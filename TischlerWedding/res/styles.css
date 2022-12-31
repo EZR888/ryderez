@@ -1,0 +1,6 @@
+body, .gallery {
+	background-color:#222222;
+	background-image:url(bg.png);
+	background-position:center top;
+	background-repeat:repeat;
+}

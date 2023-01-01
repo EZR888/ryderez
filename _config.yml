@@ -3,7 +3,7 @@ title: PHOTORAMA
 email: ""
 description: "Photo Journal"
 url: "https://www.ryderez.com"
-baseurl: "/photorama"
+baseurl: "/photor"
 facebook_username: ""
 twitter_username: ""
 instagram_username: ""
@@ -33,9 +33,9 @@ comments :
 
 # Internal nav
 nav:
-  - GALLERY: "https://www.ryderez.com/photorama/gallery/"  
-  - JOURNAL: "https://www.ryderez.com/photorama/journal/"
-  - ABOUT: "https://www.ryderez.com/photorama/about/"
+  - GALLERY: "https://www.ryderez.com/photor/gallery/"  
+  - JOURNAL: "https://www.ryderez.com/photor/journal/"
+  - ABOUT: "https://www.ryderez.com/photor/about/"
 
 # All translation keys
 translations:

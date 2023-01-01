@@ -33,9 +33,9 @@ comments :
 
 # Internal nav
 nav:
-  - GALLERY: "https://www.ryderez.com/photor/gallery/"  
-  - JOURNAL: "https://www.ryderez.com/photor/journal/"
-  - ABOUT: "https://www.ryderez.com/photor/about/"
+  - GALLERY: "https://www.ryderez.com/gallery/"  
+  - JOURNAL: "https://www.ryderez.com/journal/"
+  - ABOUT: "https://www.ryderez.com/about/"
 
 # All translation keys
 translations:

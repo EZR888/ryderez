@@ -1,0 +1,5 @@
+.extra-wrap, .scroll-pane .inner, .scroll-pane .inner1 {zoom:1;}
+
+#viewport li a em {
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000,endColorstr=#99000000);
+}

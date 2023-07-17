@@ -116,7 +116,7 @@ hr {
 .intro h2,
 .intro h3,
 .intro h4 {
-	text-align: center;
+	text-align: left;
 	width: 65%;
 	font-weight: normal;
 	color: rgba(255,255,255,1.0)

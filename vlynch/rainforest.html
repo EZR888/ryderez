@@ -2,6 +2,17 @@
 <html lang="en">
 <head>
 
+<script>
+var floatingButtonContainer = document.querySelector('.floating-button-div');
+var scrollY = window.scrollY;
+
+window.addEventListener('scroll', function() {
+  scrollY = window.scrollY;
+  floatingButtonContainer.style.top = scrollY + window.innerHeight - 150 + 'px';
+});
+</script>
+
+
 <style>
       a:link {
          color: white;
@@ -34,7 +45,7 @@
 	
 		<div class="intro">
 		<h1>
-		<b>Victoria Lynch</b>&nbsp;&nbsp;&nbsp;<font size="5"><a href="index.html">Home</a>&nbsp;&nbsp;&nbsp;<a  href="about.html">Contact</a><font size="4">
+		<b>Victoria Lynch</b>&nbsp;&nbsp;&nbsp;<font size="5"><a href="index.html">Home</a>&nbsp;&nbsp;&nbsp;<a  href="about.html">About</a><font size="4">
 		
 		</h1>
 			
@@ -86,6 +97,10 @@
 		<script src="res/main.js"></script>
 	</div>
 </div>
+
+<div class="floating-button-div">
+  <button class="fb"><a href="https://www.linkedin.com/in/victoria-lynch-02b9a61b7/"><b>CONTACT</b></button>
+</div>	
 
 <div id="jalbumwidgetcontainer"></div>
 <script>

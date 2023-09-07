@@ -1,0 +1,31 @@
+# This file is created by jAlbum. It sets custom file filtering and ordering for this image directory.
+# Files not listed here are added to the end of the album
+# Rows beginning with "-" indicate excluded files.
+# Rows can have up to 3 tab separated columns according to this scheme:
+# File name | Target path (for links) | When added (seconds since epoch)
+# Note: The target path can reference files and directories in other locations and thereby
+# allows you to compile albums consisting of files from several different locations.
+
+Concourse-Cars-2005-025.jpg		1693961082
+Concourse-Cars-2005-014.jpg		1693961082
+Concourse-Cars-2005-005.jpg		1694112972
+Concourse-Cars-2005-007.jpg		1694112972
+Concourse-Cars-2005-008.jpg		1694112972
+DSC04818-p.jpg		1694112972
+DSC04788-p.jpg		1694112972
+DSCF0081.JPG		1694112972
+DSCF0087b.jpg		1694112972
+DSCF0094.JPG		1694112972
+DSCF0096a.jpg		1694112972
+DSCF0102.JPG		1694112972
+DSC02970.JPG		1694112972
+PICT0010.JPG		1694112972
+PICT0016.JPG		1694112972
+DSC01621.jpg		1693961082
+DSC04812-p.jpg		1693961082
+DSC05095-p.jpg		1693961082
+PICT0006a.JPG		1693961082
+DSCF0076.JPG		1693961082
+Bolt.jpg		1693961082	1579997435
+spark-ev1.jpg		1693964772
+IMG_4584c.jpg		1693964972	1629664686

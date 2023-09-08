@@ -9,6 +9,16 @@
    		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
         <item>
+            <title>vineyard-sentinels-II</title>
+            <link>slides/vineyard-sentinels-II.jpg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/vineyard-sentinels-II.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/vineyard-sentinels-II.jpg" width="1000" height="579"/>
+            <guid isPermaLink="false">slides/vineyard-sentinels-II.jpg</guid>
+        </item>
+        <item>
             <title>Wintry Province 32x17-bw</title>
             <link>slides/Wintry%20Province%2032x17-bw.jpg</link>
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
@@ -640,16 +650,6 @@
             <media:content type="image/jpeg" url="slides/sonora2%20027a.jpg" width="571" height="800"/>
             <jalbum:exif originalDate="Sun, 23 Sep 2007 10:51:59 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/sonora2%20027a.jpg</guid>
-        </item>
-        <item>
-            <title>vineyard-sentinels-II</title>
-            <link>slides/vineyard-sentinels-II.jpg</link>
-            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/vineyard-sentinels-II.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/vineyard-sentinels-II.jpg" width="1000" height="579"/>
-            <guid isPermaLink="false">slides/vineyard-sentinels-II.jpg</guid>
         </item>
         <item>
             <title>winery-03</title>

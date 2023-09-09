@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Real Art</title>
+   	<link>..</link>
+        <generator>jAlbum 32.1</generator>
+   		<description></description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>ship-1</title>
+            <link>slides/ship-1.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/ship-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/ship-1.jpg" width="1000" height="592"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:19:38 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/ship-1.jpg</guid>
+        </item>
+        <item>
+            <title>ship-2</title>
+            <link>slides/ship-2.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/ship-2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/ship-2.jpg" width="1000" height="639"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:21:34 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/ship-2.jpg</guid>
+        </item>
+        <item>
+            <title>harbor-1</title>
+            <link>slides/harbor-1.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/harbor-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor-1.jpg" width="1000" height="586"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:19:08 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/harbor-1.jpg</guid>
+        </item>
+        <item>
+            <title>harbor-2</title>
+            <link>slides/harbor-2.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/harbor-2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor-2.jpg" width="1000" height="602"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:18:05 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/harbor-2.jpg</guid>
+        </item>
+        <item>
+            <title>harbor-3</title>
+            <link>slides/harbor-3.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/harbor-3.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor-3.jpg" width="600" height="800"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:14:17 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/harbor-3.jpg</guid>
+        </item>
+        <item>
+            <title>ship-3pg</title>
+            <link>slides/ship-3pg.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/ship-3pg.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/ship-3pg.jpg" width="1000" height="662"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:19:27 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/ship-3pg.jpg</guid>
+        </item>
+        <item>
+            <title>ship-4</title>
+            <link>slides/ship-4.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/ship-4.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/ship-4.jpg" width="1000" height="730"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:19:54 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/ship-4.jpg</guid>
+        </item>
+        <item>
+            <title>harbor-4</title>
+            <link>slides/harbor-4.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/harbor-4.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor-4.jpg" width="1000" height="587"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:20:26 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/harbor-4.jpg</guid>
+        </item>
+        <item>
+            <title>harbor-5</title>
+            <link>slides/harbor-5.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/harbor-5.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor-5.jpg" width="1000" height="629"/>
+            <jalbum:exif originalDate="Fri, 25 Oct 2019 11:20:42 -0700" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/harbor-5.jpg</guid>
+        </item>
+        <item>
+            <title>foxhunt</title>
+            <link>slides/foxhunt.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/foxhunt.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/foxhunt.jpg" width="438" height="344"/>
+            <guid isPermaLink="false">slides/foxhunt.jpg</guid>
+        </item>
+        <item>
+            <title>art-room</title>
+            <link>slides/art-room.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/art-room.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/art-room.jpg" width="760" height="532"/>
+            <guid isPermaLink="false">slides/art-room.jpg</guid>
+        </item>
+        <item>
+            <title>horse-show</title>
+            <link>slides/horse-show.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/horse-show.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/horse-show.jpg" width="438" height="332"/>
+            <guid isPermaLink="false">slides/horse-show.jpg</guid>
+        </item>
+    </channel>
+</rss>

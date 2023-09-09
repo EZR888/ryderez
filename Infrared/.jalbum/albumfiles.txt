@@ -1,0 +1,68 @@
+# This file is created by jAlbum. It sets custom file filtering and ordering for this image directory.
+# Files not listed here are added to the end of the album
+# Rows beginning with "-" indicate excluded files.
+# Rows can have up to 3 tab separated columns according to this scheme:
+# File name | Target path (for links) | When added (seconds since epoch)
+# Note: The target path can reference files and directories in other locations and thereby
+# allows you to compile albums consisting of files from several different locations.
+
+Wintry Province 32x17-bw.jpg		1693874115	1189271667
+vineyard-sentinels-II.jpg		1693874115
+covered-bridge-2.jpg		1693874115
+Leaving Brooklyn 28 x 14.jpg		1693874115	1170012792
+river-1.jpg		1693874115
+Sterling Silver Trees 22x20.jpg		1693874115	1189897595
+vineyard-vogue.jpg		1693874115
+covered-bridge-vt.jpg		1693874115
+Manhattan-Bridge.jpg		1693874115
+Snowy Creek 28x20.jpg		1693874115	1160391692
+OMT2.jpg		1693874115	1365377685
+Peerless Pier 32x17.jpg		1693874115	1187489506
+Toadstool Garden 20x28.jpg		1693874115	1155468837
+Rutherford Vineyard 32x17.jpg		1693874115	1161038519
+Directors Reserve 32x17.jpg		1693874115	1190140862
+bridge-big-pers.jpg		1693874115	1170014300
+sonoraredchurch.jpg		1693874115	1190569919
+Tired of Fishing 28x20.jpg		1693874115	1187494333
+clos-pegase-01.jpg		1693874115	1189898295
+dom-chan-03.jpg		1693874115	1191618250
+dreamscape.JPG		1693874115	1276810883
+epic.jpg		1693874115	1268615245
+bart-park-01a.jpg		1693874115	1191713661
+fa-alpha-01.jpg		1693874115	1188691678
+french-laundry-02.jpg		1693874115	1191526860
+goldeneye-ir.jpg		1693874115	1364595374
+icon-01.jpg		1693874115	1192921417
+lookout-1.jpg		1693874115	1290454704
+lighthouse-1.jpg		1693874115	1364762720
+lookout-3.jpg		1693874115	1290453830
+marin-head.jpg		1693874115	1278892914
+old man tree.jpg		1693874115	1264275582
+peju-statue-01bw-smug.jpg		1693874115	1190146789
+klein.jpg		1693874115	1152514636
+timber-cove-1.jpg		1693874115	1153710670
+timber-cove-2.jpg		1693874115	1153718833
+peju-trees.jpg		1693874115	1190146056
+brokebackbarn-1.jpg		1693874115	1153747200
+chandon-1.jpg		1693874115	1155472585
+Frozen Domaine 28x20.jpg		1693874115	1195514331
+horsetailfalls.jpg		1693874115	1160387092
+GGB-1.jpg		1693874115	1186369681
+pl-DSC06873.brokebackbarn-2.jpg		1693874115	1153747436
+SilveradoVineyards.jpg		1693874115	1161139272
+artesa.jpg		1693874115	1161472907
+bart-1.jpg		1693874115	1161478943
+brokebackbarn-3.jpg		1693874115	1168141976
+ir-vineyard.jpg		1693874115	1168145617
+nike-campus.jpg		1693874115	1151043793
+sawyer.jpg		1693874115	1168139624
+capemay-1.jpg		1693874115	1159083739
+rubicon-10.jpg		1693874115	1190140507
+vineyardtunnel.jpg		1693874115	1177804819
+rockerfella-2.jpg		1693874115	1170008404
+rubicon-02.jpg		1693874115	1190140277
+rubicon-05.jpg		1693874115	1190140626
+mondavi-1.jpg		1693874115	1162729953
+signorello-02.jpg		1693874115	1192916035
+winery-03.jpg		1693874115	1189898141
+signorello-01.jpg		1693874115	1192915931

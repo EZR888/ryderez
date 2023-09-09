@@ -1,0 +1,33 @@
+# This file is created by jAlbum. It sets custom file filtering and ordering for this image directory.
+# Files not listed here are added to the end of the album
+# Rows beginning with "-" indicate excluded files.
+# Rows can have up to 3 tab separated columns according to this scheme:
+# File name | Target path (for links) | When added (seconds since epoch)
+# Note: The target path can reference files and directories in other locations and thereby
+# allows you to compile albums consisting of files from several different locations.
+
+grapes.jpg		1693961082
+hot-air-1.jpg		1693961082
+yville-hotel.JPG		1693961082
+FrenchLaundChefs.JPG		1693961082
+Wine Country 05 001.jpg		1693961082
+Wine Country 05 009a.jpg		1693961082
+winerack.JPG		1694112972
+Wine Country 05 008.jpg		1694112972
+Wine Country 05 017a.jpg		1693961082
+FallVines.jpg		1693961082
+FlowerBldg.jpg		1693961082
+chimnayrock,jpg.jpg		1693961082
+hot-air-2.JPG		1693961082
+FrenchLaundry.JPG		1693961082
+vineyard-1.JPG		1693961082
+vineyard-2.JPG		1693961082
+vineyard-4.JPG		1693961082
+mustard3.jpg		1693961082
+Tower.jpg		1693961082
+Wine Country 05 013.jpg		1693961082
+mustard2.jpg		1693961082
+blackbird.jpg		1693961082
+balloons.jpg		1693961082
+ChateauRyder.jpeg		1693874115
+HogsBreath.jpg		1693961082	1595212448

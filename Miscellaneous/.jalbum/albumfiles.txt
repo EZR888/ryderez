@@ -1,0 +1,103 @@
+# This file is created by jAlbum. It sets custom file filtering and ordering for this image directory.
+# Files not listed here are added to the end of the album
+# Rows beginning with "-" indicate excluded files.
+# Rows can have up to 3 tab separated columns according to this scheme:
+# File name | Target path (for links) | When added (seconds since epoch)
+# Note: The target path can reference files and directories in other locations and thereby
+# allows you to compile albums consisting of files from several different locations.
+
+carmel-1.jpg		1693961082
+blockisle.jpg		1693961082
+distillery.jpg		1693961082
+tail-4.jpg		1693961082	-62170128000
+mendo-1.jpg		1693961082
+fitzmarine.jpg		1693961082	1499291633
+HalfMoonBay-1.jpg		1693961082	1577840539
+napavalley-1.jpg		1694112972
+artesawinery.jpg		1693961082
+HalfMoonBay-2.jpg		1693961082
+Nantucket-1.jpg		1693961082
+table-topfirepit.jpg		1693961082	1577061952
+macallan.jpg		1693961082
+FogBank.jpg		1693961082
+tail-7.jpg		1693961082	-62170128000
+winebassket.jpg		1693961082	1188069895
+cat.jpg		1693961082	1188071134
+veggies.JPG		1693961082	1188071212
+carmelstatebeach.jpg		1693961082
+halfmoonbay-3.jpg		1693961082	1594351623
+halfmoonbay-4.jpg		1693961082	1588646637
+SringHouse-BI.jpg		1693961082	1571876087
+17miledrive-1.jpg		1693961082	1595449284
+tail-8.jpg		1693961082	-62170128000
+hmb-5.jpg		1693961082	1587323035
+hmb-6.HEIC		1693961082	1587698031
+blockisland-2.HEIC		1693961082	1571876732
+hmb-7.jpg		1693961082	1587963487
+carmelstatebeach-2.jpg		1693961082	1595447343
+tail-10.jpg		1693961082	-62170128000
+frog.jpg		1693961082	1588303232
+17miledrive-2.jpg		1693961082	1595449524
+hmb-tree.jpg		1693961082	1589601520
+hmb-8.HEIC		1693961082	1588908530
+hmb-tree-2.HEIC		1693961082	1591672230
+sunset-1.JPG		1693961082
+fitzgeraldmarine-1.jpg		1693961082
+carmelhighlans-1.jpg		1693961082	1595441139
+lonecypress-1.jpg		1693961082	1595450311
+tail-15.jpg		1693961082	-62170128000
+7Hibbay1.jpg		1693961082
+cobble-4.jpg		1693961082
+rooftop.jpg		1693961082
+spanishbay-1.JPG		1693961082
+lighthouse-1.jpg		1693961082
+harbor_big.JPG		1693961082
+tail-19.jpg		1693961082	-62170128000
+Rubicon-NV.jpg		1693961082
+Austin-1.jpg		1693961082
+Austin-2.JPG		1693961082
+longbeach-1.JPG		1693961082
+longbeach-2.JPG		1693961082
+seagulls1.jpg		1693961082
+pebblebeach-1.JPG		1693961082	1595452419
+scary-clown.JPG		1693961082
+miramar-1.HEIC		1693961082	1597375289
+carmel-highlands-2.jpg		1693961082	1595450334
+tail-22.jpg		1693961082	-62170128000
+miramar-2.HEIC		1693961082	1597806738
+miramar-3.jpg		1693961082	1598754982
+miramar-4.jpg		1693961082	1598755014
+pillar-point-1.HEIC		1693961082	1604269307
+gourds.heic		1693961082	1604882734
+pumpkins-1.heic		1693961082	1604882826
+seascape-1.jpg		1693961082	1604885522
+tail-24.jpg		1693961082	-62170128000
+sunset-2.jpg		1693961082	1604887630
+lighthouse.jpg		1693961082
+pinotblanc.jpg		1693961082
+New York-2005-011.jpg		1693961082
+barn-1.jpg		1693961082
+masks.jpg		1693961082
+sunset1a.jpg		1693961082
+Vermont-2005-003.jpg		1693961082
+Vermont-2005-010.jpg		1693961082
+Vermont-2005-084.jpg		1693961082
+water.jpg		1693961082
+tail-30.jpg		1693961082	-62170128000
+WaterTower.jpg		1693961082
+Carmel-2005-004.jpg		1694112972
+Carmel-2005-005.jpg		1694112972
+Carmel-2005-016.jpg		1694112972
+Carmel-2005-041.jpg		1694112972
+bigvase.jpg		1694112972
+statue.JPG		1694112972
+bobmarleyT.jpg		1694112972
+butterfly-1.JPG		1694112972
+butterfly-2.JPG		1694112972
+butterfly-3.JPG		1694112972
+moon1.jpg		1694112972
+beer.jpg		1694112972
+-pumpkins-2.jpg		1694112972
+butterfly-4.jpg		1694112972
+gourds-2.jpg		1694112972
+gourds-3.jpg		1694112972

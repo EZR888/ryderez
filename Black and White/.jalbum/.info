@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="19" class="java.beans.XMLDecoder">
+ <object class="java.util.HashMap">
+  <void method="put">
+   <string>lastFolderThumbCrop</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbPath</string>
+   <string>Black and White/kids-bubble.JPEG</string>
+  </void>
+  <void method="put">
+   <string>lastFolderImageSize</string>
+   <string>1880x360</string>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbSize</string>
+   <string>620x465</string>
+  </void>
+  <void method="put">
+   <string>firstCameraDate</string>
+   <long>-62170128000000</long>
+  </void>
+  <void method="put">
+   <string>cameraDatesUpdatedDate</string>
+   <long>1694218181217</long>
+  </void>
+  <void method="put">
+   <string>lastFolderImagePath</string>
+   <string>Black and White/kids-bubble.JPEG</string>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbName</string>
+   <string>Black and White_kids-bubble.jpg</string>
+  </void>
+  <void method="put">
+   <string>lastCameraDate</string>
+   <long>1605077690000</long>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbDims</string>
+   <string>620x465</string>
+  </void>
+ </object>
+</java>

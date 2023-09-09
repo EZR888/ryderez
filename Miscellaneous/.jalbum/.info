@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="19" class="java.beans.XMLDecoder">
+ <object class="java.util.HashMap">
+  <void method="put">
+   <string>lastFolderThumbCrop</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbPath</string>
+   <string>Miscellaneous/carmel-1.jpg</string>
+  </void>
+  <void method="put">
+   <string>lastFolderImageSize</string>
+   <string>1880x360</string>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbSize</string>
+   <string>620x465</string>
+  </void>
+  <void method="put">
+   <string>firstCameraDate</string>
+   <long>-62170128000000</long>
+  </void>
+  <void method="put">
+   <string>cameraDatesUpdatedDate</string>
+   <long>1694218181120</long>
+  </void>
+  <void method="put">
+   <string>lastFolderImagePath</string>
+   <string>Miscellaneous/carmel-1.jpg</string>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbName</string>
+   <string>Miscellaneous_carmel-1.jpg</string>
+  </void>
+  <void method="put">
+   <string>userVariables</string>
+   <object class="java.util.LinkedHashMap">
+    <void method="put">
+     <string>xWeight</string>
+     <string>0.5</string>
+    </void>
+    <void method="put">
+     <string>yWeight</string>
+     <string>0.0</string>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>lastCameraDate</string>
+   <long>1693961314190</long>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbDims</string>
+   <string>620x465</string>
+  </void>
+ </object>
+</java>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Wine Country</title>
+   	<link>..</link>
+        <generator>jAlbum 32.1</generator>
+   		<description></description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>grapes</title>
+            <link>slides/grapes.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/grapes.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/grapes.jpg" width="480" height="640"/>
+            <guid isPermaLink="false">slides/grapes.jpg</guid>
+        </item>
+        <item>
+            <title>hot-air-1</title>
+            <link>slides/hot-air-1.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/hot-air-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/hot-air-1.jpg" width="735" height="800"/>
+            <guid isPermaLink="false">slides/hot-air-1.jpg</guid>
+        </item>
+        <item>
+            <title>yville-hotel</title>
+            <link>slides/yville-hotel.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/yville-hotel.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/yville-hotel.JPG" width="800" height="660"/>
+            <guid isPermaLink="false">slides/yville-hotel.JPG</guid>
+        </item>
+        <item>
+            <title>FrenchLaundChefs</title>
+            <link>slides/FrenchLaundChefs.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description>French Laundry Chefs</description>
+            <media:description type="html">French Laundry Chefs</media:description>
+            <media:thumbnail url="thumbs/FrenchLaundChefs.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/FrenchLaundChefs.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/FrenchLaundChefs.JPG</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 001</title>
+            <link>slides/Wine%20Country%2005%20001.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20001.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20001.jpg" width="800" height="451"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20001.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 009a</title>
+            <link>slides/Wine%20Country%2005%20009a.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20009a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20009a.jpg" width="800" height="289"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20009a.jpg</guid>
+        </item>
+        <item>
+            <title>winerack</title>
+            <link>slides/winerack.JPG</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/winerack.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/winerack.JPG" width="800" height="780"/>
+            <guid isPermaLink="false">slides/winerack.JPG</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 008</title>
+            <link>slides/Wine%20Country%2005%20008.jpg</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20008.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20008.jpg" width="800" height="605"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20008.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 017a</title>
+            <link>slides/Wine%20Country%2005%20017a.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20017a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20017a.jpg" width="800" height="600"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20017a.jpg</guid>
+        </item>
+        <item>
+            <title>FallVines</title>
+            <link>slides/FallVines.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/FallVines.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/FallVines.jpg" width="800" height="614"/>
+            <guid isPermaLink="false">slides/FallVines.jpg</guid>
+        </item>
+        <item>
+            <title>FlowerBldg</title>
+            <link>slides/FlowerBldg.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/FlowerBldg.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/FlowerBldg.jpg" width="800" height="555"/>
+            <guid isPermaLink="false">slides/FlowerBldg.jpg</guid>
+        </item>
+        <item>
+            <title>chimnayrock,jpg</title>
+            <link>slides/chimnayrock%2Cjpg.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/chimnayrock%2Cjpg.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/chimnayrock%2Cjpg.jpg" width="511" height="682"/>
+            <guid isPermaLink="false">slides/chimnayrock%2Cjpg.jpg</guid>
+        </item>
+        <item>
+            <title>hot-air-2</title>
+            <link>slides/hot-air-2.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/hot-air-2.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/hot-air-2.JPG" width="593" height="480"/>
+            <guid isPermaLink="false">slides/hot-air-2.JPG</guid>
+        </item>
+        <item>
+            <title>FrenchLaundry</title>
+            <link>slides/FrenchLaundry.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/FrenchLaundry.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/FrenchLaundry.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/FrenchLaundry.JPG</guid>
+        </item>
+        <item>
+            <title>vineyard-1</title>
+            <link>slides/vineyard-1.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/vineyard-1.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/vineyard-1.JPG" width="800" height="525"/>
+            <guid isPermaLink="false">slides/vineyard-1.JPG</guid>
+        </item>
+        <item>
+            <title>vineyard-2</title>
+            <link>slides/vineyard-2.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/vineyard-2.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/vineyard-2.JPG" width="800" height="635"/>
+            <guid isPermaLink="false">slides/vineyard-2.JPG</guid>
+        </item>
+        <item>
+            <title>vineyard-4</title>
+            <link>slides/vineyard-4.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/vineyard-4.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/vineyard-4.JPG" width="800" height="626"/>
+            <guid isPermaLink="false">slides/vineyard-4.JPG</guid>
+        </item>
+        <item>
+            <title>mustard3</title>
+            <link>slides/mustard3.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/mustard3.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/mustard3.jpg" width="800" height="520"/>
+            <guid isPermaLink="false">slides/mustard3.jpg</guid>
+        </item>
+        <item>
+            <title>Tower</title>
+            <link>slides/Tower.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Tower.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Tower.jpg" width="800" height="647"/>
+            <guid isPermaLink="false">slides/Tower.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 013</title>
+            <link>slides/Wine%20Country%2005%20013.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20013.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20013.jpg" width="600" height="800"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20013.jpg</guid>
+        </item>
+        <item>
+            <title>mustard2</title>
+            <link>slides/mustard2.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/mustard2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/mustard2.jpg" width="800" height="359"/>
+            <guid isPermaLink="false">slides/mustard2.jpg</guid>
+        </item>
+        <item>
+            <title>blackbird</title>
+            <link>slides/blackbird.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/blackbird.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/blackbird.jpg" width="752" height="800"/>
+            <guid isPermaLink="false">slides/blackbird.jpg</guid>
+        </item>
+        <item>
+            <title>balloons</title>
+            <link>slides/balloons.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/balloons.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/balloons.jpg" width="901" height="401"/>
+            <guid isPermaLink="false">slides/balloons.jpg</guid>
+        </item>
+        <item>
+            <title>ChateauRyder</title>
+            <link>slides/ChateauRyder.jpeg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
+            <description>My former house in Napa</description>
+            <media:description type="html">My former house in Napa</media:description>
+            <media:thumbnail url="thumbs/ChateauRyder.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/ChateauRyder.jpeg" width="665" height="441"/>
+            <guid isPermaLink="false">slides/ChateauRyder.jpeg</guid>
+        </item>
+        <item>
+            <title>HogsBreath</title>
+            <link>slides/HogsBreath.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description>Hogs Breath Inn, Carmel</description>
+            <media:description type="html">Hogs Breath Inn, Carmel</media:description>
+            <media:thumbnail url="thumbs/HogsBreath.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/HogsBreath.jpg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 19 Jul 2020 19:34:08 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/HogsBreath.jpg</guid>
+        </item>
+    </channel>
+</rss>

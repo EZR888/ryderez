@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="19" class="java.beans.XMLDecoder">
+ <object class="java.util.HashMap">
+  <void method="put">
+   <string>userVariables</string>
+   <object class="java.util.LinkedHashMap">
+    <void method="put">
+     <string>xWeight</string>
+     <string>0.5</string>
+    </void>
+    <void method="put">
+     <string>yWeight</string>
+     <string>0.15625</string>
+    </void>
+   </object>
+  </void>
+ </object>
+</java>

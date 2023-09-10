@@ -14,5 +14,16 @@
     	<jalbum:link rel="sub" href="Real%20Art/album.rss" title="Real Art" thumbnail="Real%20Art/thumbs/ship-1.jpg" thumbnailWidth="212" thumbnailHeight="170" />
     	<jalbum:link rel="sub" href="Black%20and%20White/album.rss" title="Black and White" thumbnail="Black%20and%20White/thumbs/kids-bubble.JPEG" thumbnailWidth="212" thumbnailHeight="170" />
     	<jalbum:link rel="sub" href="Wine%20Country/album.rss" title="Wine Country" thumbnail="Wine%20Country/thumbs/grapes.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+        <item>
+            <title>Wintry Province 32x17-bw</title>
+            <link>slides/Wintry%20Province%2032x17-bw.jpg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1000" height="588"/>
+            <jalbum:exif originalDate="Sat, 08 Sep 2007 10:14:27 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
+            <guid isPermaLink="false">slides/Wintry%20Province%2032x17-bw.jpg</guid>
+        </item>
     </channel>
 </rss>

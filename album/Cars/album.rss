@@ -120,13 +120,13 @@
         </item>
         <item>
             <title>harley-2,jpg</title>
-            <link>slides/harley-2%2Cjpg.JPG</link>
+            <link>slides/harley-2.JPG</link>
             <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/harley-2%2Cjpg.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/harley-2%2Cjpg.JPG" width="800" height="600"/>
-            <guid isPermaLink="false">slides/harley-2%2Cjpg.JPG</guid>
+            <media:thumbnail url="thumbs/harley-2.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harley-2.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/harley-2.JPG</guid>
         </item>
         <item>
             <title>lambo</title>

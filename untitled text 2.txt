@@ -147,121 +147,86 @@ coping strategies need to be sorted out
  - decades of reacting to stress
 how I cope with things
 
-
-
-
-
-
-
-
-
-
-
----_0253.jpg
-17434612_10211957649512224_1614953558830815892_o.jpg
-18879796.PICT0050.jpg
-18879800.flwrs1.jpg
-20170705_145353.jpg
-20200101_010218443_iOS.JPG
-26498430.DSC00199a.jpg
-27937384.DSC00577a.jpg
-45353150_10217034829758557_6234203368684781568_o.jpg
-7Hibbay1.jpg
-Carmel-2005-004.jpg
-Carmel-2005-005.jpg
-Carmel-2005-016.jpg
-Carmel-2005-041.jpg
-DSC00140a.jpg
-DSC00589.jpg
-DSC01165.jpg
-DSC03064.JPG
-DSC03231.JPG
-DSC05534.JPG
-DSCF0007.jpg
-DSCF0038.JPG
-FogBank.jpg
-IMG_0047.jpg
-IMG_0052.jpg
-IMG_0088.JPG
-IMG_0091.JPG
-IMG_0174.JPG
-IMG_0175.jpg
-IMG_0783.jpg
-IMG_0807.JPG
-IMG_0835.JPG
-IMG_0837.JPG
-IMG_1744.JPG
-IMG_1800.jpg
-IMG_2121.JPG
-IMG_2317.jpg
-IMG_2492.JPG
-IMG_3828.jpg
-IMG_4745.jpg
-IMG_4981.jpg
-IMG_4987.jpg
-IMG_4989.jpg
-IMG_5004.jpg
-IMG_5007.jpg
-IMG_5010.jpg
-IMG_5014.JPG
-IMG_5175.JPG
-IMG_5899.jpg
-IMG_6157.jpg
-IMG_6477.jpg
-IMG_6478.jpg
-IMG_9500.jpg
-IMG_9703.jpg
-IMG_9708.jpg
-IMG_9716.jpg
-IMG_9722.jpg
-Misc-2005-041.jpg
-Misc-2005-047.jpg
-Misc-2005-048.jpg
-Misc-2005-049.jpg
-New York-2005-011.jpg
-PICT0024a.jpg
-PICT0123.JPG
-PICT0126.JPG
-Vermont-2005-003.jpg
-Vermont-2005-010.jpg
-Vermont-2005-084.jpg
-WaterTower.jpg
-Wine Country 05 006a.jpg
-Wine Country 05 006b.jpg
-cobble-4.jpg
-harbor_big.JPG
-l-DSC05838.jpg
-l-DSC05901.JPG
-l-DSC05913.JPG
-l-DSC05926.JPG
-l-DSC06059.jpg
-l-DSC06064.JPG
-lighthouse.jpg
-moon1.jpg
-ps-DSC06722.jpg
-s-DSC05961.jpg
-seagulls1.jpg
-sunset1a.jpg
-tail-10.jpg
-tail-15.jpg
-tail-19.jpg
-tail-22.jpg
-tail-24.jpg
-tail-30.jpg
-tail-4.jpg
-tail-7.jpg
-tail-8.jpg
-water.jpg
-
 ------
 
-grep thumbs album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}'
+vertigo exercise
+change interpretation of bullying
+seen heard validated
+needs met
+write letters to inner child
+ - tell him what he needed to hear
+  - sorry mom is making you do this or that or cutting your hair
+  - sorry it doesn't make you fit in.
+  -here to tell you you're enough even though you feel different  everyone feels different
+  validate his experience
+  - in this moment when you're in pain i understand and feel your pain.
+  i validate what youre going through
+  what i can see as your sduly is that youre perfect as you are.  a normal kid.  all kids have these insecurities
+
+communication with your inner child.  wriete with non-dominant hand
+tell me ht youre feeling
+
+-----------
+
+Dr Appt for "ak" on my nose
+
+Setup Zoom Dr appt for early Oct to extend leave to Jan 12th
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+grep thumbs album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+addFiles filenames
+
+
+#!/bin/sh
+# addfiles script
+
+while read p; do
+ echo "<div class=\"card preload image square\"><a class=\"thumb\" href=\"slides/"$p"\"><img src=\"thumbs/"$p"\" width=\"212\" height=\"170\"></a></div>";
+done < filenames
+
+
+
+Levi's Men's Big and Tall 501...
+Size: 38W x 36L
+Color: Light Stonewash
+Order #: 111-8629732-3931446
+Sold by: Amazon.com Services LLC
+Quantity: 1
+Item price: $55.65
+
+
+1. Create a TXT record in your DNS configuration for the following hostname: _github-pages-challenge-EZR888.victoria-lynch.com
+2. Use this code for the value of the TXT record: 9d78e1a182d130199d65e80e6a9502
+3. Wait until your DNS configuration changes. This could take up to 24 hours to propagate.
+  
+
+
+
+_github-pages-challenge-EZR888.victoria-lynch.com
+
+9d78e1a182d130199d65e80e6a9502
+
+e1edc37aa43b08de0bbd4a8651a062	
 
 
 

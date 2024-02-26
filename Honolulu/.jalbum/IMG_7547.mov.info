@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="19" class="java.beans.XMLDecoder">
+ <object class="java.util.HashMap">
+  <void method="put">
+   <string>videoWidth</string>
+   <int>1920</int>
+  </void>
+  <void method="put">
+   <string>orientation</string>
+   <object class="java.lang.Enum" method="valueOf">
+    <class>se.datadosen.util.Orientation</class>
+    <string>normal</string>
+   </object>
+  </void>
+  <void method="put">
+   <string>videoDuration</string>
+   <object class="se.datadosen.jalbum.TimeCode">
+    <void property="millis">
+     <int>200</int>
+    </void>
+    <void property="secs">
+     <int>1</int>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>videoFPS</string>
+   <int>30</int>
+  </void>
+  <void method="put">
+   <string>videoHeight</string>
+   <int>1174</int>
+  </void>
+ </object>
+</java>

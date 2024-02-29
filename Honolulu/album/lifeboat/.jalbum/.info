@@ -1,0 +1,1826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="19" class="java.beans.XMLDecoder">
+ <object class="java.util.HashMap">
+  <void method="put">
+   <string>firstCameraDate</string>
+   <long>1707852909000</long>
+  </void>
+  <void method="put">
+   <string>cameraDatesUpdatedDate</string>
+   <long>1709170567780</long>
+  </void>
+  <void method="put">
+   <string>videoSettingsHash</string>
+   <string>1e4e6afd1b9d5573d075b26b2e79036c</string>
+  </void>
+  <void method="put">
+   <string>lastCameraDate</string>
+   <long>1708987557206</long>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbPath</string>
+   <string>IMG_7471.jpeg</string>
+  </void>
+  <void method="put">
+   <string>folderThumbSettingsHash</string>
+   <string>36b85e618bc36dad65f28cd5d94abd42</string>
+  </void>
+  <void method="put">
+   <string>createdDate</string>
+   <long>1709169084342</long>
+  </void>
+  <void method="put">
+   <string>lastFolderImageSize</string>
+   <string>1880x360</string>
+  </void>
+  <void method="put">
+   <string>lastFolderThumbSize</string>
+   <string>620x465</string>
+  </void>
+  <void method="put">
+   <string>lastFolderImagePath</string>
+   <string>IMG_7471.jpeg</string>
+  </void>
+  <void method="put">
+   <string>imageSettingsHash</string>
+   <string>c1e9e98be183539aa62ff9d7b88b4699</string>
+  </void>
+  <void method="put">
+   <string>imageLinking</string>
+   <string>LinkScaled</string>
+  </void>
+  <void method="put">
+   <string>projectSettings</string>
+   <object class="se.datadosen.jalbum.ProjectSettings" id="ProjectSettings0"/>
+  </void>
+  <void method="put">
+   <string>lastMadeDate</string>
+   <long>1709172712937</long>
+  </void>
+ </object>
+<void class="se.datadosen.jalbum.ProjectSettings" id="Field0" method="getField">
+ <string>main</string>
+ <void id="Properties0" method="get">
+  <object idref="ProjectSettings0"/>
+  <void method="put">
+   <string>highQualityThumbs</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>videoQuality</string>
+   <string>50</string>
+  </void>
+  <void method="put">
+   <string>albumHeight</string>
+   <string>420</string>
+  </void>
+  <void method="put">
+   <string>thumbnailPrefix</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>sharpenPercent</string>
+   <string>25</string>
+  </void>
+  <void method="put">
+   <string>homepageAddress</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>internalVersion</string>
+   <string>32.1.3</string>
+  </void>
+  <void method="put">
+   <string>outputDirectory</string>
+   <string>album</string>
+  </void>
+  <void method="put">
+   <string>iptcCaption</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>titleSource</string>
+   <string>IPTCObjectName</string>
+  </void>
+  <void method="put">
+   <string>indexPageName</string>
+   <string>index</string>
+  </void>
+  <void method="put">
+   <string>directoriesFirst</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>homepageLinkText</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>acceleratedScaling</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>style</string>
+   <string>Linen.css</string>
+  </void>
+  <void method="put">
+   <string>reverseOrder</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>skin</string>
+   <string>Tiger</string>
+  </void>
+  <void method="put">
+   <string>updatedDirsOnly</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>disableColorSubsampling</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>imageOrdering</string>
+   <string>OrderByDate</string>
+  </void>
+  <void method="put">
+   <string>widgetInjection</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>metaData</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>rights</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>albumAddress</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>imageSize</string>
+   <string>1000x800</string>
+  </void>
+  <void method="put">
+   <string>forceJPEGThumbs</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>overrideExistingCopyright</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>subdirs</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>smoothScalingType</string>
+   <string>STANDARD</string>
+  </void>
+  <void method="put">
+   <string>excludeByDefault</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>creator</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>thumbVariants</string>
+   <string>[]</string>
+  </void>
+  <void method="put">
+   <string>closeupPrefix</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>exifImageDescription</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>includePattern</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>themeImageSize</string>
+   <string>1880x360</string>
+  </void>
+  <void method="put">
+   <string>removeDiacritics</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>thumbnailDirectory</string>
+   <string>thumbs</string>
+  </void>
+  <void method="put">
+   <string>remoteDirectory</string>
+   <string>Honolulu</string>
+  </void>
+  <void method="put">
+   <string>videoParameters</string>
+   <string>-y=,-i=$inputPath,-vf=hqdn3d\=1.5:1.5:6:6\,scale\=min(iw\\\,trunc(iw*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2):min(ih\\\,trunc(ih*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2)\,unsharp\=3:3:1.0:3:3:0.0\,$normalizeOrientation,-ss=$clipStart,-t=$clipLength,-threads=0,-b:a=96k,-ac=2,-ar=44100,-vcodec=libx264,-crf=$videoQuality,-metadata:s:v:0=rotate\=0,-movflags=faststart,-pix_fmt=yuv420p,$outputPath=</string>
+  </void>
+  <void method="put">
+   <string>displayVersion</string>
+   <string>32.1</string>
+  </void>
+  <void method="put">
+   <string>videoResolution</string>
+   <string>p720</string>
+  </void>
+  <void method="put">
+   <string>visibleOnProfilePage</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>mediaRSS</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>slides</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>notes</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>makeThumbs</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>forceProcessing</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>albumWidth</string>
+   <string>560</string>
+  </void>
+  <void method="put">
+   <string>resourceDirectory</string>
+   <string>res</string>
+  </void>
+  <void method="put">
+   <string>hiDPIThumbs</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>imageBackgroundColor</string>
+   <string>#ffffff</string>
+  </void>
+  <void method="put">
+   <string>scalingMethod</string>
+   <string>ScaleSmooth</string>
+  </void>
+  <void method="put">
+   <string>slideDirectory</string>
+   <string>slides</string>
+  </void>
+  <void method="put">
+   <string>creditText</string>
+   <string>credit11</string>
+  </void>
+  <void method="put">
+   <string>jpegComment</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>outputFormat</string>
+   <string>JPEG</string>
+  </void>
+  <void method="put">
+   <string>rightsURL</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>textEncoding</string>
+   <string>UTF-8</string>
+  </void>
+  <void method="put">
+   <string>qualityPercentWebP</string>
+   <string>80</string>
+  </void>
+  <void method="put">
+   <string>keepXmpData</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>qualityPercent</string>
+   <string>85</string>
+  </void>
+  <void method="put">
+   <string>keepMetaData</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>currentProject</string>
+   <string>Project {/Users/ezryder/My Albums/Honolulu/jalbum-settings.jap}</string>
+  </void>
+  <void method="put">
+   <string>directoryChaining</string>
+   <string>NO_CHAINING</string>
+  </void>
+  <void method="put">
+   <string>generateJSON</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>thumbSize</string>
+   <string>212x170</string>
+  </void>
+  <void method="put">
+   <string>cpuCores</string>
+   <string>4</string>
+  </void>
+  <void method="put">
+   <string>useThumbForFolderIcon</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>jAlbumVersion</string>
+   <string>32.1.3</string>
+  </void>
+  <void method="put">
+   <string>readXmp</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>processFolderThumbs</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>textFileComment</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>classicReaders</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>copyOriginals</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>folderThumbSize</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>directory</string>
+   <string>/Users/ezryder/My Albums/Honolulu</string>
+  </void>
+  <void method="put">
+   <string>hiDPIImages</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>urlEncode</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>accountProfileName</string>
+   <string>https://ezryder38.jalbum.net</string>
+  </void>
+  <void method="put">
+   <string>webPassword</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>excludeBacklinks</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>closeupDirectory</string>
+   <string>slides</string>
+  </void>
+  <void method="put">
+   <string>notifyNotes</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>cols</string>
+   <string>6</string>
+  </void>
+  <void method="put">
+   <string>writeUTF8</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>class</string>
+   <string>class se.datadosen.jalbum.AlbumBean</string>
+  </void>
+  <void method="put">
+   <string>useCustomVideoSettings</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>includeDirectories</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>ignorePattern</string>
+   <string>\..*</string>
+  </void>
+  <void method="put">
+   <string>rows</string>
+   <string>0</string>
+  </void>
+  <void method="put">
+   <string>forceJPEGImages</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>superimposeFilmIcon</string>
+   <string>true</string>
+  </void>
+  <void method="put">
+   <string>exifUserComment</string>
+   <string>false</string>
+  </void>
+  <void method="put">
+   <string>imageLinking</string>
+   <string>LinkScaled</string>
+  </void>
+  <void method="put">
+   <string>imageVariants</string>
+   <string>[]</string>
+  </void>
+  <void method="put">
+   <string>pageExtension</string>
+   <string>.html</string>
+  </void>
+  <void method="put">
+   <string>dateFormat</string>
+   <string></string>
+  </void>
+ </void>
+</void>
+<void idref="Properties0"/>
+<void class="se.datadosen.jalbum.ProjectSettings" id="Field1" method="getField">
+ <string>skin</string>
+ <void id="PrintSafeHashMap0" method="get">
+  <object idref="ProjectSettings0"/>
+  <void method="put">
+   <string>searchNewReference</string>
+   <string>dateTaken</string>
+  </void>
+  <void method="put">
+   <string>sitemapIncludeSlides</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>enableMouseWheel</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shopSendAlbumName</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>enableKeyboard</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackViewButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>heroImageDesaturate</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>maxPageWidth</string>
+   <string>67.5rem</string>
+  </void>
+  <void method="put">
+   <string>folderCaptionPlacement</string>
+   <string>below</string>
+  </void>
+  <void method="put">
+   <string>showFitToggle</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showHelp</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopMinimalAmount</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shopLabel</string>
+   <string>Shopping Cart</string>
+  </void>
+  <void method="put">
+   <string>useFilters</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>externalLinks</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>tagCloudSearch</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showBreadcrumbPath</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>folderCols</string>
+   <int>3</int>
+  </void>
+  <void method="put">
+   <string>hideWeblocations</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>preloadThumbs</string>
+   <int>20</int>
+  </void>
+  <void method="put">
+   <string>bottomNavigationIncludePages</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>descriptionSEOText</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>filterData</string>
+   <string>		SINGLE_STRING</string>
+  </void>
+  <void method="put">
+   <string>sharePinterest</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopCoupons</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>folderThumbAspectRatio</string>
+   <double>1.3333</double>
+  </void>
+  <void method="put">
+   <string>showMap</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showImageCount</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>linkColor</string>
+   <string>#eeeeee</string>
+  </void>
+  <void method="put">
+   <string>afterLast</string>
+   <string>nextfolder</string>
+  </void>
+  <void method="put">
+   <string>imgHookFn</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>footerTopLevelOnly</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showWeblocations</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>moveSearchToHero</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useRobotsTxt</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>transitionSpeed</string>
+   <int>600</int>
+  </void>
+  <void method="put">
+   <string>showBottomNavigation</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>googleSiteID</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>disqusCommenting</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>facebookLabel</string>
+   <string>Facebook</string>
+  </void>
+  <void method="put">
+   <string>thumbGap</string>
+   <string>small</string>
+  </void>
+  <void method="put">
+   <string>fitPadding</string>
+   <int>0</int>
+  </void>
+  <void method="put">
+   <string>folderDateSource</string>
+   <string>cameraDateRange</string>
+  </void>
+  <void method="put">
+   <string>uploadPath</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>tagCloudSort</string>
+   <string>name</string>
+  </void>
+  <void method="put">
+   <string>lightboxBackgroundColor</string>
+   <string>#ff222222</string>
+  </void>
+  <void method="put">
+   <string>addAltTags</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackFloatButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useThumbnailStrip</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundPattern</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>tagCloudSource</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>thumbstripHeight</string>
+   <int>80</int>
+  </void>
+  <void method="put">
+   <string>headHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>backgroundAudioVolume</string>
+   <int>25</int>
+  </void>
+  <void method="put">
+   <string>shareReddit</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>lightboxBorderColor</string>
+   <string>#ffeeeeee</string>
+  </void>
+  <void method="put">
+   <string>showShop</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>regionsVisible</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackModalTitle</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>showPhotoDataInTheCaption</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>tagCloudLabel</string>
+   <string>Labels</string>
+  </void>
+  <void method="put">
+   <string>feedbackAddButtonTooltip</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>fotomotoID</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>backgroundColor</string>
+   <string>#ff222222</string>
+  </void>
+  <void method="put">
+   <string>folderImageSize</string>
+   <string>1880x360</string>
+  </void>
+  <void method="put">
+   <string>slideshowFullscreen</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>defaultFolderIcon</string>
+   <string>blue</string>
+  </void>
+  <void method="put">
+   <string>folderCaptionTemplate</string>
+   <string>&lt;h3&gt;${title}&lt;/h3&gt;
+&lt;div class=&quot;comment&quot;&gt;${commentShort}&lt;/div&gt;</string>
+  </void>
+  <void method="put">
+   <string>showFeedback</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>folderImageHeight</string>
+   <int>240</int>
+  </void>
+  <void method="put">
+   <string>infoPanelAdapt</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useAutoPano</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>downloadScaled</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>boxBackgroundImageName</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>captionShowOnHover</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>cssHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>feedbackCopyButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>neighboringFolderBgImage</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shopHandling</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shopCurrency</string>
+   <string>EUR</string>
+  </void>
+  <void method="put">
+   <string>showFolderImageCount</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundAudioSlideshowControl</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showFeedbackBtn</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>newDaysMark</string>
+   <string>icon</string>
+  </void>
+  <void method="put">
+   <string>shopAskPermissionToEmpty</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>language</string>
+   <string>jalbum</string>
+  </void>
+  <void method="put">
+   <string>backgroundAudioAutoPlay</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>infoPanelVisible</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shopInstructionsBox</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>bodyHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>heroFullWidth</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>thumbsHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>modalWindowsTheme</string>
+   <string>auto</string>
+  </void>
+  <void method="put">
+   <string>pinItButton</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopQuantityCap</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useMostphotos</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopId</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>titleSEOText</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>boxBackgroundColor</string>
+   <string>#66444444</string>
+  </void>
+  <void method="put">
+   <string>avoidCDNs</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>folderImageHeightSubAlbums</string>
+   <int>240</int>
+  </void>
+  <void method="put">
+   <string>dontStretchBehind</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>topNavigationIncludeWebLocations</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>baseFontSize</string>
+   <int>16</int>
+  </void>
+  <void method="put">
+   <string>preFormat</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopInstructions</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>mapZoom</string>
+   <int>15</int>
+  </void>
+  <void method="put">
+   <string>textColor</string>
+   <string>#cccccc</string>
+  </void>
+  <void method="put">
+   <string>customKeys</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>photoDataTemplate</string>
+   <string># Creator &amp; rights
+xmp.dc:creator|photographer|artist|Artist|Owner|Iptc.By-line|xmp.aux:OwnerName|Creator|Xmp.Author|Iptc.IIM/Creator
+xmp.dc:credit|Credit|Iptc.IIM/CreditLine
+xmp.dc:rights|rights|xmp.xmpRights:UsageTerms|Iptc.IIM/Usage Terms
+Copyright|Iptc.Copyright Notice|Iptc.IIM/CopyrightNotice
+# Title
+xmp.dc:title|Xmp.Title|objectName|Iptc.IIM/ObjectName|Xmp.UserComment
+xmp.photoshop:Headline|Headline|Iptc.IIM/Headline
+# Description
+xmp.dc:description|ImageDescription|Xmp.Description|Xmp.Subject|Iptc.IIM/Caption/Abstract
+xmp.photoshop:Category|Category|Iptc.IIM/Category
+# Keywords
+xmp.dc:subject|keywords|Iptc.IIM/Keywords
+# Format
+xmp.dc:format|Xmp.Format
+xmp.dc:identifier|Xmp.Identifier
+Xmp.Label
+# Location
+xmp.photoshop:Country|Country|Country/Primary Location|Country/Primary Location Name|Iptc.IIM/Country
+xmp.photoshop:State|Province/State|Iptc.IIM/Province/State
+xmp.photoshop:City|City|Iptc.IIM/City
+Sub-location|Iptc.IIM/Sub-Location
+# Camera
+originalDate|Date/Time Original|Date/Time|CreateDate|ModifyDate
+Make
+Model|Camera
+lens|Lens|Lens Model|Canon makernote.Lens Model|Xmp.Lens-Information|xmp.aux:Lens|Lens Specification
+focalLength35mm|focusDistance|Focal Length|Focallength
+SubjectDistance
+meteringMode|Metering Mode
+isoEquivalent|ISO Speed Ratings
+exposureTime|Exposure Time|Shutter Speed Value|ShutterSpeedValue
+Aperture Value|aperture|F-Number|FNumber|Aperturevalue
+Exposure Bias Value
+Exposure Program|Exposureprogram|Exposure Mode
+Xmp.SceneType
+White Balance|WhiteBalance
+Xmp.ColorSpace
+Xmp.LightSource
+flash|Flash
+resolution</string>
+  </void>
+  <void method="put">
+   <string>topmenuColor</string>
+   <string>#cc141414</string>
+  </void>
+  <void method="put">
+   <string>shopSendItemName</string>
+   <string>title</string>
+  </void>
+  <void method="put">
+   <string>bodyTopFitWidth</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>debugMode</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>transitionType</string>
+   <string>crossFadeAndSlide</string>
+  </void>
+  <void method="put">
+   <string>customLink</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>backgroundAudioLoop</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackInstructions</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>buttonColor</string>
+   <string>#0099cc</string>
+  </void>
+  <void method="put">
+   <string>bodyTopHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>videoAutoPlay</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>facebookCommentingPosts</string>
+   <int>3</int>
+  </void>
+  <void method="put">
+   <string>folderThumbSize</string>
+   <string>620x465</string>
+  </void>
+  <void method="put">
+   <string>hideFitToggle</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>emailSubject</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>iconStyle</string>
+   <string>thin</string>
+  </void>
+  <void method="put">
+   <string>feedbackAddButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>videoLoop</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useAudioClipButton</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>folderTitlePosition</string>
+   <string>bottom</string>
+  </void>
+  <void method="put">
+   <string>facebookPageId</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>thumbCols</string>
+   <int>5</int>
+  </void>
+  <void method="put">
+   <string>gatherWeblocationInfo</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>searchFields</string>
+   <string>title,comment,name,creator,keywords,regions</string>
+  </void>
+  <void method="put">
+   <string>clickBesideForIndex</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>writeSitemapXml</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>minVerticalAR</string>
+   <double>0.667</double>
+  </void>
+  <void method="put">
+   <string>usePriceAsSingleOption</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useSort</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>searchNewSinceLastVisit</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useBoxForPages</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>slideshowDelay</string>
+   <double>4.0</double>
+  </void>
+  <void method="put">
+   <string>bottomNavigationIncludeWebLocations</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>audioClipVolume</string>
+   <int>75</int>
+  </void>
+  <void method="put">
+   <string>alwaysRestartSlideshow</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>heroColor</string>
+   <string>#ff666666</string>
+  </void>
+  <void method="put">
+   <string>googleAnalytics</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>newDaysText</string>
+   <string>New</string>
+  </void>
+  <void method="put">
+   <string>maxHorizontalAR</string>
+   <double>2.0</double>
+  </void>
+  <void method="put">
+   <string>filteringBoxSticky</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>extraSizesChanged</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>heroOverlayColorTransparent</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>titleCaptionTemplate</string>
+   <string>&lt;h1&gt;${title}&lt;/h1&gt;
+&lt;div class=&quot;description&quot;&gt;${description}&lt;/div&gt;</string>
+  </void>
+  <void method="put">
+   <string>bodyTopTopLevelOnly</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>fixedShapeThumbs</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>cookiePolicyUrl</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>facebookAppId</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>muteBackgroundAudio</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shareEmail</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackTemplate</string>
+   <string>&lt;form&gt;
+	&lt;textarea name=&quot;albumComment&quot; id=&quot;albumComment&quot; placeholder=&quot;Your thoughts...&quot;&gt;&lt;/textarea&gt;
+&lt;/form&gt;
+&lt;!-- items:start --&gt;
+&lt;form&gt;
+	&lt;textarea name=&quot;comment&quot; placeholder=&quot;Comment...&quot;&gt;&lt;/textarea&gt;
+&lt;/form&gt;
+&lt;!-- items:stop --&gt;</string>
+  </void>
+  <void method="put">
+   <string>autoPanoStart</string>
+   <string>center</string>
+  </void>
+  <void method="put">
+   <string>tagCloudFontVaries</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>emailBody</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>maxZoom</string>
+   <double>1.2</double>
+  </void>
+  <void method="put">
+   <string>thumbCaptionTemplate</string>
+   <string>&lt;div class=&quot;title&quot;&gt;${fileTitle}&lt;/div&gt;
+&lt;div class=&quot;comment&quot;&gt;${commentShort}&lt;/div&gt;</string>
+  </void>
+  <void method="put">
+   <string>shareDigg</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>hoverColor</string>
+   <string>#ffffff</string>
+  </void>
+  <void method="put">
+   <string>shopSuccessUrl</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>lightboxDropShadow</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showFullscreen</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>regionsBtnText</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shareTumblr</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>use360Player</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>imgCornerRadius</string>
+   <int>0</int>
+  </void>
+  <void method="put">
+   <string>customSectionTopLevelOnly</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>googleBadgeId</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shareFacebook</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showShopOnImagePagesOnly</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>newDaysCount</string>
+   <int>0</int>
+  </void>
+  <void method="put">
+   <string>useMsServer</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>searchNewDays</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>supportDoubleclick</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>imageCaptionTemplate</string>
+   <string>&lt;div class=&quot;title&quot;&gt;${fileTitle}&lt;/div&gt;
+&lt;div class=&quot;comment&quot;&gt;${comment}&lt;/div&gt;</string>
+  </void>
+  <void method="put">
+   <string>autoPanoSpeed</string>
+   <string>medium</string>
+  </void>
+  <void method="put">
+   <string>topbarSticky</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>thumbnailsVisible</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>mapAll</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>tagCloudFields</string>
+   <string>creator,keywords,regions,folder:title,folder:name,webLocation:title,webPage:title</string>
+  </void>
+  <void method="put">
+   <string>debugVars</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>showPhotoDataLabel</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>facebookLike</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackActionButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>logoLinking</string>
+   <string>toplevel</string>
+  </void>
+  <void method="put">
+   <string>heroPattern</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>newDaysRef</string>
+   <string>dateTaken</string>
+  </void>
+  <void method="put">
+   <string>thumbAspectRatio</string>
+   <double>1.25</double>
+  </void>
+  <void method="put">
+   <string>showShare</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>markFilesNew</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundRepeat</string>
+   <string>repeat</string>
+  </void>
+  <void method="put">
+   <string>copyAudioClips</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>heroImageType</string>
+   <string>folderImage</string>
+  </void>
+  <void method="put">
+   <string>captionPlacement</string>
+   <string>below</string>
+  </void>
+  <void method="put">
+   <string>shopDiscountMinAmount</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shopOptions</string>
+   <string>Print (9x13 cm)=0.2
+Print (10x15 cm)=0.3
+Print (13x18 cm)=0.4
+Print (20x30 cm)=0.8
+Poster (50x70 cm)=6.0+0.8
+Poster (70x100 cm)=10.0+1.0
+Canvas print (34x34 cm)=6.0+1.0
+Canvas print (50x50 cm)=10.0+1.4
+Download original=20.0</string>
+  </void>
+  <void method="put">
+   <string>linkFolderTitle</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showFeedbackOnImagePagesOnly</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>useExpiry</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showPhotoData</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shopDiscountMinQuantity</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>downloadNonImages</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackEmail</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useAudioClips</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>buttonLabelsVisible</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>jsHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>controlsUseText</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>scrollToTopButton</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showPriceRange</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useJalbumRating</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>boxDropShadow</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>searchVisibleByDefault</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>googleApiKey</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useFotomoto</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopDiscountRate</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>footerColor</string>
+   <string>#cc141414</string>
+  </void>
+  <void method="put">
+   <string>tumblrButton</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundPos</string>
+   <string>center center</string>
+  </void>
+  <void method="put">
+   <string>visitorRating</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>mapType</string>
+   <string>hybrid</string>
+  </void>
+  <void method="put">
+   <string>regionsSkipEmpty</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>focusCurrentThumb</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>sortData</string>
+   <string>		SINGLE_STRING</string>
+  </void>
+  <void method="put">
+   <string>searchNewLabel</string>
+   <string>New images</string>
+  </void>
+  <void method="put">
+   <string>cookiePolicyStay</string>
+   <int>15</int>
+  </void>
+  <void method="put">
+   <string>shopSendFolderPath</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>neighboringFolderLoop</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showPages</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>backgroundAudioRetainPosition</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>downloadBtn</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showModifiedDate</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>shopBoxSticky</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>extraSizes</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>zipImages</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>bottomNavigationIncludeFolders</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showCookiePolicy</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>headlineFont</string>
+   <string>Fjalla One</string>
+  </void>
+  <void method="put">
+   <string>hideStartStop</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>cornerRadius</string>
+   <int>6</int>
+  </void>
+  <void method="put">
+   <string>zoomSlider</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shareLinkedin</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>fontFamily</string>
+   <string>&quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif</string>
+  </void>
+  <void method="put">
+   <string>folderImageHeightPages</string>
+   <int>120</int>
+  </void>
+  <void method="put">
+   <string>twitterTweet</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>lightboxBorderWidth</string>
+   <int>0</int>
+  </void>
+  <void method="put">
+   <string>neverScaleUp</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shopOptionSelectMethod</string>
+   <string>combo</string>
+  </void>
+  <void method="put">
+   <string>fitImage</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>webLocationOpenNew</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>downloadLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>showRegions</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showShopBtn</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>topNavigationDepth</string>
+   <int>4</int>
+  </void>
+  <void method="put">
+   <string>feedbackFormatting</string>
+   <string>human</string>
+  </void>
+  <void method="put">
+   <string>thumbLayout</string>
+   <string>fixgrid</string>
+  </void>
+  <void method="put">
+   <string>imgHookBtn</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>autoplayVideoInView</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showMapSection</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>facebookFaces</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>lightboxUseMainBg</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>useSearch</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>linkNeighboringFolders</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>topNavigationIncludeFolders</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>header</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>useRating</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundImageName</string>
+   <string>bg.png</string>
+  </void>
+  <void method="put">
+   <string>boxPadding</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>imgHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>filterLabel</string>
+   <string>Filter</string>
+  </void>
+  <void method="put">
+   <string>facebookCommenting</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>useFeedbackSendButton</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>heroOverlayColor</string>
+   <string>#44000000</string>
+  </void>
+  <void method="put">
+   <string>clickAction</string>
+   <string>toggleall</string>
+  </void>
+  <void method="put">
+   <string>customLinkText</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>headerTopLevelOnly</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>useFavicon</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>facebookHeader</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>sortLabel</string>
+   <string>Sort by</string>
+  </void>
+  <void method="put">
+   <string>footer</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>footerFitWidth</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>showFullscreenButton</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>shareLink</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>useFacebookBox</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>showStartSlideshow</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>disqusAppId</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>autohideControls</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>folderTitleSameAsHeadline</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>backgroundAudio</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>searchNewSource</string>
+   <string>none</string>
+  </void>
+  <void method="put">
+   <string>shareImageDims</string>
+   <string>1200x900</string>
+  </void>
+  <void method="put">
+   <string>rightClickProtect</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>sectionsOrder</string>
+   <string>pages	folders	map	filtering	shoppingCart	feedback	images	tags	newImages	customContent	neighboringFolders	comments</string>
+  </void>
+  <void method="put">
+   <string>hoverEffect</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shopSameWindowCheckout</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackInstructionsBox</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>showStartStop</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>lightboxFullscreen</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>writeFeedbackButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shopTax</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>shareTwitter</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>pregenerateContent</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>askTrackingConsent</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>printImageButton</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>topNavigationIncludePages</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>slideshowAuto</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>imgHookWidth</string>
+   <int>600</int>
+  </void>
+  <void method="put">
+   <string>customSectionHook</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>copyGoogleFonts</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>fixedShapeFolderThumbs</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
+   <string>majorSkinVersion</string>
+   <int>4</int>
+  </void>
+  <void method="put">
+   <string>showTopNavigation</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackBoxSticky</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>neighboringFolderSkipLevels</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>feedbackSendButtonLabel</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>showImageNumbers</string>
+   <boolean>false</boolean>
+  </void>
+  <void method="put">
+   <string>logoName</string>
+   <string></string>
+  </void>
+ </void>
+</void>
+<void idref="PrintSafeHashMap0"/>
+</java>

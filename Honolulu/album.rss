@@ -141,26 +141,34 @@
             <guid isPermaLink="false">slides/IMG_7902.jpeg</guid>
         </item>
         <item>
-            <title>IMG_7889</title>
-            <link>slides/IMG_7889.jpeg</link>
-            <pubDate>Mon, 04 Mar 2024 18:40:28 -0800</pubDate>
+            <title>IMG_8446</title>
+            <link>slides/IMG_8446.JPG</link>
+            <pubDate>Tue, 05 Mar 2024 09:50:05 -0800</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/IMG_7889.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_7889.jpeg" width="747" height="800"/>
-            <jalbum:exif originalDate="Tue, 20 Feb 2024 12:19:47 -0800" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/IMG_7889.jpeg</guid>
+            <media:thumbnail url="thumbs/IMG_8446.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_8446.JPG" width="859" height="800"/>
+            <guid isPermaLink="false">slides/IMG_8446.JPG</guid>
         </item>
         <item>
-            <title>IMG_7890</title>
-            <link>slides/IMG_7890.jpeg</link>
-            <pubDate>Mon, 04 Mar 2024 18:40:28 -0800</pubDate>
+            <title>IMG_8447</title>
+            <link>slides/IMG_8447.JPG</link>
+            <pubDate>Tue, 05 Mar 2024 09:50:05 -0800</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/IMG_7890.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_7890.jpeg" width="795" height="800"/>
-            <jalbum:exif originalDate="Tue, 20 Feb 2024 12:19:48 -0800" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/IMG_7890.jpeg</guid>
+            <media:thumbnail url="thumbs/IMG_8447.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_8447.JPG" width="875" height="800"/>
+            <guid isPermaLink="false">slides/IMG_8447.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_8448</title>
+            <link>slides/IMG_8448.JPG</link>
+            <pubDate>Tue, 05 Mar 2024 09:50:05 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_8448.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_8448.JPG" width="862" height="800"/>
+            <guid isPermaLink="false">slides/IMG_8448.JPG</guid>
         </item>
         <item>
             <title>IMG_7566</title>

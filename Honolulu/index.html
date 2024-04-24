@@ -34,7 +34,7 @@
 		<meta name="msapplication-config" content="res/browserconfig.xml">
 		<meta name="theme-color" content="#222222">
 		<meta name="msapplication-TileColor" content="#222222">
-		<link rel="stylesheet" href="res/common.css?v=5.3">
+		<link rel="stylesheet" href="../res/common.css?v=5.3">
 		<link rel="preload" href="folderimg.jpg" as="image" media="(max-width: 800px)">
 		<link rel="preload" href="folderimage.jpg" as="image" media="(min-width: 801px)">
 		<style>
@@ -45,11 +45,23 @@
 	<link rel="alternate" href="album.rss" type="application/rss+xml">
 </head>
 	<body id="index" class="index scrollable stop-transitions dark-mode top-level full-width icon-thin icon-thin use-mainbg">
-		<section class="top-bar has-search sticky">
+		<section>
 			<div class="cont">
-				<div class="right-column">
-					<form class="search closed"><div class="search-input"><input type="text" placeholder="Search..." aria-label="Search" data-tooltip="<b>Search</b> - use <em>&quot;A B&quot;</em> for exact, <em>A and B</em> for conjunctive search"></div><a class="search-btn button icon-search" data-tooltip title="Search"></a></form>
-				</div>
+				<div class="left-column">
+					<div class="topnavigation"><a class="topnav-toggle icon-menu btn" data-tooltip data-topnav-toggle title="Navigation"></a>
+					  <nav class="navigation">
+					    <ul class="dropdown menu">
+					        <li><a href="../index.html">Home</a></li>
+					        <li class="actual-branch actual"><a href="../NewEngland/index.html">New England</a></li>
+					        <li><a href="../BHI/index.html">Bald Head Island</a></li>
+					        <li><a href="../VancouverIsland/index.html">Vancouver Island, B.C.</a></li>
+					        <li><a href="../personal.html">Personal</a></li>
+					        <li><a href="../About.html">About</a></li>
+					    </ul>
+				      </nav>
+				    </div>
+			    </div>
+ 
 			</div>
 		</section>
 
@@ -59,29 +71,13 @@
 			<div class="cont">
 				<header class="bgimage">
 					<div class="title">
+					<a class="back-btn button icon-one-level-up" href="index.html"></a>
 						<div class="head">
 							<h1>Honolulu</h1><div class="description">Feb 2024 trip to visit Mary-Lou and Farris</div>
 						</div>
 					</div>
 				</header>
-				<aside class="controls">
-					<div class="buttons"><a class="button icon-connect" data-modal-open="social-share" data-tooltip title="Share album"></a></div>
-					<div class="start-show"><span class="text">Start slideshow</span><span class="button icon-play"></span></div>
-				</aside>
-			</div>
-		</section>
-		
-		<section class="hero title-bottom full-width bg-image">
-			<div class="hero-overlay color"></div>
-			<div class="cont">
-				<header class="bgimage">
-					<div class="title">
-<a class="back-btn button icon-one-level-up" href="index.html"></a>
-						<div class="head">
-							<h1>Honolulu</h1>
-						</div>
-					</div>
-				</header>
+
 			</div>
 		</section>
 

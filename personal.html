@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<link rel="preload" href="res/icon/skinicon-thin.woff?v4.3.1" as="font" type="font/woff" crossorigin>
 		<link rel="preload" href="res/icon/skinicon-thin.ttf?v4.3.1" as="font" type="font/ttf" crossorigin>
 		<link rel="prefetch" href="res/icon/skinicon-thin.svg?v4.3.1" as="font">
@@ -20,7 +20,7 @@
 		<meta property="og:description" content="">
 		<meta property="og:type" content="website">
 		<meta name="twitter:title" content="Snapshots">
-		<meta name="twitter:card" content="summary">
+		<meta name="twitter:card" content="summary_large_image">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="format-detection" content="telephone=no">
@@ -33,18 +33,21 @@
 		<meta name="msapplication-config" content="res/browserconfig.xml">
 		<meta name="theme-color" content="#222222">
 		<meta name="msapplication-TileColor" content="#222222">
-		<link rel="stylesheet" href="res/common.css?v=4.3.1">
+		<link rel="stylesheet" href="res/common.css?v=5.3">
 		<link rel="preload" href="folderimg.jpg" as="image" media="(max-width: 800px)">
 		<link rel="preload" href="folderimage.jpg" as="image" media="(min-width: 801px)">
 		<style>
 			@media (max-width:800px) { .hero { background-image: url(folderimg.jpg); } }
 			@media (min-width:801px) { .hero { background-image: url(folderimage.jpg); } }
 		</style>
+<meta https-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'">
+		
 	<link rel="alternate" href="album.rss" type="application/rss+xml">
 </head>
-	<body id="page" class="page scrollable stop-transitions dark-mode top-level full-width icon-thin icon-thin use-mainbg">
-		<section class="top-bar has-menu sticky">
+	<body id="index" class="index scrollable stop-transitions dark-mode top-level full-width icon-thin icon-thin use-mainbg">
+		<section class="top-bar has-search sticky">
 			<div class="cont">
+
 				<div class="left-column">
 					<div class="topnavigation"><a class="topnav-toggle icon-menu btn" data-tooltip data-topnav-toggle title="Navigation"></a>
 					  <nav class="navigation">
@@ -60,7 +63,7 @@
 					    </ul>
 				      </nav>
 				    </div>
-				</div>
+				</div>			
 			</div>
 
 		</section>

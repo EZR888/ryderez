@@ -1,7 +1,7 @@
 #jAlbum Project
-#Fri Mar 08 15:21:43 PST 2024
+#Wed Apr 24 11:53:47 PDT 2024
 acceleratedScaling=true
-accountProfileName=
+accountProfileName=https\://ezryder38.jalbum.net
 albumAddress=
 albumHeight=420
 albumWidth=560
@@ -13,11 +13,11 @@ cols=6
 copyOriginals=true
 cpuCores=4
 creator=
-creditText=credit2
-currentProject=Project {/Users/ezryder/My Albums/New England/jalbum-settings.jap}
+creditText=credit6
+currentProject=Project {/Users/ezryder/My Albums/Victoria/jalbum-settings.jap}
 dateFormat=
 directoriesFirst=true
-directory=/Users/ezryder/My Albums/New England
+directory=/Users/ezryder/My Albums/Victoria
 directoryChaining=NO_CHAINING
 disableColorSubsampling=false
 displayVersion=32.1
@@ -64,7 +64,7 @@ processFolderThumbs=false
 qualityPercent=85
 qualityPercentWebP=80
 readXmp=true
-remoteDirectory=New England
+remoteDirectory=Victoria
 removeDiacritics=false
 resourceDirectory=res
 reverseOrder=false

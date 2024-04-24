@@ -3,23 +3,23 @@
  <object class="java.util.HashMap">
   <void method="put">
    <string>firstCameraDate</string>
-   <long>1696966669000</long>
+   <long>1713305464000</long>
   </void>
   <void method="put">
    <string>cameraDatesUpdatedDate</string>
-   <long>1710042569961</long>
+   <long>1713986751874</long>
+  </void>
+  <void method="put">
+   <string>lastCameraDate</string>
+   <long>1713984653803</long>
   </void>
   <void method="put">
    <string>videoSettingsHash</string>
    <string>1e4e6afd1b9d5573d075b26b2e79036c</string>
   </void>
   <void method="put">
-   <string>lastCameraDate</string>
-   <long>1709961420275</long>
-  </void>
-  <void method="put">
    <string>lastFolderThumbPath</string>
-   <string>IMG_1370.jpeg</string>
+   <string>1291CC4D-8799-4B13-9E0A-69612AF45F16_4_5005_c.jpeg</string>
   </void>
   <void method="put">
    <string>folderThumbSettingsHash</string>
@@ -27,7 +27,7 @@
   </void>
   <void method="put">
    <string>createdDate</string>
-   <long>1709961640007</long>
+   <long>1713986754497</long>
   </void>
   <void method="put">
    <string>lastFolderImageSize</string>
@@ -39,7 +39,7 @@
   </void>
   <void method="put">
    <string>lastFolderImagePath</string>
-   <string>IMG_1370.jpeg</string>
+   <string>1291CC4D-8799-4B13-9E0A-69612AF45F16_4_5005_c.jpeg</string>
   </void>
   <void method="put">
    <string>imageSettingsHash</string>
@@ -51,7 +51,7 @@
   </void>
   <void method="put">
    <string>lastMadeDate</string>
-   <long>1710042570013</long>
+   <long>1713986754497</long>
   </void>
  </object>
 <void class="se.datadosen.jalbum.ProjectSettings" id="Field0" method="getField">
@@ -1469,12 +1469,12 @@ Download original=20.0</string>
    <string></string>
   </void>
   <void method="put">
-   <string>outputDirectory</string>
-   <string>album</string>
-  </void>
-  <void method="put">
    <string>internalVersion</string>
    <string>32.1.3</string>
+  </void>
+  <void method="put">
+   <string>outputDirectory</string>
+   <string>album</string>
   </void>
   <void method="put">
    <string>iptcCaption</string>
@@ -1553,16 +1553,16 @@ Download original=20.0</string>
    <string>false</string>
   </void>
   <void method="put">
+   <string>subdirs</string>
+   <string>true</string>
+  </void>
+  <void method="put">
    <string>smoothScalingType</string>
    <string>STANDARD</string>
   </void>
   <void method="put">
    <string>excludeByDefault</string>
    <string>false</string>
-  </void>
-  <void method="put">
-   <string>subdirs</string>
-   <string>true</string>
   </void>
   <void method="put">
    <string>thumbVariants</string>
@@ -1598,15 +1598,15 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>remoteDirectory</string>
-   <string>New England</string>
-  </void>
-  <void method="put">
-   <string>displayVersion</string>
-   <string>32.1</string>
+   <string>Victoria</string>
   </void>
   <void method="put">
    <string>videoParameters</string>
    <string>-y=,-i=$inputPath,-vf=hqdn3d\=1.5:1.5:6:6\,scale\=min(iw\\\,trunc(iw*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2):min(ih\\\,trunc(ih*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2)\,unsharp\=3:3:1.0:3:3:0.0\,$normalizeOrientation,-ss=$clipStart,-t=$clipLength,-threads=0,-b:a=96k,-ac=2,-ar=44100,-vcodec=libx264,-crf=$videoQuality,-metadata:s:v:0=rotate\=0,-movflags=faststart,-pix_fmt=yuv420p,$outputPath=</string>
+  </void>
+  <void method="put">
+   <string>displayVersion</string>
+   <string>32.1</string>
   </void>
   <void method="put">
    <string>videoResolution</string>
@@ -1662,7 +1662,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>creditText</string>
-   <string>credit2</string>
+   <string>credit6</string>
   </void>
   <void method="put">
    <string>jpegComment</string>
@@ -1677,12 +1677,12 @@ Download original=20.0</string>
    <string></string>
   </void>
   <void method="put">
-   <string>textEncoding</string>
-   <string>UTF-8</string>
-  </void>
-  <void method="put">
    <string>qualityPercentWebP</string>
    <string>80</string>
+  </void>
+  <void method="put">
+   <string>textEncoding</string>
+   <string>UTF-8</string>
   </void>
   <void method="put">
    <string>keepXmpData</string>
@@ -1698,7 +1698,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>currentProject</string>
-   <string>Project {/Users/ezryder/My Albums/New England/jalbum-settings.jap}</string>
+   <string>Project {/Users/ezryder/My Albums/Victoria/jalbum-settings.jap}</string>
   </void>
   <void method="put">
    <string>directoryChaining</string>
@@ -1750,7 +1750,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>directory</string>
-   <string>/Users/ezryder/My Albums/New England</string>
+   <string>/Users/ezryder/My Albums/Victoria</string>
   </void>
   <void method="put">
    <string>hiDPIImages</string>
@@ -1762,7 +1762,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>accountProfileName</string>
-   <string></string>
+   <string>https://ezryder38.jalbum.net</string>
   </void>
   <void method="put">
    <string>webPassword</string>
@@ -1781,12 +1781,12 @@ Download original=20.0</string>
    <string>true</string>
   </void>
   <void method="put">
-   <string>writeUTF8</string>
-   <string>true</string>
-  </void>
-  <void method="put">
    <string>cols</string>
    <string>6</string>
+  </void>
+  <void method="put">
+   <string>writeUTF8</string>
+   <string>true</string>
   </void>
   <void method="put">
    <string>class</string>

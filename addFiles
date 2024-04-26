@@ -1,10 +1,34 @@
 #!/bin/sh
-# grep thumbs album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
-# grep "<description>" album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./desc
-# addfiles script
+# addFiles script for modifying JAlbum-created albums.  Run the following commands first:
+#
+# Extract the filenames from the JAlbum-generated file, album.rss
+#
+grep thumbs album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+#
+# extract the captions from the JAlbum-generated file, album.rss
+#
+grep "<description>" album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./desc
+# 
+# Remove the first line of the captions file output, as it's not an actual photo filename
+#
+tail -n +2 desc > desc2
+#
+# Combine the two output files to create one file with a filename and caption on the same line for each photo
+#
+paste filenames desc2 >titledesc
+#
+# usage: ./addFiles >htmlgen
 
 while IFS=$'\t' read -r fn desc rest; do 
+
+# If there are no captions, uncomment the first line and comment-out the second line.
+
 # echo "<div class=\"card preload image square\"><a class=\"thumb\" href=\"slides/"$p"\"><img src=\"thumbs/"$p"\" width=\"212\" height=\"170\"></a></div>";
+
   echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>"
 done <./titledesc
+
+# cleanup
+#
+rm filenames desc desc2
 

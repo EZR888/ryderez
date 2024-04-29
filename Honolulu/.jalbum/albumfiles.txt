@@ -6,7 +6,6 @@
 # Note: The target path can reference files and directories in other locations and thereby
 # allows you to compile albums consisting of files from several different locations.
 
-res		1714356135
 IMG_7471.jpeg		1708987922
 IMG_7257.jpeg		1708987922
 IMG_7255.jpeg		1708987922
@@ -239,12 +238,3 @@ IMG_7854.jpeg		1708987922	1708304973
 IMG_7852.jpeg		1708987922	1708297464
 IMG_7855.jpeg		1708987922	1708379401
 IMG_7856.jpeg		1708987922	1708383078
-folderimg.jpg		1714356135
-folderimage.jpg		1714356135
-folderthumb.jpg		1714356135
-shareimage.jpg		1714356135
-lifeboat.zip		1714356135
-occ2.jpeg		1714356135
-IMG_8448.JPG		1714356135
-IMG_8447.JPG		1714356135
-IMG_8446.JPG		1714356135

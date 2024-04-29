@@ -3,19 +3,19 @@
  <object class="java.util.HashMap">
   <void method="put">
    <string>firstCameraDate</string>
-   <long>1708205034110</long>
+   <long>1707852909000</long>
   </void>
   <void method="put">
    <string>cameraDatesUpdatedDate</string>
-   <long>1708987931973</long>
-  </void>
-  <void method="put">
-   <string>lastCameraDate</string>
-   <long>1708987528513</long>
+   <long>1714356137018</long>
   </void>
   <void method="put">
    <string>videoSettingsHash</string>
    <string>1e4e6afd1b9d5573d075b26b2e79036c</string>
+  </void>
+  <void method="put">
+   <string>lastCameraDate</string>
+   <long>1709660861290</long>
   </void>
   <void method="put">
    <string>lastFolderThumbPath</string>
@@ -51,7 +51,7 @@
   </void>
   <void method="put">
    <string>lastMadeDate</string>
-   <long>1708987932887</long>
+   <long>1714356148729</long>
   </void>
  </object>
 <void class="se.datadosen.jalbum.ProjectSettings" id="Field0" method="getField">
@@ -173,6 +173,10 @@
   <void method="put">
    <string>linkColor</string>
    <string>#eeeeee</string>
+  </void>
+  <void method="put">
+   <string>addLatinExt</string>
+   <boolean>true</boolean>
   </void>
   <void method="put">
    <string>afterLast</string>
@@ -444,6 +448,14 @@
    <boolean>false</boolean>
   </void>
   <void method="put">
+   <string>fitImagesBetween</string>
+   <string>panels</string>
+  </void>
+  <void method="put">
+   <string>tagCloudSkipLevels</string>
+   <int>1</int>
+  </void>
+  <void method="put">
    <string>shopId</string>
    <string></string>
   </void>
@@ -462,10 +474,6 @@
   <void method="put">
    <string>folderImageHeightSubAlbums</string>
    <int>240</int>
-  </void>
-  <void method="put">
-   <string>dontStretchBehind</string>
-   <boolean>true</boolean>
   </void>
   <void method="put">
    <string>topNavigationIncludeWebLocations</string>
@@ -632,6 +640,10 @@ resolution</string>
    <boolean>true</boolean>
   </void>
   <void method="put">
+   <string>topnavigationAlignment</string>
+   <string>left</string>
+  </void>
+  <void method="put">
    <string>feedbackLabel</string>
    <string></string>
   </void>
@@ -669,7 +681,7 @@ resolution</string>
   </void>
   <void method="put">
    <string>slideshowDelay</string>
-   <double>4.0</double>
+   <int>4000</int>
   </void>
   <void method="put">
    <string>bottomNavigationIncludeWebLocations</string>
@@ -1106,6 +1118,10 @@ Download original=20.0</string>
    <boolean>false</boolean>
   </void>
   <void method="put">
+   <string>darkenTitleBackground</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
    <string>cornerRadius</string>
    <int>6</int>
   </void>
@@ -1374,6 +1390,10 @@ Download original=20.0</string>
    <boolean>false</boolean>
   </void>
   <void method="put">
+   <string>displayOriginals</string>
+   <boolean>true</boolean>
+  </void>
+  <void method="put">
    <string>imgHookWidth</string>
    <int>600</int>
   </void>
@@ -1533,16 +1553,16 @@ Download original=20.0</string>
    <string>false</string>
   </void>
   <void method="put">
-   <string>subdirs</string>
-   <string>true</string>
-  </void>
-  <void method="put">
    <string>smoothScalingType</string>
    <string>STANDARD</string>
   </void>
   <void method="put">
    <string>excludeByDefault</string>
    <string>false</string>
+  </void>
+  <void method="put">
+   <string>subdirs</string>
+   <string>true</string>
   </void>
   <void method="put">
    <string>thumbVariants</string>
@@ -1581,12 +1601,12 @@ Download original=20.0</string>
    <string>Honolulu</string>
   </void>
   <void method="put">
-   <string>videoParameters</string>
-   <string>-y=,-i=$inputPath,-vf=hqdn3d\=1.5:1.5:6:6\,scale\=min(iw\\\,trunc(iw*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2):min(ih\\\,trunc(ih*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2)\,unsharp\=3:3:1.0:3:3:0.0\,$normalizeOrientation,-ss=$clipStart,-t=$clipLength,-threads=0,-b:a=96k,-ac=2,-ar=44100,-vcodec=libx264,-crf=$videoQuality,-metadata:s:v:0=rotate\=0,-movflags=faststart,-pix_fmt=yuv420p,$outputPath=</string>
-  </void>
-  <void method="put">
    <string>displayVersion</string>
    <string>32.1</string>
+  </void>
+  <void method="put">
+   <string>videoParameters</string>
+   <string>-y=,-i=$inputPath,-vf=hqdn3d\=1.5:1.5:6:6\,scale\=min(iw\\\,trunc(iw*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2):min(ih\\\,trunc(ih*min($videoWidth/iw\\\,$videoHeight/ih)*0.5)*2)\,unsharp\=3:3:1.0:3:3:0.0\,$normalizeOrientation,-ss=$clipStart,-t=$clipLength,-threads=0,-b:a=96k,-ac=2,-ar=44100,-vcodec=libx264,-crf=$videoQuality,-metadata:s:v:0=rotate\=0,-movflags=faststart,-pix_fmt=yuv420p,$outputPath=</string>
   </void>
   <void method="put">
    <string>videoResolution</string>
@@ -1602,7 +1622,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>slides</string>
-   <string>true</string>
+   <string>false</string>
   </void>
   <void method="put">
    <string>notes</string>
@@ -1678,7 +1698,7 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>currentProject</string>
-   <string>Project {/Users/ezryder/My Albums/Honolulu/jalbum-settings.jap}</string>
+   <string>Project {/Users/ezryder/Documents/GitHub/ryderez/Honolulu/jalbum-settings.jap}</string>
   </void>
   <void method="put">
    <string>directoryChaining</string>
@@ -1729,10 +1749,6 @@ Download original=20.0</string>
    <string></string>
   </void>
   <void method="put">
-   <string>directory</string>
-   <string>/Users/ezryder/My Albums/Honolulu</string>
-  </void>
-  <void method="put">
    <string>hiDPIImages</string>
    <string>false</string>
   </void>
@@ -1742,7 +1758,11 @@ Download original=20.0</string>
   </void>
   <void method="put">
    <string>accountProfileName</string>
-   <string>https://ezryder38.jalbum.net</string>
+   <string></string>
+  </void>
+  <void method="put">
+   <string>directory</string>
+   <string>/Users/ezryder/Documents/GitHub/ryderez/Honolulu</string>
   </void>
   <void method="put">
    <string>webPassword</string>
@@ -1761,12 +1781,12 @@ Download original=20.0</string>
    <string>true</string>
   </void>
   <void method="put">
-   <string>cols</string>
-   <string>6</string>
-  </void>
-  <void method="put">
    <string>writeUTF8</string>
    <string>true</string>
+  </void>
+  <void method="put">
+   <string>cols</string>
+   <string>6</string>
   </void>
   <void method="put">
    <string>class</string>

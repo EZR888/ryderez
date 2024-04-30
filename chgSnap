@@ -1,49 +1,58 @@
 #!/bin/sh
-# addFiles script for modifying JAlbum-created albums.  Run the following commands first:
+# usage: ./addFiles "Album Title" "Album Description" one-word-folder-name  
+# addSnap script for modifying JAlbum-created albums. 
 #
-# Extract the filenames from the JAlbum-generated file, album.rss
-#
-grep thumbs ./album/album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
-#
-# extract the captions from the JAlbum-generated file, album.rss
-#
-grep "<description>" ./album/album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./desc
-#
-# Remove the first line of the captions file output, as it's not an actual photo filename
-#
-tail -n +2 desc > desc2
-#
-# Combine the two output files to create one file with a filename and caption on the same line for each photo
-#
-paste filenames desc2 >titledesc
-#
-# usage: ./addFiles one-word-album-name >index.html
-
-while IFS=$'\t' read -r fn desc rest; do
-
-# If there are no captions, uncomment the first line and comment-out the second line.
-
-# echo "<div class=\"card preload image square\"><a class=\"thumb\" href=\"slides/"$p"\"><img src=\"thumbs/"$p"\" width=\"212\" height=\"170\"></a></div>";
-
-  echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>" >>./htmlgen
-done <./titledesc
-# cleanup
-#
-rm filenames descr desc2
 albdir=`pwd`
 echo "Album dir: " $albdir
 title=$1
 desc=$2
 fold=$3
+echo "Title: " $title
+echo "Desc: " $desc
+
+# Extract the filenames from the JAlbum-generated file, album.rss
+#
+grep thumbs ./album/album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+
+# extract the captions from the JAlbum-generated file, album.rss
+#
+grep "<description>" ./album/album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./desc
+ 
+# Remove the first line of the captions file output, as it's not an actual photo filename
+#
+tail -n +2 desc > desc2
+
+# Combine the two output files to create one file with a filename and caption on the same line for each photo
+#
+paste filenames desc2 >titledesc
+
+# Generate html code for adding photos to index.html file.
+#
+while IFS=$'\t' read -r fn desc rest; do 
+
+  echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>" >>./htmlgen
+done <./titledesc
+
+# Update title and description fields in index.html file.
+#
 cp /Users/ezryder/My\ Albums/index-snap-template.html /Users/ezryder/My\ Albums/$3.html
 sed '/^\# Start/ r htmlgen' ../$3.html | sed '/nonsensed/d' >temp-index.html
 sed -e "s/ChangeTitle/$title/g; s/ChangeDesc/$desc/g" temp-index.html >index.html
-rm htmlgen
-rm titledesc
+
+# Copy updated files to GitHub directory for uploading to wensite.
+#
 homedir="/Users/ezryder/Documents/GitHub/ryderez/$3"
 echo "Home dir: " $homedir 
 cp -r album/* $homedir
 cp -p jalbum-settings.jap $homedir
 cp -p index.html $homedir
+
+# cleanup
+#
+rm filenames desc desc2
 rm ../$3.html
-rm temp-index.html
+rm temp*
+rm snap-add
+rm htmlgen
+rm titledesc
+

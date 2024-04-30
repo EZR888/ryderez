@@ -1,5 +1,5 @@
 #jAlbum Project
-#Wed Apr 24 11:53:47 PDT 2024
+#Mon Apr 29 15:29:50 PDT 2024
 acceleratedScaling=true
 accountProfileName=https\://ezryder38.jalbum.net
 albumAddress=
@@ -14,10 +14,10 @@ copyOriginals=true
 cpuCores=4
 creator=
 creditText=credit6
-currentProject=Project {/Users/ezryder/My Albums/Victoria/jalbum-settings.jap}
+currentProject=Project {/Users/ezryder/My Albums/TEST Album/jalbum-settings.jap}
 dateFormat=
 directoriesFirst=true
-directory=/Users/ezryder/My Albums/Victoria
+directory=/Users/ezryder/My Albums/TEST Album
 directoryChaining=NO_CHAINING
 disableColorSubsampling=false
 displayVersion=32.1
@@ -64,7 +64,7 @@ processFolderThumbs=false
 qualityPercent=85
 qualityPercentWebP=80
 readXmp=true
-remoteDirectory=Victoria
+remoteDirectory=TEST Album
 removeDiacritics=false
 resourceDirectory=res
 reverseOrder=false

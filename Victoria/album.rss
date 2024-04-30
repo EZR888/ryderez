@@ -9,15 +9,15 @@
    		<description>Vancouver Island, B.C.</description>
         <jalbum:absolutePath></jalbum:absolutePath>
         <item>
-            <title>IMG_0355</title>
-            <link>slides/IMG_0355.JPG</link>
-            <pubDate>Wed, 24 Apr 2024 20:07:59 -0700</pubDate>
-            <description>View from the ferry from Port Angeles to Vancouver Island, B.C.</description>
-            <media:description type="html">View from the ferry from Port Angeles to Vancouver Island, B.C.</media:description>
-            <media:thumbnail url="thumbs/IMG_0355.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_0355.JPG" width="1000" height="365"/>
-            <jalbum:exif originalDate="Wed, 17 Apr 2024 12:59:44 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
-            <guid isPermaLink="false">slides/IMG_0355.JPG</guid>
+            <title>IMG_0367</title>
+            <link>slides/IMG_0367.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</description>
+            <media:description type="html">Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</media:description>
+            <media:thumbnail url="thumbs/IMG_0367.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0367.JPG" width="1000" height="667"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:48:55 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0367.JPG</guid>
         </item>
         <item>
             <title>IMG_0390</title>
@@ -141,6 +141,17 @@
             <guid isPermaLink="false">slides/IMG_0357.JPG</guid>
         </item>
         <item>
+            <title>IMG_0369</title>
+            <link>slides/IMG_0369.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</description>
+            <media:description type="html">Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</media:description>
+            <media:thumbnail url="thumbs/IMG_0369.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0369.JPG" width="561" height="800"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:48:13 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0369.JPG</guid>
+        </item>
+        <item>
             <title>IMG_0358</title>
             <link>slides/IMG_0358.JPG</link>
             <pubDate>Wed, 24 Apr 2024 20:07:59 -0700</pubDate>
@@ -207,6 +218,17 @@
             <guid isPermaLink="false">slides/IMG_0376.JPG</guid>
         </item>
         <item>
+            <title>IMG_0355</title>
+            <link>slides/IMG_0355.JPG</link>
+            <pubDate>Wed, 24 Apr 2024 20:07:59 -0700</pubDate>
+            <description>View from the ferry from Port Angeles to Vancouver Island, B.C.</description>
+            <media:description type="html">View from the ferry from Port Angeles to Vancouver Island, B.C.</media:description>
+            <media:thumbnail url="thumbs/IMG_0355.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0355.JPG" width="1000" height="365"/>
+            <jalbum:exif originalDate="Wed, 17 Apr 2024 12:59:44 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0355.JPG</guid>
+        </item>
+        <item>
             <title>IMG_0381</title>
             <link>slides/IMG_0381.JPG</link>
             <pubDate>Wed, 24 Apr 2024 20:07:59 -0700</pubDate>
@@ -216,6 +238,17 @@
             <media:content type="image/jpeg" url="slides/IMG_0381.JPG" width="533" height="800"/>
             <jalbum:exif originalDate="Wed, 17 Apr 2024 13:54:58 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
             <guid isPermaLink="false">slides/IMG_0381.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_0372</title>
+            <link>slides/IMG_0372.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</description>
+            <media:description type="html">Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</media:description>
+            <media:thumbnail url="thumbs/IMG_0372.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0372.JPG" width="500" height="800"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:46:41 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0372.JPG</guid>
         </item>
         <item>
             <title>IMG_0396</title>
@@ -337,6 +370,17 @@
             <media:content type="image/jpeg" url="slides/IMG_0430.JPG" width="1000" height="667"/>
             <jalbum:exif originalDate="Wed, 17 Apr 2024 15:23:41 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
             <guid isPermaLink="false">slides/IMG_0430.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_0384</title>
+            <link>slides/IMG_0384.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>                               </description>
+            <media:description type="html">                               </media:description>
+            <media:thumbnail url="thumbs/IMG_0384.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0384.JPG" width="514" height="800"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:56:28 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0384.JPG</guid>
         </item>
         <item>
             <title>IMG_0436</title>
@@ -614,6 +658,17 @@
             <guid isPermaLink="false">slides/IMG_0493.jpeg</guid>
         </item>
         <item>
+            <title>IMG_0386</title>
+            <link>slides/IMG_0386.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</description>
+            <media:description type="html">Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</media:description>
+            <media:thumbnail url="thumbs/IMG_0386.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0386.JPG" width="1000" height="667"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:52:19 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0386.JPG</guid>
+        </item>
+        <item>
             <title>IMG_0506</title>
             <link>slides/IMG_0506.jpeg</link>
             <pubDate>Wed, 24 Apr 2024 20:07:59 -0700</pubDate>
@@ -720,6 +775,28 @@
             <media:thumbnail url="thumbs/IMG_0349.jpeg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/IMG_0349.jpeg" width="1000" height="710"/>
             <guid isPermaLink="false">slides/IMG_0349.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_0377</title>
+            <link>slides/IMG_0377.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>                               </description>
+            <media:description type="html">                               </media:description>
+            <media:thumbnail url="thumbs/IMG_0377.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0377.JPG" width="1000" height="667"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:58:55 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0377.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_0385</title>
+            <link>slides/IMG_0385.JPG</link>
+            <pubDate>Tue, 30 Apr 2024 12:30:48 -0700</pubDate>
+            <description>Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</description>
+            <media:description type="html">Sheringham Point Lighthouse, Vancouver Island, British Columbia, Canada</media:description>
+            <media:thumbnail url="thumbs/IMG_0385.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0385.JPG" width="533" height="800"/>
+            <jalbum:exif originalDate="Thu, 18 Apr 2024 09:55:58 -0700" cameraMake="SONY" cameraModel="DSC-RX10M4"/>
+            <guid isPermaLink="false">slides/IMG_0385.JPG</guid>
         </item>
     </channel>
 </rss>

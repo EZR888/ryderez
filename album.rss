@@ -3,250 +3,27 @@
      xmlns:media="http://search.yahoo.com/mrss/"
      xmlns:jalbum="http://jalbum.net/jalbumrss">
     <channel>
-        <title>TEST Album</title>
+        <title>Eric Zachary Ryder</title>
    	<link>.</link>
         <generator>jAlbum 32.1</generator>
-   		<description>Only a test</description>
+   		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
+    	<jalbum:link rel="sub" href="Infrared/album.rss" title="Infrared" thumbnail="Infrared/thumbs/Wintry%20Province%2032x17-bw.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Miscellaneous/album.rss" title="Miscellaneous" thumbnail="Miscellaneous/thumbs/18879800.flwrs1.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Cars/album.rss" title="Cars" thumbnail="Cars/thumbs/Concourse-Cars-2005-014.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Real%20Art/album.rss" title="Real Art" thumbnail="Real%20Art/thumbs/IMG_0297.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Wine%20Country/album.rss" title="Wine Country" thumbnail="Wine%20Country/thumbs/DSCF0047.JPG" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Black%20and%20White/album.rss" title="Black and White" thumbnail="Black%20and%20White/thumbs/P1010275.JPG" thumbnailWidth="212" thumbnailHeight="170" />
         <item>
-            <title>Main-Pic-o</title>
-            <link>slides/Main-Pic-o.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description>One pic</description>
-            <media:description type="html">One pic</media:description>
-            <media:thumbnail url="thumbs/Main-Pic-o.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/Main-Pic-o.png" width="816" height="800"/>
-            <guid isPermaLink="false">slides/Main-Pic-o.png</guid>
-        </item>
-        <item>
-            <title>P3-Bus+Stop+Ad-1+[Recovered]</title>
-            <link>slides/P3-Bus%2BStop%2BAd-1%2B%5BRecovered%5D.jpg</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
+            <title>Wintry Province 32x17-bw</title>
+            <link>slides/Wintry%20Province%2032x17-bw.jpg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-Bus%2BStop%2BAd-1%2B%5BRecovered%5D.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/P3-Bus%2BStop%2BAd-1%2B%5BRecovered%5D.jpg" width="533" height="800"/>
-            <guid isPermaLink="false">slides/P3-Bus%2BStop%2BAd-1%2B%5BRecovered%5D.jpg</guid>
-        </item>
-        <item>
-            <title>P3-Bus+Stop+Ad-2+final</title>
-            <link>slides/P3-Bus%2BStop%2BAd-2%2Bfinal.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-Bus%2BStop%2BAd-2%2Bfinal.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/P3-Bus%2BStop%2BAd-2%2Bfinal.png" width="557" height="800"/>
-            <guid isPermaLink="false">slides/P3-Bus%2BStop%2BAd-2%2Bfinal.png</guid>
-        </item>
-        <item>
-            <title>P3-GIF2</title>
-            <link>slides/P3-GIF2.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-GIF2.png" width="212" height="170"/>
-            <media:content type="image/gif" url="slides/P3-GIF2.png" width="800" height="800"/>
-            <guid isPermaLink="false">slides/P3-GIF2.png</guid>
-        </item>
-        <item>
-            <title>P3-Mag2.3</title>
-            <link>slides/P3-Mag2.3.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-Mag2.3.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/P3-Mag2.3.png" width="615" height="793"/>
-            <guid isPermaLink="false">slides/P3-Mag2.3.png</guid>
-        </item>
-        <item>
-            <title>Main-Pic</title>
-            <link>slides/Main-Pic.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description>Two pic</description>
-            <media:description type="html">Two pic</media:description>
-            <media:thumbnail url="thumbs/Main-Pic.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/Main-Pic.png" width="572" height="800"/>
-            <guid isPermaLink="false">slides/Main-Pic.png</guid>
-        </item>
-        <item>
-            <title>P3-Mag1.2+Pineapple+Cocktail+final+[Recovered]</title>
-            <link>slides/P3-Mag1.2%2BPineapple%2BCocktail%2Bfinal%2B%5BRecovered%5D.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-Mag1.2%2BPineapple%2BCocktail%2Bfinal%2B%5BRecovered%5D.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/P3-Mag1.2%2BPineapple%2BCocktail%2Bfinal%2B%5BRecovered%5D.png" width="613" height="793"/>
-            <guid isPermaLink="false">slides/P3-Mag1.2%2BPineapple%2BCocktail%2Bfinal%2B%5BRecovered%5D.png</guid>
-        </item>
-        <item>
-            <title>Portfolio-P1-Dig1</title>
-            <link>slides/Portfolio-P1-Dig1.jpg</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P1-Dig1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Portfolio-P1-Dig1.jpg" width="375" height="375"/>
-            <guid isPermaLink="false">slides/Portfolio-P1-Dig1.jpg</guid>
-        </item>
-        <item>
-            <title>P3-Mag3.2+mountains+[Recovered]</title>
-            <link>slides/P3-Mag3.2%2Bmountains%2B%5BRecovered%5D.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/P3-Mag3.2%2Bmountains%2B%5BRecovered%5D.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/P3-Mag3.2%2Bmountains%2B%5BRecovered%5D.png" width="612" height="792"/>
-            <guid isPermaLink="false">slides/P3-Mag3.2%2Bmountains%2B%5BRecovered%5D.png</guid>
-        </item>
-        <item>
-            <title>Portfolio-P1-Mag2</title>
-            <link>slides/Portfolio-P1-Mag2.jpg</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P1-Mag2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Portfolio-P1-Mag2.jpg" width="619" height="800"/>
-            <guid isPermaLink="false">slides/Portfolio-P1-Mag2.jpg</guid>
-        </item>
-        <item>
-            <title>Portfolio-P1-Mag1</title>
-            <link>slides/Portfolio-P1-Mag1.jpg</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P1-Mag1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Portfolio-P1-Mag1.jpg" width="552" height="714"/>
-            <guid isPermaLink="false">slides/Portfolio-P1-Mag1.jpg</guid>
-        </item>
-        <item>
-            <title>Portfolio-P2-Mag1</title>
-            <link>slides/Portfolio-P2-Mag1.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P2-Mag1.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/Portfolio-P2-Mag1.png" width="370" height="522"/>
-            <guid isPermaLink="false">slides/Portfolio-P2-Mag1.png</guid>
-        </item>
-        <item>
-            <title>Portfolio-P2-B2</title>
-            <link>slides/Portfolio-P2-B2.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P2-B2.png" width="196" height="157"/>
-            <media:content type="image/png" url="slides/Portfolio-P2-B2.png" width="616" height="157"/>
-            <guid isPermaLink="false">slides/Portfolio-P2-B2.png</guid>
-        </item>
-        <item>
-            <title>Portfolio-P2-B1</title>
-            <link>slides/Portfolio-P2-B1.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P2-B1.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/Portfolio-P2-B1.png" width="689" height="176"/>
-            <guid isPermaLink="false">slides/Portfolio-P2-B1.png</guid>
-        </item>
-        <item>
-            <title>Portfolio-P2-SocialAd</title>
-            <link>slides/Portfolio-P2-SocialAd.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Portfolio-P2-SocialAd.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/Portfolio-P2-SocialAd.png" width="305" height="522"/>
-            <guid isPermaLink="false">slides/Portfolio-P2-SocialAd.png</guid>
-        </item>
-        <item>
-            <title>alohahp</title>
-            <link>slides/alohahp.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/alohahp.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/alohahp.png" width="1000" height="752"/>
-            <guid isPermaLink="false">slides/alohahp.png</guid>
-        </item>
-        <item>
-            <title>bn</title>
-            <link>slides/bn.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/bn.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/bn.png" width="1000" height="751"/>
-            <guid isPermaLink="false">slides/bn.png</guid>
-        </item>
-        <item>
-            <title>linkedin</title>
-            <link>slides/linkedin.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/linkedin.png" width="187" height="150"/>
-            <media:content type="image/png" url="slides/linkedin.png" width="650" height="150"/>
-            <guid isPermaLink="false">slides/linkedin.png</guid>
-        </item>
-        <item>
-            <title>diablo</title>
-            <link>slides/diablo.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/diablo.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/diablo.png" width="1000" height="749"/>
-            <guid isPermaLink="false">slides/diablo.png</guid>
-        </item>
-        <item>
-            <title>poptarts</title>
-            <link>slides/poptarts.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description>Poptarts</description>
-            <media:description type="html">Poptarts</media:description>
-            <media:thumbnail url="thumbs/poptarts.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/poptarts.png" width="1000" height="752"/>
-            <guid isPermaLink="false">slides/poptarts.png</guid>
-        </item>
-        <item>
-            <title>porteno</title>
-            <link>slides/porteno.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/porteno.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/porteno.png" width="1000" height="755"/>
-            <guid isPermaLink="false">slides/porteno.png</guid>
-        </item>
-        <item>
-            <title>rainforest</title>
-            <link>slides/rainforest.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/rainforest.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/rainforest.png" width="1000" height="751"/>
-            <guid isPermaLink="false">slides/rainforest.png</guid>
-        </item>
-        <item>
-            <title>saltys</title>
-            <link>slides/saltys.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/saltys.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/saltys.png" width="1000" height="745"/>
-            <guid isPermaLink="false">slides/saltys.png</guid>
-        </item>
-        <item>
-            <title>tabasco</title>
-            <link>slides/tabasco.png</link>
-            <pubDate>Mon, 29 Apr 2024 15:31:08 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/tabasco.png" width="212" height="170"/>
-            <media:content type="image/png" url="slides/tabasco.png" width="1000" height="750"/>
-            <guid isPermaLink="false">slides/tabasco.png</guid>
+            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1000" height="588"/>
+            <jalbum:exif originalDate="Sat, 08 Sep 2007 10:14:27 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
+            <guid isPermaLink="false">slides/Wintry%20Province%2032x17-bw.jpg</guid>
         </item>
     </channel>
 </rss>

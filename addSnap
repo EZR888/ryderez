@@ -1,0 +1,61 @@
+#!/bin/sh
+# addFiles script for modifying JAlbum-created albums.  Run the following commands first:
+#
+# Extract the filenames from the JAlbum-generated file, album.rss
+#
+grep thumbs ./album/album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+#
+# extract the captions from the JAlbum-generated file, album.rss
+#
+grep "<description>" ./album/album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./desc
+# 
+# Remove the first line of the captions file output, as it's not an actual photo filename
+#
+tail -n +2 desc > desc2
+#
+# Combine the two output files to create one file with a filename and caption on the same line for each photo
+#
+paste filenames desc2 >titledesc
+#
+# usage: ./addFiles one-word-album-name >index.html 
+
+while IFS=$'\t' read -r fn desc rest; do 
+
+# If there are no captions, uncomment the first line and comment-out the second line.
+
+# echo "<div class=\"card preload image square\"><a class=\"thumb\" href=\"slides/"$p"\"><img src=\"thumbs/"$p"\" width=\"212\" height=\"170\"></a></div>";
+
+  echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>" >>./htmlgen
+done <./titledesc
+
+# cleanup
+#
+rm filenames desc desc2
+albdir=`pwd`
+echo "Album dir: " $albdir
+title=$1
+desc=$2
+fold=$3
+echo "Title: " $title
+echo "Desc: " $desc
+cp /Users/ezryder/My\ Albums/index-snap-template.html /Users/ezryder/My\ Albums/$3.html
+sed '/^\# Start/ r htmlgen' ../$3.html | sed '/nonsensed/d' >temp-index.html
+sed -e "s/ChangeTitle/$title/g; s/ChangeDesc/$desc/g" temp-index.html >index.html
+rm htmlgen
+rm titledesc
+mkdir /Users/ezryder/Documents/GitHub/ryderez/$3
+homedir="/Users/ezryder/Documents/GitHub/ryderez/$3"
+echo "Home dir: " $homedir 
+cp -r album/* $homedir
+cp -p jalbum-settings.jap $homedir
+cp -p index.html $homedir
+rm ../$3.html
+
+echo >snap-add; echo "<div class=\""card folder preload has-count\""><a href=\""$3/index.html\"" class=\""thumb\""><img src=\""$3/folderthumb.jpg\"" width=\""620\"" height=\""465\""></a><div class=\""caption\""><h3><a href=\""$3/index.html\"">$1</a></h3><p class=\""counts\""><span class=\""images\"">12&nbsp;images</span></p></div></div>" >>snap-add; echo >>snap-add
+
+sed '/"cont caption-below thumbs-fill"/ r snap-add' /Users/ezryder/Documents/GitHub/ryderez/personal.html >personal.html
+
+rm temp*
+rm snap-add
+cp personal.html /Users/ezryder/Documents/GitHub/ryderez
+

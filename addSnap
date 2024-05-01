@@ -1,6 +1,6 @@
 #!/bin/sh
-# usage: ./addFiles "Album Title" "Album Description" one-word-folder-name  
-# addSnap script for modifying JAlbum-created albums. 
+# usage: ./addSnap "Album Title" "Album Description" one-word-folder-name  
+# Script for modifying JAlbum-created albums. 
 albdir=`pwd`
 echo "Album dir: " $albdir
 title=$1

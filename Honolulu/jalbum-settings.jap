@@ -1,5 +1,5 @@
 #jAlbum Project
-#Mon Mar 04 18:15:34 PST 2024
+#Thu May 02 13:11:26 PDT 2024
 acceleratedScaling=true
 accountProfileName=
 albumAddress=
@@ -13,11 +13,11 @@ cols=6
 copyOriginals=true
 cpuCores=4
 creator=
-creditText=credit11
-currentProject=Project {/Users/ezryder/Documents/GitHub/Honolulu/jalbum-settings.jap}
+creditText=credit3
+currentProject=Project {/Users/ezryder/My Albums/Hawaii/jalbum-settings.jap}
 dateFormat=
 directoriesFirst=true
-directory=/Users/ezryder/Documents/GitHub/Honolulu
+directory=/Users/ezryder/My Albums/Hawaii
 directoryChaining=NO_CHAINING
 disableColorSubsampling=false
 displayVersion=32.1
@@ -64,7 +64,7 @@ processFolderThumbs=false
 qualityPercent=85
 qualityPercentWebP=80
 readXmp=true
-remoteDirectory=Honolulu
+remoteDirectory=Hawaii
 removeDiacritics=false
 resourceDirectory=res
 reverseOrder=false

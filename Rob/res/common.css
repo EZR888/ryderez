@@ -3510,7 +3510,7 @@ body.page .hero {
     height: 100%;
     border-radius: 6px; }
     .folders .cont.caption-over .card .thumb.icon {
-      min-height: 165px; }
+      min-height: 170px; }
   .folders .cont.caption-over .card .caption {
     padding: 0.3125rem 0.625rem;
     position: absolute;
@@ -3825,7 +3825,7 @@ body.page .hero {
   .thumbnails .cont.flexgrid .card .thumb {
     display: flex;
     flex: 1;
-    max-height: 124px; }
+    max-height: 128px; }
     .thumbnails .cont.flexgrid .card .thumb img {
       margin: auto;
       width: auto;
@@ -3853,7 +3853,7 @@ body.page .hero {
     .thumbnails .cont.justified .card.landscape .caption {
       max-width: 238px; }
     .thumbnails .cont.justified .card.icon .thumb img {
-      height: 124px; }
+      height: 128px; }
   .thumbnails .cont.justified.caption-below .card {
     justify-content: flex-start;
     align-self: stretch; }
@@ -3861,7 +3861,7 @@ body.page .hero {
   justify-content: center; }
   .thumbnails .cont.horizontal .card {
     flex: 1;
-    min-width: 59px;
+    min-width: 61px;
     /*
     .caption {
     	max-height: 40%;
@@ -4684,16 +4684,16 @@ body.page .hero {
 .thumbnails .cont.fixgrid .card, .thumbnails .cont.grid .card, .thumbnails .cont.flexgrid .card {
   width: calc(24.990% - 0.75rem); }
 .thumbnails .cont.flexgrid .card .thumb {
-  max-height: 165px; }
+  max-height: 170px; }
 .thumbnails .cont.horizontal:after {
   flex: 50;
   content: ''; }
 .thumbnails .cont.horizontal .card.active:not(.icon):not(.tiny) img {
-  height: calc(124px - 2px); }
+  height: calc(127px - 2px); }
 .thumbnails .cont.horizontal .card:not(.icon):not(.tiny) img {
-  height: 124px; }
+  height: 127px; }
 .thumbnails .cont.horizontal .card.icon .thumb, .thumbnails .cont.horizontal .card.tiny .thumb {
-  max-height: 124px; }
+  max-height: 127px; }
 
 .filter-cont {
   text-align: left; }

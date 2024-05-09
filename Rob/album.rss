@@ -1679,6 +1679,26 @@
             <guid isPermaLink="false">slides/r34.jpg</guid>
         </item>
         <item>
+            <title>r1</title>
+            <link>slides/r1.jpg</link>
+            <pubDate>Thu, 09 May 2024 08:54:54 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/r1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/r1.jpg" width="1000" height="787"/>
+            <guid isPermaLink="false">slides/r1.jpg</guid>
+        </item>
+        <item>
+            <title>r38</title>
+            <link>slides/r38.jpg</link>
+            <pubDate>Thu, 09 May 2024 08:54:54 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/r38.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/r38.jpg" width="1000" height="787"/>
+            <guid isPermaLink="false">slides/r38.jpg</guid>
+        </item>
+        <item>
             <title>r3</title>
             <link>slides/r3.jpg</link>
             <pubDate>Wed, 08 May 2024 14:57:48 -0700</pubDate>

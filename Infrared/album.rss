@@ -5,7 +5,7 @@
     <channel>
         <title>Infrared</title>
    	<link>..</link>
-        <generator>jAlbum 32.1</generator>
+        <generator>jAlbum 34.3</generator>
    		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
         <item>
@@ -23,8 +23,8 @@
             <title>vineyard-sentinels-II</title>
             <link>slides/vineyard-sentinels-II.jpg</link>
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
-            <description> St. Helena, NV</description>
-            <media:description type="html"> St. Helena, NV</media:description>
+            <description>St. Helena, NV</description>
+            <media:description type="html">St. Helena, NV</media:description>
             <media:thumbnail url="thumbs/vineyard-sentinels-II.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/vineyard-sentinels-II.jpg" width="1000" height="579"/>
             <guid isPermaLink="false">slides/vineyard-sentinels-II.jpg</guid>

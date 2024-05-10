@@ -3,240 +3,27 @@
      xmlns:media="http://search.yahoo.com/mrss/"
      xmlns:jalbum="http://jalbum.net/jalbumrss">
     <channel>
-        <title>Real Art</title>
+        <title>Eric Zachary Ryder</title>
    	<link>.</link>
         <generator>jAlbum 34.3</generator>
-   		<description>Art mentioned in the novel, &quot;Like A Guilty Thing&quot;, by Brandi Lynn Ryder</description>
+   		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
+    	<jalbum:link rel="sub" href="Infrared/album.rss" title="Infrared" thumbnail="Infrared/thumbs/Wintry%20Province%2032x17-bw.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Miscellaneous/album.rss" title="Miscellaneous" thumbnail="Miscellaneous/thumbs/carmel-1.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Cars/album.rss" title="Cars" thumbnail="Cars/thumbs/Concourse-Cars-2005-014.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Real%20Art/album.rss" title="Real Art" thumbnail="Real%20Art/thumbs/ship-1.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Black%20and%20White/album.rss" title="Black and White" thumbnail="Black%20and%20White/thumbs/kids-bubble.JPEG" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Wine%20Country/album.rss" title="Wine Country" thumbnail="Wine%20Country/thumbs/grapes.jpg" thumbnailWidth="212" thumbnailHeight="170" />
         <item>
-            <title>image001</title>
-            <link>image001.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
+            <title>Wintry Province 32x17-bw</title>
+            <link>slides/Wintry%20Province%2032x17-bw.jpg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image001.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image001.jpg" width="406" height="545"/>
-            <guid isPermaLink="false">image001.jpg</guid>
-        </item>
-        <item>
-            <title>image003</title>
-            <link>image003.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image003.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image003.jpg" width="700" height="581"/>
-            <guid isPermaLink="false">image003.jpg</guid>
-        </item>
-        <item>
-            <title>image007</title>
-            <link>image007.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image007.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image007.jpg" width="514" height="731"/>
-            <guid isPermaLink="false">image007.jpg</guid>
-        </item>
-        <item>
-            <title>image009</title>
-            <link>image009.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image009.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image009.jpg" width="1383" height="1056"/>
-            <guid isPermaLink="false">image009.jpg</guid>
-        </item>
-        <item>
-            <title>image012</title>
-            <link>image012.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image012.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image012.jpg" width="545" height="408"/>
-            <guid isPermaLink="false">image012.jpg</guid>
-        </item>
-        <item>
-            <title>image014</title>
-            <link>image014.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image014.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image014.jpg" width="359" height="432"/>
-            <guid isPermaLink="false">image014.jpg</guid>
-        </item>
-        <item>
-            <title>image015</title>
-            <link>image015.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image015.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image015.jpg" width="707" height="586"/>
-            <guid isPermaLink="false">image015.jpg</guid>
-        </item>
-        <item>
-            <title>image017</title>
-            <link>image017.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image017.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image017.jpg" width="907" height="1118"/>
-            <guid isPermaLink="false">image017.jpg</guid>
-        </item>
-        <item>
-            <title>image020</title>
-            <link>image020.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image020.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image020.jpg" width="357" height="432"/>
-            <guid isPermaLink="false">image020.jpg</guid>
-        </item>
-        <item>
-            <title>image026</title>
-            <link>image026.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image026.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image026.jpg" width="451" height="317"/>
-            <guid isPermaLink="false">image026.jpg</guid>
-        </item>
-        <item>
-            <title>image027</title>
-            <link>image027.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image027.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image027.jpg" width="534" height="700"/>
-            <guid isPermaLink="false">image027.jpg</guid>
-        </item>
-        <item>
-            <title>image029</title>
-            <link>image029.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image029.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image029.jpg" width="800" height="582"/>
-            <guid isPermaLink="false">image029.jpg</guid>
-        </item>
-        <item>
-            <title>image031</title>
-            <link>image031.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image031.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image031.jpg" width="514" height="892"/>
-            <guid isPermaLink="false">image031.jpg</guid>
-        </item>
-        <item>
-            <title>image033</title>
-            <link>image033.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image033.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image033.jpg" width="308" height="420"/>
-            <guid isPermaLink="false">image033.jpg</guid>
-        </item>
-        <item>
-            <title>image034</title>
-            <link>image034.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image034.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image034.jpg" width="500" height="610"/>
-            <guid isPermaLink="false">image034.jpg</guid>
-        </item>
-        <item>
-            <title>image037</title>
-            <link>image037.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image037.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image037.jpg" width="329" height="438"/>
-            <guid isPermaLink="false">image037.jpg</guid>
-        </item>
-        <item>
-            <title>image038</title>
-            <link>image038.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image038.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image038.jpg" width="862" height="1030"/>
-            <guid isPermaLink="false">image038.jpg</guid>
-        </item>
-        <item>
-            <title>image041</title>
-            <link>image041.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image041.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image041.jpg" width="438" height="335"/>
-            <guid isPermaLink="false">image041.jpg</guid>
-        </item>
-        <item>
-            <title>image042</title>
-            <link>image042.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image042.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image042.jpg" width="462" height="342"/>
-            <guid isPermaLink="false">image042.jpg</guid>
-        </item>
-        <item>
-            <title>image044</title>
-            <link>image044.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image044.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image044.jpg" width="349" height="438"/>
-            <guid isPermaLink="false">image044.jpg</guid>
-        </item>
-        <item>
-            <title>image046</title>
-            <link>image046.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image046.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image046.jpg" width="438" height="322"/>
-            <guid isPermaLink="false">image046.jpg</guid>
-        </item>
-        <item>
-            <title>image048</title>
-            <link>image048.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image048.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image048.jpg" width="438" height="348"/>
-            <guid isPermaLink="false">image048.jpg</guid>
-        </item>
-        <item>
-            <title>image049</title>
-            <link>image049.jpg</link>
-            <pubDate>Fri, 10 May 2024 12:20:11 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/image049.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="image049.jpg" width="551" height="719"/>
-            <guid isPermaLink="false">image049.jpg</guid>
+            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1000" height="588"/>
+            <jalbum:exif originalDate="Sat, 08 Sep 2007 10:14:27 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
+            <guid isPermaLink="false">slides/Wintry%20Province%2032x17-bw.jpg</guid>
         </item>
     </channel>
 </rss>

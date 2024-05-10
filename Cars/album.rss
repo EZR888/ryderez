@@ -3,715 +3,242 @@
      xmlns:media="http://search.yahoo.com/mrss/"
      xmlns:jalbum="http://jalbum.net/jalbumrss">
     <channel>
-        <title>More Cars</title>
-   	<link>.</link>
+        <title>Cars</title>
+   	<link>..</link>
         <generator>jAlbum 34.3</generator>
-   		<description>Concourse d&apos;Elegance and others</description>
+   		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
         <item>
-            <title>2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c</title>
-            <link>slides/2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c.jpeg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>My 2023 Tesla Model Y LR AWD</description>
-            <media:description type="html">My 2023 Tesla Model Y LR AWD</media:description>
-            <media:thumbnail url="thumbs/2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c.jpeg" width="1000" height="550"/>
-            <jalbum:original url="2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c.jpeg" width="1196" height="658" fileSize="379726"/>
-            <jalbum:exif originalDate="Sat, 27 Apr 2024 16:30:41 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/2A4EF78A-BC7E-4BF5-9250-56B6A53BA351_1_105_c.jpeg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-012</title>
-            <link>slides/Concourse-Cars-2005-012.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description>Concourse cars on Ocean Ave, Carmel</description>
-            <media:description type="html">Concourse cars on Ocean Ave, Carmel</media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-012.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-012.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-012.jpg" width="540" height="720" fileSize="116985"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-012.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-013</title>
-            <link>slides/Concourse-Cars-2005-013.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description>Concourse cars on Ocean Ave, Carmel</description>
-            <media:description type="html">Concourse cars on Ocean Ave, Carmel</media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-013.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-013.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-013.jpg" width="540" height="720" fileSize="123068"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-013.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-016</title>
-            <link>slides/Concourse-Cars-2005-016.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-016.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-016.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-016.jpg" width="800" height="599" fileSize="105743"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-016.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-008</title>
-            <link>slides/Concourse-Cars-2005-008.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-008.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-008.jpg" width="519" height="629"/>
-            <jalbum:original url="Concourse-Cars-2005-008.jpg" width="519" height="629" fileSize="78222"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-008.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-001</title>
-            <link>slides/Concourse-Cars-2005-001.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-001.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-001.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-001.jpg" width="800" height="599" fileSize="116310"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-001.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-011</title>
-            <link>slides/Concourse-Cars-2005-011.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-011.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-011.jpg" width="800" height="476"/>
-            <jalbum:original url="Concourse-Cars-2005-011.jpg" width="800" height="476" fileSize="115749"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-011.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-002</title>
-            <link>slides/Concourse-Cars-2005-002.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-002.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-002.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-002.jpg" width="800" height="599" fileSize="105707"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-002.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-003</title>
-            <link>slides/Concourse-Cars-2005-003.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-003.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-003.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-003.jpg" width="540" height="720" fileSize="66778"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-003.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-004</title>
-            <link>slides/Concourse-Cars-2005-004.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-004.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-004.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-004.jpg" width="800" height="599" fileSize="100952"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-004.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-006</title>
-            <link>slides/Concourse-Cars-2005-006.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-006.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-006.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-006.jpg" width="540" height="720" fileSize="62782"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-006.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-009</title>
-            <link>slides/Concourse-Cars-2005-009.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-009.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-009.jpg" width="527" height="554"/>
-            <jalbum:original url="Concourse-Cars-2005-009.jpg" width="527" height="554" fileSize="82856"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-009.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-010</title>
-            <link>slides/Concourse-Cars-2005-010.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-010.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-010.jpg" width="495" height="552"/>
-            <jalbum:original url="Concourse-Cars-2005-010.jpg" width="495" height="552" fileSize="90629"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-010.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-015</title>
-            <link>slides/Concourse-Cars-2005-015.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-015.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-015.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-015.jpg" width="800" height="599" fileSize="85666"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-015.jpg</guid>
+            <title>Concourse-Cars-2005-025</title>
+            <link>slides/Concourse-Cars-2005-025.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description>Ferrari&apos;s during Concourse</description>
+            <media:description type="html">Ferrari&apos;s during Concourse</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-025.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-025.jpg" width="800" height="568"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-025.jpg</guid>
         </item>
         <item>
             <title>Concourse-Cars-2005-014</title>
             <link>slides/Concourse-Cars-2005-014.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description>Pebble Beach Concourse</description>
+            <media:description type="html">Pebble Beach Concourse</media:description>
             <media:thumbnail url="thumbs/Concourse-Cars-2005-014.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-014.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-014.jpg" width="800" height="599" fileSize="92902"/>
             <guid isPermaLink="false">slides/Concourse-Cars-2005-014.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-007</title>
-            <link>slides/Concourse-Cars-2005-007.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-007.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-007.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-007.jpg" width="540" height="720" fileSize="84875"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-007.jpg</guid>
-        </item>
-        <item>
-            <title>belair-1</title>
-            <link>slides/belair-1.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/belair-1.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/belair-1.JPG" width="800" height="600"/>
-            <jalbum:original url="belair-1.JPG" width="800" height="600" fileSize="122869"/>
-            <guid isPermaLink="false">slides/belair-1.JPG</guid>
-        </item>
-        <item>
-            <title>belair-2</title>
-            <link>slides/belair-2.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/belair-2.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/belair-2.JPG" width="800" height="600"/>
-            <jalbum:original url="belair-2.JPG" width="800" height="600" fileSize="129871"/>
-            <guid isPermaLink="false">slides/belair-2.JPG</guid>
         </item>
         <item>
             <title>Concourse-Cars-2005-005</title>
             <link>slides/Concourse-Cars-2005-005.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description>Pebble Beach Concourse</description>
+            <media:description type="html">Pebble Beach Concourse</media:description>
             <media:thumbnail url="thumbs/Concourse-Cars-2005-005.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-005.jpg" width="540" height="720"/>
-            <jalbum:original url="Concourse-Cars-2005-005.jpg" width="540" height="720" fileSize="108746"/>
             <guid isPermaLink="false">slides/Concourse-Cars-2005-005.jpg</guid>
         </item>
         <item>
-            <title>hood-orn-3</title>
-            <link>slides/hood-orn-3.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/hood-orn-3.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/hood-orn-3.jpg" width="800" height="687"/>
-            <jalbum:original url="hood-orn-3.jpg" width="800" height="687" fileSize="71287"/>
-            <guid isPermaLink="false">slides/hood-orn-3.jpg</guid>
+            <title>Concourse-Cars-2005-007</title>
+            <link>slides/Concourse-Cars-2005-007.jpg</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description>Pebble Beach Concourse</description>
+            <media:description type="html">Pebble Beach Concourse</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-007.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-007.jpg" width="540" height="720"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-007.jpg</guid>
         </item>
         <item>
-            <title>jag</title>
-            <link>slides/jag.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/jag.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/jag.JPG" width="800" height="574"/>
-            <jalbum:original url="jag.JPG" width="800" height="574" fileSize="122367"/>
-            <guid isPermaLink="false">slides/jag.JPG</guid>
+            <title>Concourse-Cars-2005-008</title>
+            <link>slides/Concourse-Cars-2005-008.jpg</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description>Pebble Beach Concourse</description>
+            <media:description type="html">Pebble Beach Concourse</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-008.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-008.jpg" width="519" height="629"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-008.jpg</guid>
         </item>
         <item>
             <title>rolls-1</title>
             <link>slides/rolls-1.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>Nicholson Ranch Winery, Sonoma, CA</description>
-            <media:description type="html">Nicholson Ranch Winery, Sonoma, CA</media:description>
-            <media:thumbnail url="thumbs/rolls-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/rolls-1.jpg" width="633" height="800"/>
-            <jalbum:original url="rolls-1.jpg" width="633" height="800" fileSize="125029"/>
-            <guid isPermaLink="false">slides/rolls-1.jpg</guid>
-        </item>
-        <item>
-            <title>hood-orn-1</title>
-            <link>slides/hood-orn-1.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/hood-orn-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/hood-orn-1.jpg" width="660" height="495"/>
-            <jalbum:original url="hood-orn-1.jpg" width="660" height="495" fileSize="34869"/>
-            <guid isPermaLink="false">slides/hood-orn-1.jpg</guid>
+            <media:thumbnail url="thumbs/rolls-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/rolls-1.jpg" width="633" height="800"/>
+            <guid isPermaLink="false">slides/rolls-1.jpg</guid>
         </item>
         <item>
             <title>rolls-2</title>
             <link>slides/rolls-2.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/rolls-2.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/rolls-2.jpg" width="600" height="800"/>
-            <jalbum:original url="rolls-2.jpg" width="600" height="800" fileSize="98478"/>
             <guid isPermaLink="false">slides/rolls-2.jpg</guid>
-        </item>
-        <item>
-            <title>hood-orn-2</title>
-            <link>slides/hood-orn-2.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/hood-orn-2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/hood-orn-2.jpg" width="610" height="800"/>
-            <jalbum:original url="hood-orn-2.jpg" width="610" height="800" fileSize="74279"/>
-            <guid isPermaLink="false">slides/hood-orn-2.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-017</title>
-            <link>slides/Concourse-Cars-2005-017.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-017.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-017.jpg" width="748" height="558"/>
-            <jalbum:original url="Concourse-Cars-2005-017.jpg" width="748" height="558" fileSize="53568"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-017.jpg</guid>
-        </item>
-        <item>
-            <title>lambo</title>
-            <link>slides/lambo.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/lambo.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/lambo.JPG" width="800" height="599"/>
-            <jalbum:original url="lambo.JPG" width="800" height="599" fileSize="55962"/>
-            <guid isPermaLink="false">slides/lambo.JPG</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-018</title>
-            <link>slides/Concourse-Cars-2005-018.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-018.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-018.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-018.jpg" width="800" height="599" fileSize="120171"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-018.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-019</title>
-            <link>slides/Concourse-Cars-2005-019.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-019.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-019.jpg" width="800" height="601"/>
-            <jalbum:original url="Concourse-Cars-2005-019.jpg" width="800" height="601" fileSize="84761"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-019.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-020</title>
-            <link>slides/Concourse-Cars-2005-020.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-020.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-020.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-020.jpg" width="800" height="599" fileSize="121544"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-020.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-021</title>
-            <link>slides/Concourse-Cars-2005-021.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-021.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-021.jpg" width="800" height="599"/>
-            <jalbum:original url="Concourse-Cars-2005-021.jpg" width="800" height="599" fileSize="125434"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-021.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-023</title>
-            <link>slides/Concourse-Cars-2005-023.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-023.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-023.jpg" width="800" height="411"/>
-            <jalbum:original url="Concourse-Cars-2005-023.jpg" width="800" height="411" fileSize="52146"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-023.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-022</title>
-            <link>slides/Concourse-Cars-2005-022.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-022.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-022.jpg" width="800" height="462"/>
-            <jalbum:original url="Concourse-Cars-2005-022.jpg" width="800" height="462" fileSize="78164"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-022.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-025</title>
-            <link>slides/Concourse-Cars-2005-025.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>Ferrari&apos;s on Ocean Ave, Carmel</description>
-            <media:description type="html">Ferrari&apos;s on Ocean Ave, Carmel</media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-025.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-025.jpg" width="800" height="568"/>
-            <jalbum:original url="Concourse-Cars-2005-025.jpg" width="800" height="568" fileSize="101330"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-025.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-024</title>
-            <link>slides/Concourse-Cars-2005-024.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description>Ferrari&apos;s on Ocean Ave, Carmel</description>
-            <media:description type="html">Ferrari&apos;s on Ocean Ave, Carmel</media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-024.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-024.jpg" width="800" height="697"/>
-            <jalbum:original url="Concourse-Cars-2005-024.jpg" width="800" height="697" fileSize="118033"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-024.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-026</title>
-            <link>slides/Concourse-Cars-2005-026.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-026.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-026.jpg" width="800" height="473"/>
-            <jalbum:original url="Concourse-Cars-2005-026.jpg" width="800" height="473" fileSize="100377"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-026.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-027</title>
-            <link>slides/Concourse-Cars-2005-027.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-027.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-027.jpg" width="800" height="600"/>
-            <jalbum:original url="Concourse-Cars-2005-027.jpg" width="800" height="600" fileSize="103712"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-027.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-028</title>
-            <link>slides/Concourse-Cars-2005-028.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-028.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-028.jpg" width="583" height="778"/>
-            <jalbum:original url="Concourse-Cars-2005-028.jpg" width="583" height="778" fileSize="132664"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-028.jpg</guid>
-        </item>
-        <item>
-            <title>DSC02973</title>
-            <link>slides/DSC02973.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02973.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02973.JPG" width="540" height="720"/>
-            <jalbum:original url="DSC02973.JPG" width="540" height="720" fileSize="106187"/>
-            <guid isPermaLink="false">slides/DSC02973.JPG</guid>
-        </item>
-        <item>
-            <title>DSC02971</title>
-            <link>slides/DSC02971.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02971.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02971.JPG" width="800" height="599"/>
-            <jalbum:original url="DSC02971.JPG" width="800" height="599" fileSize="107129"/>
-            <guid isPermaLink="false">slides/DSC02971.JPG</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-029</title>
-            <link>slides/Concourse-Cars-2005-029.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-029.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-029.jpg" width="800" height="540"/>
-            <jalbum:original url="Concourse-Cars-2005-029.jpg" width="800" height="540" fileSize="143288"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-029.jpg</guid>
-        </item>
-        <item>
-            <title>Concourse-Cars-2005-030</title>
-            <link>slides/Concourse-Cars-2005-030.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/Concourse-Cars-2005-030.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-030.jpg" width="800" height="600"/>
-            <jalbum:original url="Concourse-Cars-2005-030.jpg" width="800" height="600" fileSize="88556"/>
-            <guid isPermaLink="false">slides/Concourse-Cars-2005-030.jpg</guid>
-        </item>
-        <item>
-            <title>DSC02983</title>
-            <link>slides/DSC02983.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02983.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02983.JPG" width="800" height="599"/>
-            <jalbum:original url="DSC02983.JPG" width="800" height="599" fileSize="134101"/>
-            <guid isPermaLink="false">slides/DSC02983.JPG</guid>
-        </item>
-        <item>
-            <title>DSC02962</title>
-            <link>slides/DSC02962.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02962.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02962.JPG" width="800" height="599"/>
-            <jalbum:original url="DSC02962.JPG" width="800" height="599" fileSize="108691"/>
-            <guid isPermaLink="false">slides/DSC02962.JPG</guid>
-        </item>
-        <item>
-            <title>DSC02963</title>
-            <link>slides/DSC02963.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02963.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02963.JPG" width="800" height="599"/>
-            <jalbum:original url="DSC02963.JPG" width="800" height="599" fileSize="121044"/>
-            <guid isPermaLink="false">slides/DSC02963.JPG</guid>
-        </item>
-        <item>
-            <title>DSC02982</title>
-            <link>slides/DSC02982.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC02982.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC02982.JPG" width="800" height="599"/>
-            <jalbum:original url="DSC02982.JPG" width="800" height="599" fileSize="122358"/>
-            <guid isPermaLink="false">slides/DSC02982.JPG</guid>
-        </item>
-        <item>
-            <title>p-DSC00045</title>
-            <link>slides/p-DSC00045.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/p-DSC00045.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/p-DSC00045.jpg" width="800" height="743"/>
-            <jalbum:original url="p-DSC00045.jpg" width="800" height="743" fileSize="67335"/>
-            <guid isPermaLink="false">slides/p-DSC00045.jpg</guid>
-        </item>
-        <item>
-            <title>DSC00045</title>
-            <link>slides/DSC00045.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC00045.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC00045.JPG" width="800" height="533"/>
-            <jalbum:original url="DSC00045.JPG" width="800" height="533" fileSize="44341"/>
-            <guid isPermaLink="false">slides/DSC00045.JPG</guid>
-        </item>
-        <item>
-            <title>PICT0019</title>
-            <link>slides/PICT0019.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/PICT0019.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/PICT0019.jpg" width="450" height="338"/>
-            <jalbum:original url="PICT0019.jpg" width="450" height="338" fileSize="27044"/>
-            <guid isPermaLink="false">slides/PICT0019.jpg</guid>
-        </item>
-        <item>
-            <title>DSC05647</title>
-            <link>slides/DSC05647.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSC05647.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSC05647.JPG" width="600" height="800"/>
-            <jalbum:original url="DSC05647.JPG" width="600" height="800" fileSize="99850"/>
-            <guid isPermaLink="false">slides/DSC05647.JPG</guid>
-        </item>
-        <item>
-            <title>DSCF0070</title>
-            <link>slides/DSCF0070.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSCF0070.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSCF0070.jpg" width="450" height="325"/>
-            <jalbum:original url="DSCF0070.jpg" width="450" height="325" fileSize="38176"/>
-            <guid isPermaLink="false">slides/DSCF0070.jpg</guid>
-        </item>
-        <item>
-            <title>DSCF0072</title>
-            <link>slides/DSCF0072.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSCF0072.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSCF0072.jpg" width="303" height="450"/>
-            <jalbum:original url="DSCF0072.jpg" width="303" height="450" fileSize="35564"/>
-            <guid isPermaLink="false">slides/DSCF0072.jpg</guid>
-        </item>
-        <item>
-            <title>PICT0017</title>
-            <link>slides/PICT0017.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/PICT0017.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/PICT0017.jpg" width="322" height="450"/>
-            <jalbum:original url="PICT0017.jpg" width="322" height="450" fileSize="35809"/>
-            <guid isPermaLink="false">slides/PICT0017.jpg</guid>
-        </item>
-        <item>
-            <title>PICT0012</title>
-            <link>slides/PICT0012.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/PICT0012.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/PICT0012.jpg" width="450" height="338"/>
-            <jalbum:original url="PICT0012.jpg" width="450" height="338" fileSize="32356"/>
-            <guid isPermaLink="false">slides/PICT0012.jpg</guid>
-        </item>
-        <item>
-            <title>caddies-sonoma</title>
-            <link>slides/caddies-sonoma.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/caddies-sonoma.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/caddies-sonoma.JPG" width="800" height="328"/>
-            <jalbum:original url="caddies-sonoma.JPG" width="800" height="328" fileSize="70022"/>
-            <guid isPermaLink="false">slides/caddies-sonoma.JPG</guid>
-        </item>
-        <item>
-            <title>car-show-1</title>
-            <link>slides/car-show-1.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/car-show-1.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/car-show-1.JPG" width="614" height="800"/>
-            <jalbum:original url="car-show-1.JPG" width="614" height="800" fileSize="88898"/>
-            <guid isPermaLink="false">slides/car-show-1.JPG</guid>
         </item>
         <item>
             <title>carbs</title>
             <link>slides/carbs.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/carbs.JPG" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/carbs.JPG" width="800" height="491"/>
-            <jalbum:original url="carbs.JPG" width="800" height="491" fileSize="116189"/>
             <guid isPermaLink="false">slides/carbs.JPG</guid>
-        </item>
-        <item>
-            <title>DSCF0085</title>
-            <link>slides/DSCF0085.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:24:20 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/DSCF0085.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/DSCF0085.jpg" width="450" height="315"/>
-            <jalbum:original url="DSCF0085.jpg" width="450" height="315" fileSize="44008"/>
-            <guid isPermaLink="false">slides/DSCF0085.jpg</guid>
         </item>
         <item>
             <title>ford</title>
             <link>slides/ford.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/ford.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/ford.jpg" width="731" height="799"/>
-            <jalbum:original url="ford.jpg" width="731" height="799" fileSize="178235"/>
             <guid isPermaLink="false">slides/ford.jpg</guid>
+        </item>
+        <item>
+            <title>car-show-1</title>
+            <link>slides/car-show-1.JPG</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/car-show-1.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/car-show-1.JPG" width="614" height="800"/>
+            <guid isPermaLink="false">slides/car-show-1.JPG</guid>
         </item>
         <item>
             <title>harley-1</title>
             <link>slides/harley-1.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/harley-1.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/harley-1.jpg" width="589" height="800"/>
-            <jalbum:original url="harley-1.jpg" width="589" height="800" fileSize="110075"/>
             <guid isPermaLink="false">slides/harley-1.jpg</guid>
         </item>
         <item>
             <title>harley-2</title>
             <link>slides/harley-2.JPG</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/harley-2.JPG" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/harley-2.JPG" width="800" height="600"/>
-            <jalbum:original url="harley-2.JPG" width="800" height="600" fileSize="167065"/>
             <guid isPermaLink="false">slides/harley-2.JPG</guid>
         </item>
         <item>
-            <title>spark-ev-2015</title>
-            <link>slides/spark-ev-2015.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>My 2015 Chevy Spark EV</description>
-            <media:description type="html">My 2015 Chevy Spark EV</media:description>
-            <media:thumbnail url="thumbs/spark-ev-2015.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/spark-ev-2015.jpg" width="960" height="643"/>
-            <jalbum:original url="spark-ev-2015.jpg" width="960" height="643" fileSize="196197"/>
-            <guid isPermaLink="false">slides/spark-ev-2015.jpg</guid>
+            <title>lambo</title>
+            <link>slides/lambo.JPG</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/lambo.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/lambo.JPG" width="800" height="599"/>
+            <guid isPermaLink="false">slides/lambo.JPG</guid>
         </item>
         <item>
-            <title>Bolt-EVP-2019</title>
-            <link>slides/Bolt-EVP-2019.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>My 2019 Chevy Bolt EV Premier</description>
-            <media:description type="html">My 2019 Chevy Bolt EV Premier</media:description>
-            <media:thumbnail url="thumbs/Bolt-EVP-2019.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Bolt-EVP-2019.jpg" width="1000" height="531"/>
-            <jalbum:original url="Bolt-EVP-2019.jpg" width="1000" height="531" fileSize="139029"/>
-            <guid isPermaLink="false">slides/Bolt-EVP-2019.jpg</guid>
+            <title>belair-1</title>
+            <link>slides/belair-1.JPG</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/belair-1.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/belair-1.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/belair-1.JPG</guid>
+        </item>
+        <item>
+            <title>belair-2</title>
+            <link>slides/belair-2.JPG</link>
+            <pubDate>Thu, 07 Sep 2023 11:56:12 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/belair-2.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/belair-2.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/belair-2.JPG</guid>
+        </item>
+        <item>
+            <title>hood-orn-1</title>
+            <link>slides/hood-orn-1.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/hood-orn-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/hood-orn-1.jpg" width="660" height="495"/>
+            <guid isPermaLink="false">slides/hood-orn-1.jpg</guid>
+        </item>
+        <item>
+            <title>hood-orn-2</title>
+            <link>slides/hood-orn-2.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/hood-orn-2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/hood-orn-2.jpg" width="610" height="800"/>
+            <guid isPermaLink="false">slides/hood-orn-2.jpg</guid>
+        </item>
+        <item>
+            <title>hood-orn-3</title>
+            <link>slides/hood-orn-3.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/hood-orn-3.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/hood-orn-3.jpg" width="800" height="687"/>
+            <guid isPermaLink="false">slides/hood-orn-3.jpg</guid>
+        </item>
+        <item>
+            <title>caddies-sonoma</title>
+            <link>slides/caddies-sonoma.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/caddies-sonoma.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/caddies-sonoma.JPG" width="800" height="328"/>
+            <guid isPermaLink="false">slides/caddies-sonoma.JPG</guid>
+        </item>
+        <item>
+            <title>jag</title>
+            <link>slides/jag.JPG</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/jag.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/jag.JPG" width="800" height="574"/>
+            <guid isPermaLink="false">slides/jag.JPG</guid>
         </item>
         <item>
             <title>bolt-euvp-2023</title>
             <link>slides/bolt-euvp-2023.jpg</link>
-            <pubDate>Thu, 09 May 2024 20:40:31 -0700</pubDate>
-            <description>My 2023 Chevy Bolt EUV Premier</description>
-            <media:description type="html">My 2023 Chevy Bolt EUV Premier</media:description>
+            <pubDate>Tue, 05 Sep 2023 18:49:32 -0700</pubDate>
+            <description>My 2023 Bolt EUV Premier</description>
+            <media:description type="html">My 2023 Bolt EUV Premier</media:description>
             <media:thumbnail url="thumbs/bolt-euvp-2023.jpg" width="212" height="170"/>
             <media:content type="image/jpeg" url="slides/bolt-euvp-2023.jpg" width="1000" height="510"/>
-            <jalbum:original url="bolt-euvp-2023.jpg" width="1000" height="510" fileSize="107703"/>
+            <jalbum:exif originalDate="Sun, 22 Aug 2021 13:38:06 -0700" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
             <guid isPermaLink="false">slides/bolt-euvp-2023.jpg</guid>
+        </item>
+        <item>
+            <title>Bolt-EVP-2019</title>
+            <link>slides/Bolt-EVP-2019.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 17:44:42 -0700</pubDate>
+            <description>My 2019 Bolt EV Premier</description>
+            <media:description type="html">My 2019 Bolt EV Premier</media:description>
+            <media:thumbnail url="thumbs/Bolt-EVP-2019.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Bolt-EVP-2019.jpg" width="1000" height="531"/>
+            <jalbum:exif originalDate="Sat, 25 Jan 2020 16:10:35 -0800" cameraMake="Apple" cameraModel="iPhone 11 Pro Max"/>
+            <guid isPermaLink="false">slides/Bolt-EVP-2019.jpg</guid>
+        </item>
+        <item>
+            <title>spark-ev-2015</title>
+            <link>slides/spark-ev-2015.jpg</link>
+            <pubDate>Tue, 05 Sep 2023 18:46:12 -0700</pubDate>
+            <description>My 2015 Spark EV</description>
+            <media:description type="html">My 2015 Spark EV</media:description>
+            <media:thumbnail url="thumbs/spark-ev-2015.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/spark-ev-2015.jpg" width="960" height="643"/>
+            <guid isPermaLink="false">slides/spark-ev-2015.jpg</guid>
         </item>
     </channel>
 </rss>

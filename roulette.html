@@ -97,8 +97,13 @@
   <h1>Roulette Random Picker</h1>
   <label for="n">Enter a value for n:</label>
   <input type="number" id="n" name="n" value="14">
-  <button onclick="runMain()">Run Main</button>
+  <button onclick="runMain()">Run Simulation</button>
   <pre id="output"></pre>
+  
+  <button id="exportHoldCSVButton" style="margin-left: 10px;">Export Totals</button>
+  <button onclick="exportHits()" style="margin-left: 10px;">Export Hits</button>
+  <button onclick="exportSkips()" style="margin-left: 10px;">Export Skips</button>
+
   
   <div class="table-container">
     <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
@@ -138,6 +143,91 @@
       hold = new Array(38).fill(0);
     }
 
+// Function to export hold array data to CSV format
+function exportHoldToCSV(array, filename) {
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+
+  csvContent += ","; // Empty cell to align with headers
+
+  // Loop through hold array to append values
+  for (let j = 0; j < array.length; j++) {
+    csvContent += array[j] + ",";
+  }
+  csvContent += "\n";
+
+  // Encode and create a download link
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link); // Required for Firefox
+  link.click(); // Trigger the download
+}
+
+
+
+// Function to export Hits array to CSV
+function exportHitsToCSV(array, filename) {
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  // Create CSV content from the array
+  for (let i = 0; i < array.length; i++) {
+    csvContent += ",";
+    for (let j = 0; j < array[i].length; j++) {
+      csvContent += array[i][j] + ",";
+    }
+    csvContent += "\n";
+  }
+
+  // Encode and create a download link
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link); // Required for Firefox
+  link.click(); // Trigger the download
+}
+
+// Function to export Skips array to CSV
+function exportSkipsToCSV(array, filename) {
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  // Create CSV content from the array
+  for (let i = 0; i < array.length; i++) {
+    csvContent += ",";
+    for (let j = 0; j < array[i].length; j++) {
+      csvContent += array[i][j] + ",";
+    }
+    csvContent += "\n";
+  }
+
+  // Encode and create a download link
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link); // Required for Firefox
+  link.click(); // Trigger the download
+}
+
+    
+    // Event listener for the export HOLD CSV button
+document.getElementById("exportHoldCSVButton").addEventListener("click", function() {
+  exportHoldToCSV(hold, 'hold_data.csv');
+});
+
+// Event listener for the export Hits CSV button
+function exportHits() {
+  exportHitsToCSV(hits, 'HitsArray.csv');
+}
+
+// Event listener for the export Skips CSV button
+function exportSkips() {
+  exportSkipsToCSV(skips, 'SkipsArray.csv');
+}
+
+
     // Define the main function
     function main() {
       const runs = parseInt(document.getElementById('n').value);
@@ -165,10 +255,6 @@
         }
       }
 
-      // Append the value of c1 for the last run to the output
-      output += "Last number randomly picked: " + lastC1 + "\n";
-      output += "\n";
-
       // Display output in the <pre> element
       document.getElementById('output').innerHTML = output;
 
@@ -190,50 +276,51 @@
     // Call the main function when the page loads
     window.onload = runMain;
 
-// Function to display hold array as a table with red/green formatting
-function displayHoldTableWithColors(hold) {
-  let output = "<table id='holdTable'>";
+    // Function to display hold array as a table with red/green formatting
+    function displayHoldTableWithColors(hold) {
+      let output = "<table id='holdTable'>";
 
-  // Header row
-  output += "<tr>";
-  output += "<th></th>"; // Empty cell for alignment
+      // Header row
+      output += "<tr>";
+      output += "<th></th>"; // Empty cell for alignment
 
-  // Add "0" and "00" headers with green background
-  output += "<th class='bold green'>0</th>";
-  output += "<th class='bold green'>00</th>";
+      // Add "0" and "00" headers with green background
+      output += "<th class='bold green'>0</th>";
+      output += "<th class='bold green'>00</th>";
 
-  // Loop through columns 01 to 36 for headers
-  for (let j = 1; j <= 36; j++) {
-    const headerLabel = (j < 10 ? "0" : "") + j.toString(); // Format numbers as "01" to "36"
-    const colorClass = j % 2 === 0 ? 'green' : 'red'; // Green for even, red for odd
-    output += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
-  }
+      // Loop through columns 01 to 36 for headers
+      for (let j = 1; j <= 36; j++) {
+        const headerLabel = (j < 10 ? "0" : "") + j.toString(); // Format numbers as "01" to "36"
+        const colorClass = j % 2 === 0 ? 'green' : 'red'; // Green for even, red for odd
+        output += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
+      }
 
-  // Close the header row
-  output += "</tr>";
+      // Close the header row
+      output += "</tr>";
 
-  // Data row
-  output += "<tr>";
-  output += "<th class='black'></th>"; // Black background for the first column header, white text color
+      // Data row
+      output += "<tr>";
+      output += "<th class='black'></th>"; // Black background for the first column header, white text color
 
-  // Loop through hold array to display values, starting from index 0
-  for (let j = 0; j < hold.length - 1; j++) { // Iterate through the entire hold array, minus the last element
-    const cellValue = hold[j]; // Accessing hold array values correctly
-    const cellClass = cellValue > 0 ? (cellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
-    output += "<td class='" + cellClass + " bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
-  }
+      // Loop through hold array to display values, starting from index 0
+      for (let j = 0; j < hold.length - 1; j++) { // Iterate through the entire hold array, minus the last element
+        const cellValue = hold[j]; // Accessing hold array values correctly
+        const cellClass = cellValue > 0 ? (cellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
+        output += "<td class='" + cellClass + " bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
+      }
 
-  // Add the last cell for "36"
-  const lastCellValue = hold[37]; // Accessing the last element for "36"
-  const lastCellClass = lastCellValue > 0 ? (lastCellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
-  output += "<td class='" + lastCellClass + " bold'>" + lastCellValue + "</td>";
+      // Add the last cell for "36"
+      const lastCellValue = hold[37]; // Accessing the last element for "36"
+      const lastCellClass = lastCellValue > 0 ? (lastCellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
+      output += "<td class='" + lastCellClass + " bold'>" + lastCellValue + "</td>";
 
-  output += "</tr>";
+      output += "</tr>";
 
-  output += "</table>";
+      output += "</table>";
 
-  document.getElementById('holdTableContainer').innerHTML = output; // Update holdTable content
-}
+      document.getElementById('holdTableContainer').innerHTML = output; // Update holdTable content
+    }
+
     // Function to display array data in a table
     function displayTable(array, tableId, includeHeaders, start, reverseOrder) {
       const table = document.getElementById(tableId);

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roulette Random Picker</title>
+  <style>
+    body {
+      background-color: #FFEBCD; /* Light orange background */
+    }
+    
+    /* Remove specific background colors for row headers */
+    #hitsTable th:first-child,
+    #skipsTable th:first-child {
+      /* No specific styling here */
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: black; /* Black background for header rows */
+      color: white; /* White text color for header rows */
+    }
+    th:first-child, td:first-child {
+      font-weight: bold;
+      background-color: black; /* Black background for the first column in Hits and Skips tables */
+    }
+    #hitsTable th:first-child, #skipsTable th:first-child {
+      background-color: black; /* Black background for the first row header column in both tables */
+    }
+    #hitsTable th {
+      background-color: black; /* Black background for Hits table header */
+      color: white; /* White text color for Hits table header */
+    }
+    #hitsTable td {
+      background-color: lightgray; /* Light gray for content rows in the Hits table */
+    }
+    #skipsTable th {
+      background-color: black; /* Black background for Skips table header */
+      color: white; /* White text color for Skips table header */
+    }
+    #skipsTable td {
+      background-color: lightgray; /* Light gray for content rows in the Skips table */
+    }
+    #skipsTable .numeric {
+      font-weight: bold; /* Make numeric values bold */
+      color: red;
+    }
+    
+    .bold-blue {
+      font-weight: bold;
+      color: blue;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .caption {
+      text-align: center;
+      font-weight: bold;
+      display: block;
+    }
+    .table-container {
+      text-align: center;
+    }
+    .black {
+      color: black; /* Black text color for "-" cells */
+    }
+    .caption#holdCaption {
+      text-align: center;
+    }
+    .times-picked-caption {
+      font-weight: bold;
+      text-align: center; 
+    }
+    .green {
+      background-color: green; /* Light green background for even numbers */
+    }
+    .red {
+      background-color: red; /* Light red background for odd numbers */
+    }
+    .no-value {
+      color: black; /* Black text color for cells with no value */
+    }
+
+    /* Add this style for hold table content */
+    #holdTable td {
+      background-color: lightgray; /* Light gray for content cells in the HOLD table */
+    }
+  </style>
+</head>
+<body>
+  <h1>Roulette Random Picker</h1>
+  <label for="n">Enter a value for n:</label>
+  <input type="number" id="n" name="n" value="14">
+  <button onclick="runMain()">Run Main</button>
+  <pre id="output"></pre>
+  
+  <div class="table-container">
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+    <div id="holdTableContainer"></div>
+  </div>
+  <br> <!-- Added a blank line -->
+  
+  <div class="table-container">
+    <p class="bold caption">HITS</p>
+    <table id="hitsTable">
+      <caption>HITS</caption>
+    </table>
+  </div>
+  <br> <!-- Added a blank line -->
+  <div class="table-container">
+    <p class="bold caption">SKIPS</p>
+    <table id="skipsTable">
+      <caption>SKIPS</caption>
+    </table>
+  </div>
+
+  <script>
+    // Define the variables
+    let height = 38;
+    let width = 38;
+    let hits = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
+    let skips = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
+    let last = new Array(38).fill(0);
+    const pick = Array.from({ length: 38 }, (_, i) => i + 1);
+    let hold = new Array(38).fill(0);
+
+    // Function to clear all arrays
+    function clearArrays() {
+      hits = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
+      skips = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
+      last = new Array(38).fill(0);
+      hold = new Array(38).fill(0);
+    }
+
+    // Define the main function
+    function main() {
+      const runs = parseInt(document.getElementById('n').value);
+      let output = '';
+
+      clearArrays(); // Clear arrays before populating
+
+      let lastC1; // Variable to store the value of c1 for the last run
+
+      for (let x = 1; x <= runs; x++) {
+        for (let n = 1; n <= 38; n++) {
+          let c1 = pick[Math.floor(Math.random() * pick.length)];
+          c1 -= 1;
+
+          if (x === runs) {
+            hits[c1][n - 1] += 1;
+            lastC1 = c1; // Store the value of c1 for the last run
+          }
+
+          const lastval = last[c1];
+          last[c1] = n;
+          const skipsval = n - lastval;
+          skips[c1][skipsval - 1] += 1;
+          hold[c1] += 1;
+        }
+      }
+
+      // Append the value of c1 for the last run to the output
+      output += "Last number randomly picked: " + lastC1 + "\n";
+      output += "\n";
+
+      // Display output in the <pre> element
+      document.getElementById('output').innerHTML = output;
+
+      // Display Hits data in the table
+      displayTable(hits, 'hitsTable', true, 37, true);
+
+      // Display Skips data in the table
+      displayTable(skips, 'skipsTable', true, 1, false);
+
+      // Display Hold data in the table with colors
+      displayHoldTableWithColors(hold);
+    }
+
+    // Function to run main and clear arrays
+    function runMain() {
+      main();
+    }
+
+    // Call the main function when the page loads
+    window.onload = runMain;
+
+// Function to display hold array as a table with red/green formatting
+function displayHoldTableWithColors(hold) {
+  let output = "<table id='holdTable'>";
+
+  // Header row
+  output += "<tr>";
+  output += "<th></th>"; // Empty cell for alignment
+
+  // Add "0" and "00" headers with green background
+  output += "<th class='bold green'>0</th>";
+  output += "<th class='bold green'>00</th>";
+
+  // Loop through columns 01 to 36 for headers
+  for (let j = 1; j <= 36; j++) {
+    const headerLabel = (j < 10 ? "0" : "") + j.toString(); // Format numbers as "01" to "36"
+    const colorClass = j % 2 === 0 ? 'green' : 'red'; // Green for even, red for odd
+    output += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
+  }
+
+  // Close the header row
+  output += "</tr>";
+
+  // Data row
+  output += "<tr>";
+  output += "<th class='black'></th>"; // Black background for the first column header, white text color
+
+  // Loop through hold array to display values, starting from index 0
+  for (let j = 0; j < hold.length - 1; j++) { // Iterate through the entire hold array, minus the last element
+    const cellValue = hold[j]; // Accessing hold array values correctly
+    const cellClass = cellValue > 0 ? (cellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
+    output += "<td class='" + cellClass + " bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
+  }
+
+  // Add the last cell for "36"
+  const lastCellValue = hold[37]; // Accessing the last element for "36"
+  const lastCellClass = lastCellValue > 0 ? (lastCellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
+  output += "<td class='" + lastCellClass + " bold'>" + lastCellValue + "</td>";
+
+  output += "</tr>";
+
+  output += "</table>";
+
+  document.getElementById('holdTableContainer').innerHTML = output; // Update holdTable content
+}
+    // Function to display array data in a table
+    function displayTable(array, tableId, includeHeaders, start, reverseOrder) {
+      const table = document.getElementById(tableId);
+      table.innerHTML = ''; // Clear the table before populating
+
+      if (includeHeaders) {
+        const headerRow = table.insertRow();
+        let th = document.createElement('th');
+        th.textContent = ' ';
+        headerRow.appendChild(th);
+
+        if (reverseOrder) {
+          for (let j = start; j >= 0; j--) {
+            th = document.createElement('th');
+            th.textContent = j === 38 ? ' 00' : (j < 10 ? ' 0' + j : ' ' + j);
+            headerRow.appendChild(th);
+          }
+        } else {
+          for (let j = 1; j <= 38; j++) {
+            th = document.createElement('th');
+            th.textContent = j < 10 ? ' 0' + j : ' ' + j;
+            headerRow.appendChild(th);
+          }
+        }
+      }
+
+      for (let i = 0; i < array.length; i++) {
+        const row = table.insertRow();
+        const cell1 = row.insertCell(0);
+        if (i === 0) {
+          cell1.textContent = ' 0';
+          cell1.style.backgroundColor = 'green';
+        } else if (i === 1) {
+          cell1.textContent = '00';
+          cell1.style.backgroundColor = 'green';
+        } else {
+          cell1.textContent = (i - 1).toString().padStart(2, '0');
+          if ((i - 1) % 2 === 0) {
+            cell1.style.backgroundColor = 'green';
+          } else {
+            cell1.style.backgroundColor = 'red';
+          }
+        }
+        cell1.style.color = 'white'; // White text color for row headers
+
+        for (let j = 0; j < array[i].length; j++) {
+          const cell = row.insertCell();
+
+          // Adjust cell content based on table type
+          if (tableId === 'hitsTable' && array[i][j] !== 0) {
+            const boldBlueX = document.createElement('span');
+            boldBlueX.textContent = "X";
+            boldBlueX.classList.add('bold-blue');
+            cell.appendChild(boldBlueX);
+          } else {
+            if (!isNaN(array[i][j])) { // Check if the value is numeric
+              if (array[i][j] === 0) {
+                cell.textContent = "-";
+                cell.classList.add('no-value'); // Add class to cells with no value
+              } else {
+                cell.textContent = array[i][j];
+                cell.classList.add('numeric'); // Add class to numeric cells
+              }
+            } else {
+              cell.textContent = array[i][j];
+              cell.classList.add('black');
+            }
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

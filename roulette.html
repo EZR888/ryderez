@@ -96,7 +96,11 @@
 <body>
   <center><h1>Roulette Random Picker</h1><img src="wheel.png"></center><br>
   <center><label for="n">Number of runs:</label>
-   <input type="number" id="n" name="n" value="14"></center><br>
+   <input type="number" id="n" name="n" value="1"></center><br>
+   
+   <center><label for="n">Number of sets:</label>
+<input type="number" id="n" name="n" value="1"></center><br>
+
   <center><button onclick="runMain()">Run Simulation</button></center>
   <pre id="output"></pre>
 
@@ -230,53 +234,54 @@ function exportSkips() {
 }
 
 
-    // Define the main function
-    function main() {
-      const runs = parseInt(document.getElementById('n').value);
-      let output = '';
+// Define the main function
+function main() {
+  const runs = parseInt(document.getElementById('n').value);
+  let output = '';
 
-      clearArrays(); // Clear arrays before populating
+  clearArrays(); // Clear arrays before populating
 
-      let lastC1; // Variable to store the value of c1 for the last run
+  let lastC1; // Variable to store the value of c1 for the last run
 
-      for (let x = 1; x <= runs; x++) {
-        for (let n = 1; n <= 38; n++) {
-          let c1 = pick[Math.floor(Math.random() * pick.length)];
-          c1 -= 1;
+  for (let x = 1; x <= runs; x++) {
+    for (let n = 1; n <= 38; n++) {
+      let c1 = pick[Math.floor(Math.random() * pick.length)];
+      c1 -= 1;
 
-          if (x === runs) {
-            hits[c1][n - 1] += 1;
-            lastC1 = c1; // Store the value of c1 for the last run
-          }
-
-          const lastval = last[c1];
-          last[c1] = n;
-          const skipsval = n - lastval;
-          skips[c1][skipsval - 1] += 1;
-          hold[c1] += 1;
-        }
+      if (x === runs) {
+        hits[c1][n - 1] += 1;
+        lastC1 = c1; // Store the value of c1 for the last run
       }
 
-      // Display output in the <pre> element
-      document.getElementById('output').innerHTML = output;
-
-      // Display Hits data in the table
-      displayTable(hits, 'hitsTable', true, 37, true);
-
-      // Display Skips data in the table
-      displayTable(skips, 'skipsTable', true, 1, false);
-
-      // Display Hold data in the table with colors
-      displayHoldTableWithColors(hold);
+      const lastval = last[c1];
+      last[c1] = n;
+      const skipsval = n - lastval;
+      skips[c1][skipsval - 1] += 1;
+      hold[c1] += 1;
     }
+  }
 
-    // Function to run main and clear arrays
-    function runMain() {
-      main();
-    }
+  // Display output in the <pre> element
+  document.getElementById('output').innerHTML = output;
 
-    // Call the main function when the page loads
-    window.onload = runMain;
+  // Display Hits data in the table
+  displayTable(hits, 'hitsTable', true, 37, true);
+
+  // Display Skips data in the table
+  displayTable(skips, 'skipsTable', true, 1, false);
+
+  // Display Hold data in the table with colors
+  displayHoldTableWithColors(hold);
+}
+
+// Function to run main and clear arrays
+function runMain() {
+  main();
+}
+
+// Call the main function when the page loads
+window.onload = runMain;
+
 
     // Function to display hold array as a table with red/green formatting
     function displayHoldTableWithColors(hold) {

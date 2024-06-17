@@ -171,7 +171,7 @@ function exportHoldToCSV(array, filename) {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `hold_data_${getFormattedTimestamp()}.csv`);
+  link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
   document.body.appendChild(link); // Required for Firefox
   link.click(); // Trigger the download
 }
@@ -193,7 +193,7 @@ function exportHitsToCSV(array, filename) {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `HitsArray_${getFormattedTimestamp()}.csv`);
+  link.setAttribute("download", `Hits_data_${getFormattedTimestamp()}.csv`);
   document.body.appendChild(link); // Required for Firefox
   link.click(); // Trigger the download
 }
@@ -215,16 +215,16 @@ function exportSkipsToCSV(array, filename) {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `SkipsArray_${getFormattedTimestamp()}.csv`);
+  link.setAttribute("download", `Skips_data_${getFormattedTimestamp()}.csv`);
   document.body.appendChild(link); // Required for Firefox
   link.click(); // Trigger the download
 }
 
 // Event listener for the Save Data button
 document.getElementById("saveDataButton").addEventListener("click", function() {
-  exportHoldToCSV(hold, 'hold_data.csv');
-  exportHitsToCSV(hits, 'HitsArray.csv');
-  exportSkipsToCSV(skips, 'SkipsArray.csv');
+  exportHoldToCSV(hold, 'totals_data.csv');
+  exportHitsToCSV(hits, 'Hits_data.csv');
+  exportSkipsToCSV(skips, 'Skips_data.csv');
 });
 
 // Define the main function

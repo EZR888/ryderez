@@ -6,12 +6,6 @@
     body {
       background-color: #FFEBCD; /* Light orange background */
     }
-    
-    /* Remove specific background colors for row headers */
-    #hitsTable th:first-child,
-    #skipsTable th:first-child {
-      /* No specific styling here */
-    }
 
     table {
       border-collapse: collapse;
@@ -26,32 +20,6 @@
       background-color: black; /* Black background for header rows */
       color: white; /* White text color for header rows */
     }
-    th:first-child, td:first-child {
-      font-weight: bold;
-      background-color: black; /* Black background for the first column in Hits and Skips tables */
-    }
-    #hitsTable th:first-child, #skipsTable th:first-child {
-      background-color: black; /* Black background for the first row header column in both tables */
-    }
-    #hitsTable th {
-      background-color: black; /* Black background for Hits table header */
-      color: white; /* White text color for Hits table header */
-    }
-    #hitsTable td {
-      background-color: lightgray; /* Light gray for content rows in the Hits table */
-    }
-    #skipsTable th {
-      background-color: black; /* Black background for Skips table header */
-      color: white; /* White text color for Skips table header */
-    }
-    #skipsTable td {
-      background-color: lightgray; /* Light gray for content rows in the Skips table */
-    }
-    #skipsTable .numeric {
-      font-weight: bold; /* Make numeric values bold */
-      color: red;
-    }
-    
     .bold-blue {
       font-weight: bold;
       color: blue;
@@ -70,7 +38,7 @@
     .black {
       color: black; /* Black text color for "-" cells */
     }
-    .caption#holdCaption {
+    .caption#TotalsCaption {
       text-align: center;
     }
     .times-picked-caption {
@@ -87,61 +55,36 @@
       color: black; /* Black text color for cells with no value */
     }
 
-    /* Add this style for hold table content */
-    #holdTable td {
-      background-color: lightgray; /* Light gray for content cells in the HOLD table */
+    /* Add this style for Totals table content */
+    #TotalsTable td {
+      background-color: lightgray; /* Light gray for content cells in the Totals table */
     }
   </style>
 </head>
 <body>
   <center><h1>Roulette Random Picker</h1><img src="wheel.png"></center><br>
-  <center><label for="n">Number of runs:</label>
-   <input type="number" id="n" name="n" value="0"></center>
+  <center><label for="x">Number of runs:</label>
+   <input type="number" id="x" name="x" value="0"></center>
+   <br>
    
-   <center><label for="n">Number of sets:</label>
-<input type="number" id="n" name="n" value="0"></center><br>
-
   <center><button onclick="runMain()">Run Simulation</button><button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
 </center>
   <pre id="output"></pre>
 
   <div class="table-container">
-    <br><br>
+    <br>
     <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
-    <div id="holdTableContainer"></div>
+    <div id="TotalsTableContainer"></div>
   </div>
   <br> <!-- Added a blank line -->
-  
-  <div class="table-container">
-    <p class="bold caption">HITS</p>
-    <table id="hitsTable">
-      <caption>HITS</caption>
-    </table>
-  </div>
-  <br> <!-- Added a blank line -->
-  <div class="table-container">
-    <p class="bold caption">SKIPS</p>
-    <table id="skipsTable">
-      <caption>SKIPS</caption>
-    </table>
-  </div>
 
   <script>
 // Define the variables
-let height = 38;
-let width = 38;
-let hits;
-let skips;
-let last = new Array(38).fill(0);
-const pick = Array.from({ length: 38 }, (_, i) => i + 1);
-let hold = new Array(38).fill(0);
+let Totals = new Array(38).fill(0);
 
 // Function to clear all arrays
 function clearArrays() {
-  hits = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
-  skips = Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
-  last = new Array(38).fill(0);
-  hold = new Array(38).fill(0);
+  Totals = new Array(38).fill(0);
 }
 
 // Function to generate a formatted timestamp
@@ -155,13 +98,13 @@ function getFormattedTimestamp() {
   return `${year}-${month}-${day}-${hours}-${minutes}`;
 }
 
-// Function to export hold array data to CSV format
-function exportHoldToCSV(array, filename) {
+// Function to export Totals array data to CSV format
+function exportTotalsToCSV(array, filename) {
   let csvContent = "data:text/csv;charset=utf-8,";
 
   csvContent += ","; // Empty cell to align with headers
 
-  // Loop through hold array to append values
+  // Loop through Totals array to append values
   for (let j = 0; j < array.length; j++) {
     csvContent += array[j] + ",";
   }
@@ -176,96 +119,30 @@ function exportHoldToCSV(array, filename) {
   link.click(); // Trigger the download
 }
 
-// Function to export Hits array to CSV
-function exportHitsToCSV(array, filename) {
-  let csvContent = "data:text/csv;charset=utf-8,";
-
-  // Create CSV content from the array
-  for (let i = 0; i < array.length; i++) {
-    csvContent += ",";
-    for (let j = 0; j < array[i].length; j++) {
-      csvContent += array[i][j] + ",";
-    }
-    csvContent += "\n";
-  }
-
-  // Encode and create a download link
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `Hits_data_${getFormattedTimestamp()}.csv`);
-  document.body.appendChild(link); // Required for Firefox
-  link.click(); // Trigger the download
-}
-
-// Function to export Skips array to CSV
-function exportSkipsToCSV(array, filename) {
-  let csvContent = "data:text/csv;charset=utf-8,";
-
-  // Create CSV content from the array
-  for (let i = 0; i < array.length; i++) {
-    csvContent += ",";
-    for (let j = 0; j < array[i].length; j++) {
-      csvContent += array[i][j] + ",";
-    }
-    csvContent += "\n";
-  }
-
-  // Encode and create a download link
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `Skips_data_${getFormattedTimestamp()}.csv`);
-  document.body.appendChild(link); // Required for Firefox
-  link.click(); // Trigger the download
-}
-
 // Event listener for the Save Data button
 document.getElementById("saveDataButton").addEventListener("click", function() {
-  exportHoldToCSV(hold, 'totals_data.csv');
-  exportHitsToCSV(hits, 'Hits_data.csv');
-  exportSkipsToCSV(skips, 'Skips_data.csv');
+  exportTotalsToCSV(Totals, 'totals_data.csv');
 });
 
 // Define the main function
 function main() {
   clearArrays(); // Clear arrays before each simulation run
-  const runs = parseInt(document.getElementById('n').value);
+  const runs = parseInt(document.getElementById('x').value);
   let output = '';
 
-  clearArrays(); // Clear arrays before populating
-
-  let lastC1; // Variable to store the value of c1 for the last run
-
   for (let x = 1; x <= runs; x++) {
-    for (let n = 1; n <= 38; n++) {
-      let c1 = pick[Math.floor(Math.random() * pick.length)];
-      c1 -= 1;
-
-      if (x === runs) {
-        hits[c1][n - 1] += 1;
-        lastC1 = c1; // Store the value of c1 for the last run
+    for (let y = 1; y <= 38; y++) {
+      for (let n = 1; n <= 38; n++) {
+        let c1 = Math.floor(Math.random() * 38);
+        Totals[c1] += 1;
       }
-
-      const lastval = last[c1];
-      last[c1] = n;
-      const skipsval = n - lastval;
-      skips[c1][skipsval - 1] += 1;
-      hold[c1] += 1;
     }
   }
-
   // Display output in the <pre> element
   document.getElementById('output').innerHTML = output;
 
-  // Display Hits data in the table
-  displayTable(hits, 'hitsTable', true, 37, true);
-
-  // Display Skips data in the table
-  displayTable(skips, 'skipsTable', true, 1, false);
-
-  // Display Hold data in the table with colors
-  displayHoldTableWithColors(hold);
+  // Display Totals data in the table with colors
+  displayTotalsTableWithColors(Totals);
 }
 
 // Function to run main and clear arrays
@@ -276,31 +153,11 @@ function runMain() {
 // Call the main function when the page loads
 window.onload = function() {
   runMain(); // Only call runMain() which initializes everything needed
-  //initializeTables(); // Initialize tables separately
 };
 
-// Function to initialize tables with "-"
-function initializeTables() {
-  initializeTable('hitsTable', height, width);
-  initializeTable('skipsTable', height, width);
-}
-
-// Function to initialize a specific table with "-"
-function initializeTable(tableId, rows, cols) {
-  const table = document.getElementById(tableId);
-  for (let i = 0; i < rows; i++) {
-    const row = table.insertRow();
-    for (let j = 0; j < cols; j++) {
-      const cell = row.insertCell();
-      cell.textContent = "-";
-      cell.classList.add('no-value'); // Add class to cells with no value
-    }
-  }
-}
-
-// Function to display hold array as a table with red/green formatting
-function displayHoldTableWithColors(hold) {
-  let output = "<table id='holdTable'>";
+// Function to display Totals array as a table with red/green formatting
+function displayTotalsTableWithColors(Totals) {
+  let output = "<table id='TotalsTable'>";
 
   // Header row
   output += "<tr>";
@@ -324,15 +181,15 @@ function displayHoldTableWithColors(hold) {
   output += "<tr>";
   output += "<th class='black'></th>"; // Black background for the first column header, white text color
 
-  // Loop through hold array to display values, starting from index 0
-  for (let j = 0; j < hold.length - 1; j++) { // Iterate through the entire hold array, minus the last element
-    const cellValue = hold[j]; // Accessing hold array values correctly
+  // Loop through Totals array to display values, starting from index 0
+  for (let j = 0; j < Totals.length - 1; j++) { // Iterate through the entire Totals array, minus the last element
+    const cellValue = Totals[j]; // Accessing Totals array values correctly
     const cellClass = cellValue > 0 ? (cellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
     output += "<td class='" + cellClass + " bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
   }
 
   // Add the last cell for "36"
-  const lastCellValue = hold[37]; // Accessing the last element for "36"
+  const lastCellValue = Totals[37]; // Accessing the last element for "36"
   const lastCellClass = lastCellValue > 0 ? (lastCellValue % 2 === 0 ? 'numeric green' : 'numeric red') : 'no-value black'; // Determine class based on value
   output += "<td class='" + lastCellClass + " bold'>" + lastCellValue + "</td>";
 
@@ -340,79 +197,7 @@ function displayHoldTableWithColors(hold) {
 
   output += "</table>";
 
-  document.getElementById('holdTableContainer').innerHTML = output; // Update holdTable content
-}
-
-// Function to display array data in a table
-function displayTable(array, tableId, includeHeaders, start, reverseOrder) {
-  const table = document.getElementById(tableId);
-  table.innerHTML = ''; // Clear the table before populating
-
-  if (includeHeaders) {
-    const headerRow = table.insertRow();
-    let th = document.createElement('th');
-    th.textContent = ' ';
-    headerRow.appendChild(th);
-
-    if (reverseOrder) {
-      for (let j = start; j >= 0; j--) {
-        th = document.createElement('th');
-        th.textContent = j === 38 ? ' 00' : (j < 10 ? ' 0' + j : ' ' + j);
-        headerRow.appendChild(th);
-      }
-    } else {
-      for (let j = 1; j <= 38; j++) {
-        th = document.createElement('th');
-        th.textContent = j < 10 ? ' 0' + j : ' ' + j;
-        headerRow.appendChild(th);
-      }
-    }
-  }
-
-  for (let i = 0; i < array.length; i++) {
-    const row = table.insertRow();
-    const cell1 = row.insertCell(0);
-    if (i === 0) {
-      cell1.textContent = ' 0';
-      cell1.style.backgroundColor = 'green';
-    } else if (i === 1) {
-      cell1.textContent = '00';
-      cell1.style.backgroundColor = 'green';
-    } else {
-      cell1.textContent = (i - 1).toString().padStart(2, '0');
-      if ((i - 1) % 2 === 0) {
-        cell1.style.backgroundColor = 'green';
-      } else {
-        cell1.style.backgroundColor = 'red';
-      }
-    }
-    cell1.style.color = 'white'; // White text color for row headers
-
-    for (let j = 0; j < array[i].length; j++) {
-      const cell = row.insertCell();
-
-      // Adjust cell content based on table type
-      if (tableId === 'hitsTable' && array[i][j] !== 0) {
-        const boldBlueX = document.createElement('span');
-        boldBlueX.textContent = "X";
-        boldBlueX.classList.add('bold-blue');
-        cell.appendChild(boldBlueX);
-      } else {
-        if (!isNaN(array[i][j])) { // Check if the value is numeric
-          if (array[i][j] === 0) {
-            cell.textContent = "-";
-            cell.classList.add('no-value'); // Add class to cells with no value
-          } else {
-            cell.textContent = array[i][j];
-            cell.classList.add('numeric'); // Add class to numeric cells
-          }
-        } else {
-          cell.textContent = array[i][j];
-          cell.classList.add('black');
-        }
-      }
-    }
-  }
+  document.getElementById('TotalsTableContainer').innerHTML = output; // Update TotalsTable content
 }
 
   </script>

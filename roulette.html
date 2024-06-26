@@ -63,13 +63,19 @@
 </head>
 <body>
   <center><h1>Roulette Random Picker</h1><img src="wheel.png"></center><br>
-  <center><label for="x">Number of runs:</label>
-   <input type="number" id="x" name="x" value="0"></center>
+  <center>
+    <label for="x">Number of runs:</label>
+    <input type="number" id="x" name="x" value="0">
+    <label for="y">Number of sets per run:</label> <!-- Added input for y -->
+    <input type="number" id="y" name="y" value="14"> <!-- Default value is 14 -->
+  </center>
  
-  <center><h3>Each run does 38 sets of 38 random number picks of numbers 1 through 38</h3>
+  <center><h3>Each run will be doing sets of random number picks of numbers 1 through 38</h3>
   
-  <center><button onclick="runMain()">Run Simulation</button><button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
-</center>
+  <center>
+    <button onclick="runMain()">Run Simulation</button>
+    <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
+  </center>
   <pre id="output"></pre>
 
   <div class="table-container">
@@ -129,10 +135,11 @@ document.getElementById("saveDataButton").addEventListener("click", function() {
 function main() {
   clearArrays(); // Clear arrays before each simulation run
   const runs = parseInt(document.getElementById('x').value);
+  const sets = parseInt(document.getElementById('y').value); // Get the value of y
   let output = '';
 
   for (let x = 1; x <= runs; x++) {
-    for (let y = 1; y <= 38; y++) {
+    for (let y = 1; y <= sets; y++) { // Use sets instead of 38
       for (let n = 1; n <= 38; n++) {
         let c1 = Math.floor(Math.random() * 38);
         Totals[c1] += 1;

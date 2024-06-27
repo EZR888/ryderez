@@ -1,6 +1,0 @@
-#!/bin/sh
-while read p; do
- echo "<div class=\"card preload image square\"><a class=\"thumb\" href=\"slides/"$p"\"><img src=\"thumbs/"$p"\" width=\"212\" height=\"170\"></a></div>";
-done < filenames
-
-

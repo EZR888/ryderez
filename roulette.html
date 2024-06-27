@@ -59,6 +59,10 @@
     #TotalsTable td {
       background-color: lightgray; /* Light gray for content cells in the Totals table */
     }
+    .even-header {
+      background-color: black; /* Black background for even number headers */
+      color: white; /* White text color for even number headers */
+    }
   </style>
 </head>
 <body>
@@ -67,10 +71,10 @@
     <label for="x">Number of runs:</label>
     <input type="number" id="x" name="x" value="0">
     <label for="y">Number of sets per run:</label> <!-- Added input for y -->
-    <input type="number" id="y" name="y" value="14"> <!-- Default value is 14 -->
+    <input type="number" id="y" name="y" value="38"> <!-- Default value is 38 -->
   </center>
  
-  <center><h3>Each run will be doing sets of random number picks of numbers 1 through 38</h3>
+  <center><h3>Each run does 38 sets of random number picks of numbers 1 through 38</h3>
   
   <center>
     <button onclick="runMain()">Run Simulation</button>
@@ -102,7 +106,8 @@ function getFormattedTimestamp() {
   const day = String(now.getDate()).padStart(2, '0');
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
-  return `${year}-${month}-${day}-${hours}-${minutes}-$(seconds)`;
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
 }
 
 // Function to export Totals array data to CSV format
@@ -178,7 +183,7 @@ function displayTotalsTableWithColors(Totals) {
   // Loop through columns 01 to 36 for headers
   for (let j = 1; j <= 36; j++) {
     const headerLabel = (j < 10 ? "0" : "") + j.toString(); // Format numbers as "01" to "36"
-    const colorClass = j % 2 === 0 ? 'green' : 'red'; // Green for even, red for odd
+    const colorClass = j % 2 === 0 ? 'even-header' : 'red'; // Black for even, red for odd
     output += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
   }
 

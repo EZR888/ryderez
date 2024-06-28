@@ -1,0 +1,70 @@
+#!/bin/sh
+# usage: ./addSnap "Album Title" "Album Description" one-word-folder-name  
+# Script for modifying JAlbum-created albums. 
+albdir=`pwd`
+echo "Album dir: " $albdir
+title=$1
+description=$2
+fold=$3
+echo "Title: " $title
+echo "Desc: " $description
+#
+# Extract the filenames from the JAlbum-generated file, album.rss
+#
+grep thumbs album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+#
+# extract the captions from the JAlbum-generated file, album.rss
+#
+grep "<description>" album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./comments
+# 
+# Remove the first line of the captions file output, as it's not an actual photo filename
+#
+tail -n +2 comments > desc2
+#
+# Combine the two output files to create one file with a filename and caption on the same line for each photo
+#
+paste filenames desc2 >titledesc
+
+# Generate html code for adding photos to index.html file.
+#
+while IFS=$'\t' read -r fn desc rest; do 
+
+  echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>" >>./htmlgen
+done <./titledesc
+
+# Update title and description fields in index.html file.
+#
+# cp /Users/ezryder/My\ Albums/index-snap-template.html /Users/ezryder/My\ Albums/$3.html
+# sed '/^\# Start/ r htmlgen' ../$3.html | sed '/nonsensed/d' >temp-index.html
+# sed -e "s/ChangeTitle/$title/g; s/ChangeDesc/$description/g" temp-index.html >index.html
+
+# Copy updated files to GitHub directory for uploading to wensite.
+#
+# mkdir /Users/ezryder/Documents/GitHub/ryderez/$3
+homedir="/Users/ezryder/Documents/GitHub/ryderez/$3"
+echo "Home dir: " $homedir 
+cp -r album/* $homedir
+cp -p jalbum-settings.jap $homedir
+# cp -p index.html $homedir
+
+# Grab number of photos from tree.json
+#
+# total=`cat album/tree.json | awk -F"total\":" '{print $2}' | awk -F"," '{print $1}'`; echo "Total photos in album: " $total
+
+# Add album section to main Snapsshots page.
+#
+# echo >snap-add; echo "<div class=\""card folder preload has-count\""><a href=\""$3/index.html\"" class=\""thumb\""><img src=\""$3/folderthumb.jpg\"" width=\""620\"" height=\""465\""></a><div class=\""caption\""><h3><a href=\""$3/index.html\"">$1</a></h3><p class=\""counts\""><span class=\""images\"">$total &nbsp;images</span></p></div></div>" >>snap-add; echo >>snap-add
+
+# sed '/"cont caption-below thumbs-fill"/ r snap-add' /Users/ezryder/Documents/GitHub/ryderez/personal.html >personal.html
+
+# cp personal.html /Users/ezryder/Documents/GitHub/ryderez
+
+# cleanup
+#
+rm filenames comments desc2
+rm ../$3.html
+rm temp*
+# rm snap-add
+# rm htmlgen
+rm titledesc
+

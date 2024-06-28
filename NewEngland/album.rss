@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>New England</title>
+   	<link>.</link>
+        <generator>jAlbum 32.1</generator>
+   		<description>October, 2023.  Kennebunkport, Portland, Ogunquit, Narragansett, Newport</description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>IMG_1068</title>
+            <link>slides/IMG_1068.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1068.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1068.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:37:49 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1068.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1070</title>
+            <link>slides/IMG_1070.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1070.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1070.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:40:47 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1070.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1071</title>
+            <link>slides/IMG_1071.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1071.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1071.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:41:41 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1071.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1072</title>
+            <link>slides/IMG_1072.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1072.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1072.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:42:43 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1072.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1087</title>
+            <link>slides/IMG_1087.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1087.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1087.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 18:12:24 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1087.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1429</title>
+            <link>slides/IMG_1429.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1429.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1429.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:17:51 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1429.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1430</title>
+            <link>slides/IMG_1430.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1430.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1430.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:17:31 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1430.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1434</title>
+            <link>slides/IMG_1434.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1434.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1434.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:15:46 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1434.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1439</title>
+            <link>slides/IMG_1439.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1439.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1439.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:32:35 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1439.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1441</title>
+            <link>slides/IMG_1441.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1441.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1441.JPG" width="1000" height="605"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:29:51 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1441.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1443</title>
+            <link>slides/IMG_1443.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1443.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1443.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:29:41 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1443.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1445</title>
+            <link>slides/IMG_1445.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1445.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1445.JPG" width="1000" height="563"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:27:56 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1445.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1449</title>
+            <link>slides/IMG_1449.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1449.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1449.JPG" width="451" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:26:05 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1449.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1447</title>
+            <link>slides/IMG_1447.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1447.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1447.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:27:44 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1447.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1451</title>
+            <link>slides/IMG_1451.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1451.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1451.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:24:10 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1451.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1453</title>
+            <link>slides/IMG_1453.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1453.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1453.JPG" width="1000" height="543"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:23:44 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1453.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1709</title>
+            <link>slides/IMG_1709.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1709.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1709.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 08:35:56 -0700" cameraMake="Apple" cameraModel="iPad Air (5th generation)"/>
+            <guid isPermaLink="false">slides/IMG_1709.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1139</title>
+            <link>slides/IMG_1139.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1139.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1139.jpeg" width="757" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 15:19:43 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1139.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1137</title>
+            <link>slides/IMG_1137.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1137.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1137.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 14:19:35 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1137.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1138</title>
+            <link>slides/IMG_1138.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1138.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1138.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 14:24:00 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1138.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1075</title>
+            <link>slides/IMG_1075.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1075.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1075.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:54:26 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1075.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1076</title>
+            <link>slides/IMG_1076.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1076.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1076.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 12:54:47 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1076.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1077</title>
+            <link>slides/IMG_1077.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1077.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1077.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 13:14:03 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1077.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1080</title>
+            <link>slides/IMG_1080.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1080.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1080.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 13:14:17 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1080.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1428</title>
+            <link>slides/IMG_1428.JPG</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1428.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1428.JPG" width="1000" height="564"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 06:18:37 -0700" cameraMake="Panasonic" cameraModel="DC-LX100M2"/>
+            <guid isPermaLink="false">slides/IMG_1428.JPG</guid>
+        </item>
+        <item>
+            <title>IMG_1083</title>
+            <link>slides/IMG_1083.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1083.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1083.jpeg" width="591" height="800"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 13:23:35 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1083.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1084</title>
+            <link>slides/IMG_1084.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1084.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1084.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 13:23:37 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1084.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1103</title>
+            <link>slides/IMG_1103.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1103.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1103.jpeg" width="1000" height="793"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 10:48:47 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1103.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1085</title>
+            <link>slides/IMG_1085.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1085.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1085.jpeg" width="1000" height="613"/>
+            <jalbum:exif originalDate="Tue, 10 Oct 2023 14:40:21 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1085.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1108</title>
+            <link>slides/IMG_1108.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1108.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1108.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:33:42 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1108.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1109</title>
+            <link>slides/IMG_1109.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1109.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1109.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:35:17 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1109.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1111</title>
+            <link>slides/IMG_1111.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1111.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1111.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:36:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1111.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1113</title>
+            <link>slides/IMG_1113.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1113.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1113.jpeg" width="1000" height="259"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:37:58 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1113.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1119</title>
+            <link>slides/IMG_1119.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1119.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1119.jpeg" width="1000" height="568"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:40:05 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1119.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1114</title>
+            <link>slides/IMG_1114.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1114.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1114.jpeg" width="973" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:38:40 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1114.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1122</title>
+            <link>slides/IMG_1122.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1122.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1122.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:41:49 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1122.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1123</title>
+            <link>slides/IMG_1123.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1123.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1123.jpeg" width="517" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:42:18 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1123.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1129</title>
+            <link>slides/IMG_1129.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1129.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1129.jpeg" width="767" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:45:05 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1129.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1131</title>
+            <link>slides/IMG_1131.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1131.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1131.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:45:55 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1131.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1121</title>
+            <link>slides/IMG_1121.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1121.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1121.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:41:16 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1121.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1124</title>
+            <link>slides/IMG_1124.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1124.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1124.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:42:48 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1124.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1125</title>
+            <link>slides/IMG_1125.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1125.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1125.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:42:53 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1125.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1128</title>
+            <link>slides/IMG_1128.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1128.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1128.jpeg" width="791" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 12:43:56 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1128.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1235</title>
+            <link>slides/IMG_1235.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1235.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1235.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Sat, 14 Oct 2023 15:01:41 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1235.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1177</title>
+            <link>slides/IMG_1177.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1177.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1177.jpeg" width="1000" height="750"/>
+            <guid isPermaLink="false">slides/IMG_1177.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1178</title>
+            <link>slides/IMG_1178.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1178.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1178.jpeg" width="1000" height="750"/>
+            <guid isPermaLink="false">slides/IMG_1178.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1179</title>
+            <link>slides/IMG_1179.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1179.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1179.jpeg" width="1000" height="750"/>
+            <guid isPermaLink="false">slides/IMG_1179.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1180</title>
+            <link>slides/IMG_1180.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1180.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1180.jpeg" width="1000" height="724"/>
+            <guid isPermaLink="false">slides/IMG_1180.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1181</title>
+            <link>slides/IMG_1181.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1181.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1181.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Thu, 12 Oct 2023 16:59:33 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1181.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1182</title>
+            <link>slides/IMG_1182.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1182.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1182.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Thu, 12 Oct 2023 16:59:56 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1182.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1183</title>
+            <link>slides/IMG_1183.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1183.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1183.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Thu, 12 Oct 2023 17:17:07 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1183.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1184</title>
+            <link>slides/IMG_1184.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1184.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1184.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Thu, 12 Oct 2023 17:17:19 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1184.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1185</title>
+            <link>slides/IMG_1185.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1185.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1185.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Thu, 12 Oct 2023 18:40:12 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1185.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1208</title>
+            <link>slides/IMG_1208.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1208.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1208.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Fri, 13 Oct 2023 18:36:44 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1208.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1199</title>
+            <link>slides/IMG_1199.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1199.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1199.jpeg" width="1000" height="432"/>
+            <jalbum:exif originalDate="Fri, 13 Oct 2023 11:03:19 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1199.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1200</title>
+            <link>slides/IMG_1200.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1200.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1200.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Fri, 13 Oct 2023 13:49:34 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1200.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1207</title>
+            <link>slides/IMG_1207.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1207.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1207.jpeg" width="922" height="800"/>
+            <jalbum:exif originalDate="Fri, 13 Oct 2023 17:29:06 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1207.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1236</title>
+            <link>slides/IMG_1236.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1236.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1236.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sat, 14 Oct 2023 19:32:12 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1236.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1284</title>
+            <link>slides/IMG_1284.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1284.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1284.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 15 Oct 2023 12:31:08 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1284.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1285</title>
+            <link>slides/IMG_1285.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1285.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1285.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Sun, 15 Oct 2023 12:35:21 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1285.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1133</title>
+            <link>slides/IMG_1133.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1133.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1133.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Wed, 11 Oct 2023 13:37:57 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1133.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1286</title>
+            <link>slides/IMG_1286.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1286.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1286.jpeg" width="731" height="800"/>
+            <jalbum:exif originalDate="Sun, 15 Oct 2023 15:39:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1286.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1333</title>
+            <link>slides/IMG_1333.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1333.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1333.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Mon, 16 Oct 2023 16:18:18 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1333.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1338</title>
+            <link>slides/IMG_1338.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1338.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1338.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 16 Oct 2023 17:32:06 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1338.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1364</title>
+            <link>slides/IMG_1364.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1364.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1364.jpeg" width="553" height="800"/>
+            <jalbum:exif originalDate="Mon, 16 Oct 2023 17:37:41 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1364.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1202</title>
+            <link>slides/IMG_1202.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1202.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1202.jpeg" width="1000" height="750"/>
+            <jalbum:exif originalDate="Fri, 13 Oct 2023 17:21:51 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1202.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_1370</title>
+            <link>slides/IMG_1370.jpeg</link>
+            <pubDate>Sat, 09 Mar 2024 19:42:01 -0800</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1370.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_1370.jpeg" width="599" height="800"/>
+            <jalbum:exif originalDate="Mon, 16 Oct 2023 17:51:10 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_1370.jpeg</guid>
+        </item>
+    </channel>
+</rss>

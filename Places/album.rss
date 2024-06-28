@@ -1,0 +1,792 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Places</title>
+   	<link>.</link>
+        <generator>jAlbum 34.3</generator>
+   		<description>Various places around the country...</description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>7Hibbay1</title>
+            <link>slides/7Hibbay1.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Bodega Bay, 2008</description>
+            <media:description type="html">Bodega Bay, 2008</media:description>
+            <media:thumbnail url="thumbs/7Hibbay1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/7Hibbay1.jpg" width="722" height="800"/>
+            <guid isPermaLink="false">slides/7Hibbay1.jpg</guid>
+        </item>
+        <item>
+            <title>DSCF0007</title>
+            <link>slides/DSCF0007.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Not sure, but I think this was on Lake Ontario, MI</description>
+            <media:description type="html">Not sure, but I think this was on Lake Ontario, MI</media:description>
+            <media:thumbnail url="thumbs/DSCF0007.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0007.jpg" width="640" height="800"/>
+            <guid isPermaLink="false">slides/DSCF0007.jpg</guid>
+        </item>
+        <item>
+            <title>seagulls1</title>
+            <link>slides/seagulls1.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/seagulls1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/seagulls1.jpg" width="800" height="655"/>
+            <guid isPermaLink="false">slides/seagulls1.jpg</guid>
+        </item>
+        <item>
+            <title>18879796.PICT0050</title>
+            <link>slides/18879796.PICT0050.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Mendcino, CA, 2007</description>
+            <media:description type="html">Mendcino, CA, 2007</media:description>
+            <media:thumbnail url="thumbs/18879796.PICT0050.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/18879796.PICT0050.jpg" width="800" height="611"/>
+            <guid isPermaLink="false">slides/18879796.PICT0050.jpg</guid>
+        </item>
+        <item>
+            <title>18879799.chimneyrock</title>
+            <link>slides/18879799.chimneyrock.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Napa Valley Vineyard</description>
+            <media:description type="html">Napa Valley Vineyard</media:description>
+            <media:thumbnail url="thumbs/18879799.chimneyrock.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/18879799.chimneyrock.jpg" width="511" height="682"/>
+            <guid isPermaLink="false">slides/18879799.chimneyrock.jpg</guid>
+        </item>
+        <item>
+            <title>27937384.DSC00577a</title>
+            <link>slides/27937384.DSC00577a.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Artesa Winery, Napa</description>
+            <media:description type="html">Artesa Winery, Napa</media:description>
+            <media:thumbnail url="thumbs/27937384.DSC00577a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/27937384.DSC00577a.jpg" width="600" height="800"/>
+            <guid isPermaLink="false">slides/27937384.DSC00577a.jpg</guid>
+        </item>
+        <item>
+            <title>Car2</title>
+            <link>slides/Car2.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>I forget the name of this winery, but it&apos;s in Anderson Valley, CA</description>
+            <media:description type="html">I forget the name of this winery, but it&apos;s in Anderson Valley, CA</media:description>
+            <media:thumbnail url="thumbs/Car2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Car2.jpg" width="800" height="576"/>
+            <guid isPermaLink="false">slides/Car2.jpg</guid>
+        </item>
+        <item>
+            <title>cobble-1</title>
+            <link>slides/cobble-1.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/cobble-1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/cobble-1.jpg" width="619" height="800"/>
+            <guid isPermaLink="false">slides/cobble-1.jpg</guid>
+        </item>
+        <item>
+            <title>cobble-4</title>
+            <link>slides/cobble-4.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/cobble-4.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/cobble-4.jpg" width="727" height="800"/>
+            <guid isPermaLink="false">slides/cobble-4.jpg</guid>
+        </item>
+        <item>
+            <title>DSC00140a</title>
+            <link>slides/DSC00140a.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC00140a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC00140a.jpg" width="800" height="600"/>
+            <guid isPermaLink="false">slides/DSC00140a.jpg</guid>
+        </item>
+        <item>
+            <title>DSC03064</title>
+            <link>slides/DSC03064.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>The Inn at Spanish Bay, Pebble Beach, CA</description>
+            <media:description type="html">The Inn at Spanish Bay, Pebble Beach, CA</media:description>
+            <media:thumbnail url="thumbs/DSC03064.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC03064.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/DSC03064.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05235</title>
+            <link>slides/DSC05235.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC05235.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05235.JPG" width="600" height="800"/>
+            <guid isPermaLink="false">slides/DSC05235.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05303</title>
+            <link>slides/DSC05303.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>World famous French Laundry restaurant, Yountville, CA</description>
+            <media:description type="html">World famous French Laundry restaurant, Yountville, CA</media:description>
+            <media:thumbnail url="thumbs/DSC05303.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05303.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/DSC05303.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05432</title>
+            <link>slides/DSC05432.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC05432.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05432.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/DSC05432.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05462</title>
+            <link>slides/DSC05462.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Along Rte 29, Napa Valley</description>
+            <media:description type="html">Along Rte 29, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05462.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05462.JPG" width="800" height="525"/>
+            <guid isPermaLink="false">slides/DSC05462.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05465</title>
+            <link>slides/DSC05465.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Along Rte 29, Napa Valley</description>
+            <media:description type="html">Along Rte 29, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05465.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05465.JPG" width="800" height="635"/>
+            <guid isPermaLink="false">slides/DSC05465.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05468</title>
+            <link>slides/DSC05468.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Along Rte 29, Napa Valley</description>
+            <media:description type="html">Along Rte 29, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05468.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05468.JPG" width="800" height="374"/>
+            <guid isPermaLink="false">slides/DSC05468.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05528</title>
+            <link>slides/DSC05528.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Along Rte 29, Napa Valley</description>
+            <media:description type="html">Along Rte 29, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05528.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05528.JPG" width="800" height="626"/>
+            <guid isPermaLink="false">slides/DSC05528.JPG</guid>
+        </item>
+        <item>
+            <title>harbor_big</title>
+            <link>slides/harbor_big.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Taken at the Harbor House Inn, Elk, CA</description>
+            <media:description type="html">Taken at the Harbor House Inn, Elk, CA</media:description>
+            <media:thumbnail url="thumbs/harbor_big.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/harbor_big.JPG" width="800" height="507"/>
+            <guid isPermaLink="false">slides/harbor_big.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC06059</title>
+            <link>slides/l-DSC06059.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Near San Antonio, TX</description>
+            <media:description type="html">Near San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC06059.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC06059.jpg" width="800" height="625"/>
+            <guid isPermaLink="false">slides/l-DSC06059.jpg</guid>
+        </item>
+        <item>
+            <title>l-DSC06064</title>
+            <link>slides/l-DSC06064.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Near San Antonio, TX</description>
+            <media:description type="html">Near San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC06064.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC06064.JPG" width="725" height="800"/>
+            <guid isPermaLink="false">slides/l-DSC06064.JPG</guid>
+        </item>
+        <item>
+            <title>lbw-DSC06059</title>
+            <link>slides/lbw-DSC06059.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Near San Antonio, TX</description>
+            <media:description type="html">Near San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/lbw-DSC06059.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/lbw-DSC06059.jpg" width="800" height="625"/>
+            <guid isPermaLink="false">slides/lbw-DSC06059.jpg</guid>
+        </item>
+        <item>
+            <title>m-DSC06010</title>
+            <link>slides/m-DSC06010.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>I call this, &quot;Woman in Lavender Field near San Antonio&quot;.  Included here by popular demand.</description>
+            <media:description type="html">I call this, &quot;Woman in Lavender Field near San Antonio&quot;.  Included here by popular demand.</media:description>
+            <media:thumbnail url="thumbs/m-DSC06010.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/m-DSC06010.jpg" width="800" height="498"/>
+            <guid isPermaLink="false">slides/m-DSC06010.jpg</guid>
+        </item>
+        <item>
+            <title>Misc-2005-040</title>
+            <link>slides/Misc-2005-040.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Napa winery during harvest.</description>
+            <media:description type="html">Napa winery during harvest.</media:description>
+            <media:thumbnail url="thumbs/Misc-2005-040.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Misc-2005-040.jpg" width="583" height="778"/>
+            <guid isPermaLink="false">slides/Misc-2005-040.jpg</guid>
+        </item>
+        <item>
+            <title>Misc-2005-041</title>
+            <link>slides/Misc-2005-041.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Misc-2005-041.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Misc-2005-041.jpg" width="634" height="779"/>
+            <guid isPermaLink="false">slides/Misc-2005-041.jpg</guid>
+        </item>
+        <item>
+            <title>mustard3</title>
+            <link>slides/mustard3.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Along Rte 29, Napa Valley</description>
+            <media:description type="html">Along Rte 29, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/mustard3.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/mustard3.jpg" width="800" height="520"/>
+            <guid isPermaLink="false">slides/mustard3.jpg</guid>
+        </item>
+        <item>
+            <title>PICT0019</title>
+            <link>slides/PICT0019.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/PICT0019.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0019.JPG" width="800" height="636"/>
+            <guid isPermaLink="false">slides/PICT0019.JPG</guid>
+        </item>
+        <item>
+            <title>PICT0123</title>
+            <link>slides/PICT0123.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Long Beach, CA</description>
+            <media:description type="html">Long Beach, CA</media:description>
+            <media:thumbnail url="thumbs/PICT0123.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0123.JPG" width="800" height="468"/>
+            <guid isPermaLink="false">slides/PICT0123.JPG</guid>
+        </item>
+        <item>
+            <title>PICT0126</title>
+            <link>slides/PICT0126.JPG</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Long Beach, CA</description>
+            <media:description type="html">Long Beach, CA</media:description>
+            <media:thumbnail url="thumbs/PICT0126.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0126.JPG" width="800" height="494"/>
+            <guid isPermaLink="false">slides/PICT0126.JPG</guid>
+        </item>
+        <item>
+            <title>Tower</title>
+            <link>slides/Tower.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Alexander Valley winery</description>
+            <media:description type="html">Alexander Valley winery</media:description>
+            <media:thumbnail url="thumbs/Tower.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Tower.jpg" width="800" height="647"/>
+            <guid isPermaLink="false">slides/Tower.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 013</title>
+            <link>slides/Wine%20Country%2005%20013.jpg</link>
+            <pubDate>Thu, 09 May 2024 12:31:09 -0700</pubDate>
+            <description>Alexander Valley winery</description>
+            <media:description type="html">Alexander Valley winery</media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20013.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20013.jpg" width="600" height="800"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20013.jpg</guid>
+        </item>
+        <item>
+            <title>21560641.Picture015</title>
+            <link>slides/21560641.Picture015.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Nice shirt.. :)</description>
+            <media:description type="html">Nice shirt.. :)</media:description>
+            <media:thumbnail url="thumbs/21560641.Picture015.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/21560641.Picture015.jpg" width="605" height="800"/>
+            <guid isPermaLink="false">slides/21560641.Picture015.jpg</guid>
+        </item>
+        <item>
+            <title>21560642.Picture018</title>
+            <link>slides/21560642.Picture018.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/21560642.Picture018.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/21560642.Picture018.jpg" width="533" height="800"/>
+            <guid isPermaLink="false">slides/21560642.Picture018.jpg</guid>
+        </item>
+        <item>
+            <title>26498430.DSC00199a</title>
+            <link>slides/26498430.DSC00199a.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/26498430.DSC00199a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/26498430.DSC00199a.jpg" width="800" height="600"/>
+            <guid isPermaLink="false">slides/26498430.DSC00199a.jpg</guid>
+        </item>
+        <item>
+            <title>Carmel-2005-004</title>
+            <link>slides/Carmel-2005-004.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Carmel gallery at night</description>
+            <media:description type="html">Carmel gallery at night</media:description>
+            <media:thumbnail url="thumbs/Carmel-2005-004.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Carmel-2005-004.jpg" width="799" height="636"/>
+            <guid isPermaLink="false">slides/Carmel-2005-004.jpg</guid>
+        </item>
+        <item>
+            <title>Carmel-2005-005</title>
+            <link>slides/Carmel-2005-005.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Carmel gallery at night</description>
+            <media:description type="html">Carmel gallery at night</media:description>
+            <media:thumbnail url="thumbs/Carmel-2005-005.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Carmel-2005-005.jpg" width="800" height="599"/>
+            <guid isPermaLink="false">slides/Carmel-2005-005.jpg</guid>
+        </item>
+        <item>
+            <title>Carmel-2005-016</title>
+            <link>slides/Carmel-2005-016.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Mission Ranch restaurant, Carmel, CA</description>
+            <media:description type="html">Mission Ranch restaurant, Carmel, CA</media:description>
+            <media:thumbnail url="thumbs/Carmel-2005-016.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Carmel-2005-016.jpg" width="600" height="800"/>
+            <guid isPermaLink="false">slides/Carmel-2005-016.jpg</guid>
+        </item>
+        <item>
+            <title>Carmel-2005-041</title>
+            <link>slides/Carmel-2005-041.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>The Inn at Spanish Bay, Pebble Beach</description>
+            <media:description type="html">The Inn at Spanish Bay, Pebble Beach</media:description>
+            <media:thumbnail url="thumbs/Carmel-2005-041.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Carmel-2005-041.jpg" width="800" height="599"/>
+            <guid isPermaLink="false">slides/Carmel-2005-041.jpg</guid>
+        </item>
+        <item>
+            <title>Concourse-Cars-2005-005</title>
+            <link>slides/Concourse-Cars-2005-005.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Concourse de Elegance, Pebble Beach</description>
+            <media:description type="html">Concourse de Elegance, Pebble Beach</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-005.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-005.jpg" width="540" height="720"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-005.jpg</guid>
+        </item>
+        <item>
+            <title>Concourse-Cars-2005-007</title>
+            <link>slides/Concourse-Cars-2005-007.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Concourse de Elegance, Pebble Beach</description>
+            <media:description type="html">Concourse de Elegance, Pebble Beach</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-007.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-007.jpg" width="540" height="720"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-007.jpg</guid>
+        </item>
+        <item>
+            <title>Concourse-Cars-2005-008</title>
+            <link>slides/Concourse-Cars-2005-008.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Concourse de Elegance, Pebble Beach</description>
+            <media:description type="html">Concourse de Elegance, Pebble Beach</media:description>
+            <media:thumbnail url="thumbs/Concourse-Cars-2005-008.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Concourse-Cars-2005-008.jpg" width="519" height="629"/>
+            <guid isPermaLink="false">slides/Concourse-Cars-2005-008.jpg</guid>
+        </item>
+        <item>
+            <title>DSC01165</title>
+            <link>slides/DSC01165.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC01165.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC01165.jpg" width="669" height="799"/>
+            <guid isPermaLink="false">slides/DSC01165.jpg</guid>
+        </item>
+        <item>
+            <title>DSC02970</title>
+            <link>slides/DSC02970.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Concourse de Elegance, Pebble Beach</description>
+            <media:description type="html">Concourse de Elegance, Pebble Beach</media:description>
+            <media:thumbnail url="thumbs/DSC02970.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC02970.JPG" width="800" height="599"/>
+            <guid isPermaLink="false">slides/DSC02970.JPG</guid>
+        </item>
+        <item>
+            <title>DSC04788-p</title>
+            <link>slides/DSC04788-p.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC04788-p.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC04788-p.jpg" width="600" height="800"/>
+            <guid isPermaLink="false">slides/DSC04788-p.jpg</guid>
+        </item>
+        <item>
+            <title>DSC04818-p</title>
+            <link>slides/DSC04818-p.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Nicholson Ranch Winery, Sonoma, CA</description>
+            <media:description type="html">Nicholson Ranch Winery, Sonoma, CA</media:description>
+            <media:thumbnail url="thumbs/DSC04818-p.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC04818-p.jpg" width="633" height="800"/>
+            <guid isPermaLink="false">slides/DSC04818-p.jpg</guid>
+        </item>
+        <item>
+            <title>DSC04824-p</title>
+            <link>slides/DSC04824-p.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Nicholson Ranch Winery, Sonoma, CA</description>
+            <media:description type="html">Nicholson Ranch Winery, Sonoma, CA</media:description>
+            <media:thumbnail url="thumbs/DSC04824-p.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC04824-p.jpg" width="800" height="529"/>
+            <guid isPermaLink="false">slides/DSC04824-p.jpg</guid>
+        </item>
+        <item>
+            <title>DSC04839-p</title>
+            <link>slides/DSC04839-p.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Nicholson Ranch Winery, Sonoma, CA</description>
+            <media:description type="html">Nicholson Ranch Winery, Sonoma, CA</media:description>
+            <media:thumbnail url="thumbs/DSC04839-p.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC04839-p.jpg" width="800" height="534"/>
+            <guid isPermaLink="false">slides/DSC04839-p.jpg</guid>
+        </item>
+        <item>
+            <title>DSC05064</title>
+            <link>slides/DSC05064.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Miner Vineyard winery, Napa Valley</description>
+            <media:description type="html">Miner Vineyard winery, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05064.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05064.JPG" width="799" height="574"/>
+            <guid isPermaLink="false">slides/DSC05064.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05067</title>
+            <link>slides/DSC05067.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Miner Vineyard winery, Napa Valley</description>
+            <media:description type="html">Miner Vineyard winery, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05067.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05067.JPG" width="800" height="586"/>
+            <guid isPermaLink="false">slides/DSC05067.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05083</title>
+            <link>slides/DSC05083.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Miner Vineyard winery, Napa Valley</description>
+            <media:description type="html">Miner Vineyard winery, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05083.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05083.JPG" width="800" height="780"/>
+            <guid isPermaLink="false">slides/DSC05083.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05167</title>
+            <link>slides/DSC05167.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC05167.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05167.JPG" width="800" height="702"/>
+            <guid isPermaLink="false">slides/DSC05167.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05499</title>
+            <link>slides/DSC05499.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSC05499.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05499.JPG" width="594" height="602"/>
+            <guid isPermaLink="false">slides/DSC05499.JPG</guid>
+        </item>
+        <item>
+            <title>DSC05513</title>
+            <link>slides/DSC05513.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Mumms Winery, Napa Valley</description>
+            <media:description type="html">Mumms Winery, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/DSC05513.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSC05513.JPG" width="800" height="676"/>
+            <guid isPermaLink="false">slides/DSC05513.JPG</guid>
+        </item>
+        <item>
+            <title>DSCF0038</title>
+            <link>slides/DSCF0038.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0038.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0038.JPG" width="474" height="597"/>
+            <guid isPermaLink="false">slides/DSCF0038.JPG</guid>
+        </item>
+        <item>
+            <title>DSCF0081</title>
+            <link>slides/DSCF0081.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0081.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0081.JPG" width="800" height="491"/>
+            <guid isPermaLink="false">slides/DSCF0081.JPG</guid>
+        </item>
+        <item>
+            <title>DSCF0087b</title>
+            <link>slides/DSCF0087b.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0087b.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0087b.jpg" width="731" height="799"/>
+            <guid isPermaLink="false">slides/DSCF0087b.jpg</guid>
+        </item>
+        <item>
+            <title>DSCF0094</title>
+            <link>slides/DSCF0094.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0094.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0094.JPG" width="614" height="800"/>
+            <guid isPermaLink="false">slides/DSCF0094.JPG</guid>
+        </item>
+        <item>
+            <title>DSCF0096a</title>
+            <link>slides/DSCF0096a.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0096a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0096a.jpg" width="589" height="800"/>
+            <guid isPermaLink="false">slides/DSCF0096a.jpg</guid>
+        </item>
+        <item>
+            <title>DSCF0102</title>
+            <link>slides/DSCF0102.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/DSCF0102.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/DSCF0102.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/DSCF0102.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC05774</title>
+            <link>slides/l-DSC05774.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC05774.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05774.JPG" width="683" height="800"/>
+            <guid isPermaLink="false">slides/l-DSC05774.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC05838</title>
+            <link>slides/l-DSC05838.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/l-DSC05838.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05838.jpg" width="800" height="626"/>
+            <guid isPermaLink="false">slides/l-DSC05838.jpg</guid>
+        </item>
+        <item>
+            <title>l-DSC05901</title>
+            <link>slides/l-DSC05901.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC05901.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05901.JPG" width="800" height="722"/>
+            <guid isPermaLink="false">slides/l-DSC05901.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC05913</title>
+            <link>slides/l-DSC05913.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC05913.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05913.JPG" width="678" height="800"/>
+            <guid isPermaLink="false">slides/l-DSC05913.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC05926</title>
+            <link>slides/l-DSC05926.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC05926.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05926.JPG" width="800" height="579"/>
+            <guid isPermaLink="false">slides/l-DSC05926.JPG</guid>
+        </item>
+        <item>
+            <title>l-DSC05993</title>
+            <link>slides/l-DSC05993.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/l-DSC05993.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/l-DSC05993.JPG" width="569" height="800"/>
+            <guid isPermaLink="false">slides/l-DSC05993.JPG</guid>
+        </item>
+        <item>
+            <title>Misc-2005-039</title>
+            <link>slides/Misc-2005-039.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Harvest time in Napa Valley</description>
+            <media:description type="html">Harvest time in Napa Valley</media:description>
+            <media:thumbnail url="thumbs/Misc-2005-039.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Misc-2005-039.jpg" width="800" height="541"/>
+            <guid isPermaLink="false">slides/Misc-2005-039.jpg</guid>
+        </item>
+        <item>
+            <title>Misc-2005-047</title>
+            <link>slides/Misc-2005-047.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Misc-2005-047.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Misc-2005-047.jpg" width="599" height="800"/>
+            <guid isPermaLink="false">slides/Misc-2005-047.jpg</guid>
+        </item>
+        <item>
+            <title>Misc-2005-049</title>
+            <link>slides/Misc-2005-049.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>A refreshing beer at Rutherford Grill, Napa Valley</description>
+            <media:description type="html">A refreshing beer at Rutherford Grill, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/Misc-2005-049.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Misc-2005-049.jpg" width="563" height="720"/>
+            <guid isPermaLink="false">slides/Misc-2005-049.jpg</guid>
+        </item>
+        <item>
+            <title>moon1</title>
+            <link>slides/moon1.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/moon1.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/moon1.jpg" width="587" height="570"/>
+            <guid isPermaLink="false">slides/moon1.jpg</guid>
+        </item>
+        <item>
+            <title>PICT0010</title>
+            <link>slides/PICT0010.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/PICT0010.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0010.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/PICT0010.JPG</guid>
+        </item>
+        <item>
+            <title>PICT0016</title>
+            <link>slides/PICT0016.JPG</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/PICT0016.JPG" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0016.JPG" width="800" height="600"/>
+            <guid isPermaLink="false">slides/PICT0016.JPG</guid>
+        </item>
+        <item>
+            <title>PICT0021b</title>
+            <link>slides/PICT0021b.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Culinary Institute of America, Napa Valley</description>
+            <media:description type="html">Culinary Institute of America, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/PICT0021b.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/PICT0021b.jpg" width="532" height="800"/>
+            <guid isPermaLink="false">slides/PICT0021b.jpg</guid>
+        </item>
+        <item>
+            <title>s-DSC05961</title>
+            <link>slides/s-DSC05961.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/s-DSC05961.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/s-DSC05961.jpg" width="800" height="686"/>
+            <guid isPermaLink="false">slides/s-DSC05961.jpg</guid>
+        </item>
+        <item>
+            <title>s-DSC06034</title>
+            <link>slides/s-DSC06034.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>San Antonio, TX</description>
+            <media:description type="html">San Antonio, TX</media:description>
+            <media:thumbnail url="thumbs/s-DSC06034.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/s-DSC06034.jpg" width="669" height="800"/>
+            <guid isPermaLink="false">slides/s-DSC06034.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 002a</title>
+            <link>slides/Wine%20Country%2005%20002a.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description>Franciscan Winery, Napa Valley</description>
+            <media:description type="html">Franciscan Winery, Napa Valley</media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20002a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20002a.jpg" width="800" height="660"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20002a.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 006a</title>
+            <link>slides/Wine%20Country%2005%20006a.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20006a.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20006a.jpg" width="751" height="714"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20006a.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 006b</title>
+            <link>slides/Wine%20Country%2005%20006b.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20006b.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20006b.jpg" width="800" height="448"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20006b.jpg</guid>
+        </item>
+        <item>
+            <title>Wine Country 05 008</title>
+            <link>slides/Wine%20Country%2005%20008.jpg</link>
+            <pubDate>Thu, 09 May 2024 13:25:29 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wine%20Country%2005%20008.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wine%20Country%2005%20008.jpg" width="800" height="605"/>
+            <guid isPermaLink="false">slides/Wine%20Country%2005%20008.jpg</guid>
+        </item>
+    </channel>
+</rss>

@@ -1,0 +1,20 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+  Album template author: Laszlo Molnar
+  Site: http://lazaworx.com/
+  Contact: m_laca@yahoo.com
+  Twitter: 
+  Location: Budapest, Hungary
+
+/* THANKS */
+  jAlbum (http://jalbum.net/)
+  textures: webtexture.net, www.tamararogers.co.uk
+  translators: Eyael, Danamel
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: Modernizr, jQuery, Google Maps, Paypal, jQuery history
+  Software: jAlbum
+

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Old Ships</title>
+   	<link>.</link>
+        <generator>jAlbum 34.3</generator>
+   		<description>Pictures of ship paintings taken from a gallery wall in Gloucester, MA</description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>IMG_0345</title>
+            <link>slides/IMG_0345.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0345.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0345.jpg" width="1000" height="639"/>
+            <jalbum:original url="IMG_0345.jpg" width="1000" height="639" fileSize="127535"/>
+            <guid isPermaLink="false">slides/IMG_0345.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0297</title>
+            <link>slides/IMG_0297.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0297.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0297.jpg" width="1000" height="592"/>
+            <jalbum:original url="IMG_0297.jpg" width="1000" height="592" fileSize="121225"/>
+            <guid isPermaLink="false">slides/IMG_0297.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0267</title>
+            <link>slides/IMG_0267.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0267.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0267.jpg" width="1000" height="602"/>
+            <jalbum:original url="IMG_0267.jpg" width="1000" height="602" fileSize="91855"/>
+            <guid isPermaLink="false">slides/IMG_0267.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0279</title>
+            <link>slides/IMG_0279.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0279.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0279.jpg" width="1000" height="586"/>
+            <jalbum:original url="IMG_0279.jpg" width="1000" height="586" fileSize="69553"/>
+            <guid isPermaLink="false">slides/IMG_0279.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0253</title>
+            <link>slides/IMG_0253.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0253.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0253.jpg" width="600" height="800"/>
+            <jalbum:original url="IMG_0253.jpg" width="600" height="800" fileSize="89597"/>
+            <guid isPermaLink="false">slides/IMG_0253.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0305</title>
+            <link>slides/IMG_0305.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0305.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0305.jpg" width="1000" height="730"/>
+            <jalbum:original url="IMG_0305.jpg" width="1000" height="730" fileSize="123633"/>
+            <guid isPermaLink="false">slides/IMG_0305.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0284</title>
+            <link>slides/IMG_0284.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0284.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0284.jpg" width="1000" height="662"/>
+            <jalbum:original url="IMG_0284.jpg" width="1000" height="662" fileSize="94258"/>
+            <guid isPermaLink="false">slides/IMG_0284.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0317</title>
+            <link>slides/IMG_0317.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0317.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0317.jpg" width="1000" height="587"/>
+            <jalbum:original url="IMG_0317.jpg" width="1000" height="587" fileSize="106806"/>
+            <guid isPermaLink="false">slides/IMG_0317.jpg</guid>
+        </item>
+        <item>
+            <title>IMG_0329</title>
+            <link>slides/IMG_0329.jpg</link>
+            <pubDate>Sat, 11 May 2024 08:12:06 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_0329.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_0329.jpg" width="1000" height="629"/>
+            <jalbum:original url="IMG_0329.jpg" width="1000" height="629" fileSize="105086"/>
+            <guid isPermaLink="false">slides/IMG_0329.jpg</guid>
+        </item>
+    </channel>
+</rss>

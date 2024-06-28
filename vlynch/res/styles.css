@@ -1,0 +1,609 @@
+.intro h1, 
+.intro h2,
+.intro h3,
+.intro h4 {
+	text-shadow: 1px 3px 6px rgba(0,0,0,0.4);
+}
+
+* { 
+	margin:0;
+	padding:0;
+}
+html, body { 
+	height:100%;
+}
+html {
+	min-width:984px;
+}
+body { 
+	background:url(images/main-bg.jpg) no-repeat 50% 0 #000; 
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:100%; 
+	line-height:1.125em;
+	color:#aaa7a7;
+}
+
+img {
+	border:0; 
+	vertical-align:top; 
+	text-align:left;
+}
+object { 
+	vertical-align:top; 
+	outline:none;
+}
+ul, ol { 
+	list-style:none;
+}
+table, table td { 
+	padding:0;
+	border:none;
+	border-collapse:collapse;
+}
+
+.fleft { 
+	float:left;
+}
+.fright { 
+	float:right;
+}
+.clear { 
+	clear:both;
+}
+
+.col-1, .col-2, .col-3 { 
+	float:left;
+}
+
+.alignright { 
+	text-align:right;
+}
+.aligncenter { 
+	text-align:center;
+}
+
+.wrapper { 
+	width:100%;
+	overflow:hidden;
+}
+
+
+
+
+/*==== GLOBAL =====*/
+#main, .container {
+	width:984px; 
+	margin:0 auto;
+	font-size:.8125em;
+}
+
+#header {
+	height:195px;
+}
+
+#content {
+	padding:54px 0 75px 25px;
+	overflow:hidden;
+}
+	#content.bg {
+		background:url(images/content-bg.jpg) no-repeat 0 0;
+	}
+
+
+
+/*----- forms parameters -----*/
+
+input, select, textarea { 
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:1em;
+	vertical-align:middle;
+	font-weight:normal;
+}
+
+
+/*----- other -----*/
+.img-indent { 
+	margin:0 23px 0 0; 
+	float:left;
+}
+.img-box { 
+	width:100%; 
+	overflow:hidden; 
+	padding-bottom:25px;
+}
+	.img-box img { 
+		float:left; 
+		margin:0 23px 0 0;
+	}
+
+.extra-wrap { 
+	overflow:hidden;
+}
+
+
+p {
+	margin-bottom:18px;
+}
+.p1 { 
+	margin-bottom:9px;
+}
+.p2 { 
+	margin-bottom:18px;
+}
+.p3 { 
+	margin-bottom:27px;
+}
+.p4 { 
+	margin-bottom:36px;
+}
+
+/*----- txt, links, lines, titles -----*/
+a {
+	color:#2cb43f; 
+	outline:none;
+}
+a:hover{
+	text-decoration:none;
+}
+
+h2 {
+	font-size:30px;
+	line-height:1.2em;
+	font-weight:normal;
+	color:#cdcdcd;
+	border-bottom:3px solid #686868;
+	padding:0 0 9px 0;
+	margin:0 25px 0 0;
+}
+h3 {
+	font-size:16px;
+	color:#cdcdcd;
+	font-weight:normal;
+	line-height:24px;
+	margin-bottom:24px;
+}
+h4 {
+	font-family:   Georgia, "Times New Roman", Times, serif;
+	font-size:24px;
+	line-height:1.1;
+	font-weight: 100;
+	font-style: italic;
+	color:#369431;
+	border-bottom:3px solid #686868;
+	padding:0 0 9px 0;
+	margin:0 25px 0 0;
+}
+h5 {
+	font-size:30px;
+	line-height:1.2em;
+	font-weight: normal    ;
+	font-style:  normal;
+	color:#2cb43f;
+	border-bottom:3px solid #686868;
+	padding:0 0 9px 0;
+	margin:0 25px 0 0;
+}
+
+.txt1 {
+	color:#cdcdcd;
+	font-weight:bold;
+}
+.txt2 {
+	font-size:30px;
+	color:#cdcdcd;
+	font-weight:normal;
+}
+
+.link1 { 
+	display:block;
+	float:left;
+	background:url(images/link1-bg.gif) left top repeat-x; 
+	color:#fff; 
+	text-decoration:none;
+}
+.link1:hover { 
+	text-decoration:underline;
+}
+	.link1 em {
+		display:block;
+		background:url(images/link1-left.gif) no-repeat left top;
+	}
+	.link1 b { 
+		display:block;
+		background:url(images/link1-right.gif) no-repeat right top; 
+		padding:3px 14px 4px 14px; 
+		font-weight:normal; font-style:normal;
+	}
+	
+
+
+
+.address { 
+	float:left;
+}
+	.address dt {
+		margin-bottom:16px;
+	}
+	.address dd { 
+		clear:both;
+		text-align:right;
+	}
+		.address dd span { 
+			float:left;
+			padding-right:25px;
+		}
+
+
+/*===== header =====*/
+#header .row-1 {
+	height:103px;
+	overflow:hidden;
+}
+	#header .row-1 .fleft {
+		padding:22px 0 0 27px;
+	}
+	#header .social-services {
+		float:right;
+		padding:60px 0 0 0;
+	}
+		#header .social-services dt {
+			float:left;
+			text-transform:uppercase;
+			font-size:12px;
+			color:#838282;
+			padding-top:2px;
+		}
+		#header .social-services dd {
+			float:left;
+			padding-left:4px;
+		}
+			#header .social-services ul li {
+				float:left;
+				padding-left:4px;
+			}
+#header .row-2 {
+	height:92px;
+	overflow:hidden;
+	background:url(images/header-bg.jpg) no-repeat 0 0;
+}
+	#header .nav {
+		padding:38px 0 0 20px;
+	}
+		#header .nav li {
+			float:left;
+			padding:0 20px;
+		}
+			#header .nav li a {
+				float:left;
+				color:#ababab;
+				font-size:19px;
+				text-decoration:none;
+				padding:6px 10px 6px 10px;
+				letter-spacing:-1px;
+			}
+				#header .nav li a b {
+					color:#2cb43f;
+				}
+				#header .nav li a:hover, #header .nav li a.current {
+					color:#000;
+					background:url(images/nav-bg.gif) 0 0 repeat-x;
+				}
+					#header .nav li a:hover b, #header .nav li a.current b {
+						color:#fff;
+					}
+					
+
+
+/*===== slider =====*/
+#slider {
+	background:url(images/slider-bg.jpg) no-repeat 0 0;
+	height:540px;
+	overflow:hidden;
+	position:relative;
+}
+	#slider .indent {
+		padding:18px 17px 0 17px;
+	}
+#slider.small {
+	height:390px;
+}
+	
+	
+
+#viewport{
+	width: 950px; /* Defines the size of the visible part of the carousel
+		Attention : if you only want to see plain items in the viewport,
+		the width of the viewport should take into account of :
+		- the items width
+		- the right and left padding of items
+		- the number of items you want to see in the viewport
+	 */
+	overflow:hidden; /* Hides extra elements, those outside the viewport area */
+	position:relative;
+}
+#viewport ul{
+	position: relative; /* Enables positionning of elements inside viewport */
+	padding: 0; /* Resets default - User Agent - style */
+	overflow:hidden;
+	
+}
+#viewport li{
+	width: 310px; /* Defines the size of inner element */
+	height: 473px;
+	position:relative;
+	float: left; /* Places list items side by side*/
+	/* Cosmetic */
+	margin: 0 10px 0 0;
+}
+#slider.small #viewport li {
+	margin-top:-150px;
+}
+	#viewport li a {
+		width:310px;
+		height:473px;
+		float:left;
+		position:relative;
+		display:block;
+		text-decoration:none;
+	}
+		#viewport li a span {
+			width:310px;
+			height:473px;
+			overflow:hidden;
+			position:absolute;
+			display:block;
+			cursor:pointer;
+		}
+		#viewport li a em {
+			font-family:   Georgia, "Times New Roman", Times, serif;
+			width:310px;
+			height:86px;
+			position: absolute;
+			left:0;
+			bottom:-86px;
+			background: rgba(0,0,0,0.8);
+			color:#2cb43f;
+			font-style: italic;
+		}
+			#viewport li a em b {
+				display:block;
+				padding:22px 40px 0 20px;
+				font-weight:bold;
+			}
+				#viewport li a em b i {
+					color:#2cb43f;
+				}
+
+#slider .navigation {
+	width:100%;
+	overflow:hidden;
+	padding-top:10px;
+}
+	#slider .navigation li {
+		float:right;
+		padding-left:5px;
+	}
+		#slider .navigation li a {
+			width:57px;
+			height:29px;
+			overflow:hidden;
+			float:left;
+			text-indent:-9999em;
+			cursor:pointer;
+		}
+			#slider .navigation li a#simplePrevious {
+				cursor:pointer;
+				background:url(images/prev-sprite.gif) no-repeat 0 0;
+			}
+			#slider .navigation li a#simplePrevious:hover {
+				background-position:0 -29px;
+			}
+			#slider .navigation li a#simpleNext {
+				cursor:pointer;
+				background:url(images/next-sprite.gif) no-repeat 0 0
+			}
+			#slider .navigation li a#simpleNext:hover {
+				background-position:0 -29px;
+			}
+
+/*===== content =====*/
+#content .section {
+	padding-bottom:40px;
+}
+
+#content .inside {
+	padding:40px 20px 0 0;
+}
+
+
+.scroll-pane{
+	height:392px;
+	overflow:auto;
+	position:relative;
+}
+.scroll-pane.alt {
+	height:540px;	
+}
+	.scroll-pane .inner {
+		padding:40px 25px 10px 0;
+		zoom:1
+	}
+	.scroll-pane .inner1 {
+		padding:40px 15px 10px 0;
+	}
+
+.jScrollPaneContainer {
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.jScrollPaneTrack {
+	position: absolute;
+	cursor: pointer;
+	right: 0;
+	top: 0;
+	height: 100%;
+	background:url(images/scroll.gif) repeat-y;
+}
+.jScrollPaneDrag {
+	position: absolute;
+	cursor: pointer;
+	overflow: hidden;
+	background:url(images/drag.gif) no-repeat center top;
+	height:62px;
+	margin:0 0 0 -2px;
+}
+
+
+
+.list1 dt {
+	margin-bottom:6px;
+}
+	.list1 dt a {
+		color:#cdcdcd;
+		font-weight:bold;
+		font-size:15px;
+	}
+	.list1 dt em {
+		font-size:13px;
+		font-weight:bold;
+		color:#2cb43f;
+	}
+.list1 dd {
+	padding-bottom:32px;
+}
+
+
+.list2 li {
+	background:url(images/arrow1.gif) no-repeat 0 8px;
+	padding:0 0 12px 20px;
+}
+
+.locations li {
+	padding-bottom:30px;
+}
+	.locations li.last {
+		padding-bottom:0;
+	}
+
+
+
+.testimonials li {
+	text-align:right;
+	padding-bottom:18px;
+}
+	.testimonials li blockquote {
+		text-align:left;
+	}
+
+
+.img-list li {
+	padding-bottom:43px;
+}
+	.img-list li .img-box {
+		padding-bottom:17px;
+	}
+
+
+
+/*===== footer =====*/
+#footer .row-1 {
+	padding:0 0 16px 0;
+}
+#footer .row-2 {
+	background:url(images/footer-bg.gif) 0 0;
+	padding:22px 0 25px 0;
+}
+	
+	#footer .nav {
+		float:left;
+	}
+		#footer .nav li {
+			display:inline;
+			color:#2cb43f;
+		}
+			#footer .nav li a {
+				color:#515151;
+				text-decoration:none;
+				padding:0 24px 0 23px;
+			}
+			#footer .nav li a:hover {
+				color:#fff;
+			}
+	
+	#footer .adv-social {
+		float:right;
+		padding:0 60px 0 0;
+	}
+		#footer .adv-social dt {
+			float:left;
+			padding-right:3px;
+		}
+		#footer .adv-social dd {
+			float:left;
+		}
+			#footer .adv-social dd img {
+				margin-left:5px;
+			}
+	
+	
+	.sponsors-list {
+		float:left;
+		padding:0 0 0 25px;
+	}
+		.sponsors-list li {
+			float:left;
+			padding:0 20px 0 0;
+		}
+	
+	#footer .row-2 .fright {
+		padding:0 55px 0 0;
+		text-align:right;
+		color:#909090;
+	}
+		#footer .row-2 .fright a {
+			color:#909090;
+			text-decoration:none;
+		}
+		#footer .row-2 .fright a:hover {
+			text-decoration:underline;
+			color:#fff;
+		}
+
+
+/*----- forms -----*/
+#contacts-form fieldset {
+	border:none;
+}
+	#contacts-form label {
+		display:block;
+		height:37px;
+		overflow:hidden;
+	}
+		#contacts-form input {
+			width:255px;
+			padding:2px 5px 2px 5px;
+			border:1px solid #474747;
+			background:none;
+			color:#8c8c8c;
+		}
+		#contacts-form textarea {
+			width:255px;
+			padding:2px 5px 2px 5px;
+			border:1px solid #474747;
+			background:none;
+			color:#8c8c8c;
+			height:330px;
+			margin-bottom:22px;
+			overflow:auto;
+		}
+		#contacts-form .link1 {
+			float:right;
+			margin-left:8px;
+			margin-right:14px;
+			display:inline;
+		}
+
+/*==========================================*/
+

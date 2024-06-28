@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Eric Zachary Ryder</title>
+   	<link>.</link>
+        <generator>jAlbum 32.1</generator>
+   		<description></description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+    	<jalbum:link rel="sub" href="Infrared/album.rss" title="Infrared" thumbnail="Infrared/thumbs/Wintry%20Province%2032x17-bw.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Miscellaneous/album.rss" title="Miscellaneous" thumbnail="Miscellaneous/thumbs/18879800.flwrs1.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Cars/album.rss" title="Cars" thumbnail="Cars/thumbs/Concourse-Cars-2005-014.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Real%20Art/album.rss" title="Real Art" thumbnail="Real%20Art/thumbs/IMG_0297.jpg" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Wine%20Country/album.rss" title="Wine Country" thumbnail="Wine%20Country/thumbs/DSCF0047.JPG" thumbnailWidth="212" thumbnailHeight="170" />
+    	<jalbum:link rel="sub" href="Black%20and%20White/album.rss" title="Black and White" thumbnail="Black%20and%20White/thumbs/P1010275.JPG" thumbnailWidth="212" thumbnailHeight="170" />
+        <item>
+            <title>Wintry Province 32x17-bw</title>
+            <link>slides/Wintry%20Province%2032x17-bw.jpg</link>
+            <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1000" height="588"/>
+            <jalbum:exif originalDate="Sat, 08 Sep 2007 10:14:27 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
+            <guid isPermaLink="false">slides/Wintry%20Province%2032x17-bw.jpg</guid>
+        </item>
+    </channel>
+</rss>

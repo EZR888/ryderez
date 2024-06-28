@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Tori</title>
+   	<link>.</link>
+        <generator>jAlbum 31.1</generator>
+   		<description></description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>Main-Pic</title>
+            <link>slides/Main-Pic.png</link>
+            <pubDate>Fri, 14 Jul 2023 14:51:17 -0700</pubDate>
+            <description>Hello,
+&lt;br&gt;
+&lt;br&gt;My name is Victoria Lynch, and I am a graduate of the University of South Carolina, with a major in Marketing and Communications.  I am a Content Strategist, currently based out of Charlotte, NC. &lt;br&gt;
+&lt;br&gt;From experimental passion projects, to advertising assignments through undergrad, I thrive on creative challenges.  I look forward to helping you with your content challenges.
+&lt;br&gt;
+&lt;br&gt;Please peruse my recent work through the Portfolio link above, and I look forward to hearing from you!
+Victoria</description>
+            <media:description type="html">Hello,
+&lt;br&gt;
+&lt;br&gt;My name is Victoria Lynch, and I am a graduate of the University of South Carolina, with a major in Marketing and Communications.  I am a Content Strategist, currently based out of Charlotte, NC. &lt;br&gt;
+&lt;br&gt;From experimental passion projects, to advertising assignments through undergrad, I thrive on creative challenges.  I look forward to helping you with your content challenges.
+&lt;br&gt;
+&lt;br&gt;Please peruse my recent work through the Portfolio link above, and I look forward to hearing from you!
+Victoria</media:description>
+            <media:thumbnail url="thumbs/Main-Pic.png" width="264" height="259"/>
+            <media:content type="image/png" url="slides/Main-Pic.png" width="1020" height="1000"/>
+            <guid isPermaLink="false">slides/Main-Pic.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.51.49 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.51.49%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description>href=&quot;&lt;a href=&quot;https://www.linkedin.com/in/victoria-lynch-02b9a61b7/&quot;&gt;https://www.linkedin.com/in/victoria-lynch-02b9a61b7/&lt;/a&gt;</description>
+            <media:description type="html">href=&quot;&lt;a href=&quot;https://www.linkedin.com/in/victoria-lynch-02b9a61b7/&quot;&gt;https://www.linkedin.com/in/victoria-lynch-02b9a61b7/&lt;/a&gt;</media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.51.49%20PM.png" width="344" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.51.49%20PM.png" width="1131" height="851"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.51.49%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.51.59 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.51.59%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.51.59%20PM.png" width="345" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.51.59%20PM.png" width="1132" height="850"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.51.59%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.52.14 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.52.14%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.52.14%20PM.png" width="345" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.52.14%20PM.png" width="1128" height="845"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.52.14%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.52.21 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.52.21%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.52.21%20PM.png" width="344" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.52.21%20PM.png" width="1126" height="847"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.52.21%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.52.32 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.52.32%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.52.32%20PM.png" width="347" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.52.32%20PM.png" width="1134" height="845"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.52.32%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.52.40 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.52.40%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.52.40%20PM.png" width="345" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.52.40%20PM.png" width="1128" height="846"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.52.40%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.52.53 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.52.53%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.52.53%20PM.png" width="345" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.52.53%20PM.png" width="1128" height="847"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.52.53%20PM.png</guid>
+        </item>
+        <item>
+            <title>Screenshot 2023-07-12 at 3.53.00 PM</title>
+            <link>slides/Screenshot%202023-07-12%20at%203.53.00%20PM.png</link>
+            <pubDate>Fri, 14 Jul 2023 10:27:08 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/Screenshot%202023-07-12%20at%203.53.00%20PM.png" width="343" height="259"/>
+            <media:content type="image/png" url="slides/Screenshot%202023-07-12%20at%203.53.00%20PM.png" width="1123" height="848"/>
+            <guid isPermaLink="false">slides/Screenshot%202023-07-12%20at%203.53.00%20PM.png</guid>
+        </item>
+    </channel>
+</rss>

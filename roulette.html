@@ -70,11 +70,22 @@
     #TotalsTable td {
       background-color: lightgray; /* Light gray for content cells in the Totals table */
     }
+
+    /* CSS animation for spinning the image */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Apply animation to the image */
+    .spin {
+      animation: spin 2s linear infinite; /* Faster spinning animation */
+    }
   </style>
 </head>
 <body>
 <div>
-  <center><h1>Roulette Random Picker</h1><img src="rouwheel.png"><img src="roufield.png"></center><br>
+  <center><h1>Roulette Random Picker</h1><img id="rouletteWheel" src="rouwheel.png"><img src="roufield.png"></center><br>
 </div>
   <center>
     <label for="x">Number of runs:</label>
@@ -87,7 +98,7 @@
   <center><h3>Each run performs the number of sets indicated above.</h3></center>
   
   <center>
-    <button onclick="runMain()">Run Simulation</button>
+    <button onclick="runSimulation()">Run Simulation</button>
     <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
   </center>
   <pre id="output"></pre>
@@ -146,9 +157,28 @@
       exportTotalsToCSV(Totals, 'totals_data.csv');
     });
 
-    // Define the main function
-    function main() {
+    // Function to run the simulation
+    function runSimulation() {
       clearArrays(); // Clear arrays before each simulation run
+      document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
+      document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
+
+      setTimeout(function() {
+        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
+        populateTotalsTable(); // Populate Totals table after spinning stops
+      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+    }
+
+    // Function to populate Totals table
+    function populateTotalsTable() {
+      runMain(); // Execute the main function to populate Totals array
+
+      // Display Totals data in the table with colors
+      displayTotalsTableWithColors(Totals);
+    }
+
+    // Define the main function
+    function runMain() {
       const runs = parseInt(document.getElementById('x').value);
       const sets = parseInt(document.getElementById('y').value);
       let output = '';
@@ -165,20 +195,7 @@
 
       // Display output in the <pre> element
       document.getElementById('output').innerHTML = output;
-
-      // Display Totals data in the table with colors
-      displayTotalsTableWithColors(Totals);
     }
-
-    // Function to run main and clear arrays
-    function runMain() {
-      main();
-    }
-
-    // Call the main function when the page loads
-    window.onload = function() {
-      runMain();
-    };
 
     // Function to display Totals array as a table with red/green formatting
     function displayTotalsTableWithColors(Totals) {
@@ -208,7 +225,7 @@
       // Close the header row
       output += "</tr>";
 
-      // Data row
+      // Data row with initial zeros
       output += "<tr>";
       output += "<th class='black'></th>"; // Black background for the first column header, white text color
 
@@ -229,6 +246,11 @@
 
       document.getElementById('TotalsTableContainer').innerHTML = output; // Update TotalsTable content
     }
+
+    // Call the populateTotalsTable function when the page loads
+    window.onload = function() {
+      populateTotalsTable();
+    };
 
   </script>
   <br><br><br>

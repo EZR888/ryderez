@@ -160,6 +160,7 @@
     // Function to run the simulation
     function runSimulation() {
       clearArrays(); // Clear arrays before each simulation run
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
       document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 

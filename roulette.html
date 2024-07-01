@@ -98,7 +98,7 @@
   <center><h3>Each run performs the number of sets indicated above.</h3></center>
   
   <center>
-    <button onclick="singleSpin()">Single Spin</button>&nbsp;&nbsp; <!-- Single Spin button -->
+    <button onclick="singleSpin()">Single Spin</button>&nbsp;&nbsp; <!-- Replace input field with button -->
     <button onclick="runSimulation()">Run Simulation</button>
     <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
   </center>
@@ -169,52 +169,34 @@
 
       setTimeout(function() {
         document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
-        runSingleSpin(); // Execute single spin after animation stops
+        for (let n = 1; n <= 1; n++) {
+          let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+          Totals[c1] += 1; // Increment corresponding index in Totals array
+        }
+        populateTotalsTable(); // Populate Totals table after spinning stops
+        singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
       }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
-    }
-
-    // Function to run single spin logic
-    function runSingleSpin() {
-      clearArrays(); // Clear arrays before single spin
-      const spins = 1; // Number of spins for single spin
-
-      for (let n = 1; n <= spins; n++) {
-        let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-        Totals[c1] += 1; // Increment corresponding index in Totals array
-      }
-          
-      populateTotalsTable(); // Populate Totals table after single spin stops
     }
 
     // Function to run the simulation
     function runSimulation() {
-      clearArrays(); // Clear arrays before simulation run
+      clearArrays(); // Clear arrays before single spin
       document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
       document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 
       setTimeout(function() {
         document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
-        runFullSimulation(); // Execute full simulation after animation stops
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
-    }
-
-    // Function to run full simulation logic
-    function runFullSimulation() {
-      clearArrays(); // Clear arrays before each simulation run
-      const runs = parseInt(document.getElementById('x').value);
-      const sets = parseInt(document.getElementById('y').value);
-
-      for (let x = 1; x <= runs; x++) {
-        for (let y = 1; y <= sets; y++) {
-          for (let n = 1; n <= 38; n++) {
-            let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-            Totals[c1] += 1; // Increment corresponding index in Totals array
+        for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
+          for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
+            for (let n = 1; n <= 38; n++) {
+              let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+              Totals[c1] += 1; // Increment corresponding index in Totals array
+            }
           }
         }
-      }
-
-      populateTotalsTable(); // Populate Totals table after simulation stops
+        populateTotalsTable(); // Populate Totals table after simulation
+      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
     // Function to populate Totals table
@@ -263,7 +245,14 @@
         } else {
           cellValue = Totals[number];
         }
-        output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
+        // Check if singleSpinClicked is true and cellValue is 1
+        if (singleSpinClicked && cellValue === 1) {
+          output += "<td class='numeric bold' style='background-color: white; color: red;'>✘</td>"; // Display red X
+        } else {
+          // Replace 0 with empty string
+          cellValue = (cellValue === 0) ? '' : cellValue;
+          output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
+        }
       });
 
       output += "</tr>";

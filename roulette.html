@@ -13,7 +13,7 @@
     }
     th, td {
       border: 1px solid black;
-      padding: 8px;
+      padding: 16px; /* Increased padding */
       text-align: center;
     }
     th {
@@ -71,6 +71,18 @@
       background-color: lightgray; /* Light gray for content cells in the Totals table */
     }
 
+    /* Blinking animation */
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: gray; }
+      100% { background-color: white; }
+    }
+
+    /* Apply blinking animation to cell */
+    .blink-bg {
+      animation: blink 0.5s infinite;
+    }
+
     /* CSS animation for spinning the image */
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -80,6 +92,11 @@
     /* Apply animation to the image */
     .spin {
       animation: spin 2s linear infinite; /* Faster spinning animation */
+    }
+
+    /* Double height for content cells */
+    .double-height {
+      height: 48px; /* Adjust height as needed */
     }
   </style>
 </head>
@@ -98,7 +115,7 @@
   <center><h3>Each run performs the number of sets indicated above.</h3></center>
   
   <center>
-    <button onclick="singleSpin()">Single Spin</button>&nbsp;&nbsp; <!-- Replace input field with button -->
+    <button onclick="singleSpin()">Single Spin</button> <!-- Replace input field with button -->
     <button onclick="runSimulation()">Run Simulation</button>
     <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
   </center>
@@ -169,10 +186,8 @@
 
       setTimeout(function() {
         document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
-        for (let n = 1; n <= 1; n++) {
-          let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-          Totals[c1] += 1; // Increment corresponding index in Totals array
-        }
+        let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+        Totals[c1] += 1; // Increment corresponding index in Totals array
         populateTotalsTable(); // Populate Totals table after spinning stops
         singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
       }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
@@ -247,7 +262,7 @@
         }
         // Check if singleSpinClicked is true and cellValue is 1
         if (singleSpinClicked && cellValue === 1) {
-          output += "<td class='numeric bold' style='background-color: white; color: red;'>✘</td>"; // Display red X
+          output += "<td class='numeric bold blink-bg'></td>"; // Apply blinking background and double height class
         } else {
           // Replace 0 with empty string
           cellValue = (cellValue === 0) ? '' : cellValue;

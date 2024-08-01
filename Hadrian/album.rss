@@ -9,6 +9,26 @@
    		<description>and the Lanercost Priory</description>
         <jalbum:absolutePath></jalbum:absolutePath>
         <item>
+            <title>https://www.english-heritage.org.uk/visit/places/hadrians-wall/hadrians-wall-history-and-stories/history/</title>
+            <link>slides/IMG_1.png</link>
+            <pubDate>Thu, 01 Aug 2024 13:07:59 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_1.png" width="212" height="170"/>
+            <media:content type="image/png" url="slides/IMG_1.png" width="1000" height="689"/>
+            <guid isPermaLink="false">slides/IMG_1.png</guid>
+        </item>
+        <item>
+            <title>https://www.english-heritage.org.uk/visit/places/lanercost-priory/history/</title>
+            <link>slides/IMG_2.jpg</link>
+            <pubDate>Thu, 01 Aug 2024 13:07:59 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_2.jpg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_2.jpg" width="1000" height="686"/>
+            <guid isPermaLink="false">slides/IMG_2.jpg</guid>
+        </item>
+        <item>
             <title>IMG_4126</title>
             <link>slides/IMG_4126.jpeg</link>
             <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
@@ -59,7 +79,7 @@
             <description></description>
             <media:description type="html"></media:description>
             <media:thumbnail url="thumbs/IMG_4132.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_4132.jpeg" width="612" height="800"/>
+            <media:content type="image/jpeg" url="slides/IMG_4132.jpeg" width="866" height="636"/>
             <jalbum:exif originalDate="Mon, 15 Jul 2024 11:36:56 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
             <guid isPermaLink="false">slides/IMG_4132.jpeg</guid>
         </item>
@@ -383,17 +403,6 @@
             <guid isPermaLink="false">slides/IMG_4170.jpeg</guid>
         </item>
         <item>
-            <title>IMG_4172</title>
-            <link>slides/IMG_4172.jpeg</link>
-            <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/IMG_4172.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_4172.jpeg" width="646" height="800"/>
-            <jalbum:exif originalDate="Mon, 15 Jul 2024 12:51:56 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/IMG_4172.jpeg</guid>
-        </item>
-        <item>
             <title>IMG_4173</title>
             <link>slides/IMG_4173.jpeg</link>
             <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
@@ -460,7 +469,7 @@
             <guid isPermaLink="false">slides/IMG_4178.jpeg</guid>
         </item>
         <item>
-            <title>IMG_4179</title>
+            <title>I&apos;ll leave this section with this horrible photo of us.</title>
             <link>slides/IMG_4179.jpeg</link>
             <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
             <description></description>
@@ -469,28 +478,6 @@
             <media:content type="image/jpeg" url="slides/IMG_4179.jpeg" width="600" height="800"/>
             <jalbum:exif originalDate="Mon, 15 Jul 2024 12:59:48 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
             <guid isPermaLink="false">slides/IMG_4179.jpeg</guid>
-        </item>
-        <item>
-            <title>IMG_4167</title>
-            <link>slides/IMG_4167.jpeg</link>
-            <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/IMG_4167.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_4167.jpeg" width="750" height="797"/>
-            <jalbum:exif originalDate="Mon, 15 Jul 2024 12:08:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/IMG_4167.jpeg</guid>
-        </item>
-        <item>
-            <title>IMG_4131</title>
-            <link>slides/IMG_4131.jpeg</link>
-            <pubDate>Mon, 29 Jul 2024 14:33:03 -0700</pubDate>
-            <description></description>
-            <media:description type="html"></media:description>
-            <media:thumbnail url="thumbs/IMG_4131.jpeg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/IMG_4131.jpeg" width="1000" height="750"/>
-            <jalbum:exif originalDate="Mon, 15 Jul 2024 11:32:27 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
-            <guid isPermaLink="false">slides/IMG_4131.jpeg</guid>
         </item>
     </channel>
 </rss>

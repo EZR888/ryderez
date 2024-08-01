@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>Homeward-bound</title>
+   	<link>.</link>
+        <generator>jAlbum 34.3</generator>
+   		<description>Ready for an 11 hour flight home...</description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>British Airways First Class lounge</title>
+            <link>slides/IMG_4715.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4715.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4715.jpeg" width="1000" height="443"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 09:36:28 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4715.jpeg</guid>
+        </item>
+        <item>
+            <title>Our plane...</title>
+            <link>slides/IMG_4716.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4716.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4716.jpeg" width="774" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:05:15 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4716.jpeg</guid>
+        </item>
+        <item>
+            <title>Surprisingly great food...</title>
+            <link>slides/IMG_4720.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4720.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4720.jpeg" width="872" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:19:17 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4720.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4721</title>
+            <link>slides/IMG_4721.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4721.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4721.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:20:06 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4721.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4722</title>
+            <link>slides/IMG_4722.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4722.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4722.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:20:26 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4722.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4723</title>
+            <link>slides/IMG_4723.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4723.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4723.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:20:37 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4723.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4725</title>
+            <link>slides/IMG_4725.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4725.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4725.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 10:20:58 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4725.jpeg</guid>
+        </item>
+        <item>
+            <title>Horrible lighting, giving Terri a &quot;Queen Mum&quot; look...</title>
+            <link>slides/IMG_4711.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4711.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4711.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 07:28:35 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4711.jpeg</guid>
+        </item>
+        <item>
+            <title>I look tired...</title>
+            <link>slides/IMG_4713.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:17:31 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4713.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4713.jpeg" width="645" height="800"/>
+            <jalbum:exif originalDate="Mon, 22 Jul 2024 07:29:05 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4713.jpeg</guid>
+        </item>
+    </channel>
+</rss>

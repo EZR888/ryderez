@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>London</title>
+   	<link>.</link>
+        <generator>jAlbum 34.3</generator>
+   		<description>Our last day of the trip...</description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>IMG_4602</title>
+            <link>slides/IMG_4602.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4602.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4602.jpeg" width="432" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 16:01:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4602.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4606</title>
+            <link>slides/IMG_4606.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4606.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4606.jpeg" width="732" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 16:25:24 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4606.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4611</title>
+            <link>slides/IMG_4611.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4611.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4611.jpeg" width="697" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 16:39:58 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4611.jpeg</guid>
+        </item>
+        <item>
+            <title>The Last Supper.  Ceaser Salad with (supposed) Grilled Chicken.  And Bacon.</title>
+            <link>slides/IMG_4617.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4617.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4617.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 17:38:19 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4617.jpeg</guid>
+        </item>
+        <item>
+            <title>Sticky Toffee Pudding.  Nothing pudding about it.  But real good.</title>
+            <link>slides/IMG_4620.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4620.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4620.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:10:40 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4620.jpeg</guid>
+        </item>
+        <item>
+            <title>Tower Bridge, as seen from the Sky Garden building.</title>
+            <link>slides/IMG_4621.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4621.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4621.jpeg" width="717" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:33:25 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4621.jpeg</guid>
+        </item>
+        <item>
+            <title>Tower of London.  I think.</title>
+            <link>slides/IMG_4622.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4622.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4622.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:34:51 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4622.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4623</title>
+            <link>slides/IMG_4623.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4623.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4623.jpeg" width="1000" height="753"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:34:56 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4623.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4624</title>
+            <link>slides/IMG_4624.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4624.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4624.jpeg" width="790" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:36:14 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4624.jpeg</guid>
+        </item>
+        <item>
+            <title>The London Eye.  Couldn&apos;t get tickets.</title>
+            <link>slides/IMG_4626.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4626.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4626.jpeg" width="809" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:41:09 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4626.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4628</title>
+            <link>slides/IMG_4628.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4628.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4628.jpeg" width="850" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:41:34 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4628.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4629</title>
+            <link>slides/IMG_4629.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4629.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4629.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:42:16 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4629.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4630</title>
+            <link>slides/IMG_4630.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4630.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4630.jpeg" width="1000" height="767"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:45:04 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4630.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4631</title>
+            <link>slides/IMG_4631.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4631.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4631.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:46:07 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4631.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4632</title>
+            <link>slides/IMG_4632.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4632.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4632.jpeg" width="952" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:47:26 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4632.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4633</title>
+            <link>slides/IMG_4633.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4633.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4633.jpeg" width="762" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:47:33 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4633.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4634</title>
+            <link>slides/IMG_4634.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4634.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4634.jpeg" width="743" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:48:15 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4634.jpeg</guid>
+        </item>
+        <item>
+            <title>&quot;Look kids!  Big Ben!&quot;</title>
+            <link>slides/IMG_4636.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4636.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4636.jpeg" width="414" height="800"/>
+            <guid isPermaLink="false">slides/IMG_4636.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4637</title>
+            <link>slides/IMG_4637.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4637.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4637.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:59:06 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4637.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4638</title>
+            <link>slides/IMG_4638.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4638.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4638.jpeg" width="537" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 18:59:48 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4638.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4640</title>
+            <link>slides/IMG_4640.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4640.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4640.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:00:32 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4640.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4641</title>
+            <link>slides/IMG_4641.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4641.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4641.jpeg" width="669" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:01:18 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4641.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4642</title>
+            <link>slides/IMG_4642.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4642.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4642.jpeg" width="747" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:01:26 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4642.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4643</title>
+            <link>slides/IMG_4643.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4643.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4643.jpeg" width="1000" height="687"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:02:49 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4643.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4644</title>
+            <link>slides/IMG_4644.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4644.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4644.jpeg" width="641" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:03:16 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4644.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4645</title>
+            <link>slides/IMG_4645.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4645.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4645.jpeg" width="1000" height="779"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:04:20 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4645.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4646</title>
+            <link>slides/IMG_4646.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4646.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4646.jpeg" width="473" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:05:08 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4646.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4647</title>
+            <link>slides/IMG_4647.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4647.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4647.jpeg" width="1000" height="609"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:06:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4647.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4648</title>
+            <link>slides/IMG_4648.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4648.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4648.jpeg" width="594" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:06:54 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4648.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4650</title>
+            <link>slides/IMG_4650.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4650.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4650.jpeg" width="629" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:07:29 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4650.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4651</title>
+            <link>slides/IMG_4651.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4651.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4651.jpeg" width="694" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:09:08 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4651.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4652</title>
+            <link>slides/IMG_4652.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4652.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4652.jpeg" width="566" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:09:59 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4652.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4653</title>
+            <link>slides/IMG_4653.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4653.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4653.jpeg" width="516" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:10:07 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4653.jpeg</guid>
+        </item>
+        <item>
+            <title>Kim and Guido stopped for a rest...</title>
+            <link>slides/IMG_4655.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4655.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4655.jpeg" width="614" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:12:18 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4655.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4656</title>
+            <link>slides/IMG_4656.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4656.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4656.jpeg" width="943" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:21:58 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4656.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4657</title>
+            <link>slides/IMG_4657.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4657.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4657.jpeg" width="606" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:22:00 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4657.jpeg</guid>
+        </item>
+        <item>
+            <title>Fun part of this drawing is the heads on spikes in the lower right corner...</title>
+            <link>slides/IMG_4659.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4659.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4659.jpeg" width="639" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:22:52 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4659.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4660</title>
+            <link>slides/IMG_4660.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4660.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4660.jpeg" width="903" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:24:10 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4660.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4661</title>
+            <link>slides/IMG_4661.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4661.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4661.jpeg" width="636" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:26:00 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4661.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4662</title>
+            <link>slides/IMG_4662.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4662.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4662.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:26:50 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4662.jpeg</guid>
+        </item>
+        <item>
+            <title>Gotta love a Black Cab ride...</title>
+            <link>slides/IMG_4664.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4664.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4664.jpeg" width="815" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:29:11 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4664.jpeg</guid>
+        </item>
+        <item>
+            <title>That guy in the window looks familiar...</title>
+            <link>slides/IMG_4666.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4666.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4666.jpeg" width="648" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:30:50 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4666.jpeg</guid>
+        </item>
+        <item>
+            <title>The London Eye</title>
+            <link>slides/IMG_4675.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4675.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4675.jpeg" width="958" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:56:28 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4675.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4680</title>
+            <link>slides/IMG_4680.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4680.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4680.jpeg" width="620" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:58:15 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4680.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4681</title>
+            <link>slides/IMG_4681.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4681.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4681.jpeg" width="736" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:58:22 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4681.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4685</title>
+            <link>slides/IMG_4685.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4685.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4685.jpeg" width="526" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 19:59:41 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4685.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4692</title>
+            <link>slides/IMG_4692.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4692.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4692.jpeg" width="1000" height="611"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:01:04 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4692.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4695</title>
+            <link>slides/IMG_4695.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4695.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4695.jpeg" width="600" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:04:17 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4695.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4699</title>
+            <link>slides/IMG_4699.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4699.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4699.jpeg" width="900" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:05:31 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4699.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4703</title>
+            <link>slides/IMG_4703.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4703.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4703.jpeg" width="682" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:05:50 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4703.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4705</title>
+            <link>slides/IMG_4705.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4705.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4705.jpeg" width="826" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:07:00 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4705.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4706</title>
+            <link>slides/IMG_4706.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4706.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4706.jpeg" width="799" height="800"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:07:11 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4706.jpeg</guid>
+        </item>
+        <item>
+            <title>IMG_4707</title>
+            <link>slides/IMG_4707.jpeg</link>
+            <pubDate>Tue, 30 Jul 2024 13:08:52 -0700</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/IMG_4707.jpeg" width="212" height="170"/>
+            <media:content type="image/jpeg" url="slides/IMG_4707.jpeg" width="1000" height="546"/>
+            <jalbum:exif originalDate="Sun, 21 Jul 2024 20:07:16 -0700" cameraMake="Apple" cameraModel="iPhone 15 Pro Max"/>
+            <guid isPermaLink="false">slides/IMG_4707.jpeg</guid>
+        </item>
+    </channel>
+</rss>

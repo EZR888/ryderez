@@ -4,7 +4,7 @@
      xmlns:jalbum="http://jalbum.net/jalbumrss">
     <channel>
         <title>Infrared</title>
-   	<link>..</link>
+   	<link>.</link>
         <generator>jAlbum 34.3</generator>
    		<description></description>
         <jalbum:absolutePath></jalbum:absolutePath>
@@ -14,8 +14,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>St. Helena, NV</description>
             <media:description type="html">St. Helena, NV</media:description>
-            <media:thumbnail url="thumbs/vineyard-sentinels-II.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/vineyard-sentinels-II.jpg" width="1000" height="579"/>
+            <media:thumbnail url="thumbs/vineyard-sentinels-II.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/vineyard-sentinels-II.jpg" width="1368" height="792"/>
             <guid isPermaLink="false">slides/vineyard-sentinels-II.jpg</guid>
         </item>
         <item>
@@ -24,8 +24,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Near Yountville, Napa Valley</description>
             <media:description type="html">Near Yountville, Napa Valley</media:description>
-            <media:thumbnail url="thumbs/vineyard-vogue.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/vineyard-vogue.jpg" width="579" height="800"/>
+            <media:thumbnail url="thumbs/vineyard-vogue.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/vineyard-vogue.jpg" width="652" height="900"/>
             <guid isPermaLink="false">slides/vineyard-vogue.jpg</guid>
         </item>
         <item>
@@ -34,8 +34,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Columbia River Gorge, OR</description>
             <media:description type="html">Columbia River Gorge, OR</media:description>
-            <media:thumbnail url="thumbs/Snowy%20Creek%2028x20.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Snowy%20Creek%2028x20.jpg" width="533" height="800"/>
+            <media:thumbnail url="thumbs/Snowy%20Creek%2028x20.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Snowy%20Creek%2028x20.jpg" width="600" height="900"/>
             <jalbum:exif originalDate="Mon, 09 Oct 2006 04:01:32 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/Snowy%20Creek%2028x20.jpg</guid>
         </item>
@@ -45,8 +45,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Peju Winery, Napa Valley, 2007</description>
             <media:description type="html">Peju Winery, Napa Valley, 2007</media:description>
-            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1000" height="588"/>
+            <media:thumbnail url="thumbs/Wintry%20Province%2032x17-bw.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Wintry%20Province%2032x17-bw.jpg" width="1530" height="900"/>
             <jalbum:exif originalDate="Sat, 08 Sep 2007 10:14:27 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/Wintry%20Province%2032x17-bw.jpg</guid>
         </item>
@@ -56,8 +56,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Goldeneye, Anderson Valley</description>
             <media:description type="html">Goldeneye, Anderson Valley</media:description>
-            <media:thumbnail url="thumbs/goldeneye-ir.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/goldeneye-ir.jpg" width="1000" height="735"/>
+            <media:thumbnail url="thumbs/goldeneye-ir.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/goldeneye-ir.jpg" width="1224" height="900"/>
             <jalbum:exif originalDate="Fri, 29 Mar 2013 15:16:14 -0700" cameraMake="Canon" cameraModel="Canon PowerShot SX230 HS"/>
             <guid isPermaLink="false">slides/goldeneye-ir.jpg</guid>
         </item>
@@ -67,8 +67,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Napa Valley</description>
             <media:description type="html">Napa Valley</media:description>
-            <media:thumbnail url="thumbs/OMT2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/OMT2.jpg" width="1000" height="699"/>
+            <media:thumbnail url="thumbs/OMT2.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/OMT2.jpg" width="1288" height="900"/>
             <jalbum:exif originalDate="Sun, 07 Apr 2013 16:34:45 -0700" cameraMake="Canon" cameraModel="Canon PowerShot SX230 HS"/>
             <guid isPermaLink="false">slides/OMT2.jpg</guid>
         </item>
@@ -78,8 +78,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Yountville, NV</description>
             <media:description type="html">Yountville, NV</media:description>
-            <media:thumbnail url="thumbs/dreamscape.JPG" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/dreamscape.JPG" width="1000" height="667"/>
+            <media:thumbnail url="thumbs/dreamscape.JPG" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/dreamscape.JPG" width="1350" height="900"/>
             <jalbum:exif originalDate="Thu, 17 Jun 2010 14:41:23 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/dreamscape.JPG</guid>
         </item>
@@ -89,8 +89,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Domaine Chandon, NV</description>
             <media:description type="html">Domaine Chandon, NV</media:description>
-            <media:thumbnail url="thumbs/Toadstool%20Garden%2020x28.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Toadstool%20Garden%2020x28.jpg" width="533" height="800"/>
+            <media:thumbnail url="thumbs/Toadstool%20Garden%2020x28.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Toadstool%20Garden%2020x28.jpg" width="600" height="900"/>
             <jalbum:exif originalDate="Sun, 13 Aug 2006 04:33:57 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/Toadstool%20Garden%2020x28.jpg</guid>
         </item>
@@ -100,8 +100,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Clo Pegas Winery, NV</description>
             <media:description type="html">Clo Pegas Winery, NV</media:description>
-            <media:thumbnail url="thumbs/clos-pegase-01.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/clos-pegase-01.jpg" width="567" height="800"/>
+            <media:thumbnail url="thumbs/clos-pegase-01.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/clos-pegase-01.jpg" width="637" height="900"/>
             <jalbum:exif originalDate="Sat, 15 Sep 2007 16:18:15 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/clos-pegase-01.jpg</guid>
         </item>
@@ -111,8 +111,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Signorello Vineyards, Sonoma</description>
             <media:description type="html">Signorello Vineyards, Sonoma</media:description>
-            <media:thumbnail url="thumbs/signorello-02.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/signorello-02.jpg" width="1000" height="589"/>
+            <media:thumbnail url="thumbs/signorello-02.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/signorello-02.jpg" width="1528" height="900"/>
             <jalbum:exif originalDate="Sat, 20 Oct 2007 14:33:55 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/signorello-02.jpg</guid>
         </item>
@@ -122,8 +122,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Signorello Vineyards, Sonoma</description>
             <media:description type="html">Signorello Vineyards, Sonoma</media:description>
-            <media:thumbnail url="thumbs/signorello-01.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/signorello-01.jpg" width="614" height="800"/>
+            <media:thumbnail url="thumbs/signorello-01.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/signorello-01.jpg" width="691" height="900"/>
             <jalbum:exif originalDate="Sat, 20 Oct 2007 14:32:11 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/signorello-01.jpg</guid>
         </item>
@@ -133,8 +133,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rubicon Winery, NV</description>
             <media:description type="html">Rubicon Winery, NV</media:description>
-            <media:thumbnail url="thumbs/rubicon-10.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/rubicon-10.jpg" width="522" height="800"/>
+            <media:thumbnail url="thumbs/rubicon-10.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/rubicon-10.jpg" width="587" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 11:35:07 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/rubicon-10.jpg</guid>
         </item>
@@ -144,8 +144,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Peju Winery, NV</description>
             <media:description type="html">Peju Winery, NV</media:description>
-            <media:thumbnail url="thumbs/peju-statue-01bw-smug.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/peju-statue-01bw-smug.jpg" width="1000" height="702"/>
+            <media:thumbnail url="thumbs/peju-statue-01bw-smug.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/peju-statue-01bw-smug.jpg" width="1281" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 13:19:49 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/peju-statue-01bw-smug.jpg</guid>
         </item>
@@ -155,8 +155,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Point Reyes</description>
             <media:description type="html">Point Reyes</media:description>
-            <media:thumbnail url="thumbs/Tired%20of%20Fishing%2028x20.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Tired%20of%20Fishing%2028x20.jpg" width="1000" height="750"/>
+            <media:thumbnail url="thumbs/Tired%20of%20Fishing%2028x20.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Tired%20of%20Fishing%2028x20.jpg" width="1200" height="900"/>
             <jalbum:exif originalDate="Sat, 18 Aug 2007 20:32:13 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/Tired%20of%20Fishing%2028x20.jpg</guid>
         </item>
@@ -166,8 +166,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Point Arena, CA</description>
             <media:description type="html">Point Arena, CA</media:description>
-            <media:thumbnail url="thumbs/lighthouse-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/lighthouse-1.jpg" width="1000" height="766"/>
+            <media:thumbnail url="thumbs/lighthouse-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/lighthouse-1.jpg" width="1175" height="900"/>
             <jalbum:exif originalDate="Sun, 31 Mar 2013 13:45:20 -0700" cameraMake="Canon" cameraModel="Canon PowerShot SX230 HS"/>
             <guid isPermaLink="false">slides/lighthouse-1.jpg</guid>
         </item>
@@ -177,8 +177,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Marin Headlands</description>
             <media:description type="html">Marin Headlands</media:description>
-            <media:thumbnail url="thumbs/marin-head.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/marin-head.jpg" width="800" height="800"/>
+            <media:thumbnail url="thumbs/marin-head.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/marin-head.jpg" width="900" height="900"/>
             <jalbum:exif originalDate="Sun, 11 Jul 2010 17:01:54 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/marin-head.jpg</guid>
         </item>
@@ -188,8 +188,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Franciscan Winery, NV</description>
             <media:description type="html">Franciscan Winery, NV</media:description>
-            <media:thumbnail url="thumbs/icon-01.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/icon-01.jpg" width="1000" height="688"/>
+            <media:thumbnail url="thumbs/icon-01.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/icon-01.jpg" width="1309" height="900"/>
             <jalbum:exif originalDate="Sat, 20 Oct 2007 16:03:37 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/icon-01.jpg</guid>
         </item>
@@ -199,8 +199,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rte 29, Napa Valley</description>
             <media:description type="html">Rte 29, Napa Valley</media:description>
-            <media:thumbnail url="thumbs/lookout-3.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/lookout-3.jpg" width="1000" height="731"/>
+            <media:thumbnail url="thumbs/lookout-3.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/lookout-3.jpg" width="1232" height="900"/>
             <jalbum:exif originalDate="Mon, 22 Nov 2010 11:23:50 -0800" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/lookout-3.jpg</guid>
         </item>
@@ -210,8 +210,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Sterling Vineyards, Napa Valley</description>
             <media:description type="html">Sterling Vineyards, Napa Valley</media:description>
-            <media:thumbnail url="thumbs/Sterling%20Silver%20Trees%2022x20.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Sterling%20Silver%20Trees%2022x20.jpg" width="800" height="800"/>
+            <media:thumbnail url="thumbs/Sterling%20Silver%20Trees%2022x20.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Sterling%20Silver%20Trees%2022x20.jpg" width="900" height="900"/>
             <jalbum:exif originalDate="Sat, 15 Sep 2007 16:06:35 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/Sterling%20Silver%20Trees%2022x20.jpg</guid>
         </item>
@@ -221,8 +221,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rubicon Winery, NV</description>
             <media:description type="html">Rubicon Winery, NV</media:description>
-            <media:thumbnail url="thumbs/rubicon-05.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/rubicon-05.jpg" width="533" height="800"/>
+            <media:thumbnail url="thumbs/rubicon-05.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/rubicon-05.jpg" width="600" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 11:37:06 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/rubicon-05.jpg</guid>
         </item>
@@ -232,8 +232,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Point Reyes</description>
             <media:description type="html">Point Reyes</media:description>
-            <media:thumbnail url="thumbs/epic.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/epic.jpg" width="1000" height="734"/>
+            <media:thumbnail url="thumbs/epic.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/epic.jpg" width="1225" height="900"/>
             <jalbum:exif originalDate="Sun, 14 Mar 2010 18:07:25 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/epic.jpg</guid>
         </item>
@@ -243,8 +243,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Horsetail Falls, OR</description>
             <media:description type="html">Horsetail Falls, OR</media:description>
-            <media:thumbnail url="thumbs/horsetailfalls.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/horsetailfalls.jpg" width="617" height="800"/>
+            <media:thumbnail url="thumbs/horsetailfalls.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/horsetailfalls.jpg" width="694" height="900"/>
             <jalbum:exif originalDate="Mon, 09 Oct 2006 02:44:52 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/horsetailfalls.jpg</guid>
         </item>
@@ -254,8 +254,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rubicon Winery, NV</description>
             <media:description type="html">Rubicon Winery, NV</media:description>
-            <media:thumbnail url="thumbs/rubicon-02.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/rubicon-02.jpg" width="1000" height="674"/>
+            <media:thumbnail url="thumbs/rubicon-02.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/rubicon-02.jpg" width="1336" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 11:31:17 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/rubicon-02.jpg</guid>
         </item>
@@ -265,8 +265,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rte 29, Napa Valley</description>
             <media:description type="html">Rte 29, Napa Valley</media:description>
-            <media:thumbnail url="thumbs/lookout-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/lookout-1.jpg" width="1000" height="731"/>
+            <media:thumbnail url="thumbs/lookout-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/lookout-1.jpg" width="1232" height="900"/>
             <jalbum:exif originalDate="Mon, 22 Nov 2010 11:38:24 -0800" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/lookout-1.jpg</guid>
         </item>
@@ -276,8 +276,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Nike Campus, OR</description>
             <media:description type="html">Nike Campus, OR</media:description>
-            <media:thumbnail url="thumbs/nike-campus.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/nike-campus.jpg" width="600" height="800"/>
+            <media:thumbnail url="thumbs/nike-campus.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/nike-campus.jpg" width="675" height="900"/>
             <jalbum:exif originalDate="Thu, 22 Jun 2006 23:23:13 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/nike-campus.jpg</guid>
         </item>
@@ -287,8 +287,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Domaine Chandon, Napa Valley</description>
             <media:description type="html">Domaine Chandon, Napa Valley</media:description>
-            <media:thumbnail url="thumbs/Frozen%20Domaine%2028x20.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Frozen%20Domaine%2028x20.jpg" width="1000" height="702"/>
+            <media:thumbnail url="thumbs/Frozen%20Domaine%2028x20.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Frozen%20Domaine%2028x20.jpg" width="1283" height="900"/>
             <jalbum:exif originalDate="Mon, 19 Nov 2007 15:18:51 -0800" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/Frozen%20Domaine%2028x20.jpg</guid>
         </item>
@@ -298,8 +298,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Cape May, NJ</description>
             <media:description type="html">Cape May, NJ</media:description>
-            <media:thumbnail url="thumbs/capemay-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/capemay-1.jpg" width="600" height="800"/>
+            <media:thumbnail url="thumbs/capemay-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/capemay-1.jpg" width="675" height="900"/>
             <jalbum:exif originalDate="Sun, 24 Sep 2006 00:42:19 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/capemay-1.jpg</guid>
         </item>
@@ -309,8 +309,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Napa Valley Vineyard</description>
             <media:description type="html">Napa Valley Vineyard</media:description>
-            <media:thumbnail url="thumbs/ir-vineyard.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/ir-vineyard.jpg" width="1000" height="655"/>
+            <media:thumbnail url="thumbs/ir-vineyard.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/ir-vineyard.jpg" width="1375" height="900"/>
             <jalbum:exif originalDate="Sat, 06 Jan 2007 20:53:37 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/ir-vineyard.jpg</guid>
         </item>
@@ -320,8 +320,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Bartholomew Winery, Sonoma</description>
             <media:description type="html">Bartholomew Winery, Sonoma</media:description>
-            <media:thumbnail url="thumbs/bart-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/bart-1.jpg" width="1000" height="667"/>
+            <media:thumbnail url="thumbs/bart-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/bart-1.jpg" width="1350" height="900"/>
             <jalbum:exif originalDate="Sat, 21 Oct 2006 18:02:23 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/bart-1.jpg</guid>
         </item>
@@ -331,8 +331,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Rockerfella Center</description>
             <media:description type="html">Rockerfella Center</media:description>
-            <media:thumbnail url="thumbs/rockerfella-2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/rockerfella-2.jpg" width="1000" height="657"/>
+            <media:thumbnail url="thumbs/rockerfella-2.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/rockerfella-2.jpg" width="1370" height="900"/>
             <jalbum:exif originalDate="Sun, 28 Jan 2007 10:20:04 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/rockerfella-2.jpg</guid>
         </item>
@@ -342,8 +342,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Timber Cove, CA</description>
             <media:description type="html">Timber Cove, CA</media:description>
-            <media:thumbnail url="thumbs/timber-cove-2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/timber-cove-2.jpg" width="604" height="800"/>
+            <media:thumbnail url="thumbs/timber-cove-2.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/timber-cove-2.jpg" width="679" height="900"/>
             <jalbum:exif originalDate="Sun, 23 Jul 2006 22:27:13 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/timber-cove-2.jpg</guid>
         </item>
@@ -353,8 +353,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Silverado Trails Winery, NV</description>
             <media:description type="html">Silverado Trails Winery, NV</media:description>
-            <media:thumbnail url="thumbs/SilveradoVineyards.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/SilveradoVineyards.jpg" width="601" height="800"/>
+            <media:thumbnail url="thumbs/SilveradoVineyards.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/SilveradoVineyards.jpg" width="676" height="900"/>
             <jalbum:exif originalDate="Tue, 17 Oct 2006 19:41:12 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/SilveradoVineyards.jpg</guid>
         </item>
@@ -364,8 +364,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Franciscan Brothers, NV</description>
             <media:description type="html">Franciscan Brothers, NV</media:description>
-            <media:thumbnail url="thumbs/old%20man%20tree.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/old%20man%20tree.jpg" width="689" height="800"/>
+            <media:thumbnail url="thumbs/old%20man%20tree.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/old%20man%20tree.jpg" width="775" height="900"/>
             <jalbum:exif originalDate="Sat, 23 Jan 2010 11:39:42 -0800" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/old%20man%20tree.jpg</guid>
         </item>
@@ -375,8 +375,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>The French Laundry, NV</description>
             <media:description type="html">The French Laundry, NV</media:description>
-            <media:thumbnail url="thumbs/french-laundry-02.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/french-laundry-02.jpg" width="1000" height="714"/>
+            <media:thumbnail url="thumbs/french-laundry-02.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/french-laundry-02.jpg" width="1260" height="900"/>
             <jalbum:exif originalDate="Thu, 04 Oct 2007 12:41:00 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/french-laundry-02.jpg</guid>
         </item>
@@ -386,8 +386,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Artesa Winery, NV</description>
             <media:description type="html">Artesa Winery, NV</media:description>
-            <media:thumbnail url="thumbs/artesa.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/artesa.jpg" width="573" height="800"/>
+            <media:thumbnail url="thumbs/artesa.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/artesa.jpg" width="644" height="900"/>
             <jalbum:exif originalDate="Sat, 21 Oct 2006 16:21:47 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/artesa.jpg</guid>
         </item>
@@ -397,8 +397,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Petaluma, CA</description>
             <media:description type="html">Petaluma, CA</media:description>
-            <media:thumbnail url="thumbs/brokebackbarn-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/brokebackbarn-1.jpg" width="1000" height="750"/>
+            <media:thumbnail url="thumbs/brokebackbarn-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/brokebackbarn-1.jpg" width="1200" height="900"/>
             <jalbum:exif originalDate="Mon, 24 Jul 2006 06:20:00 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/brokebackbarn-1.jpg</guid>
         </item>
@@ -408,8 +408,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Alpha Omega Winery, NV</description>
             <media:description type="html">Alpha Omega Winery, NV</media:description>
-            <media:thumbnail url="thumbs/fa-alpha-01.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/fa-alpha-01.jpg" width="1000" height="641"/>
+            <media:thumbnail url="thumbs/fa-alpha-01.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/fa-alpha-01.jpg" width="1405" height="900"/>
             <jalbum:exif originalDate="Sat, 01 Sep 2007 17:07:58 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/fa-alpha-01.jpg</guid>
         </item>
@@ -419,8 +419,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Klein Vineyards, Sonoma</description>
             <media:description type="html">Klein Vineyards, Sonoma</media:description>
-            <media:thumbnail url="thumbs/klein.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/klein.jpg" width="1000" height="740"/>
+            <media:thumbnail url="thumbs/klein.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/klein.jpg" width="1217" height="900"/>
             <jalbum:exif originalDate="Sun, 09 Jul 2006 23:57:16 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/klein.jpg</guid>
         </item>
@@ -430,8 +430,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Sawyer Winery, NV</description>
             <media:description type="html">Sawyer Winery, NV</media:description>
-            <media:thumbnail url="thumbs/brokebackbarn-3.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/brokebackbarn-3.jpg" width="1000" height="706"/>
+            <media:thumbnail url="thumbs/brokebackbarn-3.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/brokebackbarn-3.jpg" width="1274" height="900"/>
             <jalbum:exif originalDate="Sat, 06 Jan 2007 19:52:56 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/brokebackbarn-3.jpg</guid>
         </item>
@@ -441,8 +441,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Nicks Cover, Point Reyes</description>
             <media:description type="html">Nicks Cover, Point Reyes</media:description>
-            <media:thumbnail url="thumbs/Peerless%20Pier%2032x17.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Peerless%20Pier%2032x17.jpg" width="1000" height="588"/>
+            <media:thumbnail url="thumbs/Peerless%20Pier%2032x17.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Peerless%20Pier%2032x17.jpg" width="1530" height="900"/>
             <jalbum:exif originalDate="Sat, 18 Aug 2007 19:11:46 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/Peerless%20Pier%2032x17.jpg</guid>
         </item>
@@ -452,8 +452,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Coppola&apos;s Winery,  Napa Valley</description>
             <media:description type="html">Coppola&apos;s Winery,  Napa Valley</media:description>
-            <media:thumbnail url="thumbs/Directors%20Reserve%2032x17.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Directors%20Reserve%2032x17.jpg" width="1000" height="643"/>
+            <media:thumbnail url="thumbs/Directors%20Reserve%2032x17.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Directors%20Reserve%2032x17.jpg" width="1400" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 11:41:02 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/Directors%20Reserve%2032x17.jpg</guid>
         </item>
@@ -463,8 +463,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Brooklyn Bridge</description>
             <media:description type="html">Brooklyn Bridge</media:description>
-            <media:thumbnail url="thumbs/bridge-big-pers.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/bridge-big-pers.jpg" width="710" height="800"/>
+            <media:thumbnail url="thumbs/bridge-big-pers.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/bridge-big-pers.jpg" width="799" height="900"/>
             <jalbum:exif originalDate="Sun, 28 Jan 2007 11:58:20 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/bridge-big-pers.jpg</guid>
         </item>
@@ -474,8 +474,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Bartholomew Park, Sonoma</description>
             <media:description type="html">Bartholomew Park, Sonoma</media:description>
-            <media:thumbnail url="thumbs/bart-park-01a.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/bart-park-01a.jpg" width="1000" height="706"/>
+            <media:thumbnail url="thumbs/bart-park-01a.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/bart-park-01a.jpg" width="1276" height="900"/>
             <jalbum:exif originalDate="Sat, 06 Oct 2007 16:34:21 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/bart-park-01a.jpg</guid>
         </item>
@@ -485,8 +485,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Timber Cove, CA</description>
             <media:description type="html">Timber Cove, CA</media:description>
-            <media:thumbnail url="thumbs/timber-cove-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/timber-cove-1.jpg" width="624" height="800"/>
+            <media:thumbnail url="thumbs/timber-cove-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/timber-cove-1.jpg" width="702" height="900"/>
             <jalbum:exif originalDate="Sun, 23 Jul 2006 20:11:10 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/timber-cove-1.jpg</guid>
         </item>
@@ -496,8 +496,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Peju WInery, NV</description>
             <media:description type="html">Peju WInery, NV</media:description>
-            <media:thumbnail url="thumbs/peju-trees.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/peju-trees.jpg" width="589" height="800"/>
+            <media:thumbnail url="thumbs/peju-trees.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/peju-trees.jpg" width="663" height="900"/>
             <jalbum:exif originalDate="Tue, 18 Sep 2007 13:07:36 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/peju-trees.jpg</guid>
         </item>
@@ -507,8 +507,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Brooklyn Bridge</description>
             <media:description type="html">Brooklyn Bridge</media:description>
-            <media:thumbnail url="thumbs/Leaving%20Brooklyn%2028%20x%2014.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Leaving%20Brooklyn%2028%20x%2014.jpg" width="1000" height="563"/>
+            <media:thumbnail url="thumbs/Leaving%20Brooklyn%2028%20x%2014.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Leaving%20Brooklyn%2028%20x%2014.jpg" width="1600" height="900"/>
             <jalbum:exif originalDate="Sun, 28 Jan 2007 11:33:12 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/Leaving%20Brooklyn%2028%20x%2014.jpg</guid>
         </item>
@@ -518,8 +518,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Petaluma, CA</description>
             <media:description type="html">Petaluma, CA</media:description>
-            <media:thumbnail url="thumbs/pl-DSC06873.brokebackbarn-2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/pl-DSC06873.brokebackbarn-2.jpg" width="1000" height="764"/>
+            <media:thumbnail url="thumbs/pl-DSC06873.brokebackbarn-2.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/pl-DSC06873.brokebackbarn-2.jpg" width="1178" height="900"/>
             <jalbum:exif originalDate="Mon, 24 Jul 2006 06:23:56 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/pl-DSC06873.brokebackbarn-2.jpg</guid>
         </item>
@@ -529,8 +529,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Domaine Chandon, NV</description>
             <media:description type="html">Domaine Chandon, NV</media:description>
-            <media:thumbnail url="thumbs/dom-chan-03.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/dom-chan-03.jpg" width="1000" height="502"/>
+            <media:thumbnail url="thumbs/dom-chan-03.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/dom-chan-03.jpg" width="1600" height="803"/>
             <jalbum:exif originalDate="Fri, 05 Oct 2007 14:04:10 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/dom-chan-03.jpg</guid>
         </item>
@@ -540,8 +540,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Manhattan Bridge</description>
             <media:description type="html">Manhattan Bridge</media:description>
-            <media:thumbnail url="thumbs/Manhattan-Bridge.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Manhattan-Bridge.jpg" width="554" height="800"/>
+            <media:thumbnail url="thumbs/Manhattan-Bridge.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Manhattan-Bridge.jpg" width="624" height="900"/>
             <guid isPermaLink="false">slides/Manhattan-Bridge.jpg</guid>
         </item>
         <item>
@@ -550,8 +550,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Golden Gate Bridge</description>
             <media:description type="html">Golden Gate Bridge</media:description>
-            <media:thumbnail url="thumbs/GGB-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/GGB-1.jpg" width="533" height="800"/>
+            <media:thumbnail url="thumbs/GGB-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/GGB-1.jpg" width="600" height="900"/>
             <jalbum:exif originalDate="Sun, 05 Aug 2007 20:08:01 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/GGB-1.jpg</guid>
         </item>
@@ -561,8 +561,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Sawyer Winery?</description>
             <media:description type="html">Sawyer Winery?</media:description>
-            <media:thumbnail url="thumbs/sawyer.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/sawyer.jpg" width="1000" height="548"/>
+            <media:thumbnail url="thumbs/sawyer.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/sawyer.jpg" width="1600" height="877"/>
             <jalbum:exif originalDate="Sat, 06 Jan 2007 19:13:44 -0800" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/sawyer.jpg</guid>
         </item>
@@ -572,8 +572,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Napa Valley</description>
             <media:description type="html">Napa Valley</media:description>
-            <media:thumbnail url="thumbs/Rutherford%20Vineyard%2032x17.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/Rutherford%20Vineyard%2032x17.jpg" width="1000" height="643"/>
+            <media:thumbnail url="thumbs/Rutherford%20Vineyard%2032x17.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/Rutherford%20Vineyard%2032x17.jpg" width="1400" height="900"/>
             <jalbum:exif originalDate="Mon, 16 Oct 2006 15:41:59 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/Rutherford%20Vineyard%2032x17.jpg</guid>
         </item>
@@ -583,8 +583,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>The Red Church, Sonora</description>
             <media:description type="html">The Red Church, Sonora</media:description>
-            <media:thumbnail url="thumbs/sonoraredchurch.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/sonoraredchurch.jpg" width="571" height="800"/>
+            <media:thumbnail url="thumbs/sonoraredchurch.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/sonoraredchurch.jpg" width="643" height="900"/>
             <jalbum:exif originalDate="Sun, 23 Sep 2007 10:51:59 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/sonoraredchurch.jpg</guid>
         </item>
@@ -594,8 +594,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Domain Chandon, NV</description>
             <media:description type="html">Domain Chandon, NV</media:description>
-            <media:thumbnail url="thumbs/chandon-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/chandon-1.jpg" width="578" height="800"/>
+            <media:thumbnail url="thumbs/chandon-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/chandon-1.jpg" width="650" height="900"/>
             <jalbum:exif originalDate="Sun, 13 Aug 2006 05:36:25 -0700" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/chandon-1.jpg</guid>
         </item>
@@ -605,8 +605,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Mondavi Winery, NV</description>
             <media:description type="html">Mondavi Winery, NV</media:description>
-            <media:thumbnail url="thumbs/mondavi-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/mondavi-1.jpg" width="634" height="800"/>
+            <media:thumbnail url="thumbs/mondavi-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/mondavi-1.jpg" width="713" height="900"/>
             <jalbum:exif originalDate="Sun, 05 Nov 2006 04:32:33 -0800" cameraMake="SONY" cameraModel="DSC-P200"/>
             <guid isPermaLink="false">slides/mondavi-1.jpg</guid>
         </item>
@@ -616,8 +616,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Vineyard Tunnel</description>
             <media:description type="html">Vineyard Tunnel</media:description>
-            <media:thumbnail url="thumbs/vineyardtunnel.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/vineyardtunnel.jpg" width="1000" height="522"/>
+            <media:thumbnail url="thumbs/vineyardtunnel.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/vineyardtunnel.jpg" width="1600" height="835"/>
             <jalbum:exif originalDate="Sat, 28 Apr 2007 17:00:19 -0700" cameraMake="Canon" cameraModel="Canon EOS 30D"/>
             <guid isPermaLink="false">slides/vineyardtunnel.jpg</guid>
         </item>
@@ -627,8 +627,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Battenkill River, Vermont</description>
             <media:description type="html">Battenkill River, Vermont</media:description>
-            <media:thumbnail url="thumbs/river-1.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/river-1.jpg" width="1000" height="717"/>
+            <media:thumbnail url="thumbs/river-1.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/river-1.jpg" width="1255" height="900"/>
             <guid isPermaLink="false">slides/river-1.jpg</guid>
         </item>
         <item>
@@ -637,8 +637,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Dorset, Vermont</description>
             <media:description type="html">Dorset, Vermont</media:description>
-            <media:thumbnail url="thumbs/covered-bridge-vt.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/covered-bridge-vt.jpg" width="1000" height="650"/>
+            <media:thumbnail url="thumbs/covered-bridge-vt.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/covered-bridge-vt.jpg" width="1384" height="900"/>
             <guid isPermaLink="false">slides/covered-bridge-vt.jpg</guid>
         </item>
         <item>
@@ -647,8 +647,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Covered Bridge, Vermont</description>
             <media:description type="html">Covered Bridge, Vermont</media:description>
-            <media:thumbnail url="thumbs/covered-bridge-2.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/covered-bridge-2.jpg" width="1000" height="667"/>
+            <media:thumbnail url="thumbs/covered-bridge-2.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/covered-bridge-2.jpg" width="1350" height="900"/>
             <guid isPermaLink="false">slides/covered-bridge-2.jpg</guid>
         </item>
         <item>
@@ -657,8 +657,8 @@
             <pubDate>Mon, 04 Sep 2023 17:35:15 -0700</pubDate>
             <description>Clos Pegas Winvery, NV</description>
             <media:description type="html">Clos Pegas Winvery, NV</media:description>
-            <media:thumbnail url="thumbs/winery-03.jpg" width="212" height="170"/>
-            <media:content type="image/jpeg" url="slides/winery-03.jpg" width="1000" height="667"/>
+            <media:thumbnail url="thumbs/winery-03.jpg" width="206" height="165"/>
+            <media:content type="image/jpeg" url="slides/winery-03.jpg" width="1350" height="900"/>
             <jalbum:exif originalDate="Sat, 15 Sep 2007 16:15:41 -0700" cameraMake="Canon" cameraModel="Canon EOS 5D"/>
             <guid isPermaLink="false">slides/winery-03.jpg</guid>
         </item>

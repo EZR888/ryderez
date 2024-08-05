@@ -1,5 +1,5 @@
 #jAlbum Project
-#Sat May 11 08:09:26 PDT 2024
+#Mon Aug 05 16:03:03 PDT 2024
 acceleratedScaling=true
 accountProfileName=
 albumAddress=
@@ -13,11 +13,11 @@ cols=5
 copyOriginals=true
 cpuCores=4
 creator=
-creditText=credit4
-currentProject=Project {/Users/ezryder/My Albums/Old Ships/jalbum-settings.jap}
+creditText=credit9
+currentProject=Project {/Users/ezryder/My Albums/Ships/jalbum-settings.jap}
 dateFormat=
 directoriesFirst=true
-directory=/Users/ezryder/My Albums/Old Ships
+directory=/Users/ezryder/My Albums/Ships
 directoryChaining=NO_CHAINING
 disableColorSubsampling=false
 displayVersion=34.3
@@ -66,7 +66,7 @@ qualityPercent=85
 qualityPercentWebP=80
 readJAlbumMetaData=true
 readXmp=true
-remoteDirectory=Old Ships
+remoteDirectory=Ships
 removeDiacritics=false
 resourceDirectory=res
 reverseOrder=false

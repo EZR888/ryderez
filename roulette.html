@@ -91,7 +91,7 @@
 
     /* Apply animation to the image */
     .spin {
-      animation: spin 7s linear infinite; /* Faster spinning animation */
+      animation: spin 2s linear infinite; /* Faster spinning animation */
     }
 
     /* Double height for content cells */
@@ -190,7 +190,7 @@
         Totals[c1] += 1; // Increment corresponding index in Totals array
         populateTotalsTable(); // Populate Totals table after spinning stops
         singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 5000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
     // Function to run the simulation
@@ -211,7 +211,7 @@
           }
         }
         populateTotalsTable(); // Populate Totals table after simulation
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 5000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
     // Function to populate Totals table

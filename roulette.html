@@ -200,7 +200,7 @@
         Totals[c1] += 1; // Increment corresponding index in Totals array
         populateTotalsTable(); // Populate Totals table after spinning stops
         singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
     // Function to run the simulation
@@ -221,7 +221,7 @@
           }
         }
         populateTotalsTable(); // Populate Totals table after simulation
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
 // Function to run multiple spins with delay
@@ -244,7 +244,7 @@ function multiSpin() {
         spinCount++;
         
         setTimeout(spin, spinDelay); // Delay before the next spin
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
     } else {
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed
     }

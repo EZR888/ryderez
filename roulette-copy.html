@@ -224,34 +224,34 @@
       }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
-// Function to run multiple spins with delay
-function multiSpin() {
-  clearArrays(); // Clear arrays before multi-spin
-  document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
-  let numSpins = parseInt(document.getElementById('numSpins').value);
-  let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
-  let spinCount = 0;
+    // Function to run multiple spins with delay
+    function multiSpin() {
+      clearArrays(); // Clear arrays before multi-spin
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+      document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
+      document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 
-  function spin() {
-    if (spinCount < numSpins) {
-      document.getElementById('rouletteWheel').classList.add('spin'); // Start spinning animation
+      let numSpins = parseInt(document.getElementById('numSpins').value);
+      let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
 
-      setTimeout(function() {
-        document.getElementById('rouletteWheel').classList.remove('spin'); // Stop spinning animation
-        let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-        Totals[c1] += 1; // Increment corresponding index in Totals array
-        populateTotalsTable(); // Populate Totals table after each spin
-        spinCount++;
-        
-        setTimeout(spin, spinDelay); // Delay before the next spin
-      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
-    } else {
-      document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed
+      let spinCount = 0;
+
+      function spin() {
+        if (spinCount < numSpins) {
+          setTimeout(function() {
+            let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+            Totals[c1] += 1; // Increment corresponding index in Totals array
+            spinCount++;
+            spin(); // Recursively call spin function for next spin
+          }, spinDelay); // Delay between spins
+        } else {
+          document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after all spins
+          populateTotalsTable(); // Populate Totals table after all spins are complete
+        }
+      }
+
+      spin(); // Start the first spin
     }
-  }
-
-  spin(); // Start the first spin
-}
 
     // Function to populate Totals table
     function populateTotalsTable() {

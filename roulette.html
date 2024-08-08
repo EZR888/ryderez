@@ -31,10 +31,6 @@
       background-color: red; /* Red background for specific headers */
       color: white; /* White text color for red headers */
     }
-    .bold-blue {
-      font-weight: bold;
-      color: blue;
-    }
     .bold {
       font-weight: bold;
     }
@@ -102,22 +98,27 @@
 </head>
 <body>
 <div>
-  <center><h1>Roulette Random Picker</h1><img id="rouletteWheel" src="rouwheel.png">&nbsp;&nbsp;&nbsp;<img src="roufield.png"></center><br>
+  <center><h1>Roulette Random Picker</h1><img id="rouletteWheel" src="rouwheel.png">&nbsp;&nbsp;<img src="roufield.png"></center><br>
 </div>
   <center>
-    <label for="x">Number of runs:</label>
-    <input type="number" id="x" name="x" value="0">
-    <label for="y">Number of sets per run:</label>
-    <input type="number" id="y" name="y" value="14">
+    <button onclick="runSimulation()">Run Simulation</button><br><br>
+    <label for="x">Number of runs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="number" id="x" size=7 name="x" value="0" ><br>
+    <label for="y">Number of sets per run:&nbsp;</label>
+    <input type="number" id="y" name="y" value="14"><br><br>
   </center>
   
-  <center><h3>Each set selects 38 random numbers, chosen from a list of 38 numbers, 1 thru 38.</h3></center>
-  <center><h3>Each run performs the number of sets indicated above.</h3></center>
-  
   <center>
-    <button onclick="singleSpin()">Single Spin</button> <!-- Replace input field with button -->
-    <button onclick="runSimulation()">Run Simulation</button>
-    <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
+    <button onclick="multiSpin()">Multi-Spin</button><br><br>
+    <label for="numSpins">Number of Spins:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="number" id="numSpins" name="numSpins" value="1"><br>
+    <label for="spinDelay">Spin Delay (seconds):&nbsp</label>
+    <input type="number" id="spinDelay" name="spinDelay" value="1"><br>
+  </center>
+<br>
+  <center>
+
+    <button onclick="singleSpin()">Single Spin</button>&nbsp; &nbsp; <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
   </center>
   <pre id="output"></pre>
 
@@ -131,7 +132,6 @@
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);
-    let singleSpinClicked = false; // Track if Single Spin button was clicked
 
     // Function to clear all arrays
     function clearArrays() {
@@ -153,7 +153,6 @@
     // Function to export Totals array data to CSV format
     function exportTotalsToCSV(array, filename) {
       let csvContent = "data:text/csv;charset=utf-8,";
-
       csvContent += ","; // Empty cell to align with headers
 
       // Loop through Totals array to append values
@@ -178,30 +177,28 @@
 
     // Function to run a single spin
     function singleSpin() {
-      singleSpinClicked = true; // Set the flag to true when Single Spin button is clicked
       clearArrays(); // Clear arrays before single spin
       document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
       document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 
       setTimeout(function() {
-        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
+        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after spinning
         let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
         Totals[c1] += 1; // Increment corresponding index in Totals array
         populateTotalsTable(); // Populate Totals table after spinning stops
-        singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
-      }, 5000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 2000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
     // Function to run the simulation
     function runSimulation() {
-      clearArrays(); // Clear arrays before single spin
+      clearArrays(); // Clear arrays before simulation
       document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
       document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 
       setTimeout(function() {
-        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
+        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 5 seconds
         for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
           for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
             for (let n = 1; n <= 38; n++) {
@@ -211,13 +208,40 @@
           }
         }
         populateTotalsTable(); // Populate Totals table after simulation
-      }, 5000); // 2000 milliseconds = 2 seconds (faster spinning)
+      }, 5000); // 5000 milliseconds = 5 seconds (initial spinning)
+    }
+
+    // Function to perform multiple spins with delay
+    function multiSpin() {
+      clearArrays(); // Clear arrays before multi-spin
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+      document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
+      document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
+
+      const numSpins = parseInt(document.getElementById('numSpins').value);
+      const spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
+      let spinsRemaining = numSpins;
+
+      function performSpin() {
+        if (spinsRemaining > 0) {
+          setTimeout(() => {
+            let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+            Totals[c1] += 1; // Increment corresponding index in Totals array
+            populateTotalsTable(); // Update the table after each spin
+            spinsRemaining--;
+            performSpin(); // Continue with next spin
+          }, spinDelay); // Delay between spins
+        } else {
+          document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after all spins
+        }
+      }
+
+      performSpin(); // Start multi-spin process
     }
 
     // Function to populate Totals table
     function populateTotalsTable() {
-      // Display Totals data in the table with colors
-      displayTotalsTableWithColors(Totals);
+      displayTotalsTableWithColors(Totals); // Display Totals data in the table with colors
     }
 
     // Function to display Totals array as a table with red/green formatting
@@ -260,14 +284,9 @@
         } else {
           cellValue = Totals[number];
         }
-        // Check if singleSpinClicked is true and cellValue is 1
-        if (singleSpinClicked && cellValue === 1) {
-          output += "<td class='numeric bold blink-bg'></td>"; // Apply blinking background and double height class
-        } else {
-          // Replace 0 with empty string
-          cellValue = (cellValue === 0) ? '' : cellValue;
-          output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
-        }
+        // Replace 0 with empty string
+        cellValue = (cellValue === 0) ? '' : cellValue;
+        output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
       });
 
       output += "</tr>";

@@ -98,27 +98,27 @@
 </head>
 <body>
 <div>
-  <center><h1>Roulette Random Picker</h1><img id="rouletteWheel" src="rouwheel.png">&nbsp;&nbsp;&nbsp;<img src="roufield.png"></center><br>
+  <center><h1>Roulette Random Picker</h1><img id="rouletteWheel" src="rouwheel.png">&nbsp;&nbsp;<img src="roufield.png"></center><br>
 </div>
   <center>
-    <label for="x">Number of runs:</label>
-    <input type="number" id="x" name="x" value="0">
-    <label for="y">Number of sets per run:</label>
-    <input type="number" id="y" name="y" value="14">
+    <button onclick="runSimulation()">Run Simulation</button><br><br>
+    <label for="x">Number of runs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="number" id="x" size=7 name="x" value="0" ><br>
+    <label for="y">Number of sets per run:&nbsp;</label>
+    <input type="number" id="y" name="y" value="14"><br><br>
   </center>
   
   <center>
-    <label for="numSpins">Number of Spins:</label>
-    <input type="number" id="numSpins" name="numSpins" value="1">
-    <label for="spinDelay">Spin Delay (seconds):</label>
-    <input type="number" id="spinDelay" name="spinDelay" value="1">
+    <button onclick="multiSpin()">Multi-Spin</button><br><br>
+    <label for="numSpins">Number of Spins:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <input type="number" id="numSpins" name="numSpins" value="1"><br>
+    <label for="spinDelay">Spin Delay (seconds):&nbsp</label>
+    <input type="number" id="spinDelay" name="spinDelay" value="1"><br>
   </center>
-
+<br>
   <center>
-    <button onclick="singleSpin()">Single Spin</button>
-    <button onclick="runSimulation()">Run Simulation</button>
-    <button onclick="multiSpin()">Multi-Spin</button>
-    <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
+
+    <button onclick="singleSpin()">Single Spin</button>&nbsp; &nbsp; <button id="saveDataButton" style="margin-left: 10px;">Save Data</button>
   </center>
   <pre id="output"></pre>
 
@@ -219,9 +219,7 @@
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
 
       const numSpins = parseInt(document.getElementById('numSpins').value);
-      const spinDelay = parseInt(document.getElementById('spinDelay').value) * 100
-
-0; // Convert seconds to milliseconds
+      const spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
       let spinsRemaining = numSpins;
 
       function performSpin() {
@@ -229,12 +227,12 @@
           setTimeout(() => {
             let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
             Totals[c1] += 1; // Increment corresponding index in Totals array
+            populateTotalsTable(); // Update the table after each spin
             spinsRemaining--;
             performSpin(); // Continue with next spin
           }, spinDelay); // Delay between spins
         } else {
           document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after all spins
-          populateTotalsTable(); // Populate Totals table after all spins
         }
       }
 
@@ -243,8 +241,7 @@
 
     // Function to populate Totals table
     function populateTotalsTable() {
-      // Display Totals data in the table with colors
-      displayTotalsTableWithColors(Totals);
+      displayTotalsTableWithColors(Totals); // Display Totals data in the table with colors
     }
 
     // Function to display Totals array as a table with red/green formatting

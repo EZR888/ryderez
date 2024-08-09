@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roulette Wheel Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    let wheelRadius = 200;
+    let wheelCenterX;
+    let wheelCenterY;
+    let numSlots = 38;  // 38 slots including '00'
+    let slotAngle;
+    let ballRadius = 10;
+    let ballX;
+    let ballY;
+    let ballSpeed;
+    let ballAngle;
+    let ballFriction = 0.98;
+    let slotColors = [];
+    let slotNumbers = [];
+    let winningIndex = null;
+    let finalIndex = null;
+    let isSpinning = true;
+    let flashInterval = 500; // milliseconds
+    let lastFlashTime = 0;
+    let flashState = false;
+    let minSpeed = 0.1;
+    let chosenNumber;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      wheelCenterX = width / 2;
+      wheelCenterY = height / 2;
+      slotAngle = 360 / numSlots;
+
+      // Slot numbers including '00'
+      slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+
+      // Colors setup with '00' and '0' in green
+      for (let i = 0; i < numSlots; i++) {
+        if (slotNumbers[i] === '00' || slotNumbers[i] === 0) {
+          slotColors.push(color(0, 255, 0)); // Green for '00' and '0'
+        } else {
+          slotColors.push((i % 2 === 0) ? color(255, 0, 0) : color(0)); // Red and black
+        }
+      }
+
+      // Initialize ball parameters
+      ballAngle = random(0, 360);
+      ballSpeed = random(60, 100); // Increased speed for a longer spin
+      ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+      ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+
+      // Randomly choose a number and adjust the winningIndex
+      chosenNumber = int(random(0, numSlots));
+      if (chosenNumber === 37) chosenNumber = '00'; // Adjust for '00'
+      winningIndex = slotNumbers.indexOf(chosenNumber);
+      isSpinning = true;
+    }
+
+    function draw() {
+      background(0);
+
+      // Calculate slotIndex based on ballAngle
+      let slotIndex = calculateSlotIndex(ballAngle);
+
+      // Call determineWinner with the calculated slotIndex
+      let winningNumber = determineWinner(slotIndex);
+
+      drawWheel();
+
+      // Ball movement and drawing
+      if (isSpinning) {
+        ballAngle += ballSpeed;
+        ballSpeed *= ballFriction;
+
+        if (ballSpeed < minSpeed) {
+          isSpinning = false;
+          finalIndex = slotIndex; // Store the final index
+          console.log(`Ball stopped. Winning index: ${finalIndex}`);
+        }
+
+        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+
+        // Debugging: Log ball position and relevant values
+        console.log(`wheelCenterX: ${wheelCenterX}, wheelCenterY: ${wheelCenterY}, wheelRadius: ${wheelRadius}, ballRadius: ${ballRadius}, ballAngle: ${ballAngle}, ballX: ${ballX}, ballY: ${ballY}`);
+
+        fill(255);
+        ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
+      }
+
+      // Flash the winning number
+      if (!isSpinning && winningIndex !== null) {
+        let currentTime = millis();
+        if (currentTime - lastFlashTime > flashInterval) {
+          flashState = !flashState;
+          lastFlashTime = currentTime;
+        }
+
+        // Calculate slotAngle for the final index
+        let slotAngle = 360 / numSlots;
+        let angleStart = finalIndex * slotAngle * Math.PI / 180;
+        let angleEnd = (finalIndex + 1) * slotAngle * Math.PI / 180;
+        let midAngle = (angleStart + angleEnd) / 2;
+        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
+        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
+
+        // Debugging: Log angleStart, angleEnd, and midAngle
+        console.log(`slotAngle: ${slotAngle}, angleStart: ${angleStart}, angleEnd: ${angleEnd}, midAngle: ${midAngle}`);
+
+        // Draw the flashing number
+        fill(flashState ? color(255, 255, 0) : color(255));
+        textAlign(CENTER, CENTER);
+        textSize(18);
+        text(slotNumbers[finalIndex], x, y); // Use finalIndex to display correct number
+      }
+    }
+
+    function drawWheel() {
+      noStroke();
+      for (let i = 0; i < numSlots; i++) {
+        let angleStart = i * slotAngle * Math.PI / 180;
+        let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
+
+        fill(slotColors[i]);
+        arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
+
+        // Draw the slot numbers
+        let midAngle = (angleStart + angleEnd) / 2;
+        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
+        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
+
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(16);
+        text(slotNumbers[i], x, y);
+      }
+    }
+
+    function determineWinner(finalSlotIndex) {
+      // Compare the final slot index with the winning index
+      if (finalSlotIndex === winningIndex) {
+        return slotNumbers[finalSlotIndex]; // Return the winning number
+      } else {
+        return null; // Or handle losing condition appropriately
+      }
+    }
+
+    function calculateSlotIndex(ballAngle) {
+      let normalizedAngle = (ballAngle % 360 + 360) % 360;
+      let anglePerSlot = 360 / numSlots;
+      let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+
+      console.log('normalizedAngle:', normalizedAngle);
+      console.log('anglePerSlot:', anglePerSlot);
+      console.log('index:', index);
+
+      return index;
+
+    }
+  </script>
+</body>
+</html>

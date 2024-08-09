@@ -31,17 +31,17 @@
     let slotAngle;
     let moveBallDelay = 100; // Delay in milliseconds
     let lastMoveTime = 0;
- 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  wheelCenterX = width / 2;
-  wheelCenterY = height / 2;
-  slotAngle = 360 / numSlots;
-  ballAngle = random(0, 360);
-  ballSpeed = random(60, 100) * 0.90; // Reduced speed by 25%
-  ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-  ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-}
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      wheelCenterX = width / 2;
+      wheelCenterY = height / 2;
+      slotAngle = 360 / numSlots;
+      ballAngle = random(0, 360);
+      ballSpeed = random(60, 100);
+      ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+      ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+    }
 
     function draw() {
       background(0);
@@ -73,7 +73,7 @@ function setup() {
         text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
         if (millis() - lastMoveTime > moveBallDelay) {
           lastMoveTime = millis();
-          // moveBallToWinningSlot();
+         //  moveBallToWinningSlot();
         }
       }
     }
@@ -84,13 +84,7 @@ function setup() {
         let angleStart = i * slotAngle * Math.PI / 180;
         let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
 
-        // Color the slots
-        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
-          fill(0, 128, 0); // Green color
-        } else {
-          fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
-        }
-
+        fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
         arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
 
         let midAngle = (angleStart + angleEnd) / 2;

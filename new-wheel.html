@@ -82,6 +82,10 @@
     .black {
       background-color: lightgray;
     }
+    .white-text {
+      color: lightgreen;
+      text-align: center;
+    }
     #TotalsTable td {
       background-color: lightgray;
     }
@@ -103,6 +107,9 @@
   </style>
 </head>
 <body>
+  <div>
+    <h1 class="white-text">Roulette Wheel Test Bed</h1>
+  </div>
   <div class="wheel-container">
     <div id="output"></div>
   </div>
@@ -119,7 +126,7 @@
 
   <script>
     // Roulette Wheel Variables
-    let wheelRadius = 300;
+    let wheelRadius = 280;
     let wheelCenterX;
     let wheelCenterY;
     let ballRadius = 15;
@@ -129,7 +136,7 @@
     let ballAngle;
     let ballFriction = .9945;
     let isSpinning = false;
-    let minSpeed = .70;
+    let minSpeed = .85;
     let finalIndex;
     let winningNumber;
     let numSlots = 38;

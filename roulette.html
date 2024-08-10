@@ -3,10 +3,15 @@
 <head>
   <title>Roulette Random Picker</title>
   <style>
-    body {
-      background-color: black; /* Light orange background */
+   body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
     }
-
     table {
       border-collapse: collapse;
       width: 100%;
@@ -77,6 +82,7 @@
   </style>
 </head>
 <body>
+<br>
   <div>
     <h1 class="lgreen-text">Roulette Wheel Test Bed</h1>
   </div>
@@ -98,7 +104,7 @@
   </center>
   <br>
     <center>
-      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>
+      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
     </center>
 
 
@@ -155,6 +161,11 @@
     document.getElementById("saveDataButton").addEventListener("click", function() {
       exportTotalsToCSV(Totals, 'totals_data.csv');
     });
+    
+    // Event listener for the Single Spin button
+    document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.location.href = 'new-wheel.html';
+      });
 
     // Function to run the simulation
     function runSimulation() {

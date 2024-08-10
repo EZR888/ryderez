@@ -5,121 +5,162 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-    }
-    .wheel-container {
-      border: 5px solid #fff;
-      border-radius: 50%;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px; /* Space between wheel and buttons/table */
-    }
-    #output {
-      width: 600px;
-      height: 600px;
-    }
-    .button-container, .table-container {
-      text-align: center;
-      margin-bottom: 20px; /* Space between buttons and table */
-    }
-    #startButton, #saveDataButton, #accessSimulatorButton {
-      padding: 10px;
-      background: #fff;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-    }
-    #saveDataButton {
-      margin-left: 10px;
-    }
-    table {
-      border-collapse: collapse;
-      margin: auto;
-      max-width: 100%;
-    }
-    th, td {
-      border: 1px solid black;
-      padding: 10px;
-      text-align: center;
-      min-width: 50px; /* Ensure cells are the same width */
-    }
-    th {
-      color: white;
-    }
-    .green-header {
-      background-color: green;
-      color: white;
-    }
-    .black-header {
-      background-color: black;
-      color: white;
-    }
-    .red-header {
-      background-color: red;
-      color: white;
-    }
-    .bold {
-      font-weight: bold;
-    }
-    .caption {
-      font-weight: bold;
-      color: lightgreen; /* Set caption color to light green */
-      text-align: center; /* Center the caption */
-    }
-    .green {
-      background-color: lightgray; /* Changed from lightgreen to lightgray */
-    }
-    .red {
-      background-color: lightgray;
-    }
-    .black {
-      background-color: lightgray;
-    }
-    .lgreen-text {
-      color: lightgreen;
-      text-align: center;
-    }
-    #TotalsTableContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .table-half {
-      display: flex;
-      justify-content: center;
-      margin: 10px;
-    }
-    .table-half table {
-      border-collapse: collapse;
-      width: 600px; /* Adjust as needed */
-    }
-    .blink {
-      animation: blink 1s step-start infinite;
-    }
-    @keyframes blink {
-      0% { background-color: white; }
-      50% { background-color: lightgray; }
-      100% { background-color: white; }
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .spin {
-      animation: spin 2s linear infinite;
-    }
-  </style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.wheel-container {
+  border: 5px solid #fff;
+  border-radius: 50%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Space between wheel and buttons/table */
+}
+
+#output {
+  width: 100%;
+  max-width: 600px; /* Ensure it doesn't get too large */
+  height: auto;
+}
+
+.button-container, .table-container {
+  text-align: center;
+  margin-bottom: 20px; /* Space between buttons and table */
+}
+
+#startButton, #saveDataButton, #accessSimulatorButton {
+  padding: 10px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+}
+
+#saveDataButton {
+  margin-left: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 600px; /* Ensure the table does not exceed the container width */
+  margin: 0 auto; /* Center the table */
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+  min-width: 50px; /* Ensure cells are the same width */
+}
+
+th {
+  color: white;
+}
+
+.green-header {
+  background-color: green;
+  color: white;
+}
+
+.black-header {
+  background-color: black;
+  color: white;
+}
+
+.red-header {
+  background-color: red;
+  color: white;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.caption {
+  font-weight: bold;
+  color: lightgreen; /* Set caption color to light green */
+  text-align: center; /* Center the caption */
+}
+
+.green {
+  background-color: lightgray; /* Changed from lightgreen to lightgray */
+}
+
+.red {
+  background-color: lightgray;
+}
+
+.black {
+  background-color: lightgray;
+}
+
+.lgreen-text {
+  color: lightgreen;
+  text-align: center;
+}
+
+#TotalsTableContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-half {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0; /* Space between table halves */
+}
+
+.table-half table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 600px; /* Ensure the table does not exceed the container width */
+}
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  0% { background-color: white; }
+  50% { background-color: lightgray; }
+  100% { background-color: white; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  #output {
+    width: 90%;
+    max-width: 100%;
+  }
+
+  table {
+    width: 100%;
+    max-width: none;
+  }
+}
+</style>
+  
 </head>
 <body>
   <br>
@@ -136,10 +177,11 @@
     <button id="accessSimulatorButton"><b>Access Simulator</b></button>
   </div>
 
-  <div class="table-container">
-    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
-    <div id="TotalsTableContainer"></div>
-  </div>
+<div class="table-container">
+  <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+  <div id="TotalsTableContainer"></div>
+</div>
+
 
   <script>
     // Roulette Wheel Variables

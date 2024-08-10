@@ -46,11 +46,13 @@
     table {
       border-collapse: collapse;
       margin: auto;
+      max-width: 100%;
     }
     th, td {
       border: 1px solid black;
       padding: 10px;
       text-align: center;
+      min-width: 50px; /* Ensure cells are the same width */
     }
     th {
       color: white;
@@ -72,12 +74,14 @@
     }
     .caption {
       font-weight: bold;
+      color: lightgreen; /* Set caption color to light green */
+      text-align: center; /* Center the caption */
     }
     .green {
-      background-color: lightgreen;
+      background-color: lightgray; /* Changed from lightgreen to lightgray */
     }
     .red {
-      background-color: lightcoral;
+      background-color: lightgray;
     }
     .black {
       background-color: lightgray;
@@ -86,16 +90,27 @@
       color: lightgreen;
       text-align: center;
     }
-    #TotalsTable td {
-      background-color: lightgray;
+    #TotalsTableContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .table-half {
+      display: flex;
+      justify-content: center;
+      margin: 10px;
+    }
+    .table-half table {
+      border-collapse: collapse;
+      width: 600px; /* Adjust as needed */
+    }
+    .blink {
+      animation: blink 1s step-start infinite;
     }
     @keyframes blink {
       0% { background-color: white; }
       50% { background-color: lightgray; }
       100% { background-color: white; }
-    }
-    .blink {
-      animation: blink 1s step-start infinite;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -107,20 +122,20 @@
   </style>
 </head>
 <body>
-<br>
+  <br>
   <div>
     <h1 class="lgreen-text">Roulette Wheel</h1>
   </div>
   <div class="wheel-container">
     <div id="output"></div>
   </div>
-  
+
   <div class="button-container">
     <button id="startButton"><b>Spin</b></button>
     <button id="saveDataButton"><b>Save Data</b></button>
     <button id="accessSimulatorButton"><b>Access Simulator</b></button>
   </div>
-  
+
   <div class="table-container">
     <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
     <div id="TotalsTableContainer"></div>
@@ -205,13 +220,6 @@
 
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
-
-//      if (!isSpinning) {
-//        fill(255);
-//        textAlign(CENTER, CENTER);
-//        textSize(18);
-//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-//      }
     }
 
     function drawWheel() {
@@ -288,10 +296,10 @@
 
     function populateTotalsTable() {
       let tableContainer = document.getElementById('TotalsTableContainer');
-      let tableHTML = '<table id="TotalsTable"><thead><tr>';
+      let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
 
-      // Header Row
-      for (let i = 0; i < numSlots; i++) {
+      // Header Row (First Half)
+      for (let i = 0; i < numSlots / 2; i++) {
         let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
                          (i % 2 === 0 ? 'red-header' : 'black-header');
         tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
@@ -299,8 +307,8 @@
 
       tableHTML += '</tr></thead><tbody><tr>';
 
-      // Data Row
-      for (let i = 0; i < numSlots; i++) {
+      // Data Row (First Half)
+      for (let i = 0; i < numSlots / 2; i++) {
         let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                          (i % 2 === 0 ? 'red' : 'black');
         let displayValue = Totals[i] > 0 ? Totals[i] : ' ';
@@ -308,7 +316,25 @@
         tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
       }
 
-      tableHTML += '</tr></tbody></table>';
+      tableHTML += '</tr></tbody></table></div>';
+
+      // Second Half
+      tableHTML += '<div class="table-half"><table id="TotalsTable2"><thead><tr>';
+      for (let i = numSlots / 2; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                         (i % 2 === 0 ? 'red-header' : 'black-header');
+        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+      }
+      tableHTML += '</tr></thead><tbody><tr>';
+      for (let i = numSlots / 2; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                         (i % 2 === 0 ? 'red' : 'black');
+        let displayValue = Totals[i] > 0 ? Totals[i] : ' ';
+        let cellClass = i === finalIndex ? 'blink' : '';
+        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
+      }
+      tableHTML += '</tr></tbody></table></div>';
+
       tableContainer.innerHTML = tableHTML;
     }
 

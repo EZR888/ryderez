@@ -23,7 +23,7 @@
     let ballAngle;
     let ballFriction = 0.95; // Reduced friction for longer spin
     let isSpinning = true;
-    let minSpeed = 0.75;
+    let minSpeed = 0.65;
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
@@ -31,17 +31,31 @@
     let slotAngle;
     let moveBallDelay = 100; // Delay in milliseconds
     let lastMoveTime = 0;
- 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  wheelCenterX = width / 2;
-  wheelCenterY = height / 2;
-  slotAngle = 360 / numSlots;
-  ballAngle = random(0, 360);
-  ballSpeed = random(60, 100) * 0.90; // Reduced speed by 25%
-  ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-  ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-}
+
+    async function getRandomNumber() {
+      const crypto = window.crypto || window.msCrypto;
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      return array[0] / (Math.pow(2, 32) - 1); // Normalize the random value between 0 and 1
+    }
+
+    async function setup() {
+      createCanvas(windowWidth, windowHeight);
+      wheelCenterX = width / 2;
+      wheelCenterY = height / 2;
+      slotAngle = 360 / numSlots;
+
+      // Generate random angle and speed using the async function
+      let randomAngle = await getRandomNumber();
+      let randomSpeed = await getRandomNumber();
+
+      ballAngle = randomAngle * 360; // Convert to degrees
+      ballSpeed = randomSpeed * 40 + 60; // Random speed between 60 and 100
+      ballSpeed *= 0.90; // Reduced speed by 25%
+
+      ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+      ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+    }
 
     function draw() {
       background(0);
@@ -57,6 +71,7 @@ function setup() {
           finalIndex = calculateSlotIndex();
           winningNumber = slotNumbers[finalIndex];
           console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
+          moveBallToWinningSlot(); // Move the ball to the center of the winning slot
         }
 
         ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
@@ -73,7 +88,6 @@ function setup() {
         text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
         if (millis() - lastMoveTime > moveBallDelay) {
           lastMoveTime = millis();
-          // moveBallToWinningSlot();
         }
       }
     }
@@ -118,9 +132,12 @@ function setup() {
 
     function moveBallToWinningSlot() {
       if (!isSpinning) {
-        let winningAngle = (360 - ((finalIndex + 0.5) * slotAngle) + 360) % 360;
-        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(winningAngle));
-        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(winningAngle));
+        let centerAngle = (finalIndex + 0.5) * slotAngle; // Center angle of the winning slot
+        let correctedAngle = (360 - centerAngle + 360) % 360; // Adjust angle to align with the wheel rotation
+
+        // Calculate the ball's position in relation to the corrected angle
+        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(correctedAngle));
+        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(correctedAngle));
       }
     }
   </script>

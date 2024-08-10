@@ -3,6 +3,7 @@
 <head>
   <title>Roulette Wheel Animation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/addons/p5.sound.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -31,12 +32,19 @@
     let slotAngle;
     let moveBallDelay = 100; // Delay in milliseconds
     let lastMoveTime = 0;
+    let wheelSound;
 
-    async function getRandomNumber() {
-      const crypto = window.crypto || window.msCrypto;
-      const array = new Uint32Array(1);
-      crypto.getRandomValues(array);
-      return array[0] / (Math.pow(2, 32) - 1); // Normalize the random value between 0 and 1
+    function preload() {
+      // Load the sound file
+      wheelSound = loadSound('wheel-ball.wav', onSoundLoaded, onSoundLoadError);
+    }
+
+    function onSoundLoaded() {
+      console.log('Sound loaded successfully');
+    }
+
+    function onSoundLoadError(error) {
+      console.error('Sound load error:', error);
     }
 
     async function setup() {
@@ -55,6 +63,11 @@
 
       ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
       ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+
+      // Play the sound when spinning starts
+      if (wheelSound) {
+        wheelSound.loop(); // Play sound in a loop
+      }
     }
 
     function draw() {
@@ -72,6 +85,11 @@
           winningNumber = slotNumbers[finalIndex];
           console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
           moveBallToWinningSlot(); // Move the ball to the center of the winning slot
+
+          // Stop the sound when spinning stops
+          if (wheelSound) {
+            wheelSound.stop();
+          }
         }
 
         ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
@@ -139,6 +157,13 @@
         ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(correctedAngle));
         ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(correctedAngle));
       }
+    }
+
+    async function getRandomNumber() {
+      const crypto = window.crypto || window.msCrypto;
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      return array[0] / (Math.pow(2, 32) - 1); // Normalize the random value between 0 and 1
     }
   </script>
 </body>

@@ -163,7 +163,7 @@
       });
 
       // Load and prepare the sound once, so it's ready for the first spin
-      loadAndPlaySound();
+      loadAndPrepareSound();
     }
 
     function draw() {
@@ -199,13 +199,6 @@
 
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
-
-//      if (!isSpinning) {
-//        fill(255);
-//        textAlign(CENTER, CENTER);
-//        textSize(18);
-//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-//      }
     }
 
     function drawWheel() {
@@ -250,9 +243,10 @@
       }
     }
 
-    function loadAndPlaySound() {
+    function loadAndPrepareSound() {
+      // Create an empty Howl instance for the initial setup
       wheelSound = new Howl({
-        src: ['wheel-ball.wav'], // Path to your local audio file
+        src: ['http://ezr888.github.io/ryderez/wheel-ball.wav'], // Path to your audio file
         loop: true,
         onload: () => {
           soundLoaded = true;
@@ -265,15 +259,17 @@
           console.error('Sound play error:', error);
         }
       });
+      
+      // User gesture required to start audio context
+      document.getElementById('startButton').addEventListener('click', () => {
+        if (soundLoaded) {
+          wheelSound.play();
+        }
+      });
     }
 
     function startWheelSpin() {
       if (!isSpinning) {
-        if (soundLoaded) {
-          wheelSound.play();
-        } else {
-          console.error('Sound not loaded');
-        }
         isSpinning = true;
         ballAngle = random(360);
         ballSpeed = random(5, 10);
@@ -322,12 +318,6 @@
       link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
-    }
-
-    function singleSpin() {
-      if (!isSpinning) {
-        startWheelSpin();
-      }
     }
   </script>
 </body>

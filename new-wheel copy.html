@@ -3,126 +3,204 @@
 <head>
   <title>Roulette Wheel Animation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .wheel-container {
+      border: 5px solid #fff;
+      border-radius: 50%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px; /* Space between wheel and buttons/table */
+    }
+    #output {
+      width: 600px;
+      height: 600px;
+    }
+    .button-container, .table-container {
+      text-align: center;
+      margin-bottom: 20px; /* Space between buttons and table */
+    }
+    #startButton, #saveDataButton {
+      padding: 10px;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+    }
+    #saveDataButton {
+      margin-left: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: auto;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      color: white;
+    }
+    .green-header {
+      background-color: green;
+      color: white;
+    }
+    .black-header {
+      background-color: black;
+      color: white;
+    }
+    .red-header {
+      background-color: red;
+      color: white;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .caption {
+      font-weight: bold;
+    }
+    .green {
+      background-color: lightgreen;
+    }
+    .red {
+      background-color: lightcoral;
+    }
+    .black {
+      background-color: lightgray;
+    }
+    #TotalsTable td {
+      background-color: lightgray;
+    }
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: lightgray; }
+      100% { background-color: white; }
+    }
+    .blink {
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spin {
+      animation: spin 2s linear infinite;
     }
   </style>
 </head>
 <body>
+  <div class="wheel-container">
+    <div id="output"></div>
+  </div>
+  
+  <div class="button-container">
+    <button id="startButton"><b>Spin</b></button>
+    <button id="saveDataButton"><b>Save Data</b></button>
+  </div>
+  
+  <div class="table-container">
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+    <div id="TotalsTableContainer"></div>
+  </div>
+
   <script>
-    let wheelRadius = 200;
+    // Roulette Wheel Variables
+    let wheelRadius = 300;
     let wheelCenterX;
     let wheelCenterY;
-    let numSlots = 38;  // 38 slots including '00'
-    let slotAngle;
-    let ballRadius = 10;
+    let ballRadius = 15;
     let ballX;
     let ballY;
     let ballSpeed;
     let ballAngle;
-    let ballFriction = 0.98;
-    let slotColors = [];
-    let slotNumbers = [];
-    let winningIndex = null;
-    let finalIndex = null;
-    let isSpinning = true;
-    let flashInterval = 500; // milliseconds
-    let lastFlashTime = 0;
-    let flashState = false;
-    let minSpeed = 0.1;
-    let chosenNumber;
+    let ballFriction = .9945;
+    let isSpinning = false;
+    let minSpeed = .70;
+    let finalIndex;
+    let winningNumber;
+    let numSlots = 38;
+    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+    let slotAngle;
+    let wheelSound;
+    let soundLoaded = false;
+    let Totals = new Array(38).fill(0);
 
     function setup() {
-      createCanvas(windowWidth, windowHeight);
+      let canvas = createCanvas(600, 600);
+      canvas.parent('output');
       wheelCenterX = width / 2;
       wheelCenterY = height / 2;
       slotAngle = 360 / numSlots;
 
-      // Slot numbers including '00'
-      slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
-
-      // Colors setup with '00' and '0' in green
-      for (let i = 0; i < numSlots; i++) {
-        if (slotNumbers[i] === '00' || slotNumbers[i] === 0) {
-          slotColors.push(color(0, 255, 0)); // Green for '00' and '0'
-        } else {
-          slotColors.push((i % 2 === 0) ? color(255, 0, 0) : color(0)); // Red and black
+      document.getElementById('startButton').addEventListener('click', () => {
+        if (isSpinning) {
+          if (wheelSound) {
+            wheelSound.stop();
+          }
         }
-      }
+        loadAndPlaySound();
+      });
 
-      // Initialize ball parameters
-      ballAngle = random(0, 360);
-      ballSpeed = random(60, 100); // Increased speed for a longer spin
-      ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-      ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-
-      // Randomly choose a number and adjust the winningIndex
-      chosenNumber = int(random(0, numSlots));
-      if (chosenNumber === 37) chosenNumber = '00'; // Adjust for '00'
-      winningIndex = slotNumbers.indexOf(chosenNumber);
-      isSpinning = true;
+      document.getElementById('saveDataButton').addEventListener('click', () => {
+        exportTotalsToCSV(Totals, 'totals_data.csv');
+        clearAndResetTotals();
+      });
     }
 
     function draw() {
       background(0);
-
-      // Calculate slotIndex based on ballAngle
-      let slotIndex = calculateSlotIndex(ballAngle);
-
-      // Call determineWinner with the calculated slotIndex
-      let winningNumber = determineWinner(slotIndex);
-
       drawWheel();
 
-      // Ball movement and drawing
       if (isSpinning) {
         ballAngle += ballSpeed;
         ballSpeed *= ballFriction;
 
         if (ballSpeed < minSpeed) {
           isSpinning = false;
-          finalIndex = slotIndex; // Store the final index
-          console.log(`Ball stopped. Winning index: ${finalIndex}`);
+          finalIndex = calculateSlotIndex();
+          winningNumber = slotNumbers[finalIndex];
+          console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
+          moveBallToWinningSlot();
+
+          if (wheelSound) {
+            wheelSound.stop();
+          }
+
+          // Update totals
+          if (winningNumber !== undefined) {
+            let index = slotNumbers.indexOf(winningNumber);
+            Totals[index]++;
+            populateTotalsTable();
+          }
         }
 
         ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
         ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-
-        // Debugging: Log ball position and relevant values
-        console.log(`wheelCenterX: ${wheelCenterX}, wheelCenterY: ${wheelCenterY}, wheelRadius: ${wheelRadius}, ballRadius: ${ballRadius}, ballAngle: ${ballAngle}, ballX: ${ballX}, ballY: ${ballY}`);
-
-        fill(255);
-        ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
       }
 
-      // Flash the winning number
-      if (!isSpinning && winningIndex !== null) {
-        let currentTime = millis();
-        if (currentTime - lastFlashTime > flashInterval) {
-          flashState = !flashState;
-          lastFlashTime = currentTime;
-        }
+      fill(255);
+      ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
 
-        // Calculate slotAngle for the final index
-        let slotAngle = 360 / numSlots;
-        let angleStart = finalIndex * slotAngle * Math.PI / 180;
-        let angleEnd = (finalIndex + 1) * slotAngle * Math.PI / 180;
-        let midAngle = (angleStart + angleEnd) / 2;
-        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
-        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
-
-        // Debugging: Log angleStart, angleEnd, and midAngle
-        console.log(`slotAngle: ${slotAngle}, angleStart: ${angleStart}, angleEnd: ${angleEnd}, midAngle: ${midAngle}`);
-
-        // Draw the flashing number
-        fill(flashState ? color(255, 255, 0) : color(255));
-        textAlign(CENTER, CENTER);
-        textSize(18);
-        text(slotNumbers[finalIndex], x, y); // Use finalIndex to display correct number
-      }
+//      if (!isSpinning) {
+//        fill(255);
+//        textAlign(CENTER, CENTER);
+//        textSize(18);
+//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
+//      }
     }
 
     function drawWheel() {
@@ -131,10 +209,14 @@
         let angleStart = i * slotAngle * Math.PI / 180;
         let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
 
-        fill(slotColors[i]);
+        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
+          fill(0, 128, 0);
+        } else {
+          fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
+        }
+
         arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
 
-        // Draw the slot numbers
         let midAngle = (angleStart + angleEnd) / 2;
         let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
         let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
@@ -146,26 +228,103 @@
       }
     }
 
-    function determineWinner(finalSlotIndex) {
-      // Compare the final slot index with the winning index
-      if (finalSlotIndex === winningIndex) {
-        return slotNumbers[finalSlotIndex]; // Return the winning number
-      } else {
-        return null; // Or handle losing condition appropriately
-      }
-    }
-
-    function calculateSlotIndex(ballAngle) {
+    function calculateSlotIndex() {
       let normalizedAngle = (ballAngle % 360 + 360) % 360;
       let anglePerSlot = 360 / numSlots;
       let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
-
-      console.log('normalizedAngle:', normalizedAngle);
-      console.log('anglePerSlot:', anglePerSlot);
-      console.log('index:', index);
-
       return index;
+    }
 
+    function moveBallToWinningSlot() {
+      if (!isSpinning) {
+        let centerAngle = (finalIndex + 0.5) * slotAngle;
+        let correctedAngle = (360 - centerAngle + 360) % 360;
+
+        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(correctedAngle));
+        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(correctedAngle));
+      }
+    }
+
+    function loadAndPlaySound() {
+      wheelSound = new Howl({
+        src: ['wheel-ball.wav'], // Path to your local audio file
+        loop: true,
+        onload: () => {
+          soundLoaded = true;
+          console.log('Sound loaded and playing');
+          startWheelSpin();
+        },
+        onloaderror: (id, error) => {
+          console.error('Sound loading error:', error);
+        },
+        onplayerror: (id, error) => {
+          console.error('Sound play error:', error);
+        }
+      });
+
+      if (soundLoaded) {
+        wheelSound.play();
+      } else {
+        console.error('Sound not loaded');
+      }
+    }
+
+    function startWheelSpin() {
+      if (!isSpinning) {
+        isSpinning = true;
+        ballAngle = random(360);
+        ballSpeed = random(5, 10);
+      }
+    }
+
+    function populateTotalsTable() {
+      let tableContainer = document.getElementById('TotalsTableContainer');
+      let tableHTML = '<table id="TotalsTable"><thead><tr>';
+
+      // Header Row
+      for (let i = 0; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                         (i % 2 === 0 ? 'red-header' : 'black-header');
+        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+      }
+
+      tableHTML += '</tr></thead><tbody><tr>';
+
+      // Data Row
+      for (let i = 0; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                         (i % 2 === 0 ? 'red' : 'black');
+        let displayValue = Totals[i] > 0 ? Totals[i] : ' ';
+        let cellClass = i === finalIndex ? 'blink' : '';
+        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
+      }
+
+      tableHTML += '</tr></tbody></table>';
+      tableContainer.innerHTML = tableHTML;
+    }
+
+    function clearAndResetTotals() {
+      Totals.fill(0); // Reset Totals array to 0
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear table display
+    }
+
+    function exportTotalsToCSV(data, filename) {
+      const csvContent = "data:text/csv;charset=utf-8,"
+          + "Number,Frequency\n"
+          + data.map((freq, index) => `${slotNumbers[index]},${freq}`).join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+    }
+
+    function singleSpin() {
+      if (!isSpinning) {
+        startWheelSpin();
+      }
     }
   </script>
 </body>

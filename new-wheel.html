@@ -87,7 +87,7 @@
     }
     @keyframes blink {
       0% { background-color: white; }
-      50% { background-color: lightgray; }
+      50% { background-color: transparent; }
       100% { background-color: white; }
     }
     .blink {
@@ -147,18 +147,16 @@
       slotAngle = 360 / numSlots;
 
       document.getElementById('startButton').addEventListener('click', () => {
-        if (isSpinning) {
-          if (wheelSound) {
-            wheelSound.stop();
-          }
-        }
-        loadAndPlaySound();
+        startWheelSpin();
       });
 
       document.getElementById('saveDataButton').addEventListener('click', () => {
         exportTotalsToCSV(Totals, 'totals_data.csv');
         clearAndResetTotals();
       });
+
+      // Load and prepare the sound once, so it's ready for the first spin
+      loadAndPlaySound();
     }
 
     function draw() {
@@ -195,12 +193,12 @@
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
 
-//      if (!isSpinning) {
-//        fill(255);
-//        textAlign(CENTER, CENTER);
-//        textSize(18);
-//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-//      }
+      if (!isSpinning) {
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(18);
+        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
+      }
     }
 
     function drawWheel() {
@@ -251,8 +249,7 @@
         loop: true,
         onload: () => {
           soundLoaded = true;
-          console.log('Sound loaded and playing');
-          startWheelSpin();
+          console.log('Sound loaded');
         },
         onloaderror: (id, error) => {
           console.error('Sound loading error:', error);
@@ -261,16 +258,15 @@
           console.error('Sound play error:', error);
         }
       });
-
-      if (soundLoaded) {
-        wheelSound.play();
-      } else {
-        console.error('Sound not loaded');
-      }
     }
 
     function startWheelSpin() {
       if (!isSpinning) {
+        if (soundLoaded) {
+          wheelSound.play();
+        } else {
+          console.error('Sound not loaded');
+        }
         isSpinning = true;
         ballAngle = random(360);
         ballSpeed = random(5, 10);
@@ -305,7 +301,7 @@
 
     function clearAndResetTotals() {
       Totals.fill(0); // Reset Totals array to 0
-      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear table display
+      populateTotalsTable(); // Clear and repopulate the table
     }
 
     function exportTotalsToCSV(data, filename) {

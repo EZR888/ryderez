@@ -49,14 +49,16 @@
       wheelCenterX = width / 2;
       wheelCenterY = height / 2;
       slotAngle = 360 / numSlots;
-      
+
       // Add event listener for the start button
       document.getElementById('startButton').addEventListener('click', () => {
-        if (!soundLoaded) {
-          loadAndPlaySound();
-        } else {
-          startWheelSpin();
+        if (isSpinning) {
+          // If already spinning, stop the current sound
+          if (wheelSound) {
+            wheelSound.stop();
+          }
         }
+        loadAndPlaySound();
       });
     }
 
@@ -140,8 +142,9 @@
     }
 
     function loadAndPlaySound() {
+      // Reinitialize the sound
       wheelSound = new Howl({
-        src: ['https://ezr888.github.io/ryderez/wheel-ball.wav'], // Your audio file URL
+        src: ['wheel-ball.wav'], // Path to your local audio file
         loop: true,
         onload: () => {
           soundLoaded = true;

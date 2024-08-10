@@ -70,6 +70,14 @@
       font-size: 48px; /* Increase font size if needed */
       margin-bottom: 20px; /* Space below the text */
     }
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: lightgray; }
+      100% { background-color: white; }
+    }
+    .blinking {
+      animation: blink 1s linear infinite;
+    }
   </style>
 </head>
 <body>
@@ -108,6 +116,7 @@
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);
+    let currentBlinkCell = null;
 
     // Function to clear all arrays
     function clearArrays() {
@@ -186,7 +195,7 @@
           setTimeout(function() {
             let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
             Totals[c1] += 1; // Increment corresponding index in Totals array
-            populateTotalsTable(); // Populate Totals table after each spin
+            populateTotalsTable(c1); // Populate Totals table after each spin and apply blinking effect
             spinCount++;
             
             setTimeout(spin, spinDelay); // Delay before the next spin
@@ -200,13 +209,13 @@
     }
 
     // Function to populate Totals table
-    function populateTotalsTable() {
+    function populateTotalsTable(blinkCellNumber = null) {
       // Display Totals data in the table with colors
-      displayTotalsTableWithColors(Totals);
+      displayTotalsTableWithColors(Totals, blinkCellNumber);
     }
 
     // Function to display Totals array as a table with red/green formatting
-    function displayTotalsTableWithColors(Totals) {
+    function displayTotalsTableWithColors(Totals, blinkCellNumber) {
       let output = "";
 
       // Define the two header orders
@@ -251,7 +260,8 @@
           }
           // Replace 0 with empty string
           cellValue = (cellValue === 0) ? '' : cellValue;
-          tableOutput += `<td class='numeric' style='background-color: lightgray;'>${cellValue}</td>`; // Data cells with light gray background color
+          const isBlinking = (number === blinkCellNumber);
+          tableOutput += `<td class='numeric ${isBlinking ? 'blinking' : ''}' style='background-color: lightgray;'>${cellValue}</td>`; // Data cells with light gray background color
         });
 
         tableOutput += "</tr>";

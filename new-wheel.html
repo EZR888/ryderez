@@ -3,7 +3,7 @@
 <head>
   <title>Roulette Wheel Animation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/addons/p5.sound.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -23,6 +23,7 @@
 </head>
 <body>
   <button id="startButton">Start Animation</button>
+
   <script>
     let wheelRadius = 300;
     let wheelCenterX;
@@ -32,57 +33,35 @@
     let ballY;
     let ballSpeed;
     let ballAngle;
-    let ballFriction = 0.98; // Increased friction for slower deceleration
-    let isSpinning = true;
-    let minSpeed = 0.5; // Reduced minimum speed to allow more spins
+    let ballFriction = 0.98;
+    let isSpinning = false;
+    let minSpeed = 0.5;
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
     let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
     let slotAngle;
-    let moveBallDelay = 100; // Delay in milliseconds
-    let lastMoveTime = 0;
     let wheelSound;
-    let soundStarted = false;
-
-    function preload() {
-      // Load the sound file
-      wheelSound = loadSound('wheel-bal.wav', onSoundLoaded, onSoundLoadError);
-    }
+    let soundLoaded = false;
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
       wheelCenterX = width / 2;
       wheelCenterY = height / 2;
       slotAngle = 360 / numSlots;
-
+      
       // Add event listener for the start button
-      document.getElementById('startButton').addEventListener('click', startAnimation);
-
-      function startAnimation() {
-        if (!soundStarted) {
-          if (wheelSound) {
-            wheelSound.loop(); // Start sound loop
-          }
-          soundStarted = true;
+      document.getElementById('startButton').addEventListener('click', () => {
+        if (!soundLoaded) {
+          loadAndPlaySound();
+        } else {
+          startWheelSpin();
         }
-        // Generate random angle and speed using the async function
-        getRandomNumber().then(randomAngle => {
-          getRandomNumber().then(randomSpeed => {
-            ballAngle = randomAngle * 360; // Convert to degrees
-            ballSpeed = randomSpeed * 100 + 200; // Adjusted speed to ensure visibility but still multiple rotations
-            ballSpeed *= 0.90; // Reduced speed by 10%
-
-            ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-            ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-          });
-        });
-      }
+      });
     }
 
     function draw() {
       background(0);
-
       drawWheel();
 
       if (isSpinning) {
@@ -94,7 +73,7 @@
           finalIndex = calculateSlotIndex();
           winningNumber = slotNumbers[finalIndex];
           console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
-          moveBallToWinningSlot(); // Move the ball to the center of the winning slot
+          moveBallToWinningSlot();
 
           // Stop the sound when spinning stops
           if (wheelSound) {
@@ -114,9 +93,6 @@
         textAlign(CENTER, CENTER);
         textSize(18);
         text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-        if (millis() - lastMoveTime > moveBallDelay) {
-          lastMoveTime = millis();
-        }
       }
     }
 
@@ -126,9 +102,8 @@
         let angleStart = i * slotAngle * Math.PI / 180;
         let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
 
-        // Color the slots
         if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
-          fill(0, 128, 0); // Green color
+          fill(0, 128, 0);
         } else {
           fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
         }
@@ -151,29 +126,59 @@
       let anglePerSlot = 360 / numSlots;
       let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
 
-      console.log('normalizedAngle:', normalizedAngle);
-      console.log('anglePerSlot:', anglePerSlot);
-      console.log('index:', index);
-
       return index;
     }
 
     function moveBallToWinningSlot() {
       if (!isSpinning) {
-        let centerAngle = (finalIndex + 0.5) * slotAngle; // Center angle of the winning slot
-        let correctedAngle = (360 - centerAngle + 360) % 360; // Adjust angle to align with the wheel rotation
+        let centerAngle = (finalIndex + 0.5) * slotAngle;
+        let correctedAngle = (360 - centerAngle + 360) % 360;
 
-        // Calculate the ball's position in relation to the corrected angle
         ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(correctedAngle));
         ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(correctedAngle));
       }
+    }
+
+    function loadAndPlaySound() {
+      wheelSound = new Howl({
+        src: ['http://ryderez.com/wheel-ball.wav'], // Your audio file URL
+        loop: true,
+        onload: () => {
+          soundLoaded = true;
+          console.log('Sound loaded and playing');
+          startWheelSpin(); // Start spinning the wheel after sound is loaded
+        },
+        onloaderror: (id, error) => {
+          console.error('Sound load error:', error);
+        },
+        onplayerror: (id, error) => {
+          console.error('Sound play error:', error);
+        }
+      });
+
+      // Play sound after it's loaded
+      wheelSound.play();
+    }
+
+    function startWheelSpin() {
+      getRandomNumber().then(randomAngle => {
+        getRandomNumber().then(randomSpeed => {
+          ballAngle = randomAngle * 360;
+          ballSpeed = randomSpeed * 100 + 200;
+          ballSpeed *= 0.90;
+
+          ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+          ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+          isSpinning = true;
+        });
+      });
     }
 
     async function getRandomNumber() {
       const crypto = window.crypto || window.msCrypto;
       const array = new Uint32Array(1);
       crypto.getRandomValues(array);
-      return array[0] / (Math.pow(2, 32) - 1); // Normalize the random value between 0 and 1
+      return array[0] / (Math.pow(2, 32) - 1);
     }
   </script>
 </body>

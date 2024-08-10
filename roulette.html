@@ -71,18 +71,6 @@
       background-color: lightgray; /* Light gray for content cells in the Totals table */
     }
 
-    /* Blinking animation */
-    @keyframes blink {
-      0% { background-color: white; }
-      50% { background-color: gray; }
-      100% { background-color: white; }
-    }
-
-    /* Apply blinking animation to cell */
-    .blink-bg {
-      animation: blink 0.5s infinite;
-    }
-
     /* CSS animation for spinning the image */
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -109,7 +97,7 @@
   
   <br>
   <center>
-    <button onclick="singleSpin()"><b>Single Spin</b></button>&nbsp; &nbsp; <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>
+    <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>
   </center>
   <br>
   <center>
@@ -117,8 +105,7 @@
     <input type="number" id="x" name="x" value="0" style="width: 100px"><br>
     <label style="color:red" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
     <input type="number" id="y" name="y" value="14" style="width: 100px"><br><br>
-        <button onclick="runSimulation()" style="color:red"><b>Run Simulation</b></button><br><br>
-
+    <button onclick="runSimulation()" style="color:red"><b>Run Simulation</b></button><br><br>
   </center>
   
   <center>
@@ -141,7 +128,6 @@
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);
-    let singleSpinClicked = false; // Track if Single Spin button was clicked
 
     // Function to clear all arrays
     function clearArrays() {
@@ -186,26 +172,9 @@
       exportTotalsToCSV(Totals, 'totals_data.csv');
     });
 
-    // Function to run a single spin
-    function singleSpin() {
-      singleSpinClicked = true; // Set the flag to true when Single Spin button is clicked
-      clearArrays(); // Clear arrays before single spin
-      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
-      document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
-      document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
-
-      setTimeout(function() {
-        document.getElementById('rouletteWheel').classList.remove('spin'); // Remove spinning animation class after 2 seconds (faster spinning)
-        let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-        Totals[c1] += 1; // Increment corresponding index in Totals array
-        populateTotalsTable(); // Populate Totals table after spinning stops
-        singleSpinClicked = false; // Reset singleSpinClicked after displaying Totals table
-      }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
-    }
-
     // Function to run the simulation
     function runSimulation() {
-      clearArrays(); // Clear arrays before single spin
+      clearArrays(); // Clear arrays before simulation
       document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
       document.getElementById('rouletteWheel').classList.add('spin'); // Add spinning animation class to the image
       document.getElementById('TotalsTableContainer').style.display = 'block'; // Display Totals table container
@@ -224,34 +193,34 @@
       }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
     }
 
-// Function to run multiple spins with delay
-function multiSpin() {
-  clearArrays(); // Clear arrays before multi-spin
-  document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
-  let numSpins = parseInt(document.getElementById('numSpins').value);
-  let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
-  let spinCount = 0;
+    // Function to run multiple spins with delay
+    function multiSpin() {
+      clearArrays(); // Clear arrays before multi-spin
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+      let numSpins = parseInt(document.getElementById('numSpins').value);
+      let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
+      let spinCount = 0;
 
-  function spin() {
-    if (spinCount < numSpins) {
-      document.getElementById('rouletteWheel').classList.add('spin'); // Start spinning animation
+      function spin() {
+        if (spinCount < numSpins) {
+          document.getElementById('rouletteWheel').classList.add('spin'); // Start spinning animation
 
-      setTimeout(function() {
-        document.getElementById('rouletteWheel').classList.remove('spin'); // Stop spinning animation
-        let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-        Totals[c1] += 1; // Increment corresponding index in Totals array
-        populateTotalsTable(); // Populate Totals table after each spin
-        spinCount++;
-        
-        setTimeout(spin, spinDelay); // Delay before the next spin
-      }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
-    } else {
-      document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed
+          setTimeout(function() {
+            document.getElementById('rouletteWheel').classList.remove('spin'); // Stop spinning animation
+            let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
+            Totals[c1] += 1; // Increment corresponding index in Totals array
+            populateTotalsTable(); // Populate Totals table after each spin
+            spinCount++;
+            
+            setTimeout(spin, spinDelay); // Delay before the next spin
+          }, 6000); // 2000 milliseconds = 2 seconds (faster spinning)
+        } else {
+          document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed
+        }
+      }
+
+      spin(); // Start the first spin
     }
-  }
-
-  spin(); // Start the first spin
-}
 
     // Function to populate Totals table
     function populateTotalsTable() {
@@ -299,14 +268,9 @@ function multiSpin() {
         } else {
           cellValue = Totals[number];
         }
-        // Check if singleSpinClicked is true and cellValue is 1
-        if (singleSpinClicked && cellValue === 1) {
-          output += "<td class='numeric bold blink-bg'></td>"; // Apply blinking background
-        } else {
-          // Replace 0 with empty string
-          cellValue = (cellValue === 0) ? '' : cellValue;
-          output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
-        }
+        // Replace 0 with empty string
+        cellValue = (cellValue === 0) ? '' : cellValue;
+        output += "<td class='numeric bold'>" + cellValue + "</td>"; // Data cells with appropriate class and value, bolded
       });
 
       output += "</tr>";

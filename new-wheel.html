@@ -9,22 +9,116 @@
       margin: 0;
       overflow: hidden;
       background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
     }
-    #startButton {
-      position: absolute;
-      top: 20px;
-      left: 20px;
+    .wheel-container {
+      border: 5px solid #fff;
+      border-radius: 50%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px; /* Space between wheel and buttons/table */
+    }
+    #output {
+      width: 600px;
+      height: 600px;
+    }
+    .button-container, .table-container {
+      text-align: center;
+      margin-bottom: 20px; /* Space between buttons and table */
+    }
+    #startButton, #saveDataButton {
       padding: 10px;
       background: #fff;
       border: none;
       cursor: pointer;
+      margin: 5px;
+    }
+    #saveDataButton {
+      margin-left: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: auto;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      color: white;
+    }
+    .green-header {
+      background-color: green;
+      color: white;
+    }
+    .black-header {
+      background-color: black;
+      color: white;
+    }
+    .red-header {
+      background-color: red;
+      color: white;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .caption {
+      font-weight: bold;
+    }
+    .green {
+      background-color: lightgreen;
+    }
+    .red {
+      background-color: lightcoral;
+    }
+    .black {
+      background-color: lightgray;
+    }
+    #TotalsTable td {
+      background-color: lightgray;
+    }
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: lightgray; }
+      100% { background-color: white; }
+    }
+    .blink {
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spin {
+      animation: spin 2s linear infinite;
     }
   </style>
 </head>
 <body>
-  <button id="startButton">Start Animation</button>
+  <div class="wheel-container">
+    <div id="output"></div>
+  </div>
+  
+  <div class="button-container">
+    <button id="startButton"><b>Spin</b></button>
+    <button id="saveDataButton"><b>Save Data</b></button>
+  </div>
+  
+  <div class="table-container">
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+    <div id="TotalsTableContainer"></div>
+  </div>
 
   <script>
+    // Roulette Wheel Variables
     let wheelRadius = 300;
     let wheelCenterX;
     let wheelCenterY;
@@ -33,9 +127,9 @@
     let ballY;
     let ballSpeed;
     let ballAngle;
-    let ballFriction = 0.98;
+    let ballFriction = .9945;
     let isSpinning = false;
-    let minSpeed = 0.5;
+    let minSpeed = .70;
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
@@ -43,22 +137,27 @@
     let slotAngle;
     let wheelSound;
     let soundLoaded = false;
+    let Totals = new Array(38).fill(0);
 
     function setup() {
-      createCanvas(windowWidth, windowHeight);
+      let canvas = createCanvas(600, 600);
+      canvas.parent('output');
       wheelCenterX = width / 2;
       wheelCenterY = height / 2;
       slotAngle = 360 / numSlots;
 
-      // Add event listener for the start button
       document.getElementById('startButton').addEventListener('click', () => {
         if (isSpinning) {
-          // If already spinning, stop the current sound
           if (wheelSound) {
             wheelSound.stop();
           }
         }
         loadAndPlaySound();
+      });
+
+      document.getElementById('saveDataButton').addEventListener('click', () => {
+        exportTotalsToCSV(Totals, 'totals_data.csv');
+        clearAndResetTotals();
       });
     }
 
@@ -77,9 +176,15 @@
           console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
           moveBallToWinningSlot();
 
-          // Stop the sound when spinning stops
           if (wheelSound) {
             wheelSound.stop();
+          }
+
+          // Update totals
+          if (winningNumber !== undefined) {
+            let index = slotNumbers.indexOf(winningNumber);
+            Totals[index]++;
+            populateTotalsTable();
           }
         }
 
@@ -90,12 +195,12 @@
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
 
-      if (!isSpinning) {
-        fill(255);
-        textAlign(CENTER, CENTER);
-        textSize(18);
-        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-      }
+//      if (!isSpinning) {
+//        fill(255);
+//        textAlign(CENTER, CENTER);
+//        textSize(18);
+//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
+//      }
     }
 
     function drawWheel() {
@@ -127,7 +232,6 @@
       let normalizedAngle = (ballAngle % 360 + 360) % 360;
       let anglePerSlot = 360 / numSlots;
       let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
-
       return index;
     }
 
@@ -142,46 +246,85 @@
     }
 
     function loadAndPlaySound() {
-      // Reinitialize the sound
       wheelSound = new Howl({
         src: ['wheel-ball.wav'], // Path to your local audio file
         loop: true,
         onload: () => {
           soundLoaded = true;
           console.log('Sound loaded and playing');
-          startWheelSpin(); // Start spinning the wheel after sound is loaded
+          startWheelSpin();
         },
         onloaderror: (id, error) => {
-          console.error('Sound load error:', error);
+          console.error('Sound loading error:', error);
         },
         onplayerror: (id, error) => {
           console.error('Sound play error:', error);
         }
       });
 
-      // Play sound after it's loaded
-      wheelSound.play();
+      if (soundLoaded) {
+        wheelSound.play();
+      } else {
+        console.error('Sound not loaded');
+      }
     }
 
     function startWheelSpin() {
-      getRandomNumber().then(randomAngle => {
-        getRandomNumber().then(randomSpeed => {
-          ballAngle = randomAngle * 360;
-          ballSpeed = randomSpeed * 100 + 200;
-          ballSpeed *= 0.90;
-
-          ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-          ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-          isSpinning = true;
-        });
-      });
+      if (!isSpinning) {
+        isSpinning = true;
+        ballAngle = random(360);
+        ballSpeed = random(5, 10);
+      }
     }
 
-    async function getRandomNumber() {
-      const crypto = window.crypto || window.msCrypto;
-      const array = new Uint32Array(1);
-      crypto.getRandomValues(array);
-      return array[0] / (Math.pow(2, 32) - 1);
+    function populateTotalsTable() {
+      let tableContainer = document.getElementById('TotalsTableContainer');
+      let tableHTML = '<table id="TotalsTable"><thead><tr>';
+
+      // Header Row
+      for (let i = 0; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                         (i % 2 === 0 ? 'red-header' : 'black-header');
+        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+      }
+
+      tableHTML += '</tr></thead><tbody><tr>';
+
+      // Data Row
+      for (let i = 0; i < numSlots; i++) {
+        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                         (i % 2 === 0 ? 'red' : 'black');
+        let displayValue = Totals[i] > 0 ? Totals[i] : ' ';
+        let cellClass = i === finalIndex ? 'blink' : '';
+        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
+      }
+
+      tableHTML += '</tr></tbody></table>';
+      tableContainer.innerHTML = tableHTML;
+    }
+
+    function clearAndResetTotals() {
+      Totals.fill(0); // Reset Totals array to 0
+      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear table display
+    }
+
+    function exportTotalsToCSV(data, filename) {
+      const csvContent = "data:text/csv;charset=utf-8,"
+          + "Number,Frequency\n"
+          + data.map((freq, index) => `${slotNumbers[index]},${freq}`).join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+    }
+
+    function singleSpin() {
+      if (!isSpinning) {
+        startWheelSpin();
+      }
     }
   </script>
 </body>

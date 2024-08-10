@@ -87,7 +87,7 @@
     }
     @keyframes blink {
       0% { background-color: white; }
-      50% { background-color: transparent; }
+      50% { background-color: lightgray; }
       100% { background-color: white; }
     }
     .blink {
@@ -193,12 +193,12 @@
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
 
-      if (!isSpinning) {
-        fill(255);
-        textAlign(CENTER, CENTER);
-        textSize(18);
-        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-      }
+//      if (!isSpinning) {
+//        fill(255);
+//        textAlign(CENTER, CENTER);
+//        textSize(18);
+//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
+//      }
     }
 
     function drawWheel() {

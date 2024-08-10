@@ -21,9 +21,9 @@
     let ballY;
     let ballSpeed;
     let ballAngle;
-    let ballFriction = 0.95; // Reduced friction for longer spin
+    let ballFriction = 0.98; // Increased friction for slower deceleration
     let isSpinning = true;
-    let minSpeed = 0.65;
+    let minSpeed = 0.5; // Reduced minimum speed to allow more spins
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
@@ -50,8 +50,8 @@
       let randomSpeed = await getRandomNumber();
 
       ballAngle = randomAngle * 360; // Convert to degrees
-      ballSpeed = randomSpeed * 40 + 60; // Random speed between 60 and 100
-      ballSpeed *= 0.90; // Reduced speed by 25%
+      ballSpeed = randomSpeed * 100 + 200; // Adjusted speed to ensure visibility but still multiple rotations
+      ballSpeed *= 0.90; // Reduced speed by 10%
 
       ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
       ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));

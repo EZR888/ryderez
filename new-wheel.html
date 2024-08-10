@@ -10,9 +10,19 @@
       overflow: hidden;
       background-color: #000;
     }
+    #startButton {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <button id="startButton">Start Animation</button>
   <script>
     let wheelRadius = 300;
     let wheelCenterX;
@@ -33,40 +43,40 @@
     let moveBallDelay = 100; // Delay in milliseconds
     let lastMoveTime = 0;
     let wheelSound;
+    let soundStarted = false;
 
     function preload() {
       // Load the sound file
-      wheelSound = loadSound('wheel-ball.wav', onSoundLoaded, onSoundLoadError);
+      wheelSound = loadSound('wheel-bal.wav', onSoundLoaded, onSoundLoadError);
     }
 
-    function onSoundLoaded() {
-      console.log('Sound loaded successfully');
-    }
-
-    function onSoundLoadError(error) {
-      console.error('Sound load error:', error);
-    }
-
-    async function setup() {
+    function setup() {
       createCanvas(windowWidth, windowHeight);
       wheelCenterX = width / 2;
       wheelCenterY = height / 2;
       slotAngle = 360 / numSlots;
 
-      // Generate random angle and speed using the async function
-      let randomAngle = await getRandomNumber();
-      let randomSpeed = await getRandomNumber();
+      // Add event listener for the start button
+      document.getElementById('startButton').addEventListener('click', startAnimation);
 
-      ballAngle = randomAngle * 360; // Convert to degrees
-      ballSpeed = randomSpeed * 100 + 200; // Adjusted speed to ensure visibility but still multiple rotations
-      ballSpeed *= 0.90; // Reduced speed by 10%
+      function startAnimation() {
+        if (!soundStarted) {
+          if (wheelSound) {
+            wheelSound.loop(); // Start sound loop
+          }
+          soundStarted = true;
+        }
+        // Generate random angle and speed using the async function
+        getRandomNumber().then(randomAngle => {
+          getRandomNumber().then(randomSpeed => {
+            ballAngle = randomAngle * 360; // Convert to degrees
+            ballSpeed = randomSpeed * 100 + 200; // Adjusted speed to ensure visibility but still multiple rotations
+            ballSpeed *= 0.90; // Reduced speed by 10%
 
-      ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-      ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-
-      // Play the sound when spinning starts
-      if (wheelSound) {
-        wheelSound.loop(); // Play sound in a loop
+            ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
+            ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
+          });
+        });
       }
     }
 

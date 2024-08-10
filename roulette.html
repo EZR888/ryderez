@@ -7,6 +7,8 @@
       margin: 0;
       overflow: hidden;
       background-color: #000;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
@@ -14,8 +16,8 @@
     }
     table {
       border-collapse: collapse;
-      width: 100%;
-      max-width: 600px; /* Limit the maximum width of each table */
+      width: 90%; /* Adjusted to be relative to the viewport */
+      max-width: 600px; /* Ensure it doesn't get too wide */
       margin: 0 auto; /* Center tables horizontally */
       table-layout: fixed; /* Ensure consistent column widths */
     }
@@ -66,7 +68,6 @@
     .lgreen-text {
       color: lightgreen; /* Light green color for text */
       text-align: center; /* Center-align text */
-      display: block; /* Ensure text is centered */
       font-size: 48px; /* Increase font size if needed */
       margin-bottom: 20px; /* Space below the text */
     }
@@ -78,14 +79,25 @@
     .blinking {
       animation: blink 1s linear infinite;
     }
+    /* Responsive styles for small screens */
+    @media (max-width: 768px) {
+      table {
+        width: 100%; /* Make tables take full width on small screens */
+        font-size: 14px; /* Adjust font size for better readability */
+      }
+      .lgreen-text {
+        font-size: 36px; /* Adjust font size for smaller screens */
+      }
+      .caption {
+        font-size: 20px; /* Adjust font size for smaller screens */
+      }
+    }
   </style>
 </head>
 <body>
-  <br>
   <div>
     <h1 class="lgreen-text">Roulette Wheel Test Bed</h1>
   </div>
-  <br>
   <center>
     <button onclick="runSimulation()" style="color:red"><b>Run Simulation</b></button><br><br>
     <label style="color:red" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -93,7 +105,6 @@
     <label style="color:red" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
     <input type="number" id="y" name="y" value="1" style="width: 100px"><br><br>
   </center>
-  <br>
   <center>
     <button onclick="multiSpin()" style="color:green"><b>Multi-Spin</b></button><br><br>
     <label style="color:green" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -101,7 +112,6 @@
     <label style="color:green" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
     <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 100px"><br><br>
   </center>
-  <br>
   <center>
     <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
   </center>

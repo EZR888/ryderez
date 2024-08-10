@@ -82,6 +82,10 @@
     .black {
       background-color: lightgray;
     }
+    .white-text {
+      color: lightgreen;
+      text-align: center;
+    }
     #TotalsTable td {
       background-color: lightgray;
     }
@@ -103,6 +107,9 @@
   </style>
 </head>
 <body>
+  <div>
+    <h1 class="white-text">Roulette Wheel Test Bed</h1>
+  </div>
   <div class="wheel-container">
     <div id="output"></div>
   </div>
@@ -119,7 +126,7 @@
 
   <script>
     // Roulette Wheel Variables
-    let wheelRadius = 300;
+    let wheelRadius = 280;
     let wheelCenterX;
     let wheelCenterY;
     let ballRadius = 15;
@@ -129,7 +136,7 @@
     let ballAngle;
     let ballFriction = .9945;
     let isSpinning = false;
-    let minSpeed = .70;
+    let minSpeed = .90;
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
@@ -147,18 +154,16 @@
       slotAngle = 360 / numSlots;
 
       document.getElementById('startButton').addEventListener('click', () => {
-        if (isSpinning) {
-          if (wheelSound) {
-            wheelSound.stop();
-          }
-        }
-        loadAndPlaySound();
+        startWheelSpin();
       });
 
       document.getElementById('saveDataButton').addEventListener('click', () => {
         exportTotalsToCSV(Totals, 'totals_data.csv');
         clearAndResetTotals();
       });
+
+      // Load and prepare the sound once, so it's ready for the first spin
+      loadAndPrepareSound();
     }
 
     function draw() {
@@ -194,13 +199,6 @@
 
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
-
-//      if (!isSpinning) {
-//        fill(255);
-//        textAlign(CENTER, CENTER);
-//        textSize(18);
-//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
-//      }
     }
 
     function drawWheel() {
@@ -245,14 +243,14 @@
       }
     }
 
-    function loadAndPlaySound() {
+    function loadAndPrepareSound() {
+      // Create an empty Howl instance for the initial setup
       wheelSound = new Howl({
-        src: ['wheel-ball.wav'], // Path to your local audio file
+        src: ['http://ezr888.github.io/ryderez/wheel-ball.wav'], // Path to your audio file
         loop: true,
         onload: () => {
           soundLoaded = true;
-          console.log('Sound loaded and playing');
-          startWheelSpin();
+          console.log('Sound loaded');
         },
         onloaderror: (id, error) => {
           console.error('Sound loading error:', error);
@@ -261,12 +259,13 @@
           console.error('Sound play error:', error);
         }
       });
-
-      if (soundLoaded) {
-        wheelSound.play();
-      } else {
-        console.error('Sound not loaded');
-      }
+      
+      // User gesture required to start audio context
+      document.getElementById('startButton').addEventListener('click', () => {
+        if (soundLoaded) {
+          wheelSound.play();
+        }
+      });
     }
 
     function startWheelSpin() {
@@ -305,7 +304,7 @@
 
     function clearAndResetTotals() {
       Totals.fill(0); // Reset Totals array to 0
-      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear table display
+      populateTotalsTable(); // Clear and repopulate the table
     }
 
     function exportTotalsToCSV(data, filename) {
@@ -319,12 +318,6 @@
       link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
-    }
-
-    function singleSpin() {
-      if (!isSpinning) {
-        startWheelSpin();
-      }
     }
   </script>
 </body>

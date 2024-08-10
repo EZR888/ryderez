@@ -33,7 +33,7 @@
       text-align: center;
       margin-bottom: 20px; /* Space between buttons and table */
     }
-    #startButton, #saveDataButton {
+    #startButton, #saveDataButton, #accessSimulatorButton {
       padding: 10px;
       background: #fff;
       border: none;
@@ -117,6 +117,7 @@
   <div class="button-container">
     <button id="startButton"><b>Spin</b></button>
     <button id="saveDataButton"><b>Save Data</b></button>
+    <button id="accessSimulatorButton"><b>Access Simulator</b></button>
   </div>
   
   <div class="table-container">
@@ -162,8 +163,12 @@
         clearAndResetTotals();
       });
 
+      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+        window.location.href = 'roulette.html';
+      });
+
       // Load and prepare the sound once, so it's ready for the first spin
-      loadAndPrepareSound();
+      loadAndPlaySound();
     }
 
     function draw() {
@@ -199,6 +204,13 @@
 
       fill(255);
       ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
+
+//      if (!isSpinning) {
+//        fill(255);
+//        textAlign(CENTER, CENTER);
+//        textSize(18);
+//        text(`Winning Number: ${winningNumber}`, width / 2, height - 30);
+//      }
     }
 
     function drawWheel() {
@@ -243,10 +255,9 @@
       }
     }
 
-    function loadAndPrepareSound() {
-      // Create an empty Howl instance for the initial setup
+    function loadAndPlaySound() {
       wheelSound = new Howl({
-        src: ['http://ezr888.github.io/ryderez/wheel-ball.wav'], // Path to your audio file
+        src: ['wheel-ball.wav'], // Path to your local audio file
         loop: true,
         onload: () => {
           soundLoaded = true;
@@ -259,17 +270,15 @@
           console.error('Sound play error:', error);
         }
       });
-      
-      // User gesture required to start audio context
-      document.getElementById('startButton').addEventListener('click', () => {
-        if (soundLoaded) {
-          wheelSound.play();
-        }
-      });
     }
 
     function startWheelSpin() {
       if (!isSpinning) {
+        if (soundLoaded) {
+          wheelSound.play();
+        } else {
+          console.error('Sound not loaded');
+        }
         isSpinning = true;
         ballAngle = random(360);
         ballSpeed = random(5, 10);
@@ -318,6 +327,12 @@
       link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
+    }
+
+    function singleSpin() {
+      if (!isSpinning) {
+        startWheelSpin();
+      }
     }
   </script>
 </body>

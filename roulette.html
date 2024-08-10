@@ -3,7 +3,7 @@
 <head>
   <title>Roulette Random Picker</title>
   <style>
-   body {
+    body {
       margin: 0;
       overflow: hidden;
       background-color: #000;
@@ -82,11 +82,11 @@
   </style>
 </head>
 <body>
-<br>
+  <br>
   <div>
     <h1 class="lgreen-text">Roulette Wheel Test Bed</h1>
   </div>
-<br>
+  <br>
   <center>
     <button onclick="runSimulation()" style="color:red"><b>Run Simulation</b></button><br><br>
     <label style="color:red" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -94,7 +94,7 @@
     <label style="color:red" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
     <input type="number" id="y" name="y" value="1" style="width: 100px"><br><br>
   </center>
-<br>
+  <br>
   <center>
     <button onclick="multiSpin()" style="color:green"><b>Multi-Spin</b></button><br><br>
     <label style="color:green" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -103,11 +103,9 @@
     <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 100px"><br><br>
   </center>
   <br>
-    <center>
-      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
-    </center>
-
-
+  <center>
+    <button id="singleSpinButton"><b>Single Spin</b>&nbsp;&nbsp;</button><button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>
+  </center>
   <div class="table-container">
     <br>
     <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
@@ -161,7 +159,7 @@
     document.getElementById("saveDataButton").addEventListener("click", function() {
       exportTotalsToCSV(Totals, 'totals_data.csv');
     });
-    
+
     // Event listener for the Single Spin button
     document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.location.href = 'new-wheel.html';
@@ -186,7 +184,11 @@
     // Function to run multiple spins with delay
     function multiSpin() {
       clearArrays(); // Clear arrays before multi-spin
-      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+
+      // Immediately create and display an empty table
+      document.getElementById('TotalsTableContainer').innerHTML = '';
+      populateTotalsTable(); // Populate the table with initial empty state
+
       let numSpins = parseInt(document.getElementById('numSpins').value);
       let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
       let spinCount = 0;

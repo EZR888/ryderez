@@ -87,14 +87,6 @@
     .blinking {
       animation: blink 1s linear infinite;
     }
-    .black {
-      background-color: lightgray;
-    }
-   .lgreen-text {
-    color: lightgreen;
-    text-align: center;
-    }
-
   </style>
 </head>
 <body>
@@ -117,7 +109,7 @@
     <div>
       <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
     </div>
-<br>
+
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
       <div id="TotalsTableContainer"></div>
@@ -149,8 +141,7 @@
     // Function to export Totals array data to CSV format
     function exportTotalsToCSV(array, filename) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      
-      // Add headers to CSV
+
       csvContent += ","; // Empty cell to align with headers
 
       // Loop through Totals array to append values
@@ -239,6 +230,7 @@
 
         // Header row
         tableOutput += "<tr>";
+        tableOutput += "<th></th>"; // Empty cell for alignment
 
         // Create the header cells
         headerOrder.forEach((number, index) => {
@@ -259,6 +251,7 @@
 
         // Data row with values
         tableOutput += "<tr>";
+        tableOutput += "<th class='black'></th>"; // Black background for the first column header, white text color
 
         // Display Totals in the order of headerOrder array
         headerOrder.forEach((number) => {

@@ -158,9 +158,13 @@ th {
     width: 100%;
     max-width: none;
   }
+
+  th, td {
+    font-size: 14px; /* Adjust font size for smaller screens */
+    padding: 8px;    /* Adjust padding for smaller screens */
+  }
 }
 </style>
-  
 </head>
 <body>
   <br>
@@ -177,11 +181,10 @@ th {
     <button id="accessSimulatorButton"><b>Access Simulator</b></button>
   </div>
 
-<div class="table-container">
-  <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
-  <div id="TotalsTableContainer"></div>
-</div>
-
+  <div class="table-container">
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+    <div id="TotalsTableContainer"></div>
+  </div>
 
   <script>
     // Roulette Wheel Variables

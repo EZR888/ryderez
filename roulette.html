@@ -73,6 +73,7 @@
       align-items: center;
       gap: 20px; /* Space between tables */
       width: 100%;
+      overflow-x: auto; /* Enable horizontal scrolling if necessary */
     }
     td.numeric {
       color: black; /* Black text color for numbers */
@@ -95,11 +96,35 @@
     .black {
       background-color: lightgray;
     }
-   .lgreen-text {
-    color: lightgreen;
-    text-align: center;
+    .lgreen-text {
+      color: lightgreen;
+      text-align: center;
     }
-
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      .caption {
+        font-size: 20px; /* Adjust font size for smaller screens */
+      }
+      table {
+        font-size: 14px; /* Adjust font size for smaller tables */
+      }
+      th, td {
+        padding: 8px; /* Adjust padding for smaller tables */
+        width: auto; /* Allow columns to resize */
+        min-width: 40px; /* Minimum width for smaller screens */
+      }
+    }
+    @media (min-width: 769px) {
+      .container {
+        padding: 20px;
+      }
+      .caption {
+        font-size: 24px; /* Increase font size for larger screens */
+      }
+    }
   </style>
 </head>
 <body>
@@ -122,7 +147,7 @@
     <div>
       <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
     </div>
-<br>
+    <br>
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
       <div id="TotalsTableContainer"></div>

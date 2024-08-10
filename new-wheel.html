@@ -15,35 +15,41 @@ body {
   justify-content: center;
   height: 100vh;
   font-family: Arial, sans-serif;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .wheel-container {
   border: 5px solid #fff;
   border-radius: 50%;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px; /* Space between wheel and buttons/table */
+  width: 635px;  /* Fixed width */
+  height: 635px; /* Fixed height */
+  max-width: 100%; /* Ensure it doesn't exceed the viewport width */
+  max-height: 100vh; /* Ensure it doesn't exceed viewport height */
+  box-sizing: border-box;
 }
 
 #output {
   width: 100%;
-  max-width: 600px; /* Ensure it doesn't get too large */
-  height: auto;
+  height: 100%;
 }
 
 .button-container, .table-container {
   text-align: center;
-  margin-bottom: 20px; /* Space between buttons and table */
+  margin-bottom: 20px;
 }
 
 #startButton, #saveDataButton, #accessSimulatorButton {
-  padding: 10px;
+  padding: 8px;
   background: #fff;
   border: none;
   cursor: pointer;
   margin: 5px;
+  font-size: 14px;
 }
 
 #saveDataButton {
@@ -53,15 +59,20 @@ body {
 table {
   border-collapse: collapse;
   width: 100%;
-  max-width: 600px; /* Ensure the table does not exceed the container width */
-  margin: 0 auto; /* Center the table */
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 th, td {
   border: 1px solid black;
-  padding: 10px;
+  padding: 8px;
   text-align: center;
-  min-width: 50px; /* Ensure cells are the same width */
+  font-weight: bold; /* Bold text */
+  color: black; /* Black text color */
+  width: 50px; /* Fixed width for cells */
+  text-overflow: ellipsis; /* Handle overflow */
+  overflow: hidden; /* Hide overflow */
+  white-space: nowrap; /* Prevent line breaks */
 }
 
 th {
@@ -89,19 +100,12 @@ th {
 
 .caption {
   font-weight: bold;
-  color: lightgreen; /* Set caption color to light green */
-  text-align: center; /* Center the caption */
+  color: lightgreen;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.green {
-  background-color: lightgray; /* Changed from lightgreen to lightgray */
-}
-
-.red {
-  background-color: lightgray;
-}
-
-.black {
+.green, .red, .black {
   background-color: lightgray;
 }
 
@@ -114,18 +118,19 @@ th {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: auto;
 }
 
 .table-half {
   display: flex;
   justify-content: center;
-  margin: 10px 0; /* Space between table halves */
+  margin: 10px 0;
+  width: 100%;
 }
 
 .table-half table {
-  border-collapse: collapse;
-  width: 100%;
-  max-width: 600px; /* Ensure the table does not exceed the container width */
+  width: auto;
+  max-width: 100%;
 }
 
 .blink {
@@ -149,9 +154,15 @@ th {
 
 /* Media Queries */
 @media (max-width: 768px) {
-  #output {
-    width: 90%;
-    max-width: 100%;
+  .wheel-container {
+    padding: 5px;
+    width: 90%; /* Scale down proportionally */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  #startButton, #saveDataButton, #accessSimulatorButton {
+    font-size: 12px;
+    padding: 6px;
   }
 
   table {
@@ -160,21 +171,40 @@ th {
   }
 
   th, td {
-    font-size: 14px; /* Adjust font size for smaller screens */
-    padding: 8px;    /* Adjust padding for smaller screens */
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .caption {
+    font-size: 14px;
   }
 }
-</style>
+
+@media (max-width: 480px) {
+  .wheel-container {
+    width: 100%; /* Full width on very small screens */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  #startButton, #saveDataButton, #accessSimulatorButton {
+    font-size: 10px;
+    padding: 4px;
+  }
+
+  .caption {
+    font-size: 12px;
+  }
+}
+  </style>
 </head>
 <body>
-  <br>
   <div>
     <h1 class="lgreen-text">Roulette Wheel</h1>
   </div>
   <div class="wheel-container">
     <div id="output"></div>
   </div>
-
+<br>
   <div class="button-container">
     <button id="startButton"><b>Spin</b></button>
     <button id="saveDataButton"><b>Save Data</b></button>

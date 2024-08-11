@@ -46,6 +46,8 @@
       text-align: center;
       box-sizing: border-box; /* Include padding and border in element's width and height */
       word-wrap: break-word; /* Ensure text wraps properly */
+      min-height: 50px; /* Ensure rows have a minimum height */
+      min-width: 40px; /* Ensure columns have a minimum width */
     }
     th {
       color: white;
@@ -294,7 +296,7 @@
             cellValue = Totals[number];
           }
           // Replace 0 with empty string
-          cellValue = (cellValue === 0) ? '' : cellValue;
+          cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
           const isBlinking = (number === blinkCellNumber);
           tableOutput += `<td class='numeric ${isBlinking ? 'blinking' : ''}'>${cellValue}</td>`; // Data cells with light gray background color
         });

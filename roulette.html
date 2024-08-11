@@ -144,16 +144,15 @@
       <label style="color:green" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
       <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 100px"><br><br>
     </div>
-    <div>
-      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
-    </div>
-    <br>
+
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
       <div id="TotalsTableContainer"></div>
     </div>
   </div>
-
+    <div>
+      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
+    </div>
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);

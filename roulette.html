@@ -87,8 +87,16 @@
       50% { background-color: lightgray; }
       100% { background-color: white; }
     }
+    @keyframes yellowBlink {
+      0% { background-color: yellow; }
+      50% { background-color: lightgray; }
+      100% { background-color: yellow; }
+    }
     .blinking {
       animation: blink 1s linear infinite;
+    }
+    .yellow-blinking {
+      animation: yellowBlink 1s linear infinite;
     }
     .black {
       background-color: lightgray;
@@ -286,7 +294,9 @@
           setTimeout(function() {
             let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
             Totals[c1] += 1; // Increment corresponding index in Totals array
-            populateTotalsTable(c1); // Populate Totals table after each spin and apply blinking effect
+            // Determine if this is the last spin
+            let isLastSpin = (spinCount === numSpins - 1);
+            populateTotalsTable(c1, isLastSpin); // Populate Totals table after each spin and apply blinking effect
             spinCount++;
             
             setTimeout(spin, spinDelay); // Delay before the next spin
@@ -300,13 +310,13 @@
     }
 
     // Function to populate Totals table
-    function populateTotalsTable(blinkCellNumber = null) {
+    function populateTotalsTable(blinkCellNumber = null, isLastSpin = false) {
       // Display Totals data in the table with colors
-      displayTotalsTableWithColors(Totals, blinkCellNumber);
+      displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin);
     }
 
     // Function to display Totals array as a table with red/green formatting
-    function displayTotalsTableWithColors(Totals, blinkCellNumber) {
+    function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
       let output = "";
 
       // Define the two header orders
@@ -350,7 +360,8 @@
           // Replace 0 with empty string
           cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
           const isBlinking = (number === blinkCellNumber);
-          tableOutput += `<td class='numeric ${isBlinking ? 'blinking' : ''}'>${cellValue}</td>`; // Data cells with light gray background color
+          const blinkClass = isBlinking ? (isLastSpin ? 'yellow-blinking' : 'blinking') : '';
+          tableOutput += `<td class='numeric ${blinkClass}'>${cellValue}</td>`; // Data cells with light gray background color
         });
 
         tableOutput += "</tr>";

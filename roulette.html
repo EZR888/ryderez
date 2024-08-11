@@ -26,23 +26,30 @@
       padding: 20px;
       box-sizing: border-box;
     }
+    .table-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      overflow-x: auto; /* Enable horizontal scrolling if necessary */
+    }
     table {
       border-collapse: collapse;
-      width: 100%;
-      max-width: 100%;
+      width: 100%; /* Ensure table width scales properly */
+      box-sizing: border-box;
       margin: 0 auto;
-      table-layout: auto; /* Change from fixed to auto for better responsiveness */
+      table-layout: auto; /* Ensure table layout adjusts to content */
     }
     th, td {
       border: 1px solid black;
-      padding: 12px; /* Adjusted padding for better fit on mobile */
+      padding: 12px; /* Adjust padding for better fit */
       text-align: center;
-      box-sizing: border-box;
+      box-sizing: border-box; /* Include padding and border in element's width and height */
       word-wrap: break-word; /* Ensure text wraps properly */
     }
     th {
       color: white;
-      font-size: 14px; /* Adjusted font size for better mobile view */
+      font-size: 14px; /* Adjust font size */
     }
     .green-header {
       background-color: green;
@@ -65,22 +72,9 @@
       color: lightgreen;
       display: block;
       margin-bottom: 20px;
-      font-size: 20px; /* Adjusted font size for better fit on mobile */
-    }
-    .table-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      width: 100%;
-      overflow-x: auto; /* Enable horizontal scrolling if necessary */
+      font-size: 20px; /* Adjust font size */
     }
     td.numeric {
-      color: black;
-      font-weight: bold;
-      background-color: lightgray;
-    }
-    .numeric {
       color: black;
       font-weight: bold;
       background-color: lightgray;
@@ -106,14 +100,13 @@
         padding: 10px;
       }
       .caption {
-        font-size: 18px; /* Adjust font size for smaller screens */
+        font-size: 18px; /* Adjust font size */
       }
       table {
-        font-size: 12px; /* Adjust font size for smaller tables */
+        font-size: 12px; /* Adjust font size */
       }
       th, td {
-        padding: 8px; /* Adjust padding for smaller tables */
-        width: auto; /* Allow columns to resize */
+        padding: 8px; /* Adjust padding */
         min-width: 40px; /* Minimum width for smaller screens */
       }
     }
@@ -122,7 +115,7 @@
         padding: 20px;
       }
       .caption {
-        font-size: 24px; /* Increase font size for larger screens */
+        font-size: 24px; /* Increase font size */
       }
     }
   </style>
@@ -144,17 +137,17 @@
       <label style="color:green" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
       <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 100px"><br><br>
     </div>
-	
+    
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
       <div id="TotalsTableContainer"></div>
     </div>
   </div>
-    <div>
-      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
-    </div>
-    <br><br>
-    
+  <div>
+    <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
+  </div>
+  <br><br>
+  
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);

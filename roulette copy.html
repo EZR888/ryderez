@@ -22,39 +22,49 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 1200px; /* Maximum width to ensure it doesn’t stretch too wide */
+      max-width: 1200px;
       padding: 20px;
-      box-sizing: border-box; /* Include padding in the width calculation */
+      box-sizing: border-box;
+    }
+    .table-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      overflow-x: auto; /* Enable horizontal scrolling if necessary */
     }
     table {
       border-collapse: collapse;
-      width: 100%; /* Full width of container */
-      max-width: 100%; /* Prevent overflow */
-      margin: 0 auto; /* Center tables horizontally */
-      table-layout: fixed; /* Ensure consistent column widths */
+      width: 100%;
+      table-layout: fixed; /* Ensures consistent column sizing */
+      box-sizing: border-box;
+      margin: 0 auto;
     }
     th, td {
       border: 1px solid black;
-      padding: 16px; /* Increased padding */
+      padding: 12px; /* Adjust padding for better fit */
       text-align: center;
-      width: 60px; /* Fixed width for all cells */
-      min-width: 60px; /* Minimum width for all cells */
-      box-sizing: border-box; /* Ensure padding and border are included in the width */
+      box-sizing: border-box; /* Include padding and border in element's width and height */
+      word-wrap: break-word; /* Ensure text wraps properly */
+      min-height: 50px; /* Ensure rows have a minimum height */
+      min-width: 40px; /* Ensure columns have a minimum width */
     }
     th {
-      color: white; /* White text color for header rows */
+      color: white;
+      font-size: 14px; /* Adjust font size */
     }
     .green-header {
-      background-color: green; /* Green background for header 0 and 00 */
-      color: white; /* White text color for green headers */
+      background-color: green;
+      color: white;
     }
     .black-header {
-      background-color: black; /* Black background for specific headers */
-      color: white; /* White text color for black headers */
+      background-color: black;
+      color: white;
     }
     .red-header {
-      background-color: red; /* Red background for specific headers */
-      color: white; /* White text color for red headers */
+      background-color: red;
+      color: white;
+      font-size: 18px
     }
     .bold {
       font-weight: bold;
@@ -62,22 +72,15 @@
     .caption {
       text-align: center;
       font-weight: bold;
-      color: lightgreen; /* Light green color for caption text */
+      color: lightgreen;
       display: block;
-      margin-bottom: 20px; /* Space below the caption */
-      font-size: 24px; /* Increase font size if needed */
-    }
-    .table-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px; /* Space between tables */
-      width: 100%;
+      margin-bottom: 20px;
+      font-size: 20px; /* Adjust font size */
     }
     td.numeric {
-      color: black; /* Black text color for numbers */
-      font-weight: bold; /* Bold text */
-      background-color: lightgray; /* Background color for better visibility */
+      color: black;
+      font-weight: bold;
+      background-color: lightgray;
     }
     @keyframes blink {
       0% { background-color: white; }
@@ -87,13 +90,44 @@
     .blinking {
       animation: blink 1s linear infinite;
     }
+    .black {
+      background-color: lightgray;
+    }
+    .lgreen-text {
+      color: lightgreen;
+      text-align: center;
+    }
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      .caption {
+        font-size: 18px; /* Adjust font size */
+      }
+      table {
+        font-size: 12px; /* Adjust font size */
+      }
+      th, td {
+        padding: 8px; /* Adjust padding */
+        min-width: 40px; /* Minimum width for smaller screens */
+      }
+    }
+    @media (min-width: 769px) {
+      .container {
+        padding: 20px;
+      }
+      .caption {
+        font-size: 24px; /* Increase font size */
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1 class="lgreen-text">Roulette Wheel Test Bed</h1>
     <div>
-      <button onclick="runSimulation()" style="color:red"><b>Run Simulation</b></button><br><br>
+      <button onclick="runSimulation()" style="color:red" ><b>Run Simulation</b></button><br><br>
       <label style="color:red" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
       <input type="number" id="x" name="x" value="1" style="width: 100px"><br>
       <label style="color:red" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
@@ -106,16 +140,17 @@
       <label style="color:green" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
       <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 100px"><br><br>
     </div>
-    <div>
-      <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
-    </div>
-
+    
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
       <div id="TotalsTableContainer"></div>
     </div>
   </div>
-
+  <div>
+    <button id="saveDataButton" style="margin-left: 10px;"><b>Save Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="singleSpinButton"><b>Single Spin</b></button>
+  </div>
+  <br><br>
+  
   <script>
     // Define the variables
     let Totals = new Array(38).fill(0);
@@ -141,7 +176,8 @@
     // Function to export Totals array data to CSV format
     function exportTotalsToCSV(array, filename) {
       let csvContent = "data:text/csv;charset=utf-8,";
-
+      
+      // Add headers to CSV
       csvContent += ","; // Empty cell to align with headers
 
       // Loop through Totals array to append values
@@ -182,7 +218,8 @@
           }
         }
       }
-      populateTotalsTable(); // Populate Totals table after simulation
+
+      populateTotalsTable(); // Populate Totals table
     }
 
     // Function to run multiple spins with delay
@@ -230,7 +267,6 @@
 
         // Header row
         tableOutput += "<tr>";
-        tableOutput += "<th></th>"; // Empty cell for alignment
 
         // Create the header cells
         headerOrder.forEach((number, index) => {
@@ -251,7 +287,6 @@
 
         // Data row with values
         tableOutput += "<tr>";
-        tableOutput += "<th class='black'></th>"; // Black background for the first column header, white text color
 
         // Display Totals in the order of headerOrder array
         headerOrder.forEach((number) => {
@@ -262,7 +297,7 @@
             cellValue = Totals[number];
           }
           // Replace 0 with empty string
-          cellValue = (cellValue === 0) ? '' : cellValue;
+          cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
           const isBlinking = (number === blinkCellNumber);
           tableOutput += `<td class='numeric ${isBlinking ? 'blinking' : ''}'>${cellValue}</td>`; // Data cells with light gray background color
         });

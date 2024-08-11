@@ -43,17 +43,28 @@
       margin-bottom: 20px;
     }
 
-    #startButton, #saveDataButton, #accessSimulatorButton {
-      padding: 8px;
+    .button {
+      padding: 10px 16px; /* Increased padding */
       background: #fff;
       border: none;
       cursor: pointer;
       margin: 5px;
-      font-size: 14px;
+      font-size: 18px; /* Increased font size */
+    }
+
+    #startButton {
+      background-color: #4CAF50; /* Green */
+      color: white;
     }
 
     #saveDataButton {
-      margin-left: 10px;
+      background-color: #f44336; /* Red */
+      color: white;
+    }
+
+    #accessSimulatorButton {
+      background-color: #008CBA; /* Blue */
+      color: white;
     }
 
     table {
@@ -162,9 +173,9 @@
         height: auto; /* Maintain aspect ratio */
       }
 
-      #startButton, #saveDataButton, #accessSimulatorButton {
-        font-size: 12px;
-        padding: 6px;
+      .button {
+        font-size: 16px; /* Adjusted font size for medium screens */
+        padding: 8px; /* Adjusted padding for medium screens */
       }
 
       table {
@@ -188,9 +199,9 @@
         height: auto; /* Maintain aspect ratio */
       }
 
-      #startButton, #saveDataButton, #accessSimulatorButton {
-        font-size: 10px;
-        padding: 4px;
+      .button {
+        font-size: 14px; /* Adjusted font size for small screens */
+        padding: 6px; /* Adjusted padding for small screens */
       }
 
       .caption {
@@ -208,9 +219,9 @@
   </div>
   <br>
   <div class="button-container">
-    <button id="startButton"><b>Spin</b></button>
-    <button id="saveDataButton"><b>Save Data</b></button>
-    <button id="accessSimulatorButton"><b>Access Simulator</b></button>
+    <button id="startButton" class="button"><b>Spin</b></button>
+    <button id="saveDataButton" class="button"><b>Save Data</b></button>
+    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
   </div>
 
   <div class="table-container">

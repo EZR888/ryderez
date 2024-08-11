@@ -22,39 +22,39 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 1200px; /* Maximum width to ensure it doesn’t stretch too wide */
+      max-width: 1200px;
       padding: 20px;
-      box-sizing: border-box; /* Include padding in the width calculation */
+      box-sizing: border-box;
     }
     table {
       border-collapse: collapse;
-      width: 100%; /* Full width of container */
-      max-width: 100%; /* Prevent overflow */
-      margin: 0 auto; /* Center tables horizontally */
-      table-layout: fixed; /* Ensure consistent column widths */
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      table-layout: auto; /* Change from fixed to auto for better responsiveness */
     }
     th, td {
       border: 1px solid black;
-      padding: 16px; /* Increased padding */
+      padding: 12px; /* Adjusted padding for better fit on mobile */
       text-align: center;
-      width: 60px; /* Fixed width for all cells */
-      min-width: 60px; /* Minimum width for all cells */
-      box-sizing: border-box; /* Ensure padding and border are included in the width */
+      box-sizing: border-box;
+      word-wrap: break-word; /* Ensure text wraps properly */
     }
     th {
-      color: white; /* White text color for header rows */
+      color: white;
+      font-size: 14px; /* Adjusted font size for better mobile view */
     }
     .green-header {
-      background-color: green; /* Green background for header 0 and 00 */
-      color: white; /* White text color for green headers */
+      background-color: green;
+      color: white;
     }
     .black-header {
-      background-color: black; /* Black background for specific headers */
-      color: white; /* White text color for black headers */
+      background-color: black;
+      color: white;
     }
     .red-header {
-      background-color: red; /* Red background for specific headers */
-      color: white; /* White text color for red headers */
+      background-color: red;
+      color: white;
     }
     .bold {
       font-weight: bold;
@@ -62,28 +62,28 @@
     .caption {
       text-align: center;
       font-weight: bold;
-      color: lightgreen; /* Light green color for caption text */
+      color: lightgreen;
       display: block;
-      margin-bottom: 20px; /* Space below the caption */
-      font-size: 24px; /* Increase font size if needed */
+      margin-bottom: 20px;
+      font-size: 20px; /* Adjusted font size for better fit on mobile */
     }
     .table-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px; /* Space between tables */
+      gap: 20px;
       width: 100%;
       overflow-x: auto; /* Enable horizontal scrolling if necessary */
     }
     td.numeric {
-      color: black; /* Black text color for numbers */
-      font-weight: bold; /* Bold text */
-      background-color: lightgray; /* Background color for better visibility */
+      color: black;
+      font-weight: bold;
+      background-color: lightgray;
     }
     .numeric {
-      color: black; /* Ensure black text color */
-      font-weight: bold; /* Ensure bold text */
-      background-color: lightgray; /* Light gray background for contrast */
+      color: black;
+      font-weight: bold;
+      background-color: lightgray;
     }
     @keyframes blink {
       0% { background-color: white; }
@@ -106,10 +106,10 @@
         padding: 10px;
       }
       .caption {
-        font-size: 20px; /* Adjust font size for smaller screens */
+        font-size: 18px; /* Adjust font size for smaller screens */
       }
       table {
-        font-size: 14px; /* Adjust font size for smaller tables */
+        font-size: 12px; /* Adjust font size for smaller tables */
       }
       th, td {
         padding: 8px; /* Adjust padding for smaller tables */

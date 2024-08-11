@@ -35,10 +35,10 @@
     }
     table {
       border-collapse: collapse;
-      width: 100%; /* Ensure table width scales properly */
+      width: 100%;
+      table-layout: fixed; /* Ensures consistent column sizing */
       box-sizing: border-box;
       margin: 0 auto;
-      table-layout: auto; /* Ensure table layout adjusts to content */
     }
     th, td {
       border: 1px solid black;
@@ -215,7 +215,8 @@
           }
         }
       }
-      populateTotalsTable(); // Populate Totals table after simulation
+
+      populateTotalsTable(); // Populate Totals table
     }
 
     // Function to run multiple spins with delay

@@ -9,6 +9,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
+    background-color: black; /* Set the background color of the whole page */
+    }
+    #content {
+      background-color: black; /* Set the background color of the specific content */
+      color: white; /* Ensure text is visible */ 
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -289,9 +294,7 @@
         p.setup = function() {
           p.createCanvas(390, 390).parent(canvasId);
           wheelCenterX = p.width / 2;
-          wheelCenterY =
-
- p.height / 2;
+          wheelCenterY = p.height / 2;
           slotAngle = 360 / numSlots;
           document.getElementById(startButtonId).addEventListener('click', () => {
             startWheelSpin();
@@ -510,7 +513,10 @@
     }
 
 function takeScreenshot() {
-  html2canvas(document.querySelector('.page-wrapper'), { useCORS: true }).then(canvas => {
+  html2canvas(document.querySelector('#content'), { 
+    backgroundColor: null,  // Set this to `null` to use the background color of the element
+    useCORS: true
+  }).then(canvas => {
     let link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
     link.download = 'screenshot.png';

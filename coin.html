@@ -1,536 +1,298 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roulette Wheels and Coin Flipper</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    body {
-    background-color: black; /* Set the background color of the whole page */
-    }
-    #content {
-      background-color: black; /* Set the background color of the specific content */
-      color: white; /* Ensure text is visible */ 
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background-color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-      color: #fff; /* Default text color for better visibility */
-    }
-
-    .page-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 1400px; /* Increased max-width to accommodate larger wheels */
-      padding: 10px;
-      box-sizing: border-box;
-    }
-
-    .wheels-container {
-      display: flex;
-      gap: 60px; /* Increased gap between wheels */
-      justify-content: center;
-      align-items: center; /* Center items vertically */
-      margin-bottom: 30px; /* Space between wheels and buttons */
-    }
-
-    .wheel-container {
-      border: 5px solid #fff;
-      border-radius: 50%;
-      width: 390px; /* Increased width */
-      height: 390px; /* Increased height */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .wheel-container canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .button-container {
-      text-align: center;
-      margin-bottom: 20px; /* Space between buttons and history table */
-    }
-
-    .button {
-      padding: 10px 16px;
-      background: #fff;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-      font-size: 18px;
-    }
-
-    #startButton1 {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    #startButton2 {
-      background-color: #FF5722;
-      color: white;
-    }
-
-    #saveDataButton {
-      background-color: #f44336;
-      color: white;
-    }
-
-    #accessSimulatorButton {
-      background-color: #008CBA;
-      color: white;
-    }
-
-    #flipButton {
-      background-color: #FFC107;
-      color: white;
-    }
-
-    #screenshotButton {
-      background-color: #9C27B0;
-      color: white;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    th, td {
-      border: 1px solid white;
-      padding: 8px;
-      text-align: center;
-      font-weight: bold;
-      color: white;
-    }
-
-    th {
-      color: white;
-    }
-
-    .green-header {
-      background-color: green;
-      color: white;
-    }
-
-    .black-header {
-      background-color: black;
-      color: white;
-    }
-
-    .red-header {
-      background-color: red;
-      color: white;
-    }
-
-    .green, .red, .black {
-      background-color: lightgray;
-    }
-
-    .lgreen-text {
-      color: lightgreen;
-      text-align: center;
-    }
-
-    #coin {
-      width: 150px;
-      height: 150px;
-      margin: 20px;
-      transition: transform 0.6s;
-    }
-
-    #result {
-      font-size: 24px;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    #historyTableContainer {
-      overflow-x: auto;
-      max-width: 100%;
-    }
-
-    @media (max-width: 768px) {
-      .wheel-container {
-        width: 280px; /* Smaller width for smaller screens */
-        height: 280px; /* Smaller height for smaller screens */
-      }
-
-      .button {
-        font-size: 16px;
-        padding: 8px;
-      }
-
-      table {
-        width: 100%;
-        max-width: none;
-      }
-
-      th, td {
-        font-size: 12px;
-        padding: 6px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .wheel-container {
-        width: 210px; /* Even smaller width for very small screens */
-        height: 210px; /* Even smaller height for very small screens */
-      }
-
-      .button {
-        font-size: 14px;
-        padding: 6px;
-      }
-
-      table {
-        font-size: 10px;
-      }
-    }
-
-    .blink {
-      animation: blink 1s step-start infinite;
-    }
-
-    @keyframes blink {
-      0% { background-color: white; }
-      50% { background-color: lightgray; }
-      100% { background-color: white; }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .spin {
-      animation: spin 2s linear infinite;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Fortune</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: black; /* Set background color to black */
+            color: white; /* Set text color to white for visibility */
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Space between wheels and buttons */
+        }
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .wheel-container button {
+            margin-top: 10px; /* Add space between wheel and button */
+        }
+        #output1, #output2 {
+            margin: 0; /* Remove margin for better alignment */
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove borders */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block display */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px; /* Add margin */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 4px; /* Add rounded corners */
+        }
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <div>
-      <h1 class="lgreen-text">Roulette Wheels</h1>
-    </div>
-    <div class="wheels-container">
-      <div class="wheel-container">
-        <div id="output1"></div>
-      </div>
-      <div class="wheel-container">
-        <div id="output2"></div>
-      </div>
-    </div>
-    <div class="button-container">
-      <button id="startButton1" class="button"><b>Spin Wheel 1</b></button>
-      <button id="startButton2" class="button"><b>Spin Wheel 2</b></button>
-      <button id="saveDataButton" class="button"><b>Save Data</b></button>
-      <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
-      <button id="screenshotButton" class="button"><b>Screenshot</b></button>
+    <h1>Wheel of Fortune</h1>
+
+    <div class="container">
+        <div class="wheel-container">
+            <div id="output1"></div>
+            <button id="startButton1">Spin Wheel 1</button>
+        </div>
+        
+        <div class="wheel-container">
+            <div id="output2"></div>
+            <button id="startButton2">Spin Wheel 2</button>
+        </div>
     </div>
 
-    <div class="table-container">
-      <p class="bold caption">History</p>
-      <div id="historyTableContainer">
-        <table id="historyTable">
-          <thead>
+    <div id="coinTossDiv">
+        <button id="tossCoinButton">Toss Coin</button>
+        <div id="coinTossResult"></div>
+    </div>
+
+    <h2>History</h2>
+    <table id="historyTable">
+        <thead>
             <tr>
-              <th>Wheel 1</th>
-              <th>Wheel 2</th>
-              <th>Coin Toss</th>
+                <th>Wheel 1</th>
+                <th>Wheel 2</th>
             </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div class="button-container">
-        <button id="flipButton" class="button"><b>Flip Coin</b></button>
-      </div>
-      <img id="coin" src="heads.png" alt="Coin">
-      <div id="result">Click "Flip Coin" to Start</div>
-    </div>
-  </div>
+        </thead>
+        <tbody>
+            <tr id="historyRow">
+                <td id="wheel1Result"></td>
+                <td id="wheel2Result"></td>
+            </tr>
+        </tbody>
+    </table>
 
-  <script>
-    function createWheelSketch(canvasId, startButtonId, wheelNumber) {
-      return function(p) {
-        let wheelRadius = 185; /* Increased wheel radius */
-        let wheelCenterX;
-        let wheelCenterY;
-        let ballRadius = 11; /* Increased ball radius */
-        let ballX;
-        let ballY;
-        let ballSpeed;
-        let ballAngle;
-        let ballFriction = 0.9945;
-        let isSpinning = false;
-        let minSpeed = 0.85;
-        let finalIndex;
-        let winningNumber;
-        let numSlots = 38;
-        let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
-        let slotAngle;
-        let wheelSound;
-        let soundLoaded = false;
-        let history = [];
+    <button id="saveDataButton">Save Data as CSV</button>
 
-        p.setup = function() {
-          p.createCanvas(390, 390).parent(canvasId);
-          wheelCenterX = p.width / 2;
-          wheelCenterY = p.height / 2;
-          slotAngle = 360 / numSlots;
-          document.getElementById(startButtonId).addEventListener('click', () => {
-            startWheelSpin();
-          });
-          loadAndPlaySound();
-        }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <script>
+        function createWheelSketch(canvasId, startButtonId, wheelNumber) {
+            return function(p) {
+                let wheelRadius = 185;
+                let wheelCenterX;
+                let wheelCenterY;
+                let ballRadius = 11;
+                let ballX;
+                let ballY;
+                let ballSpeed;
+                let ballAngle;
+                let ballFriction = 0.9945;
+                let isSpinning = false;
+                let minSpeed = 0.85;
+                let finalIndex;
+                let winningNumber;
+                let numSlots = 38;
+                let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+                let slotAngle;
+                let wheelSound;
+                let soundLoaded = false;
+                let coinTossResult = '';
 
-        p.draw = function() {
-          p.background(0);
-          drawWheel();
+                p.setup = function() {
+                    p.createCanvas(390, 390).parent(canvasId);
+                    p.background(0); // Set background to black
+                    wheelCenterX = p.width / 2;
+                    wheelCenterY = p.height / 2;
+                    slotAngle = 360 / numSlots;
+                    document.getElementById(startButtonId).addEventListener('click', () => {
+                        startWheelSpin();
+                    });
+                    loadAndPlaySound();
+                }
 
-          if (isSpinning) {
-            ballAngle += ballSpeed;
-            ballSpeed *= ballFriction;
+                p.draw = function() {
+                    p.background(0); // Set background to black
+                    drawWheel();
 
-            if (ballSpeed < minSpeed) {
-              isSpinning = false;
-              finalIndex = calculateSlotIndex();
-              winningNumber = slotNumbers[finalIndex];
-              moveBallToWinningSlot();
+                    if (isSpinning) {
+                        ballAngle += ballSpeed;
+                        ballSpeed *= ballFriction;
 
-              if (wheelSound) {
-                wheelSound.stop();
-              }
+                        if (ballSpeed < minSpeed) {
+                            isSpinning = false;
+                            finalIndex = calculateSlotIndex();
+                            winningNumber = slotNumbers[finalIndex];
+                            moveBallToWinningSlot();
 
-              if (winningNumber !== undefined) {
-                let index = slotNumbers.indexOf(winningNumber);
-                history.push({
-                  wheel1: wheelNumber === 1 ? winningNumber : '',
-                  wheel2: wheelNumber === 2 ? winningNumber : '',
-                  coinToss: ''
+                            if (wheelSound) {
+                                wheelSound.stop();
+                            }
+
+                            if (winningNumber !== undefined) {
+                                updateTable(winningNumber, wheelNumber);
+                            }
+                        }
+
+                        ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
+                        ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
+                        p.fill(255);
+                        p.ellipse(ballX, ballY, ballRadius * 2);
+                    } else {
+                        p.fill(255);
+                        p.ellipse(ballX, ballY, ballRadius * 2);
+                    }
+                }
+
+                function drawWheel() {
+                    p.stroke(139, 69, 19);
+                    p.strokeWeight(4);
+                    p.noFill();
+                    p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
+
+                    for (let i = 0; i < numSlots; i++) {
+                        let angleStart = p.radians(i * slotAngle);
+                        let angleEnd = p.radians((i + 1) * slotAngle);
+                        p.fill((i % 2 === 0) ? 'red' : 'black');
+                        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
+                            p.fill('green');
+                        }
+                        p.arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, p.PIE);
+
+                        let midAngle = (angleStart + angleEnd) / 2;
+                        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
+                        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
+
+                        p.fill(255);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.textSize(13);
+                        p.text(slotNumbers[i], x, y);
+                    }
+
+                    p.fill(210, 180, 140);
+                    p.ellipse(wheelCenterX, wheelCenterY, 30, 30);
+                }
+
+                function calculateSlotIndex() {
+                    let normalizedAngle = (ballAngle % 360 + 360) % 360;
+                    let anglePerSlot = 360 / numSlots;
+                    let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+                    return index;
+                }
+
+                function moveBallToWinningSlot() {
+                    if (!isSpinning) {
+                        let centerAngle = (finalIndex + 0.5) * slotAngle;
+                        let correctedAngle = (360 - centerAngle + 360) % 360;
+
+                        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(p.radians(correctedAngle));
+                        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(p.radians(correctedAngle));
+                    }
+                }
+
+                function loadAndPlaySound() {
+                    wheelSound = new Howl({
+                        src: ['wheel-ball.wav'],
+                        loop: true,
+                        onload: () => {
+                            soundLoaded = true;
+                            console.log('Sound loaded');
+                        },
+                        onloaderror: (id
+
+, error) => {
+                            console.error('Sound loading error:', error);
+                        },
+                        onplayerror: (id, error) => {
+                            console.error('Sound play error:', error);
+                        }
+                    });
+                }
+
+                function startWheelSpin() {
+                    if (!isSpinning) {
+                        if (soundLoaded) {
+                            wheelSound.play();
+                        } else {
+                            console.error('Sound not loaded');
+                        }
+                        isSpinning = true;
+                        ballAngle = p.random(360);
+                        ballSpeed = p.random(5, 10);
+                    }
+                }
+
+                function updateTable(result, wheelNumber) {
+                    // Update the correct column based on wheelNumber
+                    if (wheelNumber === 1) {
+                        document.getElementById('wheel1Result').innerText = result;
+                    } else if (wheelNumber === 2) {
+                        document.getElementById('wheel2Result').innerText = result;
+                    }
+                }
+
+                function exportTotalsToCSV(filename) {
+                    let csvContent = 'data:text/csv;charset=utf-8,';
+                    csvContent += 'Wheel 1,Wheel 2\n';
+
+                    // Collect data from the table cells
+                    let wheel1Result = document.getElementById('wheel1Result').innerText;
+                    let wheel2Result = document.getElementById('wheel2Result').innerText;
+                    csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+
+                document.getElementById('tossCoinButton').addEventListener('click', () => {
+                    let result = p.random() > 0.5 ? 'Heads' : 'Tails';
+                    coinTossResult = result;
+                    document.getElementById('coinTossResult').innerText = `Coin Toss: ${result}`;
                 });
-                updateHistoryTable();
-              }
+
+                document.getElementById('saveDataButton').addEventListener('click', () => {
+                    exportTotalsToCSV('history.csv');
+                });
             }
-
-            ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
-            ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
-            p.fill(255);
-            p.ellipse(ballX, ballY, ballRadius * 2);
-          } else {
-            p.fill(255);
-            p.ellipse(ballX, ballY, ballRadius * 2);
-          }
         }
 
-        function drawWheel() {
-          p.stroke(139, 69, 19); // Brown color for wheel outlines
-          p.strokeWeight(4); // Adjusted thickness for better visibility
-          p.noFill();
-          p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2); // Outer circle of the wheel
-
-          // Draw wheel segments
-          for (let i = 0; i < numSlots; i++) {
-            let angleStart = p.radians(i * slotAngle);
-            let angleEnd = p.radians((i + 1) * slotAngle);
-            p.fill((i % 2 === 0) ? 'red' : 'black');
-            if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
-              p.fill('green'); // Color 0 and 00 slots green
-            }
-            p.arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, p.PIE);
-
-            let midAngle = (angleStart + angleEnd) / 2;
-            let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
-            let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
-
-            p.fill(255);
-            p.textAlign(p.CENTER, p.CENTER);
-            p.textSize(13); // Updated text size to 80% of previous size
-            p.text(slotNumbers[i], x, y);
-          }
-
-          // Draw the center of the wheel
-          p.fill(210, 180, 140); // Brown color for the center
-          p.ellipse(wheelCenterX, wheelCenterY, 30, 30); // Adjust size as needed
-        }
-
-        function calculateSlotIndex() {
-          let normalizedAngle = (ballAngle % 360 + 360) % 360;
-          let anglePerSlot = 360 / numSlots;
-          let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
-          return index;
-        }
-
-        function moveBallToWinningSlot() {
-          if (!isSpinning) {
-            let centerAngle = (finalIndex + 0.5) * slotAngle;
-            let correctedAngle = (360 - centerAngle + 360) % 360;
-
-            ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(p.radians(correctedAngle));
-            ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(p.radians(correctedAngle));
-          }
-        }
-
-        function loadAndPlaySound() {
-          wheelSound = new Howl({
-            src: ['wheel-ball.wav'],
-            loop: true,
-            onload: () => {
-              soundLoaded = true;
-              console.log('Sound loaded');
-            },
-            onloaderror: (id, error) => {
-              console.error('Sound loading error:', error);
-            },
-            onplayerror: (id, error) => {
-              console.error('Sound play error:', error);
-            }
-          });
-        }
-
-        function startWheelSpin() {
-          if (!isSpinning) {
-            if (soundLoaded) {
-              wheelSound.play();
-            } else {
-              console.error('Sound not loaded');
-            }
-            isSpinning = true;
-            ballAngle = p.random(360);
-            ballSpeed = p.random(5, 10);
-          }
-        }
-
-        function updateHistoryTable() {
-          let tableBody = document.querySelector('#historyTable tbody');
-          let lastRow = tableBody.lastElementChild;
-
-          if (!lastRow || lastRow.cells[0].innerText === '') {
-            let row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${history[history.length - 1].wheel1}</td>
-              <td>${history[history.length - 1].wheel2}</td>
-              <td>${history[history.length - 1].coinToss}</td>
-            `;
-            tableBody.appendChild(row);
-          } else {
-            let currentEntry = history[history.length - 1];
-            lastRow.cells[0].innerText = currentEntry.wheel1 || lastRow.cells[0].innerText;
-            lastRow.cells[1].innerText = currentEntry.wheel2;
-            lastRow.cells[2].innerText = currentEntry.coinToss;
-          }
-        }
-
-        function clearAndResetTotals() {
-          history = [];
-          updateHistoryTable();
-        }
-
-        function exportTotalsToCSV(data, filename) {
-          if (!Array.isArray(data)) {
-            console.error('Data is not an array');
-            return;
-          }
-
-          // Ensure that all entries in the history array have values for wheel1, wheel2, and coinToss
-          const csvContent = "data:text/csv;charset=utf-8,"
-              + "Wheel 1,Wheel 2,Coin Toss\n"
-              + data.map(entry => 
-                `${entry.wheel1 || ''},${entry.wheel2 || ''},${entry.coinToss || ''}`
-              ).join("\n");
-
-          const encodedUri = encodeURI(csvContent);
-          const link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download", filename);
-          document.body.appendChild(link);
-          link.click();
-        }
-      }
-    }
-
-    new p5(createWheelSketch('output1', 'startButton1', 1));
-    new p5(createWheelSketch('output2', 'startButton2', 2));
-
-    let coin;
-    let resultText;
-    let tossing = false;
-
-    function setupCoinFlipper() {
-      coin = document.getElementById('coin');
-      resultText = document.getElementById('result');
-    }
-
-    function tossCoin() {
-      if (tossing) return;
-      tossing = true;
-
-      resultText.innerHTML = 'Tossing...';
-
-      let angle = 0;
-      let rotationSpeed = 100;
-      let frames = 0;
-
-      function animateCoin() {
-        if (frames < 60) {
-          angle += rotationSpeed;
-          coin.style.transform = `rotate(${angle}deg)`;
-          frames++;
-          requestAnimationFrame(animateCoin);
-        } else {
-          let result = Math.random() > 0.5 ? 'heads' : 'tails';
-          coin.src = result === 'heads' ? 'heads.png' : 'tails.png';
-          resultText.innerHTML = result.charAt(0).toUpperCase() + result.slice(1);
-
-          let tableBody = document.querySelector('#historyTable tbody');
-          if (tableBody.rows.length > 0) {
-            tableBody.rows[tableBody.rows.length - 1].cells[2].innerText = result;
-          }
-
-          tossing = false;
-        }
-      }
-
-      animateCoin();
-    }
-
-function takeScreenshot() {
-  html2canvas(document.querySelector('#content'), { 
-    backgroundColor: null,  // Set this to `null` to use the background color of the element
-    useCORS: true
-  }).then(canvas => {
-    let link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    link.download = 'screenshot.png';
-    link.click();
-  }).catch(error => {
-    console.error('Screenshot capture failed:', error);
-  });
-}
-
-    setupCoinFlipper();
-
-    document.getElementById('flipButton').addEventListener('click', tossCoin);
-    document.getElementById('screenshotButton').addEventListener('click', takeScreenshot);
-  </script>
+        new p5(createWheelSketch('output1', 'startButton1', 1));
+        new p5(createWheelSketch('output2', 'startButton2', 2));
+    </script>
 </body>
 </html>

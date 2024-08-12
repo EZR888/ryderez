@@ -58,6 +58,7 @@
         button:hover {
             background-color: #45a049; /* Darker green on hover */
         }
+        /* Media query for small screens */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -113,8 +114,8 @@
                 let wheelCenterX;
                 let wheelCenterY;
                 let ballRadius = 11;
-                let ballX = wheelRadius; // Initialize with valid value
-                let ballY = wheelRadius; // Initialize with valid value
+                let ballX;
+                let ballY;
                 let ballSpeed;
                 let ballAngle;
                 let ballFriction = 0.9945;
@@ -160,16 +161,13 @@
                             }
 
                             if (winningNumber !== undefined) {
+                                // Update the single row in the table based on the wheel number
                                 updateTable(winningNumber, wheelNumber);
                             }
                         }
 
                         ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
                         ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
-
-                        // Debugging: Check ball position and radius
-                        console.log('ballX:', ballX, 'ballY:', ballY, 'ballRadius:', ballRadius);
-
                         p.fill(255);
                         p.ellipse(ballX, ballY, ballRadius * 2);
                     } else {
@@ -215,9 +213,7 @@
                 }
 
                 function moveBallToWinningSlot() {
-                    if (!isSpinning
-
-) {
+                    if (!isSpinning) {
                         let centerAngle = (finalIndex + 0.5) * slotAngle;
                         let correctedAngle = (360 - centerAngle + 360) % 360;
 
@@ -233,6 +229,8 @@
                         onload: () => {
                             soundLoaded = true;
                             console.log('Sound loaded');
+
+
                         },
                         onloaderror: (id, error) => {
                             console.error('Sound loading error:', error);
@@ -257,23 +255,21 @@
                 }
 
                 function updateTable(result, wheelNumber) {
-                    let wheel1Cell = document.getElementById('wheel1Result');
-                    let wheel2Cell = document.getElementById('wheel2Result');
-
+                    // Update the correct column based on wheelNumber
                     if (wheelNumber === 1) {
-                        wheel1Cell.innerText = result;
+                        document.getElementById('wheel1Result').innerText = result;
                     } else if (wheelNumber === 2) {
-                        wheel2Cell.innerText = result;
+                        document.getElementById('wheel2Result').innerText = result;
                     }
                 }
 
-                function exportTotalsToCSV(filename) {
+                function exportTotalsToCSV(history, filename) {
                     let csvContent = 'data:text/csv;charset=utf-8,';
                     csvContent += 'Wheel 1,Wheel 2\n';
 
-                    let wheel1Result = document.getElementById('wheel1Result').innerText;
-                    let wheel2Result = document.getElementById('wheel2Result').innerText;
-                    csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
+                    history.forEach(entry => {
+                        csvContent += `${entry.wheel1 || ''},${entry.wheel2 || ''}\n`;
+                    });
 
                     const encodedUri = encodeURI(csvContent);
                     const link = document.createElement('a');
@@ -291,7 +287,15 @@
                 });
 
                 document.getElementById('saveDataButton').addEventListener('click', () => {
-                    exportTotalsToCSV('history.csv');
+                    // Collect data from table cells
+                    let wheel1Result = document.getElementById('wheel1Result').innerText;
+                    let wheel2Result = document.getElementById('wheel2Result').innerText;
+
+                    if (wheel1Result || wheel2Result) {
+                        exportTotalsToCSV([{ wheel1: wheel1Result, wheel2: wheel2Result }], 'history.csv');
+                    } else {
+                        alert('No data available to export.');
+                    }
                 });
             }
         }

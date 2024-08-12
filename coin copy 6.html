@@ -10,24 +10,45 @@
             text-align: center;
             background-color: black; /* Set background color to black */
             color: white; /* Set text color to white for visibility */
+            margin: 0;
+            padding: 0;
         }
         .container {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .wheels-container {
+            display: flex;
             justify-content: center;
-            gap: 20px; /* Space between wheels and buttons */
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+            gap: 20px; /* Space between wheels */
         }
         .wheel-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 20px;
-        }
-        .wheel-container button {
-            margin-top: 10px; /* Add space between wheel and button */
         }
         #output1, #output2 {
-            margin: 0; /* Remove margin for better alignment */
+            display: block;
+            margin: 0 auto;
+        }
+        button {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove borders */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block display */
+            font-size: 16px; /* Increase font size */
+            margin: 10px; /* Add margin */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 4px; /* Add rounded corners */
+        }
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
         }
         table {
             margin: 20px auto;
@@ -42,48 +63,35 @@
         th {
             background-color: #f2f2f2;
         }
-        button {
-            background-color: #4CAF50; /* Green background */
-            color: white; /* White text */
-            border: none; /* Remove borders */
-            padding: 10px 20px; /* Add some padding */
-            text-align: center; /* Center text */
-            text-decoration: none; /* Remove underline */
-            display: inline-block; /* Inline-block display */
-            font-size: 16px; /* Increase font size */
-            margin: 10px 2px; /* Add margin */
-            cursor: pointer; /* Add pointer cursor on hover */
-            border-radius: 4px; /* Add rounded corners */
-        }
-        button:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
         @media (max-width: 768px) {
-            .container {
+            .wheels-container {
                 flex-direction: column;
-                align-items: center;
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 </head>
 <body>
     <h1>Wheel of Fortune</h1>
 
     <div class="container">
-        <div class="wheel-container">
-            <div id="output1"></div>
-            <button id="startButton1">Spin Wheel 1</button>
+        <div class="wheels-container">
+            <div class="wheel-container">
+                <div id="output1"></div>
+                <button id="startButton1">Spin Wheel 1</button>
+            </div>
+
+            <div class="wheel-container">
+                <div id="output2"></div>
+                <button id="startButton2">Spin Wheel 2</button>
+            </div>
         </div>
         
-        <div class="wheel-container">
-            <div id="output2"></div>
-            <button id="startButton2">Spin Wheel 2</button>
+        <div id="coinTossDiv">
+            <button id="tossCoinButton">Toss Coin</button>
+            <div id="coinTossResult"></div>
         </div>
-    </div>
-
-    <div id="coinTossDiv">
-        <button id="tossCoinButton">Toss Coin</button>
-        <div id="coinTossResult"></div>
     </div>
 
     <h2>History</h2>
@@ -95,17 +103,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr id="historyRow">
-                <td id="wheel1Result"></td>
-                <td id="wheel2Result"></td>
-            </tr>
         </tbody>
     </table>
 
     <button id="saveDataButton">Save Data as CSV</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
         function createWheelSketch(canvasId, startButtonId, wheelNumber) {
             return function(p) {
@@ -113,8 +115,8 @@
                 let wheelCenterX;
                 let wheelCenterY;
                 let ballRadius = 11;
-                let ballX = wheelRadius; // Initialize with valid value
-                let ballY = wheelRadius; // Initialize with valid value
+                let ballX;
+                let ballY;
                 let ballSpeed;
                 let ballAngle;
                 let ballFriction = 0.9945;
@@ -127,6 +129,7 @@
                 let slotAngle;
                 let wheelSound;
                 let soundLoaded = false;
+                let history = [];
                 let coinTossResult = '';
 
                 p.setup = function() {
@@ -160,16 +163,18 @@
                             }
 
                             if (winningNumber !== undefined) {
-                                updateTable(winningNumber, wheelNumber);
+                                let index = slotNumbers.indexOf(winningNumber);
+                                history.push({
+                                    wheel1: wheelNumber === 1 ? winningNumber : '',
+                                    wheel2: wheelNumber === 2 ? winningNumber : '',
+                                    coinToss: coinTossResult // Add coin toss result
+                                });
+                                updateHistoryTable();
                             }
                         }
 
                         ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
                         ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
-
-                        // Debugging: Check ball position and radius
-                        console.log('ballX:', ballX, 'ballY:', ballY, 'ballRadius:', ballRadius);
-
                         p.fill(255);
                         p.ellipse(ballX, ballY, ballRadius * 2);
                     } else {
@@ -215,9 +220,7 @@
                 }
 
                 function moveBallToWinningSlot() {
-                    if (!isSpinning
-
-) {
+                    if (!isSpinning) {
                         let centerAngle = (finalIndex + 0.5) * slotAngle;
                         let correctedAngle = (360 - centerAngle + 360) % 360;
 
@@ -234,7 +237,9 @@
                             soundLoaded = true;
                             console.log('Sound loaded');
                         },
-                        onloaderror: (id, error) => {
+                        onloaderror: (id,
+
+ error) => {
                             console.error('Sound loading error:', error);
                         },
                         onplayerror: (id, error) => {
@@ -256,24 +261,27 @@
                     }
                 }
 
-                function updateTable(result, wheelNumber) {
-                    let wheel1Cell = document.getElementById('wheel1Result');
-                    let wheel2Cell = document.getElementById('wheel2Result');
+                function updateHistoryTable() {
+                    let tableBody = document.querySelector('#historyTable tbody');
+                    tableBody.innerHTML = '';
 
-                    if (wheelNumber === 1) {
-                        wheel1Cell.innerText = result;
-                    } else if (wheelNumber === 2) {
-                        wheel2Cell.innerText = result;
-                    }
+                    history.forEach((entry) => {
+                        let row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${entry.wheel1}</td>
+                            <td>${entry.wheel2}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
                 }
 
-                function exportTotalsToCSV(filename) {
+                function exportTotalsToCSV(history, filename) {
                     let csvContent = 'data:text/csv;charset=utf-8,';
                     csvContent += 'Wheel 1,Wheel 2\n';
 
-                    let wheel1Result = document.getElementById('wheel1Result').innerText;
-                    let wheel2Result = document.getElementById('wheel2Result').innerText;
-                    csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
+                    history.forEach(entry => {
+                        csvContent += `${entry.wheel1},${entry.wheel2}\n`;
+                    });
 
                     const encodedUri = encodeURI(csvContent);
                     const link = document.createElement('a');
@@ -291,7 +299,11 @@
                 });
 
                 document.getElementById('saveDataButton').addEventListener('click', () => {
-                    exportTotalsToCSV('history.csv');
+                    if (history.length > 0) {
+                        exportTotalsToCSV(history, 'history.csv');
+                    } else {
+                        alert('No data available to export.');
+                    }
                 });
             }
         }

@@ -212,7 +212,7 @@
 
                 function drawWheel() {
                     // Draw the outer ring with increased thickness
-                    p.stroke(139, 69, 19); // Outer ring color
+                    p.stroke(255, 255, 255); // Outer ring color
                     p.strokeWeight(8); // Outer ring thickness
                     p.noFill();
                     p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
@@ -343,7 +343,7 @@
             new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
         }).catch(error => {
             console.error('Error loading lookup table:', error);
-        });
+       });
     </script>
 </body>
 </html>

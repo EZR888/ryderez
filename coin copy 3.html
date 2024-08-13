@@ -8,17 +8,17 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: black;
-            color: white;
-            margin: 0;
-            padding: 0;
+            background-color: black; /* Set background color to black */
+            color: white; /* Set text color to white for visibility */
+            margin: 0; /* Remove default margins */
+            padding: 0; /* Remove default padding */
         }
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            margin: 20px;
+            gap: 20px; /* Space between wheels and buttons */
+            margin: 20px; /* Margin around container */
         }
         .wheel-container {
             display: flex;
@@ -27,52 +27,56 @@
             margin: 20px;
         }
         .wheel-container button {
-            margin-top: 10px;
+            margin-top: 10px; /* Add space between wheel and button */
+        }
+        #output1, #output2 {
+            margin: 0; /* Remove margin for better alignment */
         }
         table {
             margin: 20px auto;
             border-collapse: collapse;
             width: 80%;
-            background-color: #333;
+            background-color: #333; /* Set table background to dark color */
         }
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
-            color: white;
+            color: white; /* Ensure text color is white for contrast */
         }
         th {
-            background-color: #444;
+            background-color: #444; /* Darker background for headers */
         }
         button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 10px 2px;
-            cursor: pointer;
-            border-radius: 4px;
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove borders */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block display */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px; /* Add margin */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 4px; /* Add rounded corners */
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #45a049; /* Darker green on hover */
         }
         #coinTossResult {
             position: relative;
             display: inline-block;
         }
         #coinImage {
-            width: 100px;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            transition: transform 0.6s ease-in-out;
+            width: 100px; /* Set a fixed width for the coin images */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Make sure the image is displayed as a block element */
+            margin: 10px auto; /* Center the image horizontally and add margin */
+            transform-origin: center; /* Set the origin for the rotation effect */
+            transition: transform 0.5s ease-in-out; /* Smooth transition for rotation */
         }
-        #coinImage.flip {
-            transform: rotateY(360deg);
+        #coinImage.rotate {
+            transform: rotateY(360deg); /* Rotate 360 degrees */
         }
         @media (max-width: 768px) {
             .container {
@@ -100,7 +104,7 @@
     <div id="coinTossDiv">
         <button id="tossCoinButton">Toss Coin</button>
         <div id="coinTossResult">
-            <img id="coinImage" src="default.png" alt="Coin Toss Result" />
+            <img id="coinImage" src="" alt="Coin Toss Result" />
             <div id="coinTossText"></div>
         </div>
     </div>
@@ -171,7 +175,7 @@
 
                 p.setup = function() {
                     p.createCanvas(390, 390).parent(canvasId);
-                    p.background(0);
+                    p.background(0); // Set background to black
                     wheelCenterX = p.width / 2;
                     wheelCenterY = p.height / 2;
                     slotAngle = 360 / numSlots;
@@ -182,7 +186,7 @@
                 }
 
                 p.draw = function() {
-                    p.background(0);
+                    p.background(0); // Set background to black
                     drawWheel();
 
                     if (isSpinning) {
@@ -215,13 +219,13 @@
                 }
 
                 function drawWheel() {
-                    p.stroke(255, 255, 255);
-                    p.strokeWeight(8);
+                    p.stroke(255, 255, 255); // Outer ring color
+                    p.strokeWeight(8); // Outer ring thickness
                     p.noFill();
                     p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
 
-                    p.stroke(139, 69, 19);
-                    p.strokeWeight(4);
+                    p.stroke(139, 69, 19); // Spoke color
+                    p.strokeWeight(4); // Spoke thickness
                     for (let i = 0; i < numSlots; i++) {
                         let angleStart = p.radians(i * slotAngle);
                         let angleEnd = p.radians((i + 1) * slotAngle);
@@ -257,8 +261,8 @@
                         let centerAngle = (finalIndex + 0.5) * slotAngle;
                         let correctedAngle = (360 - centerAngle + 360) % 360;
 
-                        ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(correctedAngle));
-                        ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(correctedAngle));
+                        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(p.radians(correctedAngle));
+                        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(p.radians(correctedAngle));
                     }
                 }
 
@@ -324,41 +328,16 @@
                     let coinImage = document.getElementById('coinImage');
                     let coinText = document.getElementById('coinTossText');
 
-                   if (result === 'Heads') {
-                       coinImage.src = 'heads.png';
-                } else {
-                    coinImage.src = 'tails.png';
-                   }
-                   
-                   document.getElementById('tossCoinButton').addEventListener('click', () => {
-    let result = Math.random() > 0.5 ? 'Heads' : 'Tails';
-    let coinImage = document.getElementById('coinImage');
-    let coinText = document.getElementById('coinTossText');
+                    if (result === 'Heads') {
+                        coinImage.src = 'heads.png';
+                    } else {
+                        coinImage.src = 'tails.png';
+                    }
 
-    // Update the image source
-    if (result === 'Heads') {
-        coinImage.src = 'heads.png';
-    } else {
-        coinImage.src = 'tails.png';
-    }
-
-    // Add a unique class to trigger the animation
-    const uniqueClass = 'flip-' + Date.now(); // Ensure the class is unique
-    coinImage.classList.add(uniqueClass);
-
-    // Remove the class after the animation ends to reset it
-    coinImage.addEventListener('animationend', () => {
-        coinImage.classList.remove(uniqueClass);
-    });
-
-    // Update the result text
-    coinText.innerText = `Coin Toss: ${result}`;
-});
-
-                    // Trigger the flip animation
-                    coinImage.classList.remove('flip'); // Remove the class
-                    void coinImage.offsetWidth; // Trigger a reflow
-                    coinImage.classList.add('flip'); // Re-add the class
+                    // Reset the rotation effect
+                    coinImage.classList.remove('rotate');
+                    void coinImage.offsetWidth; // Trigger a reflow to restart the animation
+                    coinImage.classList.add('rotate');
 
                     coinText.innerText = `Coin Toss: ${result}`;
                 });

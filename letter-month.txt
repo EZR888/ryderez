@@ -1,0 +1,38 @@
+1,Soneone whose first or last name starts with A
+2,Soneone whose first or last name starts with B
+3,Soneone whose first or last name starts with C
+4,Soneone whose first or last name starts with D
+5,Soneone whose first or last name starts with E
+6,Soneone whose first or last name starts with F
+7,Soneone whose first or last name starts with G
+8,Soneone whose first or last name starts with H
+9,Soneone whose first or last name starts with I
+10,Soneone whose first or last name starts with J
+11,Soneone whose first or last name starts with K
+12,Soneone whose first or last name starts with l
+13,Soneone whose first or last name starts with M
+14,Soneone whose first or last name starts with N
+15,Soneone whose first or last name starts with O
+16,Soneone whose first or last name starts with P
+17,Soneone whose first or last name starts with Q
+18,Soneone whose first or last name starts with R
+19,Soneone whose first or last name starts with S
+20,Soneone whose first or last name starts with T
+21,Soneone whose first or last name starts with U
+22,Soneone whose first or last name starts with V
+23,Soneone whose first or last name starts with W
+24,Soneone whose first or last name starts with X
+25,Soneone whose first or last name starts with Y
+26,Soneone whose first or last name starts with Z
+27,January has some significance.
+28,February has some significance.
+29,March has some significance.
+30,April has some significance.
+31,May has some significance.
+32,June has some significance.
+33,July has some significance.
+34,August has some significance.
+35,September has some significance.
+36,October has some significance.
+37,November has some significance.
+38,December has some significance.

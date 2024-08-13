@@ -1,732 +1,2346 @@
-1,Today it's up to you to create the peacefulness you long for.
-2,A friend asks only for your time not your money.
-3,If you refuse to accept anything but the best, you very often get it.
-4,A smile is your passport into the hearts of others.
-5,A good way to keep healthy is to eat more Chinese food.
-6,Your high-minded principles spell success.
-7,Hard work pays off in the future, laziness pays off now.
-8,Change can hurt, but it leads a path to something better.
-9,Enjoy the good luck a companion brings you.
-10,People are naturally attracted to you.
-11,Hidden in a valley beside an open stream- This will be the type of place where you will find your dream.
-12,A chance meeting opens new doors to success and friendship.
-13,You learn from your mistakes... You will learn a lot today.
-14,What ever you're goal is in life, embrace it visualize it, and for it will be yours.
-15,Your shoes will make you happy today.
-16,You cannot love life until you live the life you love.
-17,Be on the lookout for coming events; They cast their shadows beforehand.
-18,Land is always on the mind of a flying bird.
-19,The man or woman you desire feels the same about you.
-20,Meeting adversity well is the source of your strength.
-21,A dream you have will come true.
-22,Our deeds determine us, as much as we determine our deeds.
-23,Never give up. You're not a failure if you don't give up.
-24,You will become great if you believe in yourself.
-25,There is no greater pleasure than seeing your loved ones prosper.
-26,You will marry your lover.
-27,A very attractive person has a message for you.
-28,You already know the answer to the questions lingering inside your head.
-29,It is now, and in this world, that we must live.
-30,You must try, or hate yourself for not trying.
-31,You can make your own happiness.
-32,The greatest risk is not taking one.
-33,The love of your life is stepping into your planet this summer.
-34,Love can last a lifetime, if you want it to.
-35,Adversity is the parent of virtue.
-36,Serious trouble will bypass you.
-37,A short stranger will soon enter your life with blessings to share.
-38,Now is the time to try something new.
-39,Wealth awaits you very soon.
-40,If you feel you are right, stand firmly by your convictions.
-41,Keep your eye out for someone special.
-42,You are very talented in many ways.
-43,A stranger, is a friend you have not spoken to yet.
-44,A new voyage will fill your life with untold memories.
-45,You will travel to many exotic places in your lifetime.
-46,Your ability for accomplishment will follow with success.
-47,Nothing astonishes men so much as common sense and plain dealing.
-48,Its amazing how much good you can do if you dont care who gets the credit.
-49,There will be a happy romance for you shortly.
-50,Your fondest dream will come true within this year.
-51,You have a deep interest in all that is artistic.
-52,Your emotional nature is strong and sensitive.
-53,A letter of great importance may reach you any day now.
-54,Good health will be yours for a long time.
-55,You will become better acquainted with a coworker.
-56,To be old and wise, you must first be young and stupid.
-57,Failure is only the opportunity to begin again more intelligently.
-58,Integrity is doing the right thing, even if nobody is watching.
-59,Conquer your fears or they will conquer you.
-60,You are a lover of words; One day you will write a book.
-61,In this life it is not what we take up, but what we give up, that makes us rich.
-62,Fear can keep us up all night long, but faith makes one fine pillow.
-63,Seek out the significance of your problem at this time.  Try to understand.
-64,Never upset the driver of the car you're in; they're the master of your destiny until you get home.
-65,He who slithers among the ground is not always a foe.
-66,You learn from your mistakes, you will learn a lot today.
-67,You only need look to your own reflection for inspiration.
-68,You are not judged by your efforts you put in; you are judged on your performance.
-69,Rivers need springs.
-70,Good news from afar may bring you a welcome visitor.
-71,When all else seems to fail, smile for today and just love someone.
-72,Patience is a virtue, unless its against a brick wall.
-73,When you look down, all you see is dirt, so keep looking up.
-74,If you are afraid to shake the dice, you will never throw a six.
-75,Even if the person who appears most wrong, is also quite often right.
-76,A single conversation with a wise man is better than ten years of study.
-77,Happiness is often a rebound from hard work.
-78,The world may be your oyster, but that doesn't mean you'll get it's pearl.
-79,Your life will be filled with magical moments.
-80,You're true love will show himself to you under the moonlight.
-81,Do not follow where the path may lead.  Go where there is no path...
-82,The object of your desire comes closer.
-83,You have a flair for adding a fanciful dimension to any story.
-84,The most useless energy is trying to change what and who God so carefully created.
-85,You will have unexpected great good luck.
-86,All progress occurs because people dare to be different.
-87,Your ability for accomplishment will be followed by success.
-88,The world is always ready to receive talent with open arms.
-89,Things may come to those who wait, but only the things left by those who hustle.
-90,We can't help everyone. But everyone can help someone.
-91,Every day is a new day. But tomorrow is never promised.
-92,It is not necessary to show others you have change; the change will be obvious.
-93,You have a deep appreciation of the arts and music.
-94,If your desires are not extravagant, they will be rewarded.
-95,You try hard, never to fail. You don't, never to win.
-96,Never give up on someone that you don't go a day without thinking about.
-97,It never pays to kick a skunk.
-98,In case of fire, keep calm, pay bill and run.
-99,Next full moon brings an enchanting evening.
-100,Not all closed eye is sleeping nor open eye is seeing.
-101,Impossible is a word only to be found in the dictionary of fools.
-102,You will soon witness a miracle.
-103,The time is alway right to do what is right.
-104,Love is as necessary to human beings as food and shelter.
-105,You will make heads turn.
-106,You are extremely loved.
-107,If you are never patient, you will never get anything done. If you believe you can do it, you will be rewarded with success.
-108,You will soon embark on a business venture.
-109,You believe in the goodness of man kind.
-110,You will have a long and wealthy life.
-111,You will take a pleasant journey to a place far away.
-112,You are a person of culture.
-113,Keep it simple. The more you say, the less people remember.
-114,Life is like a dogsled team. If you ain't the lead dog, the scenery never changes.
-115,Prosperity makes friends and adversity tries them.
-116,Nothing seems impossible to you.
-117,Patience is bitter, but its fruit is sweet.
-118,The only certainty is that nothing is certain.
-119,Success is the sum of my unique visions realized by the sweat of perseverance.
-120,When you expect your opponent to yield, you also should avoid hurting him.
-121,Human evolution: &ldquo;wider freeway but narrower viewpoints.
-122,Intelligence is the door to freedom and alert attention is the mother of intelligence.
-123,Back away from individuals who are impulsive.
-124,Enjoyed the meal? Buy one to go too.
-125,You believe in the goodness of mankind.
-126,A big fortune will descend upon you this year.
-127,Now these three remain, faith, hope, and love. The greatest of these is love.
-128,For success today look first to yourself.
-129,Determination is the wake-up call to the human will.
-130,There are no limitations to the mind except those we aknowledge.
-131,A merry heart does good like a medicine.
-132,Whenever possible, keep it simple.
-133,Your dearest wish will come true.
-134,Poverty is no disgrace.
-135,If you don&rsquo;t do it excellently, don&rsquo;t do it at all.
-136,You have an unusual equipment for success, use it properly.
-137,Emotion is energy in motion.
-138,You will soon be honored by someone you respect.
-139,Punctuality is the politeness of kings and the duty of gentle people everywhere.
-140,Your happiness is intertwined with your outlook on life.
-141,Elegant surroundings will soon be yours.
-142,If you feel you are right, stand firmly by your convictions.
-143,Your smile brings happiness to everyone you meet.
-144,Instead of worrying and agonizing, move ahead constructively.
-145,Do you believe? Endurance and persistence will be rewarded.
-146,A new business venture is on the horizon.
-147,Never underestimate the power of the human touch.
-148,Hold on to the past but eventually, let the times go and keep the memories into the present.
-149,Truth is an unpopular subject. Because it is unquestionably correct.
-150,The most important thing in communication is to hear what isn&rsquo;t being said.
-151,You are broad minded and socially active.
-152,Your dearest dream is coming true. God looks after you especially.
-153,You will recieve some high prize or award.
-154,Your present question marks are going to succeed.
-155,You have a fine capacity for the enjoyment of life.
-156,You will live long and enjoy life.
-157,An admirer is concealing his/her affection for you.
-158,A wish is what makes life happen when you dream of rose petals.
-159,Love can turn cottage into a golden palace.
-160,Lend your money and lose your freind.
-161,You will be rewarded for being a good listener in the next week.
-162,If you never give up on love, It will never give up on you.
-163,Unleash your life force.
-164,Your wish will come true.
-165,There is a prospect of a thrilling time ahead for you.
-166,No distance is too far, if two hearts are tied together.
-167,Land is always in the mind of the flying birds.
-168,Try? No! Do or do not, there is no try.
-169,Do not worry, you will have great peace.
-170,It's about time you asked that special someone on a date.
-171,You create your own stage ... the audience is waiting.
-172,It is never too late. Just as it is never too early.
-173,Discover the power within yourself.
-174,Good things take time.
-175,Stop thinking about the road not taken and pave over the one you did.
-176,Put your unhappiness aside. Life is beautiful, be happy.
-177,You can still love what you can not have in life.
-178,Make a wise choice everyday.
-179,Circumstance does not make the man; it reveals him to himself.
-180,The man who waits till tomorrow, misses the opportunities of today.
-181,Life does not get better by chance. It gets better by change.
-182,If you never expect anything you can never be disappointed.
-183,People in your surroundings will be more cooperative than usual.
-184,True wisdom is found in happiness.
-185,Ones always regrets what could have done. Remember for next time.
-186,Follow your bliss and the Universe will open doors where there were once only walls.
-187,Find a peaceful place where you can make plans for the future.
-188,All the water in the world can't sink a ship unless it gets inside.
-189,The earth is a school learn in it.
-190,In music, one must think with his heart and feel with his brain.
-191,If you speak honestly, everyone will listen.
-192,Ganerosity will repay itself sooner than you imagine.
-193,Do what is right, not what you should.
-194,To effect the quality of the day is no small achievement.
-195,Simplicity and clearity should be the theme in your dress.
-196,Virtuous find joy while Wrongdoers find grieve in their actions.
-197,Not all closed eye is sleeping, nor open eye is seeing.
-198,Bread today is better than cake tomorrow.
-199,In evrything there is a piece of truth.But a piece.
-200,A feeling is an idea with roots.
-201,It's all right to have butterflies in your stomach. Just get them to fly in formation.
-202,Everything will be ok. Don't obsess. Time will prove you right, you must stay where you are.
-203,The finest men like the finest steels have been tempered in the hottest furnace.
-204,The worst of friends may become the best of enemies, but you will always find yourself hanging on.
-205,Let your fantasies unwind...
-206,Don't lead if you won't lead.
-207,Share your hapiness with others today.
-208,It's up to you to clearify.
-209,Your future will be happy and productive.
-210,Seize every second of your life and savor it.
-211,Those who walk in other's tracks leave no footprints.
-212,Failure is the mother of all success.
-213,Difficulty at the beginning useually means ease at the end.
-214,Do not seek so much to find the answer as much as to understand the question better.
-215,Your way of doing what other people do their way is what makes you special.
-216,A beautiful, smart, and loving person will be coming into your life.
-217,Friendship is an ocean that you cannot see bottom.
-218,Your life does not get better by chance, it gets better by change.
-219,Our duty,as men and women,is to proceed as if limits to our ability did not exist.
-220,A pleasant expeience is ahead:don't pass it by.
-221,They say you are stubborn; you call it persistence.
-222,Two small jumps are sometimes better than one big leap.
-223,A new wardrobe brings great joy and change to your life.
-224,The cure for grief is motion.
-225,I hear and I forget. I see and I remember. I do and I understand.
-226,I have a dream....Time to go to bed.
-227,A human being is a deciding being.
-228,Today is an ideal time to water your parsonal garden.
-229,Some men dream of fortunes, others dream of cookies.
-230,Things are never quite the way they seem.
-231,YOUR FAILURES WILL LEAD YOU TO YOUR SUCCESS.
-232,IN ORDER TO GET THE RAINBOW, YOU MUST ENDURE THE RAIN.
-233,Beauty is simply beauty. originality is magical.
-234,Your dream will come true when you least expect it.
-235,Let not your hand be stretched out to receive and shut when you should repay.
-236,Don't worry, half the people you know are below average.
-237,Vision is the art of seeing what is invisible to others.
-238,You don't need talent to gain experience.
-239,A focused mind is one of the most powerful forces in the universe.
-240,Today you shed your last tear. Tomorrow fortune knocks at your door.
-241,Be patient! The Great Wall didn't got build in one day.
-242,Think you can. Think you can't. Either way, you'll be right.
-243,Wisdom is on her way to you.
-244,Digital circuits are made from analog parts.
-245,If you eat a box of fortune cookies, anything is possible.
-246,The best is yet to come.
-247,I'm with you.
-248,Be direct,usually one can accomplish more that way.
-249,A single kind work will keep one warm for years.
-250,Ask a friend to join you on your next voyage.
-251,In God we trust.
-252,Love is free. Lust will cost you everything you have.
-253,Stop searching forever, happiness is just next to you.
-254,You don't need the answers to all of life's questions. Just ask your father what to do.
-255,Jealousy is a useless emotion.
-256,You are not a ghost.
-257,There is someone rather annoying in your life that you need to listen to.
-258,You will plant the smallest seed and it will become the greatest and most mighty tree in the world.
-259,The dream you've been dreaming all your life isn't worth it. Find a new dream, and once you're sure you've found it, fight for it.
-260,See if you can learn anything from the children.
-261,A clear conscience is usually the sign of a bad memory.
-262,Aim high, time flies.
-263,One is not sleeping, does not mean they are awake.
-264,A great pleasure in life is doing what others say you can't.
-265,Your father still loves and is in always with you. Remember that.
-266,Before you can be reborn you must die.
-267,It better to be the hammer than the nail.
-268,You are admired by everyone for your talent and ability.
-269,Save the whales. Collect the whole set.
-270,You will soon discover a major truth about the one you love most.
-271,Your life will prosper only if you acknowledge your faults and work to reduce them.
-272,Pray to God, but row towards shore.
-273,You will soon witness a miracle.
-274,Help, I'm being held prisoner in a  Chinese cookie factory.
-275,Alas! The onion you are eating is someone else&rsquo;s water lily.
-276,You are a persoon with a good sense of justice, now it's time to act like it.
-277,You create enthusiasm around you.
-278,There are big changes ahead for you.
-279,You will have many happy days soon.
-280,Out of confusion comes new patterns.
-281,If you love someone enough and they break your heart, you can't stop yourself from still loving them again even after all that pain.
-282,Look right...Now look left...Now look forward (do this really fast) do you feel any different? good you should feel dizzy.
-283,Live like you are on the bottom, even if you are on the top.
-284,You will soon emerge victorious from the maze you've been traveling in.
-285,Do not judge a book by it's color.
-286,Everything will come your way.
-287,There is a time to be practical now.
-288,Bend the rod while it is still hot.
-289,Darkness is only succesful when there is no light.
-290,Acting is not lying. It is findind someone hiding inside you and letting that person run free.
-291,You will be forced to face fear, but if you do not run, fear will be afraid of you.
-292,You are thinking about doing something. Don't do it, it won't help anything.
-293,Love Conquers all.
-294,The phrase is follow your dreams. Not dream period.
-295,stop nagging to your partner and take it day by day.
-296,Do not think that me or my brothers have supreme control over what will happen to you.
-297,Bad luck and misfortune will follow you all your days.
-298,Remember the fate of the early Worm.
-299,Begin your life anew with strength, grace and wonder.
-300,Be a good friend and a fair enemy.
-301,What goes around comes around.
-302,Bad luck and misfortune will infest your pathetic soul for all eternity.
-303,Use the force.
-304,Trust your intuition.
-305,Encourage your peers.
-306,Let your imagination wander.
-307,Your pain is the breaking of the shell that encloses your understanding.
-308,Patience is key, a wait short or long will have its reward.
-309,Tell them before it's too late...
-310,Be assertive when decisive action is needed.
-311,To determine whether someone is beautiful is not by looking at his/her appearance, but his/her heart.
-312,While you have this day, fill it with life. While you're in this moment, give it your own special meaning and purpose and joy.
-313,Even though it will often be difficult and complicated, you know you have what it takes to get it done.
-314,You can choose, right now and in every moment, to put your powerful and effective abilities to purposeful use. There is always something you can do, no matter what the situation may be, that will move your life forward.
-315,IT IS NOT GOOD TO BE A USER BLESSINGS COME FROM BEING A GIVER NOT A TAKER.
-316,You will prosper in the field of wacky inventions.
-317,Your tongue is your ambassador.
-318,The cure for grief is movement.
-319,Love Is At Your Hands Be Glad And Hold On To It.
-320,You are often asked if it is in yet.
-321,Life to you is a bold and dashing responsibility.
-322,Patience is a key to joy.
-323,A bargain is something you don't need at a price you can't resist.
-324,Stay to your inner-self, you will benefit in many ways.
-325,Rarely do great beauty and great virtue dwell together as they do in you.
-326,You are talented in many ways.
-327,You are the master of every situation.
-328,Your problem just got bigger. Think, what have you done.
-329,If your cookie still in one piece, buy lotto.
-330,Go with the flow will make your transition ever so much easier.
-331,A metaphor could save your life.
-332,There are lessons to be learned by listening to others.
-333,If you want the rainbow, you have to tolerate the rain.
-334,Volition, Strength, Languages, Freedom and Power rests in you.
-335,It takes more than a good memory to have good memories.
-336,Word to the wise: Don't play leapfrog with a unicorn.........
-337,Forgive your enemies, but never forget them.
-338,Don't worry about the stock market. Invest in family.
-339,Your fortune is as sweet as a cookie.
-340,Never trouble trouble till trouble troubles you.
-341,Get off to a new start - come out of your shell.
-342,Cooperate with those who have both know how and integrith.
-343,Minor aches today are likely to pay off handsomely tomorrow.
-344,You are about to become $8.95 poorer. ($6.
-345,Your mouth may be moving, but nobody is listening.
-346,The problem with resisting temptation is that it may never come again.
-347,All your sorrows will vanish.
-348,About time I got out of that cookie.
-349,Love will lead the way.
-350,It is best to act with confidence, no matter how little right you have to it.
-351,Soon, a visitor shall delight you.
-352,What breaks in a moment may take years to mend.
-353,Someone stole your fortune and replaced it with this one.  Your luck sucks.
-354,You will be rewarded for your patience and understanding.
-355,You will achieve all your desires and pleasures.
-356,Never miss a chance to keep your mouth shut.
-357,Nothing Shows A Man's Character More Than What He Laughs At.
-358,Never regret anything that made you smile.
-359,Love Takes Pratice.
-360,Don't take yourself so seriously, no one else does.
-361,At this very moment you can change the rest of your life.
-362,Become who you are.
-363,All comes at the proper time to him who knows how to wait.
-364,The energy is within you.
-365,The quotes that you do not understand, are not meant for you.
-366,You have an important new business development shaping up.
-367,Birds are entangled by their feet and men by their tongues.
-368,Benefit by doing things that others give up on.
-369,Rest has a peaceful effect on your physical and emotional health.
-370,One of the best ways to persuade others is with your ears--by listening to them.
-371,Plan your work and work your plan.
-372,Over self-confidence is equal to being blind.
-373,Those who bring sunshine to the lives of others cannot keep it from themselves.
-374,Before the beginning of great brilliance, there must be chaos.
-375,Old friends make best friends.
-376,Stop searching forever. Happiness is just next to you.
-377,Accept something that you cannot change, and you will feel better.
-378,Kiss is not a kiss without the heart.
-379,Enhance your karma by engaging in various charitable activities.
-380,You will have good luck and overcome many hardships.
-381,You never hesitate to tackle the most difficult problems.
-382,Hope is like food. You will starve without it.
-383,WHEN FIRE AND WATER GO TO WAR WATER ALWAYS WINS.
-384,An angry man opens his mouth and shuts up his eyes.
-385,Make the system work for you, not the other way around.
-386,You will be hungry soon, order takeout now.
-387,Be prepared for extra energy.
-388,An unexpected relationship will become permanent.
-389,The love of your life is sitting across from you.
-390,Better be the head of a chicken than the tail of an ox.
-391,To forgive others one more time is to create one more blessing for yourself.
-392,Enjoy yourself while you can.
-393,The ultimate test of a relationship is to disagree but to hold hands.
-394,Excellence is the difference between what I do and what I am capable of.
-395,Do not let what you do not have prevent you from using what you do have.
-396,What ends on hope does not end at all.
-397,People enjoy having you around. Appreciate this.
-398,Everyone agrees. You are the best.
-399,LIFE CONSIST NOT IN HOLDING GOOD CARDS, BUT IN PLAYING THOSE YOU HOLD WELL.
-400,It's better to be alone sometimes.
-401,Let the deeds speak.
-402,You will be called in to fulfill a position of high honor and responsibility.
-403,The man on the top of the mountain did not fall there.
-404,You will conquer obstacles to achieve success.
-405,Joys are often the shadows, cast by sorrows.
-406,Fortune favors the brave.
-407,An upward movement initiated in time can counteract fate.
-408,A journey of a thousand miles begins with a single step.
-409,Sometimes you just need to lay on the floor.
-410,Never give up. Always find a reason to keep trying.
-411,If you have something worth fighting for, then fight for it.
-412,Stop wishing. Start doing.
-413,Accept your past without regrets. Handle your present with confidence. Face your future without fear.
-414,Stay true to those who would do the same for you.
-415,Ask yourself if what you are doing today is getting you closer to where you want to be tomorrow.
-416,Happiness is an activity.
-417,Help is always needed but not always appreciated. Stay true to your heart and help those in need weather they appreciate it or not.
-418,Hone your competitive instincts.
-419,Finish your work on hand don't be greedy.
-420,For success today, look first to yourself.
-421,Your fortune is as sweet as a cookie.
-422,Integrity is the essence of everything successful.
-423,If you're happy, you're successful.
-424,Believing that you are beautiful will make you appear beautiful to others around you.
-425,Happinees comes from a good life.
-426,Before trying to please others think of what makes you happy.
-427,When hungry, order more Chinese food.
-428,Your golden opportunity is coming shortly.
-429,For hate is never conquered by hate. Hate is conquered by love .
-430,You will make many changes before settling down happily.
-431,A man is born to live and not prepare to live.
-432,You cannot become rich except by enriching others.
-433,Don't pursue happiness - create it.
-434,You will be successful in love.
-435,All your fingers can't be of the same length.
-436,Wise sayings often fall on barren ground, but a kind word is never thrown away.
-437,A lifetime of happiness is in store for you.
-438,It is very possible that you will achieve greatness in your lifetime.
-439,Be tactful; overlook your own opportunity.
-440,You are the controller of your destiny.
-441,Everything happens for a reson.
-442,How can you have a beutiful ending without making beautiful mistakes.
-443,You can open doors with your charm and patience.
-444,Welcome the change coming into your life.
-445,You are admired for your adventuous ways.
-446,You are blessed, today is the day to bless others.
-447,The Greatest War Sometimes Isn't On The Battlefield But Against Oneself.
-448,People in your background will be more co-operative than usual.
-449,A good way to stay healthy is to eat more Chinese food.
-450,Anyone who dares to be, can never be weak.
-451,Affirm it, visualize it, believe it, and it`will actualize itself.
-452,The measure of time to your next goal is the measure of your discipline.
-453,Take a minute and let it ride, then take a minute to let it breeze.
-454,We are here to love each other, serve each other and uplift each other.
-455,To affirm is to make firm.
-456,Remember this: duct tape can fix anything, so don't worry about messing things up.
-457,Failure is not defeat until you stop trying.
-458,The days that make us happy make us wise.
-459,Men do not fail... they give up trying.
-460,Time may fly by. But Memories don't.
-461,You will win success in whatever you adopt.
-462,You will outdistance all your competitors.
-463,Money will come to you when you are doing the right thing.
-464,When you get something for nothing, you just haven't been billed for it yet.
-465,You will discover your hidden talents.
-466,You'll advance for with your abilities.
-467,When you can't naturally feel upbeat it can sometimes help you to act as if you did.
-468,You will overcome difficult times.
-469,Your problem just became your stepping stone.  Catch the moment.
-470,I am a fortune. You just broke my little house.
-471,The majority of the word can't is can.
-472,The secret of getting ahead is getting started.
-473,Be most affectionate today.
-474,Change your thoughts and you change the world.
-475,Sing and rejoice, fortune is smiling on you.
-476,A truly great person never puts away the simplicity of a child.
-477,Customer service is like taking a bath you have to keep doing it.
-478,The expanse of your intelligence is a void no universe could ever fill.
-479,Those grapes you cannot taste are always sour.
-480,An unexpected aquaintance will resurface.
-481,If you want the rainbow, then you have to tolerate the rain.
-482,You don't get harmony when everyone sings the same note.
-483,The race is not always to the swift, but to those who keep on running.
-484,The early bird gets the worm, but the second mouse gets the cheese.
-485,The best things in life aren't things.
-486,Don't bother looking for fault. The reward for finding it is low.
-487,Everything has beauty but not everyone sees it.
-488,Nothing is as good or bad as it appears.
-489,Never cut what you can untie.
-490,Meet your opponent half way. You need the exercise.
-491,Laughter is the shortest distance between two people.
-492,We cannot change the direction of the wind, but we can adjust our sails.
-493,We could learn a lot from crayons: Some of are sharp, some are pretty, some have weird names, and all are different colors. But they all have to learn to live in the same box.
-494,Use your instincts now.
-495,If you take a single step to your journey, you'll succeed; it's not best to fail.
-496,In the eyes of lovers, everything is beautiful.
-497,Warning, do not eat your fortune.
-498,Demonstrate refinement in everything you do.
-499,Impossible standards just make life difficult.
-500,A different world cannot be build by indifferent people.
-501,Q. What is H2O? A. Caring, 2 parts Hug and 1 part Open-mind.
-502,All troubles you have can pass away very quickly.
-503,Integrity is the essense of everything successful.
-504,Sometimes the object of the journey is not the end, but the journey itself.
-505,Fear is just excitement in need of an attitude adjustment.
-506,The food here taste so good, even a cave man likes it.
-507,Perhaps you've been focusing too much on spending.
-508,Happiness isn't something you remember, it's something you experience.
-509,Oops... Wrong cookie.
-510,The dream is within you.
-511,Love is on its way.
-512,Be direct, usually one can accomplish more that way.
-513,Use your talents. That's what they are intended for.
-514,The troubles you have now will pass away quickly.
-515,See the light at the end of the tunnel.
-516,Your dream will come true when you least expect it.
-517,Don't 'face' reality, let it be the place from which you leap.
-518,Fortune smiles upon you today.
-519,Believing is doing.
-520,Your dynamic eyes have attracted a secret admirer.
-521,You know where you are going and how to get there.
-522,Go confidently in the direction of your dreams.
-523,Your ability to pick a winner will bring you success.
-524,Humor usually works at the moment of awkwardness.
-525,A good time to finish up old tasks.
-526,Enthusiastic leadership gets you a promotion when you least expect it.
-527,You love Chinese food.
-528,You are far more influential than you think.
-529,Adjust finances, make budgets, to improve your standing.
-530,Happiness is not the absence of conflict, but the ability to cope with it.
-531,An understanding heart warms all that are graced with it's presense.
-532,Your co-workers take pleasure in your great sense of creativity.
-533,You are one of the people who goes places in life.
-534,Others enjoy your company.
-535,When in doubt, let your instincts guide you.
-536,A cheerful message is on its way to you.
-537,A pleasant surprise is in store for you tonight.
-538,To courageously shoulder the responsibility of one's mistake is character.
-539,The joyful energy of the day will have a positive affect on you.
-540,You have a strong desire for a home and your family interests come first.
-541,Dogs have owners, cats have staff.
-542,Be patient: in time, even an egg will walk.
-543,You are not a person who can be ignored.
-544,You always know the right times to be assertive or to simply wait.
-545,Reading to the mind is what exercise is to the body.
-546,Eat something you never tried before.
-547,You need to live authentically, and you can't ignore that.
-548,Make all you can, save all you can, give all you can.
-549,A well-aimed spear is worth three.
-550,To build a better world, start in your community.
-551,When you can't naturally feel upbeat, it can sometimes help to act a if you did.
-552,May you have great luck.
-553,A kind word will keep someone warm for years.
-554,Nothing in the world is accomplished without passion.
-555,Human invented language to satisfy the need to complain.
-556,Accept what comes to you each day.
-557,A small lucky package is on its way to you soon.
-558,In human endeavor, chance favors the prepared mind.
-559,Do not upset the penguin today.
-560,Don't cry.
-561,The best way to give credit is to give it away.
-562,Anything you do, do it well. The last thing you want is to be sorry for what you didn't do.
-563,It takes more then good memory to have good memories.
-564,Grant yourself a wish this year only you can do it.
-565,You will be selected for a promotion because of your accomplishments.
-566,There are many new opportunities that are being presented to you.
-567,You will inherit a large sum of money.
-568,You will recieve a gift from someone that cares about you.
-569,You are not illiterate.
-570,Love because it is the only true adventure.
-571,Keep true to the dreams of your youth.
-572,Treasure what you have.
-573,The greatest precept is continual awareness.
-574,A new friend helps you break out of an old routine.
-575,I have a dream.... Time to go to bed.
-576,Your skill will accomplish what the force of many cannot.
-577,You will soon be surrounded by good friends and laughter.
-578,The best is yet to come.
-579,It is better to be the hammer then the anvil.
-580,He who climbs a ladder must begin at the first step.
-581,Action speaks nothing, without the Motive.
-582,Give yourself some peace and quiet for at least a few hours.
-583,Old dreams never die they just get filed away.
-584,You can fix it with a little extra energy and a positive attitude.
-585,A man without aim is like a clock without hands, as useless if it turns as if it stands.
-586,Many folks are about as happy as they make up their minds to be.
-587,You should be able to make money and hold on to it.
-588,The human spirit is stronger than anything that can happen to it.
-589,Your succeess will astonish everyone.
-590,It is better to have a hen tomorrow than an egg today.
-591,Judge each day not by the harvest you reap but by the seeds you plant.
-592,You like Chinese food.
-593,Your hard work will get payoff today.
-594,No matter what your past has been, you have a spotless future.
-595,Your secret desire to completely change your life will manifest.
-596,Soon you will be sitting on top of the world.
-597,You are never selfish with your advice or your help.
-598,A thrilling time is in store for you.
-599,It's tough to be fascinating.
-600,Luck sometimes visits a fool, but it never sits down with him.
-601,Keep your plans secret for now.
-602,Traveling this year will bring your life into greater perspective.
-603,Only talent people get help  from others.
-604,Constant grinding can turn an iron nod into a needle.
-605,When you're about to turn your heart into a stone remember: you do not walk alone.
-606,You are vigorous in words and action.
-607,The one who snores will always fall asleep first.
-608,Rest is a good thing, but boredom is its brother.
-609,Do not be overly judgemental of your loved one's intentions or actions.
-610,Think of how you can assist on a problem, not who to blame.
-611,The life of every woman or man - the heart of it - is pure and holy joy.
-612,Trust your intuition. The universe is guiding your life.
-613,Use your head, but live in your heart.
-614,Your passions sweep you away.
-615,Think of mother's exhortations more.
-616,The gambler is like the fisherman both have beginners luck.
-617,You are given the chance to take part in an exciting adventure.
-618,The simplest answer is to act.
-619,You will always be surrounded by true friends.
-620,Keep your feet on the ground even though friends flatter you.
-621,You are the man of righteousness and integrity.
-622,He who seeks will find.
-623,The smart thing to do is to begin trusting your intuitions.
-624,Your many hidden talents will become obvious to those around you.
-625,Pick a path with heart.
-626,The human spirit is stronger then anything that can happen to it.
-627,It takes more than good memory to have good memories.
-628,Face facts with dignity.
-629,Be calm when confronting an emergency crisis.
-630,Do you believe? Endurance and persistence will be rewarded.
-631,A new wardrobe brings great joy and change in your life.
-632,Everyone agrees you are the best.
-633,A new outlook brightens your image and brings new friends.
-634,Everything will now come your way.
-635,You will be called to fill a position of high honor and responsibility.
-636,The eyes believe themselves; the ears believe other people.
-637,Good beginning is half done.
-638,Some pursue happiness; you create it.
-639,It's the worst of times, you need to summon your optimism.
-640,You are cautious in showing your true self to others.
-641,Your ability to accomplish tasks will follow with success.
-642,We all have extraordinary coded within us, waiting to be released.
-643,You will have a bright future.
-644,Compassion is a way of being.
-645,You will always have good luck in your personal affairs.
-646,Perhaps you've been focusing too much on that one thing..
-647,Right now there's an energy pushing you in a new direction.
-648,Everybody feels lucky for having you as a friend.
-649,When the moment comes, take  the top one.
-650,Sometimes travel to new places leads to great transformation.
-651,There is always a way - if you are committed.
-652,Life is too short to waste time hating anyone.
-653,All the world may not love a lover but they will be watching him.
-654,Don't just spend time, invest it.
-655,Life  always gets harder near the summit.
-656,Take the chance while you still have the choice.
-657,It is much easier to be cirtical than to be correct.
-658,Enjoy life! It is better to be happy than wise.
-659,To make the cart go, you must grease the wheels.
-660,You are contemplating some action which will bring credit upon you.
-661,You may be disappointed if you fail, but you are doomed if you don't try.
-662,You will always get what you want through your charm and personality.
-663,The big issues are work, career, or status right now.
-664,Your emotional currents are flowing powerfully now.
-665,Any decision you have to make tomorrow is a good decsion.
-666,Consume less. Share more. Enjoy life.
-667,The secret of staying young is good health and lying about your age.
-668,Spring has sprung. Life is blooming.
-669,Go ask your mom.
-670,The possibility of a career change is near.
-671,The important thing is to never stop questioning.
-672,Compassion will cure more then condemnation.
-673,Excuses are easy to manufacture, and hard to sell.
-674,Put your mind into planning today. Look into the future.
-675,Broke is only temporaryl poor is a state of mind.
-676,Here we go. Moo Shu Cereal for breakfast with duck sauce.
-677,Teamwork: the fuel that allows common people attain uncommon results.
-678,Hard words break no bones, fine words butter no parsnips.
-679,We cannot direct the wind but we can adjust the sails.
-680,You are offered the dream of a lifetime.
-681,Working out the kinks today will make for a better tomorrow.
-682,You have a curious smile and a mysterious nature.
-683,Questions provide the key to unlocking our unlimited potential.
-684,You will enjoy razon-sharp spiritual vision today.
-685,Well-arranged time is the surest sign of a well-arranged mind.
-686,Never bring unhappy feelings into your home.
-687,This is really a lovely day.
-688,Bad luck and ill misfortune will infest your pathetic soul for all eternity.
-689,A golden egg of opportunity falls into your lap this month.
-690,You are very grateful for the small pleasures of life.
-691,today you should be a passenger. Stay close to a driver for a day.
-692,For hate is never conquered by hate. Hate is conquered by love.
-693,Service is the rent we pay for the privilege of living on this planet.
-694,Good clothes open many doors. Go shopping.
-695,The leader seeks to communicate his vision to his followers.
-696,Great works are performed not by strength, but by perseverance.
-697,Present your best ideas today to an eager and welcoming audience.
-698,Friends long absent are coming back to you.
-699,The time is right to make new friends.
-700,You may be hungry soon: order a takeout now.
-701,Do not hesitate to look for help, an extra hand should always be welcomed.
-702,What's vice today may be virtue tomorow.
-703,You have an unusually magnetic personality.
-704,You will travel to many places.
-705,Dream lofty dreams, and as you dream, so shall you become.
-706,You have a quiet and unobtrusive nature.
-707,Great thoughts come from the heart.
-708,Judge not according to the appearance.
-709,One who admires you greatly is hidden before your eyes.
-710,Traveling more often is important for your health and happiness.
-711,You have a reputation for being straightforward and honest.
-712,You are always welcome in any gathering.
-713,You will be traveling and coming into a fortune.
-714,Open up your heart - it can always be closed again.
-715,Being happy is not always being perfect.
-716,Next time you have the opportunity, go on a rollercoaster.
-717,Try everything once, even the things you don't think you will like.
-718,Life is too short to hold grudges.
-719,Dream your dream and your dream will dream of you.
-720,Being alone and being lonely are two different things.
-721,Don't worry about things in the past, there is nothing you can do about them now. Don't worry about things that are happening now, make the best of a bad situation. Don't worry about things in the future, they may never happen.
-722,Tomorrow, take a moment to do something just for yourself.
-723,Someone close to you is waiting for you to call.
-724,A virtual fortune cookie will not satisfy your hunger like that of a home made one.
-725,Smile. Tomorrow is another day.
-726,You can never been certain of success, but you can be certain of failure if you never try.
-727,It takes ten times as many muscles to frown as it does to smile.
-728,Shoot for the moon! If you miss you will still be amongst the stars.
-729,Keep your eyes open. You never know what you might see.
-730,Tell them what you really think. Otherwise, nothing will change.
-731,Let your heart make your decisions - it does not get as confused as your head.
-732,Working hard will make you live a happy life.
+1,effort
+2,grand
+3,sister
+4,please
+5,Ireland
+6,into
+7,spirit
+8,rank
+9,because
+10,ball
+11,dust
+12,growth
+13,ice
+14,ago
+15,lump
+16,stamp
+17,influence
+18,preach
+19,grind
+20,cancer
+21,love
+22,wing
+23,immense
+24,offense
+25,lay
+26,excessive
+27,stick
+28,dull
+29,ready
+30,wave
+31,serious
+32,flash
+33,grace
+34,bicycle
+35,temper
+36,who
+37,particular
+38,treat
+39,wipe
+40,grateful
+41,arm
+42,Ryder
+43,full
+44,interest
+45,minister
+46,stay
+47,Linda
+48,stripe
+49,against
+50,board
+51,corner
+52,fall
+53,wood
+54,meet
+55,april
+56,dentist
+57,nylon
+58,bury
+59,tip
+60,educator
+61,basket
+62,rubber
+63,catch
+64,quality
+65,correct
+66,poor
+67,threaten
+68,eye
+69,mountain
+70,car
+71,speech
+72,snake
+73,find
+74,colony
+75,life
+76,fever
+77,half
+78,rotten
+79,disapprove
+80,might
+81,distance
+82,scientific
+83,widow
+84,put
+85,spare
+86,hurrah
+87,village
+88,hair
+89,shoulder
+90,same
+91,defendant
+92,harbor
+93,literary
+94,crush
+95,cork
+96,overflow
+97,why
+98,clean
+99,laughter
+100,one
+101,Germany
+102,excellent
+103,harden
+104,theater
+105,aunt
+106,shilling
+107,widower
+108,average
+109,repair
+110,dot
+111,Europe
+112,imitate
+113,join
+114,compare
+115,ache
+116,headdress
+117,basic
+118,certain
+119,best
+120,leadership
+121,afternoon
+122,efficient
+123,century
+124,Julie
+125,persuade
+126,up
+127,left
+128,thing
+129,when
+130,dress
+131,impossible
+132,onto
+133,mill
+134,seed
+135,within
+136,surface
+137,cat
+138,tower
+139,copy
+140,poem
+141,moderation
+142,tea
+143,everyone
+144,machinery
+145,praise
+146,bundle
+147,weed
+148,deliver
+149,case
+150,factory
+151,north
+152,secretary
+153,spread
+154,Terri
+155,dozen
+156,wealth
+157,cut
+158,pour
+159,daughter
+160,defeat
+161,profession
+162,handwriting
+163,envelope
+164,otherwise
+165,travel
+166,competitor
+167,rough
+168,gradual
+169,cultivation
+170,throat
+171,importance
+172,perform
+173,mouse
+174,four
+175,nut
+176,nose
+177,attend
+178,saucer
+179,enter
+180,bucket
+181,earth
+182,ditch
+183,hollow
+184,deal
+185,descent
+186,curious
+187,aim
+188,ability
+189,other
+190,form
+191,mystery
+192,firm
+193,loaf
+194,humble
+195,knock
+196,marry
+197,war
+198,cow
+199,fair
+200,win
+201,rid
+202,several
+203,either
+204,classify
+205,complain
+206,egg
+207,artist
+208,committee
+209,book
+210,disrespect
+211,usual
+212,tin
+213,divide
+214,report
+215,anybody
+216,allowance
+217,murder
+218,white
+219,cold
+220,signal
+221,railroad
+222,Apostoli
+223,some
+224,proof
+225,head
+226,omission
+227,bathe
+228,Janet
+229,company
+230,temperature
+231,everlasting
+232,cottage
+233,only
+234,scold
+235,feast
+236,blame
+237,pig
+238,review
+239,term
+240,hit
+241,unite
+242,wait
+243,city
+244,soap
+245,silent
+246,many
+247,material
+248,idea
+249,valley
+250,gap
+251,regular
+252,time
+253,glass
+254,apart
+255,sharp
+256,dog
+257,money
+258,strap
+259,grow
+260,garden
+261,advantage
+262,finger
+263,hut
+264,association
+265,scatter
+266,moonlight
+267,kick
+268,enough
+269,forward
+270,train
+271,plan
+272,reason
+273,voyage
+274,wreck
+275,Japan
+276,message
+277,existence
+278,last
+279,whichever
+280,extent
+281,dinner
+282,landlord
+283,purpose
+284,friendship
+285,somehow
+286,well
+287,fish
+288,choose
+289,speed
+290,application
+291,exchange
+292,excite
+293,no
+294,recent
+295,very
+296,steer
+297,weapon
+298,wild
+299,escape
+300,now
+301,shock
+302,cotton
+303,today
+304,businessman
+305,dance
+306,conquer
+307,deepen
+308,slippery
+309,accustom
+310,snow
+311,top
+312,
+313,opinion
+314,button
+315,beneath
+316,attention
+317,music
+318,invite
+319,safe
+320,january
+321,sit
+322,absent
+323,food
+324,substance
+325,judge
+326,listen
+327,underneath
+328,modesty
+329,Lynch
+330,Scotland
+331,shadow
+332,after
+333,curse
+334,wake
+335,necessity
+336,favor
+337,sugar
+338,hurry
+339,chalk
+340,tool
+341,cook
+342,restaurant
+343,plow
+344,self
+345,momentary
+346,quiet
+347,election
+348,middle
+349,religion
+350,bless
+351,mother
+352,organ
+353,beside
+354,newspaper
+355,multiplication
+356,bargain
+357,sympathetic
+358,test
+359,throw
+360,splendid
+361,arrive
+362,hair
+363,selfish
+364,roar
+365,extra
+366,roast
+367,tempt
+368,surround
+369,mankind
+370,apology
+371,salt
+372,Diane
+373,conscience
+374,flat
+375,Sam
+376,week
+377,desert
+378,vote
+379,may
+380,before
+381,song
+382,hide
+383,limb
+384,merchant
+385,companion
+386,program
+387,chief
+388,tour
+389,clever
+390,jewel
+391,leave
+392,knee
+393,everyday
+394,autumn
+395,sock
+396,woolen
+397,value
+398,confidence
+399,spoil
+400,relation
+401,burst
+402,practical
+403,stocking
+404,hospital
+405,Bart
+406,standard
+407,number
+408,center
+409,claim
+410,attraction
+411,coward
+412,decisive
+413,population
+414,host
+415,trip
+416,curtain
+417,thorn
+418,Alex
+419,insect
+420,verse
+421,save
+422,Nick
+423,correction
+424,nature
+425,race
+426,effect
+427,another
+428,queen
+429,poison
+430,heat
+431,fancy
+432,trunk
+433,desk
+434,tremble
+435,sick
+436,furnish
+437,raw
+438,handle
+439,upset
+440,lighten
+441,progress
+442,match
+443,liquid
+444,tooth
+445,dig
+446,thief
+447,daylight
+448,female
+449,shave
+450,soon
+451,degree
+452,cowardice
+453,scrape
+454,boast
+455,poverty
+456,equal
+457,advice
+458,march
+459,bite
+460,joke
+461,animal
+462,promise
+463,medicine
+464,double
+465,west
+466,settle
+467,tie
+468,suggestion
+469,inform
+470,once
+471,fierce
+472,wire
+473,pen
+474,worship
+475,floor
+476,weigh
+477,holy
+478,goat
+479,easy
+480,stain
+481,lazy
+482,milk
+483,photograph
+484,boy
+485,exist
+486,Gene
+487,master
+488,crash
+489,parcel
+490,polite
+491,return
+492,color
+493,commercial
+494,past
+495,kiss
+496,breadth
+497,repetition
+498,stock
+499,worry
+500,we
+501,sense
+502,low
+503,little
+504,manufacture
+505,gaiety
+506,healthy
+507,thread
+508,insurance
+509,invent
+510,season
+511,remedy
+512,influential
+513,alive
+514,face
+515,property
+516,excellence
+517,record
+518,paint
+519,Victoria
+520,sudden
+521,hasten
+522,extension
+523,likely
+524,home
+525,borrow
+526,fail
+527,president
+528,guide
+529,frequency
+530,advise
+531,upper
+532,share
+533,courage
+534,birth
+535,teach
+536,risk
+537,group
+538,presence
+539,Green
+540,oar
+541,agent
+542,hope
+543,disappoint
+544,grandfather
+545,harvest
+546,translate
+547,flatten
+548,quick
+549,defend
+550,being
+551,course
+552,cautious
+553,circle
+554,feel
+555,garage
+556,worm
+557,disappear
+558,comb
+559,descendant
+560,political
+561,storm
+562,neither
+563,difference
+564,pretense
+565,pump
+566,competition
+567,hook
+568,anything
+569,spank
+570,sea
+571,homemaker
+572,bad
+573,roof
+574,drum
+575,he
+576,film
+577,reserve
+578,librarian
+579,age
+580,begin
+581,beard
+582,possible
+583,matter
+584,receipt
+585,stir
+586,attractive
+587,angry
+588,shade
+589,difficult
+590,purple
+591,explain
+592,turn
+593,roll
+594,suggest
+595,truth
+596,arrest
+597,worse
+598,hay
+599,bottom
+600,mean
+601,evening
+602,gold
+603,plenty
+604,signature
+605,William
+606,ambition
+607,conquest
+608,flow
+609,gift
+610,someone
+611,content
+612,answer
+613,die
+614,warm
+615,doubt
+616,governor
+617,mine
+618,spell
+619,flood
+620,Matt
+621,absolute
+622,copper
+623,quart
+624,sail
+625,pack
+626,ship
+627,shoe
+628,appear
+629,unit
+630,pity
+631,social
+632,history
+633,pipe
+634,elephant
+635,wage
+636,row
+637,ear
+638,homecoming
+639,anywhere
+640,explosion
+641,band
+642,busy
+643,polish
+644,anxious
+645,tend
+646,prove
+647,question
+648,fact
+649,always
+650,seize
+651,complaint
+652,leather
+653,stage
+654,Leslie
+655,civilize
+656,market
+657,june
+658,reduce
+659,seven
+660,whole
+661,bit
+662,bread
+663,wash
+664,difficulty
+665,wear
+666,grandmother
+667,steel
+668,permit
+669,carry
+670,officer
+671,ease
+672,dear
+673,audience
+674,expression
+675,procession
+676,replace
+677,castle
+678,Democracy
+679,amount
+680,back
+681,word
+682,chest
+683,bribery
+684,excess
+685,wicked
+686,ripe
+687,plain
+688,ton
+689,welcome
+690,lip
+691,refuse
+692,sensitive
+693,explode
+694,scarce
+695,step
+696,Orlijn
+697,sauce
+698,fresh
+699,seldom
+700,will
+701,congratulation
+702,thank
+703,breath
+704,discipline
+705,foreign
+706,extreme
+707,situation
+708,avenue
+709,permission
+710,solve
+711,cake
+712,toy
+713,look
+714,male
+715,fasten
+716,wound
+717,agriculture
+718,convenience
+719,pupil
+720,subject
+721,park
+722,hard
+723,idle
+724,none
+725,point
+726,active
+727,march
+728,forth
+729,sand
+730,inch
+731,relate
+732,chicken
+733,bone
+734,most
+735,make
+736,engineer
+737,art
+738,ever
+739,lung
+740,taste
+741,fun
+742,desire
+743,entertain
+744,example
+745,party
+746,year
+747,tap
+748,satisfaction
+749,inventor
+750,arrow
+751,complete
+752,Jack
+753,tongue
+754,general
+755,hotel
+756,eager
+757,whisper
+758,lawyer
+759,memory
+760,everybody
+761,dine
+762,moreover
+763,loan
+764,confession
+765,hat
+766,weak
+767,satisfactory
+768,avoidance
+769,elsewhere
+770,deceive
+771,everything
+772,still
+773,exercise
+774,any
+775,shelf
+776,whenever
+777,deep
+778,delight
+779,help
+780,various
+781,introduction
+782,rich
+783,prepare
+784,annoy
+785,summer
+786,express
+787,provide
+788,shame
+789,anxiety
+790,rush
+791,improve
+792,pretty
+793,lift
+794,nursery
+795,funny
+796,arch
+797,prompt
+798,represent
+799,bar
+800,blow
+801,hold
+802,awake
+803,wisdom
+804,captain
+805,ordinary
+806,loyalty
+807,ceremony
+808,border
+809,kind
+810,pad
+811,may
+812,extend
+813,cry
+814,go
+815,control
+816,experience
+817,second
+818,know
+819,holiday
+820,ring
+821,yesterday
+822,Russell
+823,indeed
+824,slope
+825,station
+826,separation
+827,play
+828,sound
+829,height
+830,swim
+831,frame
+832,charge
+833,spite
+834,butter
+835,red
+836,dissatisfy
+837,decay
+838,thumb
+839,near
+840,forest
+841,spade
+842,fright
+843,lady
+844,pronounce
+845,afraid
+846,robbery
+847,liar
+848,dependent
+849,fly
+850,penny
+851,special
+852,path
+853,ribbon
+854,argue
+855,pound
+856,wife
+857,local
+858,school
+859,hear
+860,page
+861,arthritis
+862,much
+863,root
+864,regret
+865,already
+866,lot
+867,offer
+868,allow
+869,custom
+870,reproduce
+871,tear
+872,bear
+873,store
+874,reputation
+875,window
+876,gas
+877,outward
+878,artificial
+879,objection
+880,ahead
+881,bind
+882,strong
+883,cup
+884,attentive
+885,grammatical
+886,omit
+887,Australia
+888,safety
+889,servant
+890,pet
+891,star
+892,Guido
+893,engine
+894,circular
+895,afford
+896,honor
+897,woman
+898,rate
+899,edge
+900,coffee
+901,sow
+902,family
+903,how
+904,inward
+905,amuse
+906,south
+907,introduce
+908,inquire
+909,lead
+910,old
+911,fool
+912,stiffen
+913,boundary
+914,remind
+915,cheat
+916,coat
+917,royal
+918,mend
+919,companionship
+920,block
+921,early
+922,night
+923,tailor
+924,deaf
+925,rabbit
+926,glad
+927,heavy
+928,ancient
+929,hurt
+930,ticket
+931,balance
+932,touch
+933,bush
+934,complicate
+935,screen
+936,through
+937,product
+938,caution
+939,lodge
+940,stroke
+941,Canada
+942,canal
+943,Rob
+944,dirt
+945,wide
+946,chairman
+947,Kim
+948,haste
+949,push
+950,habit
+951,wheat
+952,house
+953,weekday
+954,pride
+955,whoever
+956,comparison
+957,upright
+958,admission
+959,hatred
+960,contain
+961,interference
+962,high
+963,wooden
+964,gate
+965,realize
+966,popular
+967,behave
+968,aside
+969,sting
+970,iron
+971,wine
+972,calculation
+973,temple
+974,level
+975,drugs
+976,ruin
+977,check
+978,tidy
+979,postpone
+980,key
+981,place
+982,blood
+983,essence
+984,over
+985,classification
+986,cure
+987,pan
+988,behavior
+989,suspicious
+990,metal
+991,direction
+992,old-fashioned
+993,guest
+994,needle
+995,dictionary
+996,silver
+997,become
+998,three
+999,detail
+1000,towel
+1001,universal
+1002,friend
+1003,Sagan
+1004,fence
+1005,box
+1006,respect
+1007,Russia
+1008,lonely
+1009,reach
+1010,different
+1011,simple
+1012,council
+1013,strict
+1014,branch
+1015,say
+1016,pocket
+1017,faith
+1018,skill
+1019,bath
+1020,wheel
+1021,stone
+1022,human
+1023,cover
+1024,state
+1025,royalty
+1026,drag
+1027,hands
+1028,sleep
+1029,entire
+1030,picture
+1031,press
+1032,small
+1033,reference
+1034,winter
+1035,sad
+1036,faint
+1037,belief
+1038,proud
+1039,sheep
+1040,Lynch
+1041,altogether
+1042,more
+1043,violent
+1044,applaud
+1045,court
+1046,gun
+1047,pot
+1048,decenber
+1049,manner
+1050,wrap
+1051,pretend
+1052,horse
+1053,neighborhood
+1054,shake
+1055,joy
+1056,guard
+1057,between
+1058,steady
+1059,sample
+1060,solid
+1061,aloud
+1062,citizen
+1063,chance
+1064,membership
+1065,beauty
+1066,hate
+1067,few
+1068,dollar
+1069,support
+1070,gentle
+1071,politician
+1072,actress
+1073,terrible
+1074,highway
+1075,handkerchief
+1076,hour
+1077,necessary
+1078,recognition
+1079,stop
+1080,power
+1081,climb
+1082,expensive
+1083,tonight
+1084,mistake
+1085,puzzle
+1086,spring
+1087,class
+1088,critic
+1089,beam
+1090,draw
+1091,expense
+1092,nowadays
+1093,smile
+1094,cape
+1095,insure
+1096,rather
+1097,swallow
+1098,stretch
+1099,cloth
+1100,work
+1101,system
+1102,uppermost
+1103,straighten
+1104,lie
+1105,guess
+1106,abroad
+1107,accept
+1108,admire
+1109,dare
+1110,include
+1111,modest
+1112,waste
+1113,donkey
+1114,convenient
+1115,english
+1116,build
+1117,fire
+1118,ornament
+1119,visit
+1120,damp
+1121,preference
+1122,loss
+1123,loosen
+1124,fast
+1125,wax
+1126,bound
+1127,calculate
+1128,patriotic
+1129,success
+1130,behind
+1131,motion
+1132,Denise
+1133,permanent
+1134,brain
+1135,thorough
+1136,sometime
+1137,street
+1138,Jefferson
+1139,loose
+1140,shallow
+1141,rivalry
+1142,supply
+1143,reproduction
+1144,across
+1145,cheer
+1146,dive
+1147,encourage
+1148,waiter
+1149,gain
+1150,somebody
+1151,cool
+1152,university
+1153,free
+1154,pink
+1155,skirt
+1156,manage
+1157,fortune
+1158,next
+1159,angle
+1160,cheese
+1161,round
+1162,crime
+1163,river
+1164,toward
+1165,fabric
+1166,examine
+1167,remember
+1168,regard
+1169,duty
+1170,secret
+1171,limit
+1172,each
+1173,gay
+1174,learn
+1175,church
+1176,future
+1177,Wales
+1178,laugh
+1179,official
+1180,beast
+1181,sailor
+1182,golden
+1183,write
+1184,eight
+1185,strike
+1186,reasonable
+1187,barber
+1188,native
+1189,plate
+1190,orange
+1191,responsible
+1192,reflection
+1193,Lincoln
+1194,pleasure
+1195,weight
+1196,basis
+1197,plant
+1198,determine
+1199,line
+1200,valuable
+1201,numerous
+1202,all
+1203,pair
+1204,flame
+1205,miss
+1206,discontent
+1207,minute
+1208,Paul
+1209,dish
+1210,east
+1211,forget
+1212,adopt
+1213,problem
+1214,ray
+1215,especially
+1216,quantity
+1217,England
+1218,count
+1219,poet
+1220,neighbor
+1221,ought
+1222,air
+1223,ashamed
+1224,sorrow
+1225,synchronicity
+1226,separate
+1227,nine
+1228,understand
+1229,shout
+1230,despair
+1231,sun
+1232,develop
+1233,sympathy
+1234,lord
+1235,something
+1236,tube
+1237,precious
+1238,hot
+1239,maybe
+1240,own
+1241,photography
+1242,funeral
+1243,object
+1244,greet
+1245,combine
+1246,tender
+1247,describe
+1248,decrease
+1249,agency
+1250,strange
+1251,freedom
+1252,ride
+1253,noise
+1254,collector
+1255,silk
+1256,reflect
+1257,Robi
+1258,razor
+1259,playright
+1260,teacher
+1261,read
+1262,rival
+1263,field
+1264,blind
+1265,card
+1266,two
+1267,astonish
+1268,powder
+1269,enclosure
+1270,brother
+1271,weaken
+1272,tire
+1273,Janae
+1274,knot
+1275,brick
+1276,reward
+1277,qualification
+1278,resistance
+1279,favorite
+1280,fur
+1281,entrance
+1282,camera
+1283,true
+1284,heaven
+1285,energy
+1286,knife
+1287,weave
+1288,masculine
+1289,close
+1290,conscious
+1291,shop
+1292,motherly
+1293,adventure
+1294,offend
+1295,invention
+1296,broadcast
+1297,must
+1298,eat
+1299,witness
+1300,watch
+1301,lunch
+1302,kill
+1303,account
+1304,bowl
+1305,politics
+1306,fan
+1307,feet
+1308,big
+1309,collection
+1310,beautiful
+1311,deafen
+1312,drawer
+1313,wherever
+1314,wise
+1315,live
+1316,alone
+1317,again
+1318,even
+1319,front
+1320,compete
+1321,moral
+1322,drown
+1323,sentence
+1324,Italy
+1325,condition
+1326,island
+1327,scale
+1328,suspicion
+1329,bright
+1330,ground
+1331,rise
+1332,slide
+1333,son
+1334,sorry
+1335,trade
+1336,choice
+1337,decide
+1338,bare
+1339,slow
+1340,tight
+1341,affair
+1342,drink
+1343,staff
+1344,congratulate
+1345,handshake
+1346,shore
+1347,earn
+1348,eastern
+1349,opportunity
+1350,crack
+1351,crop
+1352,complication
+1353,motherhood
+1354,virtue
+1355,jealousy
+1356,rake
+1357,Anthony
+1358,rust
+1359,debt
+1360,rest
+1361,recommend
+1362,bravery
+1363,recognize
+1364,hesitation
+1365,dissatisfaction
+1366,get
+1367,bold
+1368,solution
+1369,christmas
+1370,Debbe
+1371,variety
+1372,alike
+1373,descend
+1374,annoyance
+1375,sweeten
+1376,attempt
+1377,remain
+1378,rent
+1379,arrange
+1380,lawyer
+1381,bridge
+1382,mass
+1383,talk
+1384,table
+1385,often
+1386,Kim
+1387,pay
+1388,tobacco
+1389,six
+1390,organize
+1391,fine
+1392,ten
+1393,interruption
+1394,urgent
+1395,add
+1396,sheet
+1397,Janine
+1398,cent
+1399,worth
+1400,explore
+1401,able
+1402,education
+1403,base
+1404,confusion
+1405,straw
+1406,water
+1407,elect
+1408,lengthen
+1409,heart
+1410,long
+1411,dip
+1412,lipstick
+1413,charm
+1414,China
+1415,ownership
+1416,beg
+1417,gentleman
+1418,drive
+1419,accuse
+1420,like
+1421,succeed
+1422,doctor
+1423,imagine
+1424,ambitious
+1425,relief
+1426,hill
+1427,network
+1428,sale
+1429,yield
+1430,cultivate
+1431,pint
+1432,bake
+1433,sir
+1434,width
+1435,daily
+1436,below
+1437,game
+1438,greed
+1439,harm
+1440,break
+1441,union
+1442,yellow
+1443,parent
+1444,sincere
+1445,grain
+1446,story
+1447,size
+1448,relieve
+1449,devil
+1450,struggle
+1451,spoon
+1452,science
+1453,fate
+1454,office
+1455,mark
+1456,sing
+1457,flavor
+1458,fix
+1459,farm
+1460,force
+1461,crown
+1462,tax
+1463,mad
+1464,suit
+1465,sadden
+1466,nurse
+1467,where
+1468,declare
+1469,duck
+1470,advertise
+1471,shower
+1472,hindrance
+1473,smoke
+1474,boil
+1475,interrupt
+1476,smooth
+1477,country
+1478,shield
+1479,discussion
+1480,swear
+1481,glory
+1482,treasury
+1483,child
+1484,title
+1485,meanwhile
+1486,leg
+1487,creep
+1488,description
+1489,slavery
+1490,somewhere
+1491,protection
+1492,brass
+1493,feed
+1494,clay
+1495,bill
+1496,radio
+1497,mud
+1498,sharpen
+1499,telegraph
+1500,clothe
+1501,taxi
+1502,partner
+1503,obey
+1504,swing
+1505,flour
+1506,gather
+1507,elastic
+1508,hire
+1509,scratch
+1510,breakfast
+1511,pick
+1512,part
+1513,tree
+1514,western
+1515,whip
+1516,trick
+1517,dark
+1518,space
+1519,dismiss
+1520,send
+1521,track
+1522,airplane
+1523,bus
+1524,raise
+1525,belong
+1526,short
+1527,Kamala
+1528,cough
+1529,dead
+1530,medical
+1531,deceit
+1532,battle
+1533,nowhere
+1534,confess
+1535,event
+1536,pastry
+1537,piece
+1538,quite
+1539,silence
+1540,hunt
+1541,darken
+1542,instrument
+1543,quarrel
+1544,govern
+1545,ocean
+1546,accident
+1547,Eric
+1548,extraordinary
+1549,ill
+1550,curl
+1551,noble
+1552,stomach
+1553,suspect
+1554,sore
+1555,programmer
+1556,owe
+1557,good
+1558,disease
+1559,vain
+1560,interfere
+1561,shorten
+1562,framework
+1563,hardly
+1564,frighten
+1565,soldier
+1566,pearl
+1567,about
+1568,opposition
+1569,surprise
+1570,pattern
+1571,homemade
+1572,wander
+1573,hang
+1574,member
+1575,thunder
+1576,loud
+1577,inside
+1578,Ghost
+1579,attract
+1580,grave
+1581,chair
+1582,earnest
+1583,deed
+1584,scenery
+1585,Trump
+1586,spit
+1587,musician
+1588,happy
+1589,victory
+1590,preserve
+1591,heighten
+1592,slip
+1593,speak
+1594,distant
+1595,prevent
+1596,unity
+1597,rot
+1598,universe
+1599,bean
+1600,request
+1601,empty
+1602,first
+1603,pressure
+1604,cultivator
+1605,Anne
+1606,conversation
+1607,uncle
+1608,widen
+1609,room
+1610,swell
+1611,measure
+1612,buy
+1613,outline
+1614,liberty
+1615,pool
+1616,late
+1617,order
+1618,also
+1619,brush
+1620,quarter
+1621,hello
+1622,morning
+1623,believe
+1624,guilt
+1625,actor
+1626,basin
+1627,hammer
+1628,pleasant
+1629,confuse
+1630,current
+1631,bedroom
+1632,luck
+1633,wish
+1634,feminine
+1635,blue
+1636,november
+1637,lake
+1638,jealous
+1639,string
+1640,strength
+1641,modern
+1642,large
+1643,rock
+1644,pale
+1645,action
+1646,should
+1647,envy
+1648,expect
+1649,practice
+1650,qualify
+1651,soft
+1652,Corey
+1653,bow
+1654,land
+1655,lungs
+1656,cross
+1657,disturb
+1658,pure
+1659,exact
+1660,spin
+1661,salary
+1662,inquiry
+1663,disagree
+1664,journey
+1665,damage
+1666,juice
+1667,split
+1668,sight
+1669,forgive
+1670,right
+1671,see
+1672,fruit
+1673,ladder
+1674,soul
+1675,paste
+1676,Bill
+1677,cause
+1678,real
+1679,sky
+1680,northern
+1681,visitor
+1682,apple
+1683,collect
+1684,employee
+1685,apply
+1686,far
+1687,efficiency
+1688,search
+1689,fat
+1690,rare
+1691,weekend
+1692,insult
+1693,keep
+1694,boat
+1695,distinguish
+1696,failure
+1697,urge
+1698,relative
+1699,prize
+1700,tall
+1701,department
+1702,forbid
+1703,lock
+1704,repeat
+1705,consider
+1706,above
+1707,corn
+1708,fork
+1709,joint
+1710,Lucca
+1711,singer
+1712,note
+1713,command
+1714,former
+1715,shell
+1716,wrist
+1717,particle
+1718,mail
+1719,concern
+1720,dad
+1721,theatrical
+1722,cliff
+1723,take
+1724,translation
+1725,fit
+1726,treasure
+1727,august
+1728,passenger
+1729,meantime
+1730,wind
+1731,flower
+1732,essential
+1733,cap
+1734,sometimes
+1735,camp
+1736,man
+1737,fame
+1738,Mexico
+1739,perfect
+1740,extensive
+1741,latter
+1742,effective
+1743,date
+1744,gray
+1745,world
+1746,wheelchair
+1747,news
+1748,discovery
+1749,nation
+1750,mild
+1751,position
+1752,god
+1753,oil
+1754,mixture
+1755,generous
+1756,cattle
+1757,monkey
+1758,nephew
+1759,study
+1760,friendly
+1761,diamond
+1762,due
+1763,imitation
+1764,horizontal
+1765,retire
+1766,Stacey
+1767,formal
+1768,rail
+1769,telephone
+1770,day
+1771,main
+1772,she
+1773,composition
+1774,present
+1775,road
+1776,give
+1777,translator
+1778,paranormal
+1779,ask
+1780,redden
+1781,verb
+1782,decision
+1783,fellowship
+1784,bay
+1785,tell
+1786,lean
+1787,tune
+1788,load
+1789,toe
+1790,body
+1791,patient
+1792,try
+1793,backward
+1794,cream
+1795,king
+1796,fond
+1797,berry
+1798,grammar
+1799,total
+1800,figure
+1801,zero
+1802,connect
+1803,collar
+1804,completion
+1805,off
+1806,Maria
+1807,lend
+1808,brave
+1809,Fascism
+1810,niece
+1811,fold
+1812,care
+1813,library
+1814,sour
+1815,excuse
+1816,resist
+1817,health
+1818,kingdom
+1819,pain
+1820,rub
+1821,sake
+1822,deer
+1823,rice
+1824,vessel
+1825,rod
+1826,Afterlife
+1827,persuasion
+1828,avoid
+1829,performance
+1830,operate
+1831,twist
+1832,sweat
+1833,revenge
+1834,kitchen
+1835,mom
+1836,Elaine
+1837,Joel
+1838,umbrella
+1839,lid
+1840,youth
+1841,melt
+1842,yes
+1843,crowd
+1844,law
+1845,spill
+1846,educate
+1847,bleed
+1848,shirt
+1849,Mary
+1850,hall
+1851,sweep
+1852,electrician
+1853,soil
+1854,thin
+1855,production
+1856,brighten
+1857,rapid
+1858,further
+1859,protect
+1860,adoption
+1861,overcome
+1862,receive
+1863,tail
+1864,international
+1865,end
+1866,meal
+1867,obedience
+1868,broad
+1869,explosive
+1870,capital
+1871,july
+1872,misery
+1873,serve
+1874,operator
+1875,here
+1876,heap
+1877,propose
+1878,Mark
+1879,thick
+1880,sure
+1881,clothes
+1882,sacrifice
+1883,light
+1884,chain
+1885,reduction
+1886,empire
+1887,actual
+1888,think
+1889,run
+1890,people
+1891,beyond
+1892,almost
+1893,private
+1894,post
+1895,till
+1896,fashion
+1897,imaginary
+1898,let
+1899,compose
+1900,wall
+1901,perfection
+1902,inn
+1903,discuss
+1904,burn
+1905,ideal
+1906,exception
+1907,imaginative
+1908,ash
+1909,shelter
+1910,bell
+1911,february
+1912,neck
+1913,fault
+1914,pray
+1915,guess
+1916,warn
+1917,carriage
+1918,cruel
+1919,thirst
+1920,flag
+1921,act
+1922,cupboard
+1923,scene
+1924,lessen
+1925,heal
+1926,less
+1927,spend
+1928,anyhow
+1929,together
+1930,anyway
+1931,frequent
+1932,director
+1933,move
+1934,tomorrow
+1935,heavenly
+1936,destructive
+1937,five
+1938,origin
+1939,mind
+1940,danger
+1941,enclose
+1942,away
+1943,moon
+1944,operation
+1945,saddle
+1946,priest
+1947,walk
+1948,could
+1949,waist
+1950,belt
+1951,feather
+1952,college
+1953,husband
+1954,besides
+1955,obedient
+1956,come
+1957,rob
+1958,barrel
+1959,skin
+1960,view
+1961,rubbish
+1962,club
+1963,use
+1964,baby
+1965,change
+1966,hole
+1967,least
+1968,tray
+1969,disappearance
+1970,strengthen
+1971,lose
+1972,fear
+1973,customer
+1974,beat
+1975,punish
+1976,log
+1977,cave
+1978,student
+1979,coal
+1980,hesitate
+1981,if
+1982,Jesus
+1983,disgust
+1984,thicken
+1985,model
+1986,peculiar
+1987,trust
+1988,outside
+1989,instant
+1990,print
+1991,certainty
+1992,girl
+1993,horizon
+1994,common
+1995,what
+1996,veil
+1997,division
+1998,shut
+1999,neat
+2000,tide
+2001,pills
+2002,possession
+2003,rejoice
+2004,start
+2005,net
+2006,Jim
+2007,punctual
+2008,want
+2009,opposite
+2010,ounce
+2011,representative
+2012,square
+2013,letter
+2014,literature
+2015,under
+2016,possessor
+2017,refresh
+2018,follow
+2019,sweet
+2020,wrong
+2021,whiten
+2022,whistle
+2023,coast
+2024,everywhere
+2025,yard
+2026,delivery
+2027,dream
+2028,mechanism
+2029,dependence
+2030,map
+2031,prevention
+2032,during
+2033,pencil
+2034,pile
+2035,jump
+2036,package
+2037,writer
+2038,both
+2039,cowboy
+2040,calculator
+2041,bribe
+2042,lately
+2043,conqueror
+2044,increase
+2045,nothing
+2046,fry
+2047,wonder
+2048,side
+2049,baggage
+2050,secrecy
+2051,length
+2052,call
+2053,lesson
+2054,open
+2055,paw
+2056,toes
+2057,businesslike
+2058,single
+2059,nice
+2060,immediate
+2061,mercy
+2062,handsome
+2063,pass
+2064,patience
+2065,wet
+2066,tame
+2067,solemn
+2068,voice
+2069,customary
+2070,stove
+2071,inclusive
+2072,reply
+2073,noon
+2074,out
+2075,sword
+2076,lovely
+2077,applause
+2078,person
+2079,disregard
+2080,month
+2081,suffer
+2082,seat
+2083,merry
+2084,slight
+2085,deserve
+2086,attack
+2087,motor
+2088,stream
+2089,name
+2090,cloud
+2091,bitter
+2092,gallon
+2093,weather
+2094,black
+2095,green
+2096,mix
+2097,down
+2098,scissors
+2099,continue
+2100,rope
+2101,paper
+2102,headache
+2103,chimney
+2104,coin
+2105,defense
+2106,coarse
+2107,steep
+2108,pause
+2109,neglect
+2110,article
+2111,justice
+2112,sink
+2113,connection
+2114,price
+2115,just
+2116,notice
+2117,stuff
+2118,miserable
+2119,business
+2120,clear
+2121,scorn
+2122,screw
+2123,experiment
+2124,prefer
+2125,without
+2126,Jon
+2127,clerk
+2128,sell
+2129,confident
+2130,rule
+2131,grease
+2132,mineral
+2133,fortunate
+2134,cheap
+2135,list
+2136,honesty
+2137,trouble
+2138,Jenn
+2139,produce
+2140,discomfort
+2141,rain
+2142,bottle
+2143,probable
+2144,kneel
+2145,happen
+2146,satisfy
+2147,resign
+2148,suck
+2149,absence
+2150,intend
+2151,machine
+2152,cushion
+2153,character
+2154,dry
+2155,demand
+2156,strong
+2157,delay
+2158,need
+2159,fade
+2160,employ
+2161,prejudice
+2162,familiar
+2163,service
+2164,narrow
+2165,rude
+2166,destroy
+2167,father
+2168,mile
+2169,nail
+2170,cost
+2171,depth
+2172,stand
+2173,sign
+2174,steam
+2175,hand
+2176,plaster
+2177,madden
+2178,tribe
+2179,axe
+2180,Ashleigh
+2181,appearance
+2182,confidential
+2183,scientist
+2184,proper
+2185,bank
+2186,violence
+2187,bed
+2188,bend
+2189,calm
+2190,language
+2191,continuum
+2192,occasion
+2193,salesman
+2194,pull
+2195,death
+2196,admit
+2197,grass
+2198,ink
+2199,childhood
+2200,notebook
+2201,simplicity
+2202,enjoy
+2203,teeth
+2204,trial
+2205,commerce
+2206,creature
+2207,shoot
+2208,trap
+2209,saw
+2210,God
+2211,severe
+2212,young
+2213,pardon
+2214,discover
+2215,asleep
+2216,furniture
+2217,cart
+2218,mouth
+2219,anger
+2220,republic
+2221,stem
+2222,result
+2223,meat
+2224,unless
+2225,supper
+2226,loyal
+2227,mechanic
+2228,Washington
+2229,better
+2230,evil
+2231,arise
+2232,rescue
+2233,breathe
+2234,observe
+2235,district
+2236,around
+2237,agree
+2238,direct
+2239,clock
+2240,cage
+2241,hunger
+2242,marriage
+2243,never
+2244,ugly
+2245,messenger
+2246,anyone
+2247,pin
+2248,float
+2249,flesh
+2250,spot
+2251,refer
+2252,nobody
+2253,dancer
+2254,delicate
+2255,whatever
+2256,scent
+2257,advance
+2258,new
+2259,show
+2260,public
+2261,tent
+2262,comfort
+2263,door
+2264,sew
+2265,jaw
+2266,fatten
+2267,blade
+2268,enemy
+2269,proposal
+2270,leaf
+2271,way
+2272,town
+2273,smell
+2274,appoint
+2275,bag
+2276,freeze
+2277,among
+2278,pinch
+2279,curve
+2280,threat
+2281,multiply
+2282,september
+2283,cousin
+2284,bunch
+2285,shape
+2286,Fabio
+2287,awkward
+2288,Dottie
+2289,finish
+2290,army
+2291,indoor
+2292,glasses
+2293,profit
+2294,
+2295,wool
+2296,Einstein
+2297,fellow
+2298,stiff
+2299,lamp
+2300,Alicia
+2301,rug
+2302,United States
+2303,nuisance
+2304,strip
+2305,sport
+2306,moderate
+2307,homework
+2308,moment
+2309,address
+2310,foot
+2311,passage
+2312,oppose
+2313,tough
+2314,knowledge
+2315,approve
+2316,vision
+2317,depend
+2318,soften
+2319,bird
+2320,elder
+2321,destruction
+2322,sacred
+2323,great
+2324,important
+2325,police
+2326,criminal
+2327,electric
+2328,peace
+2329,warmth
+2330,fight
+2331,honest
+2332,slave
+2333,society
+2334,pigeon
+2335,brown
+2336,prison
+2337,tighten
+2338,straight
+2339,shine
+2340,soup
+2341,nest
+2342,possess
+2343,industry
+2344,stair
+2345,stupid
+2346,intention

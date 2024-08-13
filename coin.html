@@ -5,7 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheel of Fortune</title>
     <style>
-        /* ... existing styles ... */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: black; /* Set background color to black */
+            color: white; /* Set text color to white for visibility */
+            margin: 0; /* Remove default margins */
+            padding: 0; /* Remove default padding */
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Space between wheels and buttons */
+            margin: 20px; /* Margin around container */
+        }
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .wheel-container button {
+            margin-top: 10px; /* Add space between wheel and button */
+        }
+        #output1, #output2 {
+            margin: 0; /* Remove margin for better alignment */
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            background-color: #333; /* Set table background to dark color */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            color: white; /* Ensure text color is white for contrast */
+        }
+        th {
+            background-color: #444; /* Darker background for headers */
+        }
+        button {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove borders */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block display */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px; /* Add margin */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 4px; /* Add rounded corners */
+        }
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>

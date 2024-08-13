@@ -5,7 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheel of Fortune</title>
     <style>
-        /* ... existing styles ... */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: black; /* Set background color to black */
+            color: white; /* Set text color to white for visibility */
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Space between wheels and buttons */
+        }
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .wheel-container button {
+            margin-top: 10px; /* Add space between wheel and button */
+        }
+        #output1, #output2 {
+            margin: 0; /* Remove margin for better alignment */
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove borders */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Inline-block display */
+            font-size: 16px; /* Increase font size */
+            margin: 10px 2px; /* Add margin */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 4px; /* Add rounded corners */
+        }
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -49,33 +107,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
-        // Function to fetch and parse the lookup table
-        async function loadLookupTable() {
-            try {
-                const response = await fetch('./lookup.txt');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const text = await response.text();
-                const lines = text.trim().split('\n');
-                const lookupTable = {};
-
-                lines.forEach(line => {
-                    const [number, description] = line.split(',');
-                    if (number && description) {
-                        lookupTable[number.trim()] = description.trim();
-                    }
-                });
-
-                console.log('Lookup table loaded:', lookupTable);
-                return lookupTable;
-            } catch (error) {
-                console.error('Error loading lookup table:', error);
-                return {}; // Return an empty object if there's an error
-            }
-        }
-
-        function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable) {
+        function createWheelSketch(canvasId, startButtonId, wheelNumber) {
             return function(p) {
                 let wheelRadius = 185;
                 let wheelCenterX;
@@ -128,7 +160,7 @@
                             }
 
                             if (winningNumber !== undefined) {
-                                updateTable(winningNumber, wheelNumber, lookupTable);
+                                updateTable(winningNumber, wheelNumber);
                             }
                         }
 
@@ -196,7 +228,9 @@
                             soundLoaded = true;
                             console.log('Sound loaded');
                         },
-                        onloaderror: (id, error) => {
+                        onloaderror: (id
+
+, error) => {
                             console.error('Sound loading error:', error);
                         },
                         onplayerror: (id, error) => {
@@ -218,13 +252,12 @@
                     }
                 }
 
-                function updateTable(result, wheelNumber, lookupTable) {
-                    let resultText = lookupTable[result] || result;
-
+                function updateTable(result, wheelNumber) {
+                    // Update the correct column based on wheelNumber
                     if (wheelNumber === 1) {
-                        document.getElementById('wheel1Result').innerText = resultText;
+                        document.getElementById('wheel1Result').innerText = result;
                     } else if (wheelNumber === 2) {
-                        document.getElementById('wheel2Result').innerText = resultText;
+                        document.getElementById('wheel2Result').innerText = result;
                     }
                 }
 
@@ -258,16 +291,8 @@
             }
         }
 
-        loadLookupTable().then(lookupTable => {
-            if (Object.keys(lookupTable).length > 0) {
-                new p5(createWheelSketch('output1', 'startButton1', 1, lookupTable));
-                new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
-            } else {
-                console.error('Lookup table is empty, wheel sketches not created.');
-            }
-        }).catch(error => {
-            console.error('Error initializing the application:', error);
-        });
+        new p5(createWheelSketch('output1', 'startButton1', 1));
+        new p5(createWheelSketch('output2', 'startButton2', 2));
     </script>
 </body>
 </html>

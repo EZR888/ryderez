@@ -203,15 +203,11 @@ function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable) {
         }
 
         function drawWheel() {
-            // Draw the outer ring with increased thickness
-            p.stroke(139, 69, 19); // Outer ring color
-            p.strokeWeight(8); // Outer ring thickness
+            p.stroke(139, 69, 19);
+            p.strokeWeight(4);
             p.noFill();
             p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
 
-            // Draw the spokes with default thickness
-            p.stroke(139, 69, 19); // Spoke color
-            p.strokeWeight(4); // Spoke thickness
             for (let i = 0; i < numSlots; i++) {
                 let angleStart = p.radians(i * slotAngle);
                 let angleEnd = p.radians((i + 1) * slotAngle);

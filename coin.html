@@ -52,7 +52,7 @@
         // Function to fetch and parse the lookup table
         async function loadLookupTable() {
             try {
-                const response = await fetch('./lookup.txt');
+                const response = await fetch('lookup.txt');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

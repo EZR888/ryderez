@@ -61,10 +61,10 @@
             background-color: #45a049;
         }
         button#saveDataButton {
-        background-color: red; /* Set the background color to red */
+            background-color: red; /* Set the background color to red */
         }
         button#saveDataButton:hover {
-          background-color: darkred; /* Darker red on hover for better visual effect */
+            background-color: darkred; /* Darker red on hover for better visual effect */
         }
         #coinTossResult {
             position: relative;
@@ -78,11 +78,11 @@
                 transform: rotateY(360deg);
             }
         }
-      .lgreen-text {
-      color: lightgreen;
-      text-align: center;
-      font-size: 64px;
-    }
+        .lgreen-text {
+            color: lightgreen;
+            text-align: center;
+            font-size: 64px;
+        }
         #coinImage {
             width: 100px;
             height: auto;
@@ -142,9 +142,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
+        let wheel1Result = null;
+        let wheel2Result = null;
+
         // Function to fetch and parse the lookup table
-        async function loadLookupTable() {
-            const response = await fetch('letter-month.txt');
+        async function loadLookupTable(filename) {
+            const response = await fetch(filename);
             const text = await response.text();
             const lines = text.split('\n');
             const lookupTable = {};
@@ -215,9 +218,13 @@
                                 wheelSound.stop();
                             }
 
-                            if (winningNumber !== undefined) {
-                                updateTable(winningNumber, wheelNumber, lookupTable);
+                            if (wheelNumber === 1) {
+                                wheel1Result = winningNumber;
+                            } else if (wheelNumber === 2) {
+                                wheel2Result = winningNumber;
+                                updateWheel2Result();
                             }
+                            updateTable(winningNumber, wheelNumber, lookupTable);
                         }
 
                         ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
@@ -318,6 +325,20 @@
                     }
                 }
 
+                function updateWheel2Result() {
+                    if (wheel1Result !== null && wheel2Result !== null) {
+                        let lookupValue;
+                        if (wheel1Result === 0 || wheel2Result === 0) {
+                            lookupValue = 37;
+                        } else if (wheel1Result === '00' || wheel2Result === '00') {
+                            lookupValue = 38;
+                        } else {
+                            lookupValue = Math.floor((wheel1Result * wheel2Result) / 2);
+                        }
+                        updateTable(lookupValue, 2, lookupTable);
+                    }
+                }
+
                 function exportTotalsToCSV(filename) {
                     let csvContent = 'data:text/csv;charset=utf-8,';
                     csvContent += 'Wheel 1,Wheel 2\n';
@@ -354,12 +375,20 @@
             }
         }
 
-        loadLookupTable().then(lookupTable => {
-            new p5(createWheelSketch('output1', 'startButton1', 1, lookupTable));
-            new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
-        }).catch(error => {
-            console.error('Error loading lookup table:', error);
-        });
+        // Load the lookup tables for both wheels and initialize sketches
+        async function initializeWheels() {
+            try {
+                const wheel1Table = await loadLookupTable('letter-mon.txt'); // Replace with the actual file for Wheel 1
+                const wheel2Table = await loadLookupTable('fort.txt');
+
+                new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table));
+                new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));
+            } catch (error) {
+                console.error('Error loading lookup tables:', error);
+            }
+        }
+
+        initializeWheels();
     </script>
 </body>
 </html>

@@ -114,24 +114,27 @@
             <button id="startButton2">Spin Wheel 2</button>
         </div>
     </div>
-
+    
     <div id="coinTossDiv">
         <div id="coinTossResult">
             <img id="coinImage" src="default.png" alt="Coin Toss Result" />
         </div>
+        <div id="randomNumberDisplay" style="color: lightgreen; font-size: 24px;"></div> <!-- Added -->
     </div>
 
     <h2>History</h2>
     <table id="historyTable">
         <thead>
             <tr>
-                <th>Wheel 1</th>
-                <th>Wheel 2</th>
+                <th>Name or Month Hint</th>
+                <th>Your Fortune Cookie</th> <!-- New column header -->
+                <th>Potentially Related Words</th>
             </tr>
         </thead>
         <tbody>
             <tr id="historyRow">
                 <td id="wheel1Result"></td>
+                <td id="fortuneCookieResult"></td> <!-- New column cell -->
                 <td id="wheel2Result"></td>
             </tr>
         </tbody>
@@ -217,6 +220,7 @@
 
                             if (winningNumber !== undefined) {
                                 updateTable(winningNumber, wheelNumber, lookupTable);
+                                updateFortuneCookie(); // Update the fortune cookie column
                             }
                         }
 
@@ -318,13 +322,40 @@
                     }
                 }
 
+                function updateFortuneCookie() {
+                    let randomNumber = Math.floor(Math.random() * 733) + 1; // Generate a random number
+                    document.getElementById('randomNumberDisplay').textContent = `Random Number: ${randomNumber}`;
+
+                    // Fetch the fortune description
+                    fetch('fort.txt')
+                        .then(response => response.text())
+                        .then(text => {
+                            const lines = text.split('\n');
+                            let fortuneLookup = {};
+                            lines.forEach(line => {
+                                const firstCommaIndex = line.indexOf(',');
+                                if (firstCommaIndex !== -1) {
+                                    const number = line.substring(0, firstCommaIndex).trim();
+                                    const description = line.substring(firstCommaIndex + 1).trim();
+                                    if (number && description) {
+                                        fortuneLookup[number] = description;
+                                    }
+                                }
+                            });
+
+                            let fortune = fortuneLookup[randomNumber] || 'No fortune found';
+                            document.getElementById('fortuneCookieResult').innerText = fortune;
+                        });
+                }
+
                 function exportTotalsToCSV(filename) {
                     let csvContent = 'data:text/csv;charset=utf-8,';
-                    csvContent += 'Wheel 1,Wheel 2\n';
+                    csvContent += 'Wheel 1,Wheel 2,Fortune Cookie\n';
 
                     let wheel1Result = document.getElementById('wheel1Result').innerText;
                     let wheel2Result = document.getElementById('wheel2Result').innerText;
-                    csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
+                    let fortuneCookieResult = document.getElementById('fortuneCookieResult').innerText;
+                    csvContent += `${wheel1Result || ''},${wheel2Result || ''},${fortuneCookieResult || ''}\n`;
 
                     const encodedUri = encodeURI(csvContent);
                     const link = document.createElement('a');
@@ -338,6 +369,7 @@
                 document.getElementById('coinImage').addEventListener('click', () => {
                     let result = Math.random() > 0.5 ? 'Heads' : 'Tails';
                     let coinImage = document.getElementById('coinImage');
+                    let randomNumberDisplay = document.getElementById('randomNumberDisplay');
 
                     // Update the image source
                     coinImage.src = result === 'Heads' ? 'heads.png' : 'tails.png';
@@ -346,10 +378,13 @@
                     coinImage.style.animation = 'none'; // Reset the animation
                     coinImage.offsetHeight; // Trigger a reflow to restart the animation
                     coinImage.style.animation = ''; // Reapply the animation
-                });
 
-                document.getElementById('saveDataButton').addEventListener('click', () => {
-                    exportTotalsToCSV('history.csv');
+                    // Generate and display a random number between 1 and 733
+                    let randomNumber = Math.floor(Math.random() * 733) + 1;
+                    randomNumberDisplay.textContent = `Random Number: ${randomNumber}`;
+
+                    // Update the history table with the random number
+                    document.getElementById('fortuneCookieResult').innerText = fortuneLookup[randomNumber] || 'No fortune found';
                 });
             }
         }

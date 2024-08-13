@@ -60,6 +60,12 @@
         button:hover {
             background-color: #45a049;
         }
+        button#saveDataButton {
+            background-color: red;
+        }
+        button#saveDataButton:hover {
+            background-color: darkred;
+        }
         #coinTossResult {
             position: relative;
             display: inline-block;
@@ -72,13 +78,18 @@
                 transform: rotateY(360deg);
             }
         }
+        .lgreen-text {
+            color: lightgreen;
+            text-align: center;
+            font-size: 64px;
+        }
         #coinImage {
             width: 100px;
             height: auto;
             display: block;
             margin: 10px auto;
-            animation: flip 0.4s ease-in-out; /* Set the default animation */
-            cursor: pointer; /* Make the image clickable */
+            animation: flip 0.4s ease-in-out;
+            cursor: pointer;
         }
         @media (max-width: 768px) {
             .container {
@@ -89,7 +100,8 @@
     </style>
 </head>
 <body>
-    <h1>Wheel of Fortune</h1>
+
+    <h1 class="lgreen-text">Wheels of Fortune</h1>
 
     <div class="container">
         <div class="wheel-container">
@@ -126,13 +138,14 @@
     </table>
 
     <button id="saveDataButton">Save Data as CSV</button>
+    <button id="beginButton">Begin</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
         // Function to fetch and parse the lookup table
-        async function loadLookupTable() {
-            const response = await fetch('lookup.txt');
+        async function loadLookupTable(filename) {
+            const response = await fetch(filename);
             const text = await response.text();
             const lines = text.split('\n');
             const lookupTable = {};
@@ -219,8 +232,8 @@
                 }
 
                 function drawWheel() {
-                    p.stroke(255, 255, 255);
-                    p.strokeWeight(8);
+                    p.stroke(130, 69, 0);
+                    p.strokeWeight(16);
                     p.noFill();
                     p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
 
@@ -342,11 +355,37 @@
             }
         }
 
-        loadLookupTable().then(lookupTable => {
-            new p5(createWheelSketch('output1', 'startButton1', 1, lookupTable));
-            new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
-        }).catch(error => {
-            console.error('Error loading lookup table:', error);
+        // Load the lookup tables for both wheels and initialize sketches
+        async function initializeWheels() {
+            try {
+                const wheel1Table = await loadLookupTable('letter-mon.txt'); // Replace with the actual file for Wheel 1
+                const wheel2Table = await loadLookupTable('fort.txt');
+
+                new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table));
+                new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));
+            } catch (error) {
+                console.error('Error loading lookup tables:', error);
+            }
+        }
+
+        initializeWheels();
+
+        // Manage button states
+        document.getElementById('beginButton').addEventListener('click', () => {
+            document.getElementById('startButton1').disabled = false;
+            document.getElementById('startButton2').disabled = false;
+            document.getElementById('startButton1').style.display = 'inline-block';
+            document.getElementById('startButton2').style.display = 'inline-block';
+        });
+
+        document.getElementById('startButton1').addEventListener('click', function() {
+            this.disabled = true;
+            this.style.display = 'none';
+        });
+
+        document.getElementById('startButton2').addEventListener('click', function() {
+            this.disabled = true;
+            this.style.display = 'none';
         });
     </script>
 </body>

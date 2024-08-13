@@ -63,6 +63,12 @@
         button:hover {
             background-color: #45a049; /* Darker green on hover */
         }
+        #coinTossResult img {
+            width: 100px; /* Set a fixed width for the coin images */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Make sure the image is displayed as a block element */
+            margin: 10px auto; /* Center the image horizontally and add margin */
+        }
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -88,7 +94,10 @@
 
     <div id="coinTossDiv">
         <button id="tossCoinButton">Toss Coin</button>
-        <div id="coinTossResult"></div>
+        <div id="coinTossResult">
+            <img id="coinImage" src="" alt="Coin Toss Result" />
+            <div id="coinTossText"></div>
+        </div>
     </div>
 
     <h2>History</h2>
@@ -112,223 +121,229 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
-// Function to fetch and parse the lookup table
-async function loadLookupTable() {
-    const response = await fetch('lookup.txt');
-    const text = await response.text();
-    const lines = text.split('\n');
-    const lookupTable = {};
+        // Function to fetch and parse the lookup table
+        async function loadLookupTable() {
+            const response = await fetch('lookup.txt');
+            const text = await response.text();
+            const lines = text.split('\n');
+            const lookupTable = {};
 
-    lines.forEach(line => {
-        // Split line by the first comma, assuming only the first comma separates number and description
-        const firstCommaIndex = line.indexOf(',');
-        if (firstCommaIndex !== -1) {
-            const number = line.substring(0, firstCommaIndex).trim();
-            const description = line.substring(firstCommaIndex + 1).trim();
-            if (number && description) {
-                lookupTable[number] = description;
-            }
-        }
-    });
-
-    return lookupTable;
-}
-
-// Function to handle wheel sketches and update table
-function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable) {
-    return function(p) {
-        let wheelRadius = 185;
-        let wheelCenterX;
-        let wheelCenterY;
-        let ballRadius = 11;
-        let ballX;
-        let ballY;
-        let ballSpeed;
-        let ballAngle;
-        let ballFriction = 0.9945;
-        let isSpinning = false;
-        let minSpeed = 0.85;
-        let finalIndex;
-        let winningNumber;
-        let numSlots = 38;
-        let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
-        let slotAngle;
-        let wheelSound;
-        let soundLoaded = false;
-        let coinTossResult = '';
-
-        p.setup = function() {
-            p.createCanvas(390, 390).parent(canvasId);
-            p.background(0); // Set background to black
-            wheelCenterX = p.width / 2;
-            wheelCenterY = p.height / 2;
-            slotAngle = 360 / numSlots;
-            document.getElementById(startButtonId).addEventListener('click', () => {
-                startWheelSpin();
-            });
-            loadAndPlaySound();
-        }
-
-        p.draw = function() {
-            p.background(0); // Set background to black
-            drawWheel();
-
-            if (isSpinning) {
-                ballAngle += ballSpeed;
-                ballSpeed *= ballFriction;
-
-                if (ballSpeed < minSpeed) {
-                    isSpinning = false;
-                    finalIndex = calculateSlotIndex();
-                    winningNumber = slotNumbers[finalIndex];
-                    moveBallToWinningSlot();
-
-                    if (wheelSound) {
-                        wheelSound.stop();
-                    }
-
-                    if (winningNumber !== undefined) {
-                        updateTable(winningNumber, wheelNumber, lookupTable);
+            lines.forEach(line => {
+                // Split line by the first comma, assuming only the first comma separates number and description
+                const firstCommaIndex = line.indexOf(',');
+                if (firstCommaIndex !== -1) {
+                    const number = line.substring(0, firstCommaIndex).trim();
+                    const description = line.substring(firstCommaIndex + 1).trim();
+                    if (number && description) {
+                        lookupTable[number] = description;
                     }
                 }
-
-                ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
-                ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
-                p.fill(255);
-                p.ellipse(ballX, ballY, ballRadius * 2);
-            } else {
-                p.fill(255);
-                p.ellipse(ballX, ballY, ballRadius * 2);
-            }
-        }
-
-        function drawWheel() {
-            // Draw the outer ring with increased thickness
-            p.stroke(139, 69, 19); // Outer ring color
-            p.strokeWeight(8); // Outer ring thickness
-            p.noFill();
-            p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
-
-            // Draw the spokes with default thickness
-            p.stroke(139, 69, 19); // Spoke color
-            p.strokeWeight(4); // Spoke thickness
-            for (let i = 0; i < numSlots; i++) {
-                let angleStart = p.radians(i * slotAngle);
-                let angleEnd = p.radians((i + 1) * slotAngle);
-                p.fill((i % 2 === 0) ? 'red' : 'black');
-                if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
-                    p.fill('green');
-                }
-                p.arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, p.PIE);
-
-                let midAngle = (angleStart + angleEnd) / 2;
-                let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
-                let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
-
-                p.fill(255);
-                p.textAlign(p.CENTER, p.CENTER);
-                p.textSize(13);
-                p.text(slotNumbers[i], x, y);
-            }
-
-            p.fill(210, 180, 140);
-            p.ellipse(wheelCenterX, wheelCenterY, 30, 30);
-        }
-
-        function calculateSlotIndex() {
-            let normalizedAngle = (ballAngle % 360 + 360) % 360;
-            let anglePerSlot = 360 / numSlots;
-            let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
-            return index;
-        }
-
-        function moveBallToWinningSlot() {
-            if (!isSpinning) {
-                let centerAngle = (finalIndex + 0.5) * slotAngle;
-                let correctedAngle = (360 - centerAngle + 360) % 360;
-
-                ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(p.radians(correctedAngle));
-                ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(p.radians(correctedAngle));
-            }
-        }
-
-        function loadAndPlaySound() {
-            wheelSound = new Howl({
-                src: ['wheel-ball.wav'],
-                loop: true,
-                onload: () => {
-                    soundLoaded = true;
-                    console.log('Sound loaded');
-                },
-                onloaderror: (id, error) => {
-                    console.error('Sound loading error:', error);
-                },
-                onplayerror: (id, error) => {
-                    console.error('Sound play error:', error);
-                }
             });
+
+            return lookupTable;
         }
 
-        function startWheelSpin() {
-            if (!isSpinning) {
-                if (soundLoaded) {
-                    wheelSound.play();
-                } else {
-                    console.error('Sound not loaded');
+        // Function to handle wheel sketches and update table
+        function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable) {
+            return function(p) {
+                let wheelRadius = 185;
+                let wheelCenterX;
+                let wheelCenterY;
+                let ballRadius = 11;
+                let ballX;
+                let ballY;
+                let ballSpeed;
+                let ballAngle;
+                let ballFriction = 0.9945;
+                let isSpinning = false;
+                let minSpeed = 0.85;
+                let finalIndex;
+                let winningNumber;
+                let numSlots = 38;
+                let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+                let slotAngle;
+                let wheelSound;
+                let soundLoaded = false;
+
+                p.setup = function() {
+                    p.createCanvas(390, 390).parent(canvasId);
+                    p.background(0); // Set background to black
+                    wheelCenterX = p.width / 2;
+                    wheelCenterY = p.height / 2;
+                    slotAngle = 360 / numSlots;
+                    document.getElementById(startButtonId).addEventListener('click', () => {
+                        startWheelSpin();
+                    });
+                    loadAndPlaySound();
                 }
-                isSpinning = true;
-                ballAngle = p.random(360);
-                ballSpeed = p.random(5, 10);
+
+                p.draw = function() {
+                    p.background(0); // Set background to black
+                    drawWheel();
+
+                    if (isSpinning) {
+                        ballAngle += ballSpeed;
+                        ballSpeed *= ballFriction;
+
+                        if (ballSpeed < minSpeed) {
+                            isSpinning = false;
+                            finalIndex = calculateSlotIndex();
+                            winningNumber = slotNumbers[finalIndex];
+                            moveBallToWinningSlot();
+
+                            if (wheelSound) {
+                                wheelSound.stop();
+                            }
+
+                            if (winningNumber !== undefined) {
+                                updateTable(winningNumber, wheelNumber, lookupTable);
+                            }
+                        }
+
+                        ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
+                        ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
+                        p.fill(255);
+                        p.ellipse(ballX, ballY, ballRadius * 2);
+                    } else {
+                        p.fill(255);
+                        p.ellipse(ballX, ballY, ballRadius * 2);
+                    }
+                }
+
+                function drawWheel() {
+                    // Draw the outer ring with increased thickness
+                    p.stroke(139, 69, 19); // Outer ring color
+                    p.strokeWeight(8); // Outer ring thickness
+                    p.noFill();
+                    p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
+
+                    // Draw the spokes with default thickness
+                    p.stroke(139, 69, 19); // Spoke color
+                    p.strokeWeight(4); // Spoke thickness
+                    for (let i = 0; i < numSlots; i++) {
+                        let angleStart = p.radians(i * slotAngle);
+                        let angleEnd = p.radians((i + 1) * slotAngle);
+                        p.fill((i % 2 === 0) ? 'red' : 'black');
+                        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
+                            p.fill('green');
+                        }
+                        p.arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, p.PIE);
+
+                        let midAngle = (angleStart + angleEnd) / 2;
+                        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
+                        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
+
+                        p.fill(255);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.textSize(13);
+                        p.text(slotNumbers[i], x, y);
+                    }
+
+                    p.fill(210, 180, 140);
+                    p.ellipse(wheelCenterX, wheelCenterY, 30, 30);
+                }
+
+                function calculateSlotIndex() {
+                    let normalizedAngle = (ballAngle % 360 + 360) % 360;
+                    let anglePerSlot = 360 / numSlots;
+                    let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+                    return index;
+                }
+
+                function moveBallToWinningSlot() {
+                    if (!isSpinning) {
+                        let centerAngle = (finalIndex + 0.5) * slotAngle;
+                        let correctedAngle = (360 - centerAngle + 360) % 360;
+
+                        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(p.radians(correctedAngle));
+                        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(p.radians(correctedAngle));
+                    }
+                }
+
+                function loadAndPlaySound() {
+                    wheelSound = new Howl({
+                        src: ['wheel-ball.wav'],
+                        loop: true,
+                        onload: () => {
+                            soundLoaded = true;
+                            console.log('Sound loaded');
+                        },
+                        onloaderror: (id, error) => {
+                            console.error('Sound loading error:', error);
+                        },
+                        onplayerror: (id, error) => {
+                            console.error('Sound play error:', error);
+                        }
+                    });
+                }
+
+                function startWheelSpin() {
+                    if (!isSpinning) {
+                        if (soundLoaded) {
+                            wheelSound.play();
+                        } else {
+                            console.error('Sound not loaded');
+                        }
+                        isSpinning = true;
+                        ballAngle = p.random(360);
+                        ballSpeed = p.random(5, 10);
+                    }
+                }
+
+                function updateTable(result, wheelNumber, lookupTable) {
+                    let resultText = lookupTable[result] || result;
+
+                    if (wheelNumber === 1) {
+                        document.getElementById('wheel1Result').innerText = resultText;
+                    } else if (wheelNumber === 2) {
+                        document.getElementById('wheel2Result').innerText = resultText;
+                    }
+                }
+
+                function exportTotalsToCSV(filename) {
+                    let csvContent = 'data:text/csv;charset=utf-8,';
+                    csvContent += 'Wheel 1,Wheel 2\n';
+
+                    // Collect data from the table cells
+                    let wheel1Result = document.getElementById('wheel1Result').innerText;
+                    let wheel2Result = document.getElementById('wheel2Result').innerText;
+                    csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+
+                document.getElementById('tossCoinButton').addEventListener('click', () => {
+                    let result = p.random() > 0.5 ? 'Heads' : 'Tails';
+                    let coinImage = document.getElementById('coinImage');
+                    let coinText = document.getElementById('coinTossText');
+
+                    if (result === 'Heads') {
+                        coinImage.src = 'heads.png';
+                    } else {
+                        coinImage.src = 'tails.png';
+                    }
+
+                    coinText.innerText = `Coin Toss: ${result}`;
+                });
+
+                document.getElementById('saveDataButton').addEventListener('click', () => {
+                    exportTotalsToCSV('history.csv');
+                });
             }
         }
 
-        function updateTable(result, wheelNumber, lookupTable) {
-            let resultText = lookupTable[result] || result;
-
-            if (wheelNumber === 1) {
-                document.getElementById('wheel1Result').innerText = resultText;
-            } else if (wheelNumber === 2) {
-                document.getElementById('wheel2Result').innerText = resultText;
-            }
-        }
-
-        function exportTotalsToCSV(filename) {
-            let csvContent = 'data:text/csv;charset=utf-8,';
-            csvContent += 'Wheel 1,Wheel 2\n';
-
-            // Collect data from the table cells
-            let wheel1Result = document.getElementById('wheel1Result').innerText;
-            let wheel2Result = document.getElementById('wheel2Result').innerText;
-            csvContent += `${wheel1Result || ''},${wheel2Result || ''}\n`;
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        document.getElementById('tossCoinButton').addEventListener('click', () => {
-            let result = p.random() > 0.5 ? 'Heads' : 'Tails';
-            coinTossResult = result;
-            document.getElementById('coinTossResult').innerText = `Coin Toss: ${result}`;
+        loadLookupTable().then(lookupTable => {
+            new p5(createWheelSketch('output1', 'startButton1', 1, lookupTable));
+            new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
+        }).catch(error => {
+            console.error('Error loading lookup table:', error);
         });
-
-        document.getElementById('saveDataButton').addEventListener('click', () => {
-            exportTotalsToCSV('history.csv');
-        });
-    }
-}
-
-loadLookupTable().then(lookupTable => {
-    new p5(createWheelSketch('output1', 'startButton1', 1, lookupTable));
-    new p5(createWheelSketch('output2', 'startButton2', 2, lookupTable));
-}).catch(error => {
-    console.error('Error loading lookup table:', error);
-});
-
     </script>
 </body>
 </html>

@@ -358,7 +358,7 @@
         async function initializeWheels() {
             try {
                 const wheel1Table = await loadLookupTable('letter-mon.txt'); // Replace with the actual file for Wheel 1
-                const wheel2Table = await loadLookupTable('lookup.txt');
+                const wheel2Table = await loadLookupTable('fort.txt');
 
                 new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table));
                 new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));

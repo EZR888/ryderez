@@ -344,26 +344,25 @@ async function getRandomLineFromLookupFile(filename) {
 }
 
 function computeAndUpdateTable() {
-    // Handle substitutions for 0 and 00
-    let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
-    let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
+  // Handle substitutions for 0 and 00
+  let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
+  let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
 
-    let wheel1ResultText = wheel1Table[wheel1FinalResult] || wheel1FinalResult;
+  let wheel1ResultText = wheel1Table[wheel1FinalResult] || wheel1FinalResult;
 
-    // Compute the product, divide by 2, and round
-    let computedValue = Math.round((wheel1FinalResult * wheel2FinalResult) / 2);
-    let messageResultText = messageTable[computedValue] || computedValue;
+  // Compute the product, divide by 2, and round
+  let computedValue = Math.round((wheel1FinalResult * wheel2FinalResult) / 2);
+  let messageResultText = messageTable[computedValue] || computedValue;
 
-    document.getElementById('wheel1Result').innerText = wheel1ResultText;
+  document.getElementById('wheel1Result').innerText = wheel1ResultText;
 
-    // Populate the Wheel 2 table column with a trimmed random line from lookup.txt
-    getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
-        document.getElementById('wheel2Result').innerText = trimmedLine;
-    });
+  // Populate the Wheel 2 table column with a single random line from lookup.txt
+  getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
+    document.getElementById('wheel2Result').innerText = trimmedLine;
+  });
 
-    document.getElementById('messageResult').innerText = messageResultText;
+  document.getElementById('messageResult').innerText = messageResultText;
 }
-
 
 
                 function exportTotalsToCSV(filename) {
@@ -391,18 +390,37 @@ function computeAndUpdateTable() {
                     document.getElementById('messageResult').innerText = '';
                 }
 
-                document.getElementById('coinImage').addEventListener('click', () => {
-                    let result = Math.random() > 0.5 ? 'Heads' : 'Tails';
-                    let coinImage = document.getElementById('coinImage');
+let addingWord = false; // Flag to control word addition
 
-                    // Update the image source
-                    coinImage.src = result === 'Heads' ? 'heads.png' : 'tails.png';
+document.getElementById('coinImage').addEventListener('click', () => {
+  let result = Math.random() > 0.5 ? 'Heads' : 'Tails';
+  let coinImage = document.getElementById('coinImage');
 
-                    // Trigger the flip animation
-                    coinImage.style.animation = 'none'; // Reset the animation
-                    coinImage.offsetHeight; // Trigger a reflow to restart the animation
-                    coinImage.style.animation = ''; // Reapply the animation
-                });
+  // Update the image source
+  coinImage.src = result === 'Heads' ? 'heads.png' : 'tails.png';
+
+  // Trigger the flip animation
+  coinImage.style.animation = 'none'; // Reset the animation
+  coinImage.offsetHeight; // Trigger a reflow to restart the animation
+  coinImage.style.animation = ''; // Reapply the animation
+
+  // Append the random line to the "Message From Beyond" column only if it's a heads result
+  if (result === 'Heads' && !addingWord) {
+    addingWord = true; // Prevent multiple simultaneous operations
+    getRandomLineFromLookupFile('lookup.txt')
+      .then(trimmedLine => {
+        const wheel2Cell = document.getElementById('wheel2Result');
+        wheel2Cell.innerText += (wheel2Cell.innerText ? ', ' : '') + trimmedLine;
+        addingWord = false; // Allow new operations after successful completion
+      })
+      .catch(error => {
+        console.error('Error fetching random line:', error);
+        addingWord = false; // Allow new operations after error
+      });
+  }
+});
+
+
 
                 document.getElementById('saveDataButton').addEventListener('click', () => {
                     exportTotalsToCSV('history.csv');

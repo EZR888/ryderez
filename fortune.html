@@ -101,7 +101,7 @@
 </head>
 <body>
 
-    <h1 class="lgreen-text">Wheels of Fortune</h1>
+   <h1 class="lgreen-text">Wheels of Fortune</h1>
 
     <div class="container">
         <div class="wheel-container">
@@ -134,7 +134,6 @@
                 <td id="wheel1Result"></td>
                 <td id="messageResult"></td>
                 <td id="wheel2Result"></td>
-
             </tr>
         </tbody>
     </table>
@@ -145,6 +144,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
+
+document.getElementById('beginButton').addEventListener('click', () => {
+    location.reload();});
+
         let wheel1Result, wheel2Result;
         let wheel1Table, wheel2Table, fort2Table;
 
@@ -446,6 +449,8 @@ async function initializeWheels() {
             this.disabled = true;
             this.style.display = 'none';
         });
+
+
     </script>
 </body>
 </html>

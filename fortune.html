@@ -227,6 +227,7 @@
                             if (winningNumber !== undefined) {
                                 if (wheelNumber === 1) {
                                     wheel1Result = winningNumber;
+                                    addRandomNumbersToWheel1Result(); // Call the function here
                                 } else if (wheelNumber === 2) {
                                     wheel2Result = winningNumber;
                                 }
@@ -361,6 +362,10 @@ function computeAndUpdateTable() {
   // Populate the Wheel 2 table column with a single random line from lookup.txt
   getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
     document.getElementById('wheel2Result').innerText = trimmedLine;
+    
+  // Append additional random numbers after Wheel 2 update
+    addRandomNumbersToWheel1Result(); // Assuming this function updates Wheel 1 Result
+
   });
 
   document.getElementById('messageResult').innerText = messageResultText;
@@ -382,12 +387,27 @@ function computeAndUpdateTable() {
 
         let wordCount = 1;
         addRandomWords();
+    
       });
 
       document.getElementById('messageResult').innerText = messageResultText;
 
     
 }
+
+        function addRandomNumbersToWheel1Result() {
+    const randomNumbers = [];
+    for (let i = 0; i < 5; i++) {
+        randomNumbers.push(Math.floor(Math.random() * 47) + 1);
+    }
+    randomNumbers.push(Math.floor(Math.random() * 27) + 1);
+
+    // Get the existing content and append the new numbers
+    const existingContent = document.getElementById('wheel1Result').innerText;
+    const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  M${randomNumbers[5]}`;
+    document.getElementById('wheel1Result').innerText = newContent;
+}
+
 
 
                 function exportTotalsToCSV(filename) {

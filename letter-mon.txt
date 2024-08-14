@@ -1,38 +1,38 @@
-1,Someone whose first or last name starts with O
-2,Someone whose first or last name starts with Z
+1,Name: O
+2,Name: Z
 3,September has some significance.
-4,Someone whose first or last name starts with E
+4,Name: E
 5,May has some significance.
-6,Someone whose first or last name starts with S
-7,Someone whose first or last name starts with Q
+6,Name: S
+7,Name: Q
 8,October has some significance.
 9,December has some significance.
-10,Someone whose first or last name starts with U
+10,Name: U
 11,August has some significance.
-12,Someone whose first or last name starts with X
+12,Name: X
 13,March has some significance.
-14,Someone whose first or last name starts with B
-15,Someone whose first or last name starts with A
+14,Name: B
+15,Name: A
 16,July has some significance.
-17,Someone whose first or last name starts with H
-18,Someone whose first or last name starts with G
-19,Someone whose first or last name starts with J
+17,Name: H
+18,Name: G
+19,Name: J
 20,April has some significance.
-21,Someone whose first or last name starts with F
-22,Someone whose first or last name starts with T
-23,Someone whose first or last name starts with P
-24,Someone whose first or last name starts with Y
-25,Someone whose first or last name starts with C
-26,Someone whose first or last name starts with D
-27,Someone whose first or last name starts with V
+21,Name: F
+22,Name: T
+23,Name: P
+24,Name: Y
+25,Name: C
+26,Name: D
+27,Name: V
 28,January has some significance.
 29,February has some significance.
-30,Someone whose first or last name starts with K
-31,Someone whose first or last name starts with N
-32,Someone whose first or last name starts with l
+30,Name: K
+31,Name: N
+32,Name: l
 33,June has some significance.
-34,Someone whose first or last name starts with I
-35,Someone whose first or last name starts with R
-36,Someone whose first or last name starts with W
+34,Name: I
+35,Name: R
+36,Name: W
 37,November has some significance.
-38,Someone whose first or last name starts with M
+38,Name: M

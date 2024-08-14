@@ -364,29 +364,6 @@ function computeAndUpdateTable() {
   });
 
   document.getElementById('messageResult').innerText = messageResultText;
-  
-        // Populate the Wheel 2 table column with a single random line from lookup.txt
-      getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
-        document.getElementById('wheel2Result').innerText = trimmedLine;
-
-        // Function to add additional random words with a delay
-        function addRandomWords() {
-          if (wordCount < 10) {
-            getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
-              document.getElementById('wheel2Result').innerText += `, ${trimmedLine}`;
-              wordCount++;
-              setTimeout(addRandomWords, 1000); // Call itself after 1 second
-            });
-          }
-        }
-
-        let wordCount = 1;
-        addRandomWords();
-      });
-
-      document.getElementById('messageResult').innerText = messageResultText;
-
-    
 }
 
 

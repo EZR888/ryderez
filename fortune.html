@@ -341,7 +341,7 @@ function addRandomNumbersToWheel1Result() {
 
     // Get the existing content and append the new numbers
     const existingContent = document.getElementById('wheel1Result').innerText;
-    const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  ${randomNumbers[5]}`;
+    const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  M${randomNumbers[5]}`;
     document.getElementById('wheel1Result').innerText = newContent;
 }
 

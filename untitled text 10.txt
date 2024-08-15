@@ -1,0 +1,6 @@
+tradier brokerage - open account 
+
+global auto trading
+
+
+

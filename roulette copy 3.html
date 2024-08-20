@@ -193,15 +193,14 @@
       <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
       <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
     </div>
- <div>
-  <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
-  <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-  <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
-  <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-  <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
-  <span id="runNumDisplay" style="color: yellow; font-size: 24px; margin-left: 5ch;">Run Num: 0</span>
-  <span id="spinNumDisplay" style="color: yellow; font-size: 24px; margin-left: 2ch;">Spin Num: 0</span><br><br>
-</div>
+    <div>
+      <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button>
+      <span id="spinNumDisplay" style="color: green; font-size: 24px; margin-left: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spin Num: 0</span><br><br>
+      <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
+      <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
+    </div>
     
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
@@ -299,7 +298,6 @@ function multiSpin() {
                     let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
                     Totals[c1] += 1; // Increment corresponding index in Totals array
                     document.getElementById('spinNumDisplay').textContent = "Spin Num: " + (spinCount + 1);
-                    document.getElementById('runNumDisplay').textContent = "Run Num: " + (runIndex + 1); // Update Run Num
                     let isLastSpin = (spinCount === numSpins - 1);
                     populateTotalsTable(c1, isLastSpin); // Populate Totals table after each spin and apply blinking effect
                     spinCount++;
@@ -324,7 +322,6 @@ function multiSpin() {
 
     singleRun(0); // Start the first run
 }
-
 
     
     function endMultiSpin() {

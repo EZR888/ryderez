@@ -193,15 +193,14 @@
       <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
       <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
     </div>
- <div>
-  <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
-  <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-  <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
-  <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-  <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
-  <span id="runNumDisplay" style="color: yellow; font-size: 24px; margin-left: 5ch;">Run Num: 0</span>
-  <span id="spinNumDisplay" style="color: yellow; font-size: 24px; margin-left: 2ch;">Spin Num: 0</span><br><br>
-</div>
+    <div>
+      <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button>
+      <span id="spinNumDisplay" style="color: green; font-size: 24px; margin-left: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spin Num: 0</span><br><br>
+      <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
+      <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
+    </div>
     
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
@@ -235,25 +234,27 @@
       return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
     }
 
-// Function to export Totals array data to CSV format
-function exportTotalsToCSV(array, filename) {
-    let csvContent = "data:text/csv;charset=utf-8,";
+    // Function to export Totals array data to CSV format
+    function exportTotalsToCSV(array, filename) {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      
+      // Add headers to CSV
+      csvContent += ","; // Empty cell to align with headers
 
-    // Add headers to CSV
-    let headers = [...Array(38).keys()].map(i => i === 37 ? '00' : i.toString());
-    csvContent += headers.join(",") + "\n";
+      // Loop through Totals array to append values
+      for (let j = 0; j < array.length; j++) {
+        csvContent += array[j] + ",";
+      }
+      csvContent += "\n";
 
-    // Loop through Totals array to append values
-    csvContent += array.join(",") + "\n";
-
-    // Encode and create a download link
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
-    document.body.appendChild(link); // Required for Firefox
-    link.click(); // Trigger the download
-}
+      // Encode and create a download link
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
+      document.body.appendChild(link); // Required for Firefox
+      link.click(); // Trigger the download
+    }
 
     // Event listener for the Save Data button
     document.getElementById("saveDataButton").addEventListener("click", function() {
@@ -299,7 +300,6 @@ function multiSpin() {
                     let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
                     Totals[c1] += 1; // Increment corresponding index in Totals array
                     document.getElementById('spinNumDisplay').textContent = "Spin Num: " + (spinCount + 1);
-                    document.getElementById('runNumDisplay').textContent = "Run Num: " + (runIndex + 1); // Update Run Num
                     let isLastSpin = (spinCount === numSpins - 1);
                     populateTotalsTable(c1, isLastSpin); // Populate Totals table after each spin and apply blinking effect
                     spinCount++;
@@ -324,7 +324,6 @@ function multiSpin() {
 
     singleRun(0); // Start the first run
 }
-
 
     
     function endMultiSpin() {

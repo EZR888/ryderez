@@ -388,7 +388,7 @@ function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
       // Replace 0 with empty string
       cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
       const isBlinking = (number === blinkCellNumber);
-      const blinkClass = isBlinking ? (isLastSpin ? 'yellow-blinking' : 'blinking') : '';
+      const blinkClass = isBlinking ? (isLastSpin ? 'yellow-blinking' : 'yellow-blinking') : '';
       tableOutput += `<td class='numeric ${blinkClass}'>${cellValue}</td>`; // Data cells with light gray background color
     });
 

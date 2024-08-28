@@ -369,6 +369,16 @@
         }
       });
     }
+    
+    function cryptoRandom(min, max) {
+  // Generate a cryptographically secure random number
+  const array = new Uint32Array(1);
+  window.crypto.getRandomValues(array);
+  const randomNumber = array[0] / (0xFFFFFFFF + 1);
+
+  // Scale to desired range
+  return Math.floor(randomNumber * (max - min) + min);
+}
 
     function startWheelSpin() {
       if (!isSpinning) {
@@ -378,8 +388,8 @@
           console.error('Sound not loaded');
         }
         isSpinning = true;
-        ballAngle = random(360);
-        ballSpeed = random(5, 10);
+        ballAngle = cryptoRandom(0, 360);
+        ballSpeed = cryptoRandom(5, 10);
       }
     }
 
@@ -453,3 +463,7 @@
   </script>
 </body>
 </html>
+
+
+is the average number of hits per set of 38 numbers based on the total spins.
+

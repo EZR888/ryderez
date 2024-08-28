@@ -218,14 +218,17 @@
     <div id="output"></div>
   </div>
   <br>
+  
   <div class="button-container">
-    <button id="startButton" class="button"><b>Spin</b></button>
-    <button id="saveDataButton" class="button"><b>Save Data</b></button>
-    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
-  </div>
+  <button id="startButton" class="button"><b>Spin</b></button>
+  <button id="saveDataButton" class="button"><b>Save Data</b></button>
+  <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
+<button id="resetButton" class="button"><b>Reset Count</b></button>
+</div>
+
 
   <div class="table-container">
-    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
     <div id="TotalsTableContainer"></div>
   </div>
   <br><br>
@@ -251,30 +254,66 @@
     let wheelSound;
     let soundLoaded = false;
     let Totals = new Array(38).fill(0);
+    
+    // Initialize Spin Counter
+let spinCount = 0;
 
-    function setup() {
-      let canvas = createCanvas(600, 600);
-      canvas.parent('output');
-      wheelCenterX = width / 2;
-      wheelCenterY = height / 2;
-      slotAngle = 360 / numSlots;
+// Setup function
+function setup() {
+  let canvas = createCanvas(600, 600);
+  canvas.parent('output');
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+  slotAngle = 360 / numSlots;
 
-      document.getElementById('startButton').addEventListener('click', () => {
-        startWheelSpin();
-      });
+  document.getElementById('startButton').addEventListener('click', () => {
+    startWheelSpin();
+    updateSpinCounter();  // Update the spin counter on every spin
+  });
 
-      document.getElementById('saveDataButton').addEventListener('click', () => {
-        exportTotalsToCSV(Totals, 'totals_data.csv');
-        clearAndResetTotals();
-      });
+  document.getElementById('resetButton').addEventListener('click', () => {
+    resetSpinCounter();  // Reset spin counter when reset button is clicked
+    clearAndResetTotals();
+  });
 
-      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
-        window.location.href = 'roulette.html';
-      });
+  document.getElementById('saveDataButton').addEventListener('click', () => {
+    exportTotalsToCSV(Totals, 'totals_data.csv');
+    clearAndResetTotals();
+  });
 
-      // Load and prepare the sound once, so it's ready for the first spin
-      loadAndPlaySound();
+  document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+    window.location.href = 'roulette.html';
+  });
+
+  // Load and prepare the sound once, so it's ready for the first spin
+  loadAndPlaySound();
+}
+
+// Function to update the spin counter
+function updateSpinCounter() {
+  spinCount++;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+// Function to reset the spin counter
+function resetSpinCounter() {
+  spinCount = 0;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+// Start wheel spin function
+function startWheelSpin() {
+  if (!isSpinning) {
+    if (soundLoaded) {
+      wheelSound.play();
+    } else {
+      console.error('Sound not loaded');
     }
+    isSpinning = true;
+    ballAngle = cryptoRandom(0, 360);
+    ballSpeed = cryptoRandom(5, 10);
+  }
+}
 
     function draw() {
       background(0);
@@ -380,18 +419,6 @@
   return Math.floor(randomNumber * (max - min) + min);
 }
 
-    function startWheelSpin() {
-      if (!isSpinning) {
-        if (soundLoaded) {
-          wheelSound.play();
-        } else {
-          console.error('Sound not loaded');
-        }
-        isSpinning = true;
-        ballAngle = cryptoRandom(0, 360);
-        ballSpeed = cryptoRandom(5, 10);
-      }
-    }
 
     function populateTotalsTable() {
       let tableContainer = document.getElementById('TotalsTableContainer');
@@ -463,7 +490,3 @@
   </script>
 </body>
 </html>
-
-
-is the average number of hits per set of 38 numbers based on the total spins.
-

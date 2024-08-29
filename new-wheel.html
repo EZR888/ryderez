@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -149,6 +150,17 @@
     .blink {
       animation: blink 1s step-start infinite;
     }
+    
+    @keyframes yellowBlink {
+  0% { background-color: yellow; }
+  50% { background-color: white; }
+  100% { background-color: yellow; }
+}
+
+.blink-yellow {
+  animation: yellowBlink 1s step-start infinite;
+}
+
 
     @keyframes blink {
       0% { background-color: white; }
@@ -410,47 +422,65 @@
       return Math.floor(randomNumber * (max - min) + min);
     }
 
-    function populateTotalsTable() {
-      let tableContainer = document.getElementById('TotalsTableContainer');
-      let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
+// Store the index of the last updated cell
+let lastUpdatedIndex = null;
 
-      // Header Row (First Half)
-      for (let i = 0; i < numSlots / 2; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                         (i % 2 === 0 ? 'red-header' : 'black-header');
-        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-      }
+function populateTotalsTable() {
+  let tableContainer = document.getElementById('TotalsTableContainer');
+  let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
 
-      tableHTML += '</tr></thead><tbody><tr>';
+  // Header Row (First Half)
+  for (let i = 0; i < numSlots / 2; i++) {
+    let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                     (i % 2 === 0 ? 'red-header' : 'black-header');
+    tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+  }
 
-      // Data Row (First Half)
-      for (let i = 0; i < numSlots / 2; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                         (i % 2 === 0 ? 'red' : 'black');
-        tableHTML += `<td class="${colorClass}">${Totals[i]}</td>`;
-      }
+  tableHTML += '</tr></thead><tbody><tr>';
 
-      tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
+  // Data Row (First Half)
+  for (let i = 0; i < numSlots / 2; i++) {
+    let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                     (i % 2 === 0 ? 'red' : 'black');
+    // Add blinking effect to the updated cell
+    let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
+    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i]}</td>`;
+  }
 
-      // Header Row (Second Half)
-      for (let i = numSlots / 2; i < numSlots; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                         (i % 2 === 0 ? 'red-header' : 'black-header');
-        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-      }
+  tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
 
-      tableHTML += '</tr></thead><tbody><tr>';
+  // Header Row (Second Half)
+  for (let i = numSlots / 2; i < numSlots; i++) {
+    let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                     (i % 2 === 0 ? 'red-header' : 'black-header');
+    tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+  }
 
-      // Data Row (Second Half)
-      for (let i = numSlots / 2; i < numSlots; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                         (i % 2 === 0 ? 'red' : 'black');
-        tableHTML += `<td class="${colorClass}">${Totals[i]}</td>`;
-      }
+  tableHTML += '</tr></thead><tbody><tr>';
 
-      tableHTML += '</tr></tbody></table></div>';
-      tableContainer.innerHTML = tableHTML;
+  // Data Row (Second Half)
+  for (let i = numSlots / 2; i < numSlots; i++) {
+    let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                     (i % 2 === 0 ? 'red' : 'black');
+    // Add blinking effect to the updated cell
+    let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
+    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i]}</td>`;
+  }
+
+  tableHTML += '</tr></tbody></table></div>';
+  tableContainer.innerHTML = tableHTML;
+
+  // Remove blinking effect from the previously updated cell
+  if (lastUpdatedIndex !== null) {
+    const previousCell = document.querySelectorAll(`#TotalsTable1 td, #TotalsTable2 td`)[lastUpdatedIndex];
+    if (previousCell) {
+      previousCell.classList.remove('blink-yellow');
     }
+  }
+
+  // Update the last updated index
+  lastUpdatedIndex = finalIndex;
+}
 
     // Function to generate a formatted timestamp
     function getFormattedTimestamp() {

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Wheel</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #333;
+            margin: 0;
+        }
+        .wheel-container {
+            position: relative;
+        }
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border: 10px solid #000;
+            border-radius: 50%;
+            background-color: #444;
+            position: relative;
+            overflow: hidden;
+        }
+        .ball {
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: bounce 2s ease-out;
+        }
+        @keyframes bounce {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -60%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="wheel-container">
+        <div class="wheel">
+            <div class="ball"></div>
+        </div>
+    </div>
+    <script>
+        function spinWheel() {
+            const ball = document.querySelector('.ball');
+            ball.style.animation = 'none'; // Reset animation
+            ball.offsetHeight; // Trigger reflow
+            ball.style.animation = 'bounce 2s ease-out'; // Apply bounce animation
+
+            // You can also add logic to spin the wheel here
+        }
+
+        // Simulate spinning the wheel and bouncing the ball
+        setTimeout(spinWheel, 1000);
+    </script>
+</body>
+</html>

@@ -220,12 +220,11 @@
   <br>
   
   <div class="button-container">
-  <button id="startButton" class="button"><b>Spin</b></button>
-  <button id="saveDataButton" class="button"><b>Save Data</b></button>
-  <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
-<button id="resetButton" class="button"><b>Reset Count</b></button>
-</div>
-
+    <button id="startButton" class="button"><b>Spin</b></button>
+    <button id="saveDataButton" class="button"><b>Save Data</b></button>
+    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
+    <button id="resetButton" class="button"><b>Reset Count</b></button>
+  </div>
 
   <div class="table-container">
     <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
@@ -254,66 +253,62 @@
     let wheelSound;
     let soundLoaded = false;
     let Totals = new Array(38).fill(0);
-    
-    // Initialize Spin Counter
-let spinCount = 0;
+    let spinCount = 0;
 
-// Setup function
-function setup() {
-  let canvas = createCanvas(600, 600);
-  canvas.parent('output');
-  wheelCenterX = width / 2;
-  wheelCenterY = height / 2;
-  slotAngle = 360 / numSlots;
+    // Setup function
+    function setup() {
+      let canvas = createCanvas(600, 600);
+      canvas.parent('output');
+      wheelCenterX = width / 2;
+      wheelCenterY = height / 2;
+      slotAngle = 360 / numSlots;
 
-  document.getElementById('startButton').addEventListener('click', () => {
-    startWheelSpin();
-    updateSpinCounter();  // Update the spin counter on every spin
-  });
+      document.getElementById('startButton').addEventListener('click', () => {
+        startWheelSpin();
+        updateSpinCounter();
+      });
 
-  document.getElementById('resetButton').addEventListener('click', () => {
-    resetSpinCounter();  // Reset spin counter when reset button is clicked
-    clearAndResetTotals();
-  });
+      document.getElementById('resetButton').addEventListener('click', () => {
+        resetSpinCounter();
+        clearAndResetTotals();
+      });
 
-  document.getElementById('saveDataButton').addEventListener('click', () => {
-    exportTotalsToCSV(Totals, 'totals_data.csv');
-    clearAndResetTotals();
-  });
+      document.getElementById('saveDataButton').addEventListener('click', () => {
+        exportTotalsToCSV(Totals, 'totals_data.csv');
+      });
 
-  document.getElementById('accessSimulatorButton').addEventListener('click', () => {
-    window.location.href = 'roulette.html';
-  });
+      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+        window.location.href = 'roulette.html';
+      });
 
-  // Load and prepare the sound once, so it's ready for the first spin
-  loadAndPlaySound();
-}
-
-// Function to update the spin counter
-function updateSpinCounter() {
-  spinCount++;
-  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-}
-
-// Function to reset the spin counter
-function resetSpinCounter() {
-  spinCount = 0;
-  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-}
-
-// Start wheel spin function
-function startWheelSpin() {
-  if (!isSpinning) {
-    if (soundLoaded) {
-      wheelSound.play();
-    } else {
-      console.error('Sound not loaded');
+      loadAndPlaySound();
     }
-    isSpinning = true;
-    ballAngle = cryptoRandom(0, 360);
-    ballSpeed = cryptoRandom(5, 10);
-  }
-}
+
+    // Function to update the spin counter
+    function updateSpinCounter() {
+      spinCount++;
+      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+    }
+
+    // Function to reset the spin counter
+    function resetSpinCounter() {
+      spinCount = 0;
+      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+    }
+
+    // Start wheel spin function
+    function startWheelSpin() {
+      if (!isSpinning) {
+        if (soundLoaded) {
+          wheelSound.play();
+        } else {
+          console.error('Sound not loaded');
+        }
+        isSpinning = true;
+        ballAngle = cryptoRandom(0, 360);
+        ballSpeed = cryptoRandom(5, 10);
+      }
+    }
 
     function draw() {
       background(0);
@@ -334,7 +329,6 @@ function startWheelSpin() {
             wheelSound.stop();
           }
 
-          // Update totals
           if (winningNumber !== undefined) {
             let index = slotNumbers.indexOf(winningNumber);
             Totals[index]++;
@@ -408,17 +402,13 @@ function startWheelSpin() {
         }
       });
     }
-    
+
     function cryptoRandom(min, max) {
-  // Generate a cryptographically secure random number
-  const array = new Uint32Array(1);
-  window.crypto.getRandomValues(array);
-  const randomNumber = array[0] / (0xFFFFFFFF + 1);
-
-  // Scale to desired range
-  return Math.floor(randomNumber * (max - min) + min);
-}
-
+      const array = new Uint32Array(1);
+      window.crypto.getRandomValues(array);
+      const randomNumber = array[0] / (0xFFFFFFFF + 1);
+      return Math.floor(randomNumber * (max - min) + min);
+    }
 
     function populateTotalsTable() {
       let tableContainer = document.getElementById('TotalsTableContainer');
@@ -437,55 +427,75 @@ function startWheelSpin() {
       for (let i = 0; i < numSlots / 2; i++) {
         let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                          (i % 2 === 0 ? 'red' : 'black');
-        let displayValue = Totals[i] > 0 ? Totals[i] : '&nbsp;';
-        let cellClass = i === finalIndex ? 'blink' : '';
-        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
+        tableHTML += `<td class="${colorClass}">${Totals[i]}</td>`;
       }
 
-      tableHTML += '</tr></tbody></table></div>';
+      tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
 
-      // Second Half
-      tableHTML += '<div class="table-half"><table id="TotalsTable2"><thead><tr>';
+      // Header Row (Second Half)
       for (let i = numSlots / 2; i < numSlots; i++) {
         let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
                          (i % 2 === 0 ? 'red-header' : 'black-header');
         tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
       }
+
       tableHTML += '</tr></thead><tbody><tr>';
+
+      // Data Row (Second Half)
       for (let i = numSlots / 2; i < numSlots; i++) {
         let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                          (i % 2 === 0 ? 'red' : 'black');
-        let displayValue = Totals[i] > 0 ? Totals[i] : '&nbsp;';
-        let cellClass = i === finalIndex ? 'blink' : '';
-        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
+        tableHTML += `<td class="${colorClass}">${Totals[i]}</td>`;
       }
-      tableHTML += '</tr></tbody></table></div>';
 
+      tableHTML += '</tr></tbody></table></div>';
       tableContainer.innerHTML = tableHTML;
     }
 
+    // Function to generate a formatted timestamp
+    function getFormattedTimestamp() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+    }
+
+    // Export Totals to CSV
+function exportTotalsToCSV(totals, fileNamePrefix) {
+  const formattedTimestamp = getFormattedTimestamp();
+  const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
+
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  // Add empty header cell
+  csvContent += ",";
+
+  // Add slot number headers across the page
+  csvContent += slotNumbers.join(",") + "\n";
+
+  // Add empty first cell for the row, then add totals across the page
+  csvContent += "Total," + totals.join(",") + "\n";
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+document.getElementById('saveDataButton').addEventListener('click', () => {
+  exportTotalsToCSV(Totals, 'totals_data');
+});
+
     function clearAndResetTotals() {
-      Totals.fill(0); // Reset Totals array to 0
-      populateTotalsTable(); // Clear and repopulate the table
-    }
-
-    function exportTotalsToCSV(data, filename) {
-      const csvContent = "data:text/csv;charset=utf-8,"
-          + "Number,Frequency\n"
-          + data.map((freq, index) => `${slotNumbers[index]},${freq}`).join("\n");
-      
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-    }
-
-    function singleSpin() {
-      if (!isSpinning) {
-        startWheelSpin();
-      }
+      Totals.fill(0);
+      populateTotalsTable();
     }
   </script>
 </body>

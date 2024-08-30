@@ -246,8 +246,10 @@ function exportTotalsToCSV(array, filename) {
     let headers = [...Array(38).keys()].map(i => i === 37 ? '00' : i.toString());
     csvContent += headers.join(",") + "\n";
 
-    // Loop through Totals array to append values
-    csvContent += array.join(",") + "\n";
+        // Loop through Totals array to append values
+        array.forEach(row => {
+            csvContent += row.join(",") + "\n";
+        });
 
     // Encode and create a download link
     const encodedUri = encodeURI(csvContent);
@@ -301,7 +303,8 @@ function multiSpin() {
   let numRuns = parseInt(document.getElementById('x').value); // Get the number of runs
   let numSpins = parseInt(document.getElementById('numSpins').value);
   let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
-
+  let allTotals = []; // Store all totals data
+        
   // Function to perform a single run
   function singleRun(runIndex) {
     clearArrays(); // Clear arrays before each run
@@ -321,14 +324,22 @@ function multiSpin() {
           setTimeout(spin, spinDelay); // Delay before the next spin
         }, 0); // Start the first spin immediately
       } else {
+      
+        // After all spins are done, save the Totals to allTotals array
+        allTotals.push([...Totals]); // Push a copy of the Totals array
+        
         // After all spins are done, export the results and start the next run if any
-        exportTotalsToCSV(Totals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
+ 
         if (runIndex < numRuns - 1) {
-          setTimeout(() => {
-            singleRun(runIndex + 1); // Start the next run after a delay
-          }, 1000); // Add a 1-second delay between runs
-        } else {
-          document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
+              setTimeout(() => {
+                singleRun(runIndex + 1); // Start the next run after a delay
+              }, 1000); // Add a 1-second delay between runs
+            } else {
+ 
+ 
+        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
+        
+        document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
           endMultiSpin(); // End the multi-spin session
         }
       }
@@ -338,19 +349,6 @@ function multiSpin() {
   }
 
   singleRun(0); // Start the first run
-}
-
-
-
-    
-    function endMultiSpin() {
-    // Assuming the Spin Num text is in a div with id "spinNum"
-    const spinNumElement = document.getElementById('spinNum');
-
-    if (spinNumElement) {
-        spinNumElement.style.display = 'none'; // Hides the element
-        // Or to clear the text: spinNumElement.textContent = '';
-    }
 }
 
     // Function to populate Totals table
@@ -425,6 +423,18 @@ function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
     window.onload = function() {
       populateTotalsTable();
     };
+    
+        
+    function endMultiSpin() {
+    // Assuming the Spin Num text is in a div with id "spinNum"
+    const spinNumElement = document.getElementById('spinNum');
+
+    if (spinNumElement) {
+        spinNumElement.style.display = 'none'; // Hides the element
+        // Or to clear the text: spinNumElement.textContent = '';
+    }
+}
+
   </script>
 </body>
 </html>

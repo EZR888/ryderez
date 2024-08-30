@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics View</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 8px;
+            text-align: center;
+            width: 60px;
+            font-weight: bold;
+        }
+        th {
+            color: white;
+        }
+        td {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Statistics View</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Group</th>
+                <th>5</th>
+                <th>6</th>
+                <th>7</th>
+                <th>8</th>
+                <th>9</th>
+                <th>10</th>
+                <th>11</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="group1Row">
+                <td>Group 1</td>
+            </tr>
+            <tr id="group2Row">
+                <td>Group 2</td>
+            </tr>
+            <tr id="highHitsRow">
+                <td>High Hits</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        const statsData = JSON.parse(localStorage.getItem('statsData'));
+        const group1Row = document.getElementById('group1Row');
+        const group2Row = document.getElementById('group2Row');
+        const highHitsRow = document.getElementById('highHitsRow');
+
+        for (let i = 5; i <= 11; i++) {
+            group1Row.insertAdjacentHTML('beforeend', `<td>${statsData.group1[i]}</td>`);
+            group2Row.insertAdjacentHTML('beforeend', `<td>${statsData.group2[i]}</td>`);
+            highHitsRow.insertAdjacentHTML('beforeend', `<td>${statsData.highHits[i]}</td>`);
+        }
+    </script>
+</body>
+</html>

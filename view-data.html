@@ -228,7 +228,7 @@
 
         // Button to show stats, triggering the navigation to view-stats.html
         document.getElementById('showStatsButton').addEventListener('click', function() {
-            window.location.href = 'view-stats.html', '_blank';
+            window.open('view-stats.html', '_blank'); // Corrected to use window.open for a new tab
             
         });
 

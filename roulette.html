@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -262,8 +264,10 @@ function exportTotalsToCSV(array, filename) {
 
     // Event listener for the Save Data button
     document.getElementById("saveDataButton").addEventListener("click", function() {
-      exportTotalsToCSV(Totals, 'totals_data.csv');
+            exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
     });
+    
+
     
     // Event listener for the Single Spin button
     document.getElementById('singleSpinButton').addEventListener('click', () => {
@@ -282,10 +286,11 @@ function getRandomInt(max) {
   return array[0] % max;
 }
 
-// Function to run the simulation
 function runSimulation() {
   clearArrays(); // Clear arrays before simulation
   document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+
+  let allTotals = []; // Initialize array to store all Totals data
 
   for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
     for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
@@ -294,10 +299,16 @@ function runSimulation() {
         Totals[c1] += 1; // Increment corresponding index in Totals array
       }
     }
+    // After each run, store a copy of the Totals array
+    allTotals.push([...Totals]);
   }
 
   populateTotalsTable(); // Populate Totals table
+
+  // Export to CSV after all runs
+  exportTotalsToCSV(allTotals, `totals_data_simulation.csv`);
 }
+
 
 function multiSpin() {
   let numRuns = parseInt(document.getElementById('x').value); // Get the number of runs

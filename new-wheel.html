@@ -127,6 +127,11 @@
       color: lightgreen;
       text-align: center;
     }
+    
+    #viewDataButton {
+      background-color: #FF9800; /* Orange */
+      color: white;
+    }
 
     #TotalsTableContainer {
       display: flex;
@@ -236,6 +241,7 @@
     <button id="saveDataButton" class="button"><b>Save Data</b></button>
     <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
     <button id="resetButton" class="button"><b>Reset Count</b></button>
+    <button id="viewDataButton" class="button"><b>View Data</b></button>
   </div>
 
   <div class="table-container">
@@ -292,6 +298,11 @@
       document.getElementById('accessSimulatorButton').addEventListener('click', () => {
         window.location.href = 'roulette.html';
       });
+      
+      // New event listener for the View Data button
+      document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('http://ryderez.com/view-data.html', '_blank');
+      });
 
       loadAndPlaySound();
     }
@@ -321,7 +332,7 @@
         ballSpeed = cryptoRandom(5, 10);
       }
     }
-
+    
     function draw() {
       background(0);
       drawWheel();

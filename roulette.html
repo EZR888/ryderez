@@ -105,7 +105,11 @@
       color: lightgreen;
       text-align: center;
       font-size: 64px;
-    }
+    }  
+    #viewDataButton {
+      background-color: #FF9800; /* Orange */
+      color: white;
+    }  
     /* Media Queries for responsiveness */
     @media (max-width: 768px) {
       .container {
@@ -208,7 +212,7 @@
     </div>
   </div>
   <div>
-    <button class="button button-save" id="saveDataButton">Save Data</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-single" id="singleSpinButton">Single Spin</button>
+    <button class="button button-save" id="saveDataButton">Save Data</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>
   </div>
   <br><br>
   
@@ -262,6 +266,11 @@ function exportTotalsToCSV(array, filename) {
     // Event listener for the Single Spin button
     document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.location.href = 'new-wheel.html';
+      });
+      
+            // New event listener for the View Data button
+      document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('http://ryderez.com/view-data.html', '_blank');
       });
 
 // Function to generate a random integer between 0 (inclusive) and max (exclusive)

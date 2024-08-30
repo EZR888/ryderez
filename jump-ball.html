@@ -1,66 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette Wheel</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #333;
-            margin: 0;
-        }
-        .wheel-container {
-            position: relative;
-        }
-        .wheel {
-            width: 300px;
-            height: 300px;
-            border: 10px solid #000;
-            border-radius: 50%;
-            background-color: #444;
-            position: relative;
-            overflow: hidden;
-        }
-        .ball {
-            width: 20px;
-            height: 20px;
-            background-color: red;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: bounce 2s ease-out;
-        }
-        @keyframes bounce {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -60%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-    </style>
+  <title>Roulette Wheel Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .wheel-container {
+      border: 5px solid #fff;
+      border-radius: 50%;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 635px;
+      height: 635px;
+      max-width: 100%;
+      max-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    #output {
+      width: 100%;
+      height: 100%;
+    }
+
+    .button-container, .table-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      padding: 10px 16px;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 18px;
+    }
+
+    #startButton {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #saveDataButton {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #accessSimulatorButton {
+      background-color: #008CBA;
+      color: white;
+    }
+
+    /* Add a new button style for the View Data button */
+    #viewDataButton {
+      background-color: #FF9800; /* Orange */
+      color: white;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      color: black;
+      width: 50px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      min-height: 30px;
+      min-width: 50px;
+    }
+
+    th {
+      color: white;
+    }
+
+    .green-header {
+      background-color: green;
+      color: white;
+    }
+
+    .black-header {
+      background-color: black;
+      color: white;
+    }
+
+    .red-header {
+      background-color: red;
+      color: white;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .caption {
+      font-weight: bold;
+      color: lightgreen;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .green, .red, .black {
+      background-color: lightgray;
+    }
+
+    .lgreen-text {
+      color: lightgreen;
+      text-align: center;
+    }
+
+    #TotalsTableContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .table-half {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    .table-half table {
+      width: auto;
+      max-width: 100%;
+    }
+
+    .blink {
+      animation: blink 1s step-start infinite;
+    }
+    
+    @keyframes yellowBlink {
+      0% { background-color: yellow; }
+      50% { background-color: white; }
+      100% { background-color: yellow; }
+    }
+
+    .blink-yellow {
+      animation: yellowBlink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: lightgray; }
+      100% { background-color: white; }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spin {
+      animation: spin 2s linear infinite;
+    }
+
+    @media (max-width: 768px) {
+      .wheel-container {
+        padding: 5px;
+        width: 90%;
+        height: auto;
+      }
+
+      .button {
+        font-size: 16px;
+        padding: 8px;
+      }
+
+      table {
+        width: 100%;
+        max-width: none;
+      }
+
+      th, td {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      .caption {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .wheel-container {
+        width: 100%;
+        height: auto;
+      }
+
+      .button {
+        font-size: 14px;
+        padding: 6px;
+      }
+
+      .caption {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="wheel-container">
-        <div class="wheel">
-            <div class="ball"></div>
-        </div>
-    </div>
-    <script>
-        function spinWheel() {
-            const ball = document.querySelector('.ball');
-            ball.style.animation = 'none'; // Reset animation
-            ball.offsetHeight; // Trigger reflow
-            ball.style.animation = 'bounce 2s ease-out'; // Apply bounce animation
+  <div>
+    <h1 class="lgreen-text">Roulette Wheel</h1>
+  </div>
+  <div class="wheel-container">
+    <div id="output"></div>
+  </div>
+  <br>
+  
+  <div class="button-container">
+    <button id="startButton" class="button"><b>Spin</b></button>
+    <button id="saveDataButton" class="button"><b>Save Data</b></button>
+    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
+    <button id="resetButton" class="button"><b>Reset Count</b></button>
+    <!-- New View Data Button -->
+    <button id="viewDataButton" class="button"><b>View Data</b></button>
+  </div>
 
-            // You can also add logic to spin the wheel here
-        }
+  <div class="table-container">
+    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
+    <div id="TotalsTableContainer"></div>
+  </div>
+  <br><br>
 
-        // Simulate spinning the wheel and bouncing the ball
-        setTimeout(spinWheel, 1000);
-    </script>
+  <script>
+    // Roulette Wheel Variables
+    let wheelRadius = 280;
+    let wheelCenterX;
+    let wheelCenterY;
+    let ballRadius = 14;
+    let ballX;
+    let ballY;
+    let ballSpeed;
+    let ballAngle;
+    let ballFriction = .9945;
+    let isSpinning = false;
+    let minSpeed = .85;
+    let finalIndex;
+    let winningNumber;
+    let numSlots = 38;
+    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+    let slotAngle;
+    let wheelSound;
+    let soundLoaded = false;
+    let Totals = new Array(38).fill(0);
+    let spinCount = 0;
+
+    // Setup function
+    function setup() {
+      let canvas = createCanvas(600, 600);
+      canvas.parent('output');
+      wheelCenterX = width / 2;
+      wheelCenterY = height / 2;
+      slotAngle = 360 / numSlots;
+
+      document.getElementById('startButton').addEventListener('click', () => {
+        startWheelSpin();
+        updateSpinCounter();
+      });
+
+      document.getElementById('resetButton').addEventListener('click', () => {
+        resetSpinCounter();
+        clearAndResetTotals();
+      });
+
+      document.getElementById('saveDataButton').addEventListener('click', () => {
+        exportTotalsToCSV(Totals, 'totals_data.csv');
+      });
+
+      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+        window.location.href = 'roulette.html';
+      });
+
+      // New event listener for the View Data button
+      document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('http://ryderez.com/view-data.html', '_blank');
+      });
+
+      loadAndPlaySound();
+    }
+
+    // Other JavaScript functions...
+    
+    function draw() {
+      // Existing draw function code
+    }
+
+    function drawWheel() {
+      // Existing drawWheel function code
+    }
+
+    function drawBall() {
+      // Existing drawBall function code
+    }
+
+    function startWheelSpin() {
+      // Existing startWheelSpin function code
+    }
+
+    function updateSpinCounter() {
+      // Existing updateSpinCounter function code
+    }
+
+    function resetSpinCounter() {
+      // Existing resetSpinCounter function code
+    }
+
+    function clearAndResetTotals() {
+      // Existing clearAndResetTotals function code
+    }
+
+    function exportTotalsToCSV(totals, filename) {
+      // Existing exportTotalsToCSV function code
+    }
+
+    function loadAndPlaySound() {
+      // Existing loadAndPlaySound function code
+    }
+
+    function mousePressed() {
+      // Optional mousePressed function code
+    }
+
+    function keyPressed() {
+      // Optional keyPressed function code
+    }
+  </script>
 </body>
 </html>

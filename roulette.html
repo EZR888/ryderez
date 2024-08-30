@@ -214,7 +214,7 @@
     </div>
   </div>
   <div>
-    <button class="button button-save" id="saveDataButton">Save Data</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>
+    <button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>
   </div>
   <br><br>
   
@@ -263,9 +263,9 @@ function exportTotalsToCSV(array, filename) {
 }
 
     // Event listener for the Save Data button
-    document.getElementById("saveDataButton").addEventListener("click", function() {
-            exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
-    });
+    // document.getElementById("Button").addEventListener("click", function() {
+    //        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
+    // });
     
 
     

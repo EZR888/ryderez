@@ -81,186 +81,158 @@
     </style>
 </head>
 <body>
-<body>
     <h1>Select CSV Files</h1>
     <input type="file" id="fileInput" accept=".csv" multiple>
     <button id="saveButton">Save Table</button>
+    <button id="showStatsButton">Show Stats</button> <!-- Added Show Stats Button -->
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
     </table>
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const files = Array.from(event.target.files);
-            const columnOrder = ['18', '6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', 
-                                '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31'];
-            const group1Columns = ['14', '2', '0', '28', '9'];
-            const group2Columns = ['13', '1', '00', '27', '10'];
-            let headerIndices = [];
-            let headerProcessed = false;
-            let csvData = [];
-            const table = document.getElementById('csvTable');
+     document.getElementById('fileInput').addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        const columnOrder = ['18', '6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', 
+                            '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31'];
+        const group1Columns = ['14', '2', '0', '28', '9'];
+        const group2Columns = ['13', '1', '00', '27', '10'];
+        let headerIndices = [];
+        let headerProcessed = false;
+        let csvData = [];  // Array to store processed CSV data
+        const table = document.getElementById('csvTable');
 
-            function processFile(file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const lines = event.target.result.split('\n').map(line => line.split(','));
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const lines = event.target.result.split('\n').map(line => line.split(','));
 
-                    if (!headerProcessed) {
-                        const headerRow = lines[0];
-                        headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-                        const thead = table.querySelector('thead');
-                        const tr = document.createElement('tr');
-                        headerIndices.forEach(index => {
-                            const th = document.createElement('th');
-                            th.textContent = index >= 0 ? headerRow[index] : '';
-                            if (th.textContent === '0' || th.textContent === '00') {
-                                th.style.backgroundColor = 'green';
-                            }
-                            tr.appendChild(th);
-                        });
-                        thead.appendChild(tr);
-                        headerProcessed = true;
-                    }
-
-                    for (let i = 1; i < lines.length; i++) {
-                        if (lines[i].some(cell => cell.trim())) {
-                            csvData.push(lines[i].map(cell => cell.trim()));
+                if (!headerProcessed) {
+                    const headerRow = lines[0];
+                    headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+                    const thead = table.querySelector('thead');
+                    const tr = document.createElement('tr');
+                    headerIndices.forEach(index => {
+                        const th = document.createElement('th');
+                        th.textContent = index >= 0 ? headerRow[index] : '';
+                        if (th.textContent === '0' || th.textContent === '00') {
+                            th.style.backgroundColor = 'green';
                         }
-                    }
-
-                    if (files.length > 0) {
-                        processFile(files.shift());
-                    } else {
-                        csvData.forEach(row => {
-                            const tr = document.createElement('tr');
-                            let group1Sum = 0;
-                            let group2Sum = 0;
-                            let group1Cells = [];
-                            let group2Cells = [];
-
-                            headerIndices.forEach(index => {
-                                const td = document.createElement('td');
-                                const cellValue = index >= 0 ? row[index] : '';
-                                td.textContent = cellValue;
-
-                                if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
-                                    td.classList.add('default-light-yellow');
-                                }
-
-                                if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
-                                    group1Cells.push(td);
-                                    if (!isNaN(cellValue)) {
-                                        group1Sum += Number(cellValue);
-                                    }
-                                }
-
-                                if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
-                                    group2Cells.push(td);
-                                    if (!isNaN(cellValue)) {
-                                        group2Sum += Number(cellValue);
-                                    }
-                                }
-
-                                if (!isNaN(cellValue) && Number(cellValue) >= 5) {
-                                    td.classList.remove('default-light-yellow', 'light-red');
-                                    td.classList.add('light-green');
-                                }
-
-                                tr.appendChild(td);
-                            });
-
-                            // Apply background color based on the sum conditions
-                            group1Cells.forEach(td => {
-                                if (group1Sum === 8) {
-                                    td.classList.remove('default-light-yellow');
-                                    td.classList.add('light-red');
-                                } else if (group1Sum === 9) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('light-blue');
-                                    }
-                                } else if (group1Sum === 10) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('light-orange');
-                                    }
-                                } else if (group1Sum === 11) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('violet');
-                                    }
-                                }
-                            });
-
-                            group2Cells.forEach(td => {
-                                if (group2Sum === 8) {
-                                    td.classList.remove('default-light-yellow');
-                                    td.classList.add('light-red');
-                                } else if (group2Sum === 9) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('light-blue');
-                                    }
-                                } else if (group2Sum === 10) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('light-orange');
-                                    }
-                                } else if (group2Sum === 11) {
-                                    if (!td.classList.contains('light-green')) {
-                                        td.classList.remove('default-light-yellow');
-                                        td.classList.add('violet');
-                                    }
-                                }
-                            });
-
-                            table.querySelector('tbody').appendChild(tr);
-                        });
-                    }
-                };
-
-                reader.readAsText(file);
-            }
-
-            function tableToCSV() {
-                const rows = Array.from(table.querySelectorAll('tr'));
-                const csvContent = rows.map(row => 
-                    Array.from(row.querySelectorAll('th, td'))
-                        .map(cell => `"${cell.textContent.replace(/"/g, '""')}"`)
-                        .join(',')
-                ).join('\n');
-
-                return csvContent;
-            }
-
-            function downloadCSV(filename, csvContent) {
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                if (link.download !== undefined) {
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', filename);
-                    link.style.visibility = 'hidden';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                        tr.appendChild(th);
+                    });
+                    thead.appendChild(tr);
+                    headerProcessed = true;
                 }
-            }
 
-            document.getElementById('saveButton').addEventListener('click', function() {
-                if (headerProcessed) {
-                    const csvContent = tableToCSV();
-                    downloadCSV('updated_table.csv', csvContent);
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].some(cell => cell.trim())) {
+                        csvData.push(lines[i].map(cell => cell.trim()));  // Store each row in csvData array
+                    }
+                }
+
+                if (files.length > 0) {
+                    processFile(files.shift());
                 } else {
-                    alert('No data to save.');
-                }
-            });
+                    csvData.forEach(row => {
+                        const tr = document.createElement('tr');
+                        let group1Sum = 0;
+                        let group2Sum = 0;
+                        let group1Cells = [];
+                        let group2Cells = [];
 
-            if (files.length > 0) {
-                processFile(files.shift());
-            }
+                        headerIndices.forEach(index => {
+                            const td = document.createElement('td');
+                            const cellValue = index >= 0 ? row[index] : '';
+                            td.textContent = cellValue;
+
+                            if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
+                                td.classList.add('default-light-yellow');
+                            }
+
+                            if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                                group1Cells.push(td);
+                                if (!isNaN(cellValue)) {
+                                    group1Sum += Number(cellValue);
+                                }
+                            }
+
+                            if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                                group2Cells.push(td);
+                                if (!isNaN(cellValue)) {
+                                    group2Sum += Number(cellValue);
+                                }
+                            }
+
+                            if (!isNaN(cellValue) && Number(cellValue) >= 5) {
+                                td.classList.remove('default-light-yellow', 'light-red');
+                                td.classList.add('light-green');
+                            }
+
+                            tr.appendChild(td);
+                        });
+
+                        // Apply background color based on the sum conditions
+                        group1Cells.forEach(td => {
+                            if (group1Sum === 8) {
+                                td.classList.remove('default-light-yellow');
+                                td.classList.add('light-red');
+                            } else if (group1Sum === 9) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('light-blue');
+                                }
+                            } else if (group1Sum === 10) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('light-orange');
+                                }
+                            } else if (group1Sum === 11) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('violet');
+                                }
+                            }
+                        });
+
+                        group2Cells.forEach(td => {
+                            if (group2Sum === 8) {
+                                td.classList.remove('default-light-yellow');
+                                td.classList.add('light-red');
+                            } else if (group2Sum === 9) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('light-blue');
+                                }
+                            } else if (group2Sum === 10) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('light-orange');
+                                }
+                            } else if (group2Sum === 11) {
+                                if (!td.classList.contains('light-green')) {
+                                    td.classList.remove('default-light-yellow');
+                                    td.classList.add('violet');
+                                }
+                            }
+                        });
+
+                        table.querySelector('tbody').appendChild(tr);
+                    });
+
+                    // Store the processed data in localStorage for use in view-stats.html
+                    localStorage.setItem('csvData', JSON.stringify(csvData));
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Button to show stats, triggering the navigation to view-stats.html
+        document.getElementById('showStatsButton').addEventListener('click', function() {
+            window.location.href = 'view-stats.html';
         });
+
+        processFile(files.shift());
+    });
     </script>
 </body>
 </html>

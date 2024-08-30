@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -292,7 +293,7 @@
       });
 
       document.getElementById('saveDataButton').addEventListener('click', () => {
-        exportTotalsToCSV(Totals, 'totals_data.csv');
+        exportTotalsToCSV(Totals);
       });
 
       document.getElementById('accessSimulatorButton').addEventListener('click', () => {
@@ -301,7 +302,7 @@
       
       // New event listener for the View Data button
       document.getElementById('viewDataButton').addEventListener('click', () => {
-        window.open('http://ryderez.com/view-data.html', '_blank');
+        window.open('view-data.html', '_blank');
       });
 
       loadAndPlaySound();
@@ -506,20 +507,27 @@ function populateTotalsTable() {
     }
 
     // Export Totals to CSV
-function exportTotalsToCSV(totals, fileNamePrefix) {
+// Export Totals to CSV
+function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
   const formattedTimestamp = getFormattedTimestamp();
   const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
 
+  // Define the new order of slot numbers
+  const orderedSlotNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, '00'];
+
+  // Reorder totals according to the new slot number order
+  const orderedTotals = orderedSlotNumbers.map(number => {
+    const index = slotNumbers.indexOf(number);
+    return index !== -1 ? totals[index] : 0;
+  });
+
   let csvContent = "data:text/csv;charset=utf-8,";
 
-  // Add empty header cell
-  csvContent += ",";
+  // Add ordered slot number headers
+  csvContent += orderedSlotNumbers.join(",") + "\n";
 
-  // Add slot number headers across the page
-  csvContent += slotNumbers.join(",") + "\n";
-
-  // Add empty first cell for the row, then add totals across the page
-  csvContent += "Total," + totals.join(",") + "\n";
+  // Add totals row without the "Total" column
+  csvContent += orderedTotals.join(",") + "\n";
 
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
@@ -529,10 +537,6 @@ function exportTotalsToCSV(totals, fileNamePrefix) {
   link.click();
   document.body.removeChild(link);
 }
-
-document.getElementById('saveDataButton').addEventListener('click', () => {
-  exportTotalsToCSV(Totals, 'totals_data');
-});
 
     function clearAndResetTotals() {
       Totals.fill(0);

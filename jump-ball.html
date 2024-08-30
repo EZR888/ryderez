@@ -1,356 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Roulette Wheel Animation</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Data</title>
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       font-family: Arial, sans-serif;
-      padding: 10px;
-      box-sizing: border-box;
+      margin: 0;
+      padding: 20px;
+      background-color: #000;
+      color: #fff;
     }
-
-    .wheel-container {
-      border: 5px solid #fff;
-      border-radius: 50%;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 635px;
-      height: 635px;
-      max-width: 100%;
-      max-height: 100vh;
-      box-sizing: border-box;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-
-    #output {
-      width: 100%;
-      height: 100%;
-    }
-
-    .button-container, .table-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .button {
-      padding: 10px 16px;
-      background: #fff;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-      font-size: 18px;
-    }
-
-    #startButton {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    #saveDataButton {
-      background-color: #f44336;
-      color: white;
-    }
-
-    #accessSimulatorButton {
-      background-color: #008CBA;
-      color: white;
-    }
-
-    /* Add a new button style for the View Data button */
-    #viewDataButton {
-      background-color: #FF9800; /* Orange */
-      color: white;
-    }
-
     table {
       border-collapse: collapse;
       width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
+      margin: 20px 0;
     }
-
     th, td {
-      border: 1px solid black;
-      padding: 8px;
+      border: 1px solid #ccc;
+      padding: 10px;
       text-align: center;
-      font-weight: bold;
-      color: black;
-      width: 50px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      min-height: 30px;
-      min-width: 50px;
     }
-
     th {
-      color: white;
+      background-color: #333;
+      color: #fff;
     }
-
-    .green-header {
-      background-color: green;
-      color: white;
-    }
-
-    .black-header {
-      background-color: black;
-      color: white;
-    }
-
-    .red-header {
-      background-color: red;
-      color: white;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .caption {
-      font-weight: bold;
-      color: lightgreen;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .green, .red, .black {
-      background-color: lightgray;
-    }
-
-    .lgreen-text {
-      color: lightgreen;
-      text-align: center;
-    }
-
-    #TotalsTableContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: auto;
-    }
-
-    .table-half {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-      width: 100%;
-    }
-
-    .table-half table {
-      width: auto;
-      max-width: 100%;
-    }
-
-    .blink {
-      animation: blink 1s step-start infinite;
-    }
-    
-    @keyframes yellowBlink {
-      0% { background-color: yellow; }
-      50% { background-color: white; }
-      100% { background-color: yellow; }
-    }
-
-    .blink-yellow {
-      animation: yellowBlink 1s step-start infinite;
-    }
-
-    @keyframes blink {
-      0% { background-color: white; }
-      50% { background-color: lightgray; }
-      100% { background-color: white; }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .spin {
-      animation: spin 2s linear infinite;
-    }
-
-    @media (max-width: 768px) {
-      .wheel-container {
-        padding: 5px;
-        width: 90%;
-        height: auto;
-      }
-
-      .button {
-        font-size: 16px;
-        padding: 8px;
-      }
-
-      table {
-        width: 100%;
-        max-width: none;
-      }
-
-      th, td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      .caption {
-        font-size: 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .wheel-container {
-        width: 100%;
-        height: auto;
-      }
-
-      .button {
-        font-size: 14px;
-        padding: 6px;
-      }
-
-      .caption {
-        font-size: 12px;
-      }
+    .numeric {
+      background-color: #222;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <div>
-    <h1 class="lgreen-text">Roulette Wheel</h1>
-  </div>
-  <div class="wheel-container">
-    <div id="output"></div>
-  </div>
-  <br>
-  
-  <div class="button-container">
-    <button id="startButton" class="button"><b>Spin</b></button>
-    <button id="saveDataButton" class="button"><b>Save Data</b></button>
-    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
-    <button id="resetButton" class="button"><b>Reset Count</b></button>
-    <!-- New View Data Button -->
-    <button id="viewDataButton" class="button"><b>View Data</b></button>
-  </div>
-
-  <div class="table-container">
-    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
+  <div class="container">
+    <h1>Totals Data</h1>
     <div id="TotalsTableContainer"></div>
+    <button onclick="window.close()">Close</button>
   </div>
-  <br><br>
 
   <script>
-    // Roulette Wheel Variables
-    let wheelRadius = 280;
-    let wheelCenterX;
-    let wheelCenterY;
-    let ballRadius = 14;
-    let ballX;
-    let ballY;
-    let ballSpeed;
-    let ballAngle;
-    let ballFriction = .9945;
-    let isSpinning = false;
-    let minSpeed = .85;
-    let finalIndex;
-    let winningNumber;
-    let numSlots = 38;
-    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
-    let slotAngle;
-    let wheelSound;
-    let soundLoaded = false;
-    let Totals = new Array(38).fill(0);
-    let spinCount = 0;
+    // Function to generate and display tables
+    function populateTotalsTable(allTotals) {
+      let output = "";
 
-    // Setup function
-    function setup() {
-      let canvas = createCanvas(600, 600);
-      canvas.parent('output');
-      wheelCenterX = width / 2;
-      wheelCenterY = height / 2;
-      slotAngle = 360 / numSlots;
+      // Define the two header orders
+      const headerOrder1 = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32];
+      const headerOrder2 = [17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
 
-      document.getElementById('startButton').addEventListener('click', () => {
-        startWheelSpin();
-        updateSpinCounter();
+      function generateTable(headerOrder, data, isSecondTable = false) {
+        let tableOutput = "<table>";
+
+        // Header row
+        tableOutput += "<tr>";
+
+        // Create the header cells
+        headerOrder.forEach((number, index) => {
+          const headerLabel = number.toString();
+          let colorClass;
+          if (headerLabel === '0' || headerLabel === '00') {
+            colorClass = 'green-header';
+          } else if (isSecondTable) { // For headerOrder2
+            colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with black and alternate
+          } else { // For headerOrder1
+            colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with red and alternate
+          }
+          tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
+        });
+
+        // Close the header row
+        tableOutput += "</tr>";
+
+        // Data rows
+        data.forEach((totals, runIndex) => {
+          tableOutput += "<tr>";
+
+          headerOrder.forEach((number) => {
+            let cellValue;
+            if (number === '00') { // Handle '00' as alias for 37
+              cellValue = totals[37];
+            } else {
+              cellValue = totals[number];
+            }
+            // Replace 0 with empty string
+            cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
+            tableOutput += `<td class='numeric'>${cellValue}</td>`;
+          });
+
+          tableOutput += "</tr>";
+        });
+
+        tableOutput += "</table>";
+
+        return tableOutput;
+      }
+
+      // Generate both tables for each set of Totals
+      allTotals.forEach((totals, index) => {
+        output += `<h2>Run ${index + 1}</h2>`;
+        output += generateTable(headerOrder1, [totals]);
+        output += "<br>";
+        output += generateTable(headerOrder2, [totals], true); // Pass true for the second table
+        output += "<br>";
       });
 
-      document.getElementById('resetButton').addEventListener('click', () => {
-        resetSpinCounter();
-        clearAndResetTotals();
-      });
-
-      document.getElementById('saveDataButton').addEventListener('click', () => {
-        exportTotalsToCSV(Totals, 'totals_data.csv');
-      });
-
-      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
-        window.location.href = 'roulette.html';
-      });
-
-      // New event listener for the View Data button
-      document.getElementById('viewDataButton').addEventListener('click', () => {
-        window.open('http://ryderez.com/view-data.html', '_blank');
-      });
-
-      loadAndPlaySound();
+      document.getElementById('TotalsTableContainer').innerHTML = output; // Update TotalsTable content
     }
 
-    // Other JavaScript functions...
-    
-    function draw() {
-      // Existing draw function code
-    }
-
-    function drawWheel() {
-      // Existing drawWheel function code
-    }
-
-    function drawBall() {
-      // Existing drawBall function code
-    }
-
-    function startWheelSpin() {
-      // Existing startWheelSpin function code
-    }
-
-    function updateSpinCounter() {
-      // Existing updateSpinCounter function code
-    }
-
-    function resetSpinCounter() {
-      // Existing resetSpinCounter function code
-    }
-
-    function clearAndResetTotals() {
-      // Existing clearAndResetTotals function code
-    }
-
-    function exportTotalsToCSV(totals, filename) {
-      // Existing exportTotalsToCSV function code
-    }
-
-    function loadAndPlaySound() {
-      // Existing loadAndPlaySound function code
-    }
-
-    function mousePressed() {
-      // Optional mousePressed function code
-    }
-
-    function keyPressed() {
-      // Optional keyPressed function code
-    }
+    // Retrieve allTotals from local storage
+    const allTotals = JSON.parse(localStorage.getItem('allTotals')) || [];
+    populateTotalsTable(allTotals);
   </script>
 </body>
 </html>

@@ -381,7 +381,7 @@ function computeAndUpdateTable() {
             getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
               document.getElementById('wheel2Result').innerText += `, ${trimmedLine}`;
               wordCount++;
-              setTimeout(addRandomWords, 1000); // Call itself after 1 second
+              setTimeout(addRandomWords, 2000); // Call itself after 1 second
             });
           }
         }

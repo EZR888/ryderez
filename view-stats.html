@@ -58,7 +58,9 @@
     </style>
 </head>
 <body>
-    <h1>Stats from CSV Data</h1>
+   <div>
+    <h1><center>Stats from CSV Data</center></h1>
+    </div>
     <table id="statsTable">
         <thead></thead>
         <tbody></tbody>
@@ -89,7 +91,7 @@
             const tbody = table.querySelector('tbody');
 
             // Create the header row
-            const header = ["", "Cluster 0", "Cluster 00", "High Hits"];
+            const header = ["Totals", "Cluster 0", "Cluster 00", "High Hits"];
             const trHeader = document.createElement('tr');
             header.forEach(text => {
                 const th = document.createElement('th');

@@ -35,12 +35,6 @@
         td {
             background-color: lightgray;
         }
-        .default-light-yellow { background-color: lightyellow; }
-        .light-green { background-color: lightgreen; }
-        .light-red { background-color: lightcoral; }
-        .light-blue { background-color: lightblue; }
-        .light-orange { background-color: lightsalmon; }
-        .violet { background-color: violet; }
     </style>
 </head>
 <body>
@@ -58,7 +52,8 @@
 
         // Retrieve the CSV data from localStorage
         const csvData = JSON.parse(localStorage.getItem('csvData'));
-        const columnOrder = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '00'];
+        const columnOrder = ['18', '6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', 
+                                '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31'];
         const group1Columns = ['0', '9', '14', '28', '2'];
         const group2Columns = ['1', '13', '27', '10', '00'];
 
@@ -92,37 +87,54 @@
             ];
 
             // Process each row in csvData
-            csvData.slice(1).forEach(row => {
+            csvData.forEach(row => {
                 let group1Sum = 0;
                 let group2Sum = 0;
 
                 columnOrder.forEach((header, index) => {
                     const cellValue = row[index];
-                    if (!isNaN(cellValue)) {
+                    if (!isNaN(cellValue) && cellValue !== '') {
+                        const numValue = Number(cellValue);
                         if (group1Columns.includes(header)) {
-                            group1Sum += Number(cellValue);
+                            group1Sum += numValue;
                         }
                         if (group2Columns.includes(header)) {
-                            group2Sum += Number(cellValue);
+                            group2Sum += numValue;
                         }
-                        if ([5, 6, 7, 8, 9, 10, 11].includes(Number(cellValue))) {
-                            statsData.highHits[Number(cellValue)] += 1;
+                        if ([5, 6, 7, 8, 9, 10, 11].includes(numValue)) {
+                            statsData.highHits[numValue] += 1;
                         }
                     }
                 });
 
+                console.log(`Row data: ${JSON.stringify(row)}`);
+                console.log(`Group1Sum: ${group1Sum}, Group2Sum: ${group2Sum}`);
+
                 // Update rows with correct indices based on header
                 if ([5, 6, 7, 8, 9, 10, 11].includes(group1Sum)) {
-                    rows[0].data[header.indexOf(group1Sum) - 1] += 1;
+                    const group1Index = header.indexOf(group1Sum) - 1;
+                    console.log(`Updating Cluster 0 index: ${group1Index}`);
+                    if (group1Index >= 0) {
+                        rows[0].data[group1Index] += 1;
+                    }
                 }
                 if ([5, 6, 7, 8, 9, 10, 11].includes(group2Sum)) {
-                    rows[1].data[header.indexOf(group2Sum) - 1] += 1;
+                    const group2Index = header.indexOf(group2Sum) - 1;
+                    console.log(`Updating Cluster 00 index: ${group2Index}`);
+                    if (group2Index >= 0) {
+                        rows[1].data[group2Index] += 1;
+                    }
                 }
             });
 
+            console.log(`Rows after processing: ${JSON.stringify(rows)}`);
+
             // Assign the high hits correctly
             Object.keys(statsData.highHits).forEach(key => {
-                rows[3].data[header.indexOf(parseInt(key)) - 1] = statsData.highHits[key];
+                const highHitsIndex = header.indexOf(parseInt(key)) - 1;
+                if (highHitsIndex >= 0) {
+                    rows[3].data[highHitsIndex] = statsData.highHits[key];
+                }
             });
 
             // Create the rows for the stats table

@@ -311,7 +311,7 @@ function runSimulation() {
 function multiSpin() {
   let numRuns = parseInt(document.getElementById('x').value); // Get the number of runs
   let numSpins = parseInt(document.getElementById('numSpins').value);
-  let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
+  let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100; // Convert seconds to milliseconds
   let allTotals = []; // Store all totals data
         
   // Function to perform a single run
@@ -342,7 +342,7 @@ function multiSpin() {
         if (runIndex < numRuns - 1) {
               setTimeout(() => {
                 singleRun(runIndex + 1); // Start the next run after a delay
-              }, 1000); // Add a 1-second delay between runs
+              }, 100); // Add a 1-second delay between runs
             } else {
  
  

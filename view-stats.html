@@ -69,7 +69,7 @@
             const tbody = table.querySelector('tbody');
 
             // Create the header row
-            const header = [" ", 5, 6, 7, 8, 9, 10, 11];
+            const header = ["", "Cluster 0", "Cluster 00", "High Hits"];
             const trHeader = document.createElement('tr');
             header.forEach(text => {
                 const th = document.createElement('th');
@@ -77,14 +77,6 @@
                 trHeader.appendChild(th);
             });
             thead.appendChild(trHeader);
-
-            // Initialize the rows with correct length
-            const rows = [
-                { name: "Cluster 0", data: Array(7).fill(0) },
-                { name: "Cluster 00", data: Array(7).fill(0) },
-                { name: "", data: Array(7).fill('') },
-                { name: "High Hits", data: Array(7).fill(0) }
-            ];
 
             // Process each row in csvData
             csvData.forEach(row => {
@@ -110,46 +102,40 @@
                 console.log(`Row data: ${JSON.stringify(row)}`);
                 console.log(`Group1Sum: ${group1Sum}, Group2Sum: ${group2Sum}`);
 
-                // Update rows with correct indices based on header
                 if ([5, 6, 7, 8, 9, 10, 11].includes(group1Sum)) {
-                    const group1Index = header.indexOf(group1Sum) - 1;
-                    console.log(`Updating Cluster 0 index: ${group1Index}`);
-                    if (group1Index >= 0) {
-                        rows[0].data[group1Index] += 1;
-                    }
+                    statsData.group1[group1Sum] += 1;
                 }
                 if ([5, 6, 7, 8, 9, 10, 11].includes(group2Sum)) {
-                    const group2Index = header.indexOf(group2Sum) - 1;
-                    console.log(`Updating Cluster 00 index: ${group2Index}`);
-                    if (group2Index >= 0) {
-                        rows[1].data[group2Index] += 1;
-                    }
+                    statsData.group2[group2Sum] += 1;
                 }
             });
 
-            console.log(`Rows after processing: ${JSON.stringify(rows)}`);
+            console.log(`Stats data after processing: ${JSON.stringify(statsData)}`);
 
-            // Assign the high hits correctly
-            Object.keys(statsData.highHits).forEach(key => {
-                const highHitsIndex = header.indexOf(parseInt(key)) - 1;
-                if (highHitsIndex >= 0) {
-                    rows[3].data[highHitsIndex] = statsData.highHits[key];
-                }
-            });
-
-            // Create the rows for the stats table
-            rows.forEach(row => {
+            // Create rows for each "5" to "11"
+            for (let i = 5; i <= 11; i++) {
                 const tr = document.createElement('tr');
-                const tdName = document.createElement('td');
-                tdName.textContent = row.name;
-                tr.appendChild(tdName);
-                row.data.forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    tr.appendChild(td);
-                });
+                const tdValue = document.createElement('td');
+                tdValue.textContent = i;
+                tr.appendChild(tdValue);
+
+                // Cluster 0
+                const tdGroup1 = document.createElement('td');
+                tdGroup1.textContent = statsData.group1[i] || 0;
+                tr.appendChild(tdGroup1);
+
+                // Cluster 00
+                const tdGroup2 = document.createElement('td');
+                tdGroup2.textContent = statsData.group2[i] || 0;
+                tr.appendChild(tdGroup2);
+
+                // High Hits
+                const tdHighHits = document.createElement('td');
+                tdHighHits.textContent = statsData.highHits[i] || 0;
+                tr.appendChild(tdHighHits);
+
                 tbody.appendChild(tr);
-            });
+            }
         } else {
             alert('No data found. Please process a CSV file first.');
         }

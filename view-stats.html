@@ -23,7 +23,7 @@
             font-family: Arial, sans-serif;
         }
         th, td {
-            border: 1px solid white;
+            border: 1px solid black;
             padding: 8px;
             text-align: center;
             width: 60px;
@@ -32,8 +32,28 @@
         th {
             color: white;
         }
+        /* Updated row content background color */
         td {
-            background-color: lightgray;
+            background-color: lightyellow;
+        }
+        /* Custom styles for specific headers */
+        th:nth-child(2) {
+            background-color: green; /* Cluster 0 */
+        }
+        th:nth-child(3) {
+            background-color: green; /* Cluster 00 */
+        }
+        th:nth-child(4) {
+            background-color: red; /* High Hits */
+        }
+        /* Blue background for the first column with white text */
+        td:first-child {
+            background-color: blue;
+            color: white;
+        }
+        /* Gray background for the first column header */
+        th:first-child {
+            background-color: gray;
         }
     </style>
 </head>

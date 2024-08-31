@@ -377,7 +377,7 @@ function computeAndUpdateTable() {
 
         // Function to add additional random words with a delay
         function addRandomWords() {
-          if (wordCount < 8) {
+          if (wordCount < 12) {
             getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
               document.getElementById('wheel2Result').innerText += `, ${trimmedLine}`;
               wordCount++;

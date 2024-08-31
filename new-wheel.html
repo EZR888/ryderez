@@ -456,7 +456,7 @@ function populateTotalsTable() {
                      (i % 2 === 0 ? 'red' : 'black');
     // Add blinking effect to the updated cell
     let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
-    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i]}</td>`;
+    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
   }
 
   tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
@@ -476,7 +476,7 @@ function populateTotalsTable() {
                      (i % 2 === 0 ? 'red' : 'black');
     // Add blinking effect to the updated cell
     let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
-    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i]}</td>`;
+    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
   }
 
   tableHTML += '</tr></tbody></table></div>';

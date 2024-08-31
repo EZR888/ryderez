@@ -126,7 +126,7 @@
     <div class="container">
         <h1>Spins Data</h1>
         <div class="file-input-container">
-        <h2>Select CSV file</h2>
+            <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
             <button id="saveButton">Save Table</button>
             <button id="showStatsButton">View Stats</button>
@@ -201,7 +201,13 @@
 
                             headerIndices.forEach(index => {
                                 const td = document.createElement('td');
-                                const cellValue = index >= 0 ? row[index] : '';
+                                let cellValue = index >= 0 ? row[index] : '';
+                                
+                                // Change '0' to an empty space
+                                if (cellValue === '0') {
+                                    cellValue = '';
+                                }
+                                
                                 td.textContent = cellValue;
 
                                 if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
@@ -210,19 +216,19 @@
 
                                 if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                                     group1Cells.push(td);
-                                    if (!isNaN(cellValue)) {
+                                    if (!isNaN(cellValue) && cellValue !== '') {
                                         group1Sum += Number(cellValue);
                                     }
                                 }
 
                                 if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                                     group2Cells.push(td);
-                                    if (!isNaN(cellValue)) {
+                                    if (!isNaN(cellValue) && cellValue !== '') {
                                         group2Sum += Number(cellValue);
                                     }
                                 }
 
-                                if (!isNaN(cellValue) && Number(cellValue) >= 5) {
+                                if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 5) {
                                     td.classList.remove('default-light-yellow', 'light-red');
                                     td.classList.add('light-green');
                                 }
@@ -284,32 +290,36 @@
 
             processFile(files.shift());
         });
-        
-               document.getElementById('showStatsButton').addEventListener('click', function() {
+
+        document.getElementById('saveButton').addEventListener('click', function() {
+            const table = document.getElementById('csvTable');
+            let csvContent = '';
+            const rows = table.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('th, td');
+                let rowData = [];
+                cols.forEach(col => rowData.push(col.textContent));
+                csvContent += rowData.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'table.csv';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+            document.getElementById('showStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
             window.open('view-stats.html', '_blank');
         });
 
-        document.getElementById('saveButton').addEventListener('click', function() {
-            const csvData = [];
-            const headers = Array.from(document.querySelectorAll('#csvTable thead th')).map(th => th.textContent);
-            csvData.push(headers.join(','));
-
-            document.querySelectorAll('#csvTable tbody tr').forEach(row => {
-                const rowData = Array.from(row.querySelectorAll('td')).map(td => td.textContent);
-                csvData.push(rowData.join(','));
-            });
-
-            const csvBlob = new Blob([csvData.join('\n')], { type: 'text/csv' });
-            const csvUrl = URL.createObjectURL(csvBlob);
-            const link = document.createElement('a');
-            link.href = csvUrl;
-            link.download = 'table_data.csv';
-            link.click();
-        });
-        
     </script>
 </body>
 </html>

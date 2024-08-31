@@ -14,6 +14,17 @@
             padding: 0;
             font-size: 16px;
         }
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .container h1 {
+            margin: 0;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -27,7 +38,7 @@
             padding: 8px;
             text-align: center;
             width: 60px;
-            font-weight: bold; /* Make text bold */
+            font-weight: bold;
         }
         th {
             color: white;
@@ -77,20 +88,57 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            border: none;
+            color: white;
+        }
+        #saveButton {
+            background-color: blue;
+        }
+        #showStatsButton {
+            background-color: orange;
+        }
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .file-input-container > * {
+            margin-right: 20px;
+        }
+        .file-input-container #rowCount {
+            margin-left: 20px;
+        }
+        .row-count {
+            color: yellow;
+            font-size: 24px;
+            margin: 0;
+        }
+        h1 {
+           font-size: 54px;
+        }
+        h2 {
+           font-size: 20px;
+           color: lightgray;
         }
     </style>
 </head>
 <body>
-    <h1>Select CSV File</h1>
-    <input type="file" id="fileInput" accept=".csv" multiple>
-    <button id="saveButton">Save Table</button>
-    <button id="showStatsButton">Show Stats</button> <!-- Added Show Stats Button -->
+    <div class="container">
+        <h1>Spins Data</h1>
+        <div class="file-input-container">
+        <h2>Select CSV file</h2>
+            <input type="file" id="fileInput" accept=".csv" multiple>
+            <button id="saveButton">Save Table</button>
+            <button id="showStatsButton">View Stats</button>
+            <div id="rowCount" class="row-count">Runs: 0</div>
+        </div>
+    </div>
+
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
     </table>
     <script>
-        // Function to clear the table
         function clearTable() {
             console.log('Clearing table'); // Debugging statement
             document.querySelector('#csvTable thead').innerHTML = '';
@@ -98,7 +146,6 @@
         }
 
         document.getElementById('fileInput').addEventListener('change', function(event) {
-            // Clear the table when a new file is selected
             clearTable();
             
             const files = Array.from(event.target.files);
@@ -138,6 +185,9 @@
                             csvData.push(lines[i].map(cell => cell.trim()));  // Store each row in csvData array
                         }
                     }
+
+                    // Update row count display
+                    document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`;
 
                     if (files.length > 0) {
                         processFile(files.shift());
@@ -234,8 +284,8 @@
 
             processFile(files.shift());
         });
-
-        document.getElementById('showStatsButton').addEventListener('click', function() {
+        
+               document.getElementById('showStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
@@ -259,6 +309,7 @@
             link.download = 'table_data.csv';
             link.click();
         });
+        
     </script>
 </body>
 </html>

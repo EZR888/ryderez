@@ -14,6 +14,18 @@
             padding: 0;
             font-size: 16px;
         }
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+        .runs-text {
+            color: yellow;
+            font-size: 24px; /* 50% larger than the default 16px font size */
+        }
         table {
             width: 50%;
             border-collapse: collapse;
@@ -32,34 +44,32 @@
         th {
             color: white;
         }
-        /* Updated row content background color */
         td {
             background-color: lightyellow;
         }
-        /* Custom styles for specific headers */
         th:nth-child(2) {
-            background-color: green; /* Cluster 0 */
+            background-color: green;
         }
         th:nth-child(3) {
-            background-color: green; /* Cluster 00 */
+            background-color: green;
         }
         th:nth-child(4) {
-            background-color: red; /* High Hits */
+            background-color: red;
         }
-        /* Blue background for the first column with white text */
         td:first-child {
             background-color: blue;
             color: white;
         }
-        /* Gray background for the first column header */
         th:first-child {
             background-color: gray;
         }
     </style>
 </head>
 <body>
-   <div>
-    <h1><center>Stats from CSV Data</center></h1>
+    <br><br><br>
+    <div class="header-container">
+        <h1 class="header-text">Stats from CSV Data</h1>
+        <div class="runs-text" id="runsCount"></div>
     </div>
     <table id="statsTable">
         <thead></thead>
@@ -67,12 +77,11 @@
     </table>
     <script>
         if (localStorage.getItem('clearTable') === 'true') {
-            localStorage.removeItem('clearTable');  // Remove the flag
+            localStorage.removeItem('clearTable');
             document.querySelector('#statsTable thead').innerHTML = '';
             document.querySelector('#statsTable tbody').innerHTML = '';
         }
 
-        // Retrieve the CSV data from localStorage
         const csvData = JSON.parse(localStorage.getItem('csvData'));
         const columnOrder = ['18', '6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', 
                                 '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31'];
@@ -90,7 +99,9 @@
             const thead = table.querySelector('thead');
             const tbody = table.querySelector('tbody');
 
-            // Create the header row
+            // Update Runs count
+            document.getElementById('runsCount').textContent = `Runs: ${csvData.length}`;
+
             const header = ["Totals", "Cluster 0", "Cluster 00", "High Hits"];
             const trHeader = document.createElement('tr');
             header.forEach(text => {
@@ -100,7 +111,6 @@
             });
             thead.appendChild(trHeader);
 
-            // Process each row in csvData
             csvData.forEach(row => {
                 let group1Sum = 0;
                 let group2Sum = 0;
@@ -134,24 +144,20 @@
 
             console.log(`Stats data after processing: ${JSON.stringify(statsData)}`);
 
-            // Create rows for each "5" to "11"
             for (let i = 5; i <= 11; i++) {
                 const tr = document.createElement('tr');
                 const tdValue = document.createElement('td');
                 tdValue.textContent = i;
                 tr.appendChild(tdValue);
 
-                // Cluster 0
                 const tdGroup1 = document.createElement('td');
                 tdGroup1.textContent = statsData.group1[i] || 0;
                 tr.appendChild(tdGroup1);
 
-                // Cluster 00
                 const tdGroup2 = document.createElement('td');
                 tdGroup2.textContent = statsData.group2[i] || 0;
                 tr.appendChild(tdGroup2);
 
-                // High Hits
                 const tdHighHits = document.createElement('td');
                 tdHighHits.textContent = statsData.highHits[i] || 0;
                 tr.appendChild(tdHighHits);

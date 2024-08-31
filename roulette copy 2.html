@@ -106,7 +106,11 @@
       color: lightgreen;
       text-align: center;
       font-size: 64px;
-    }
+    }  
+    #viewDataButton {
+      background-color: #FF9800; /* Orange */
+      color: white;
+    }  
     /* Media Queries for responsiveness */
     @media (max-width: 768px) {
       .container {
@@ -193,14 +197,15 @@
       <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
       <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
     </div>
-    <div>
-      <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button>
-      <span id="spinNumDisplay" style="color: green; font-size: 24px; margin-left: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spin Num: 0</span><br><br>
-      <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-      <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
-      <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-      <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
-    </div>
+ <div>
+  <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
+  <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+  <input type="number" id="numSpins" name="numSpins" value="1" style="width: 10ch"><br>
+  <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+  <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
+  <span id="runNumDisplay" style="color: yellow; font-size: 24px; margin-left: 5ch;">Run Num: 0</span>
+  <span id="spinNumDisplay" style="color: yellow; font-size: 24px; margin-left: 2ch;">Spin Num: 0</span><br><br>
+</div>
     
     <div class="table-container">
       <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
@@ -208,7 +213,7 @@
     </div>
   </div>
   <div>
-    <button class="button button-save" id="saveDataButton">Save Data</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-single" id="singleSpinButton">Single Spin</button>
+    <button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>
   </div>
   <br><br>
   
@@ -234,106 +239,126 @@
       return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
     }
 
-    // Function to export Totals array data to CSV format
-    function exportTotalsToCSV(array, filename) {
-      let csvContent = "data:text/csv;charset=utf-8,";
-      
-      // Add headers to CSV
-      csvContent += ","; // Empty cell to align with headers
+// Function to export Totals array data to CSV format
+function exportTotalsToCSV(array, filename) {
+    let csvContent = "data:text/csv;charset=utf-8,";
 
-      // Loop through Totals array to append values
-      for (let j = 0; j < array.length; j++) {
-        csvContent += array[j] + ",";
-      }
-      csvContent += "\n";
+    // Add headers to CSV
+    let headers = [...Array(38).keys()].map(i => i === 37 ? '00' : i.toString());
+    csvContent += headers.join(",") + "\n";
 
-      // Encode and create a download link
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
-      document.body.appendChild(link); // Required for Firefox
-      link.click(); // Trigger the download
-    }
+        // Loop through Totals array to append values
+        array.forEach(row => {
+            csvContent += row.join(",") + "\n";
+        });
+
+    // Encode and create a download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
+    document.body.appendChild(link); // Required for Firefox
+    link.click(); // Trigger the download
+}
 
     // Event listener for the Save Data button
-    document.getElementById("saveDataButton").addEventListener("click", function() {
-      exportTotalsToCSV(Totals, 'totals_data.csv');
-    });
+    // document.getElementById("Button").addEventListener("click", function() {
+    //        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
+    // });
+    
+
     
     // Event listener for the Single Spin button
     document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.location.href = 'new-wheel.html';
       });
+      
+            // New event listener for the View Data button
+      document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
 
-    // Function to run the simulation
-    function runSimulation() {
-      clearArrays(); // Clear arrays before simulation
-      document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
-
-      for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
-        for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
-          for (let n = 1; n <= 38; n++) {
-            let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-            Totals[c1] += 1; // Increment corresponding index in Totals array
-          }
-        }
-      }
-
-      populateTotalsTable(); // Populate Totals table
-    }
-
-function multiSpin() {
-    let numRuns = parseInt(document.getElementById('x').value); // Get the number of runs
-    let numSpins = parseInt(document.getElementById('numSpins').value);
-    let spinDelay = parseInt(document.getElementById('spinDelay').value) * 1000; // Convert seconds to milliseconds
-
-    // Function to perform a single run
-    function singleRun(runIndex) {
-        clearArrays(); // Clear arrays before each run
-        document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
-        let spinCount = 0;
-
-        function spin() {
-            if (spinCount < numSpins) {
-                setTimeout(function () {
-                    let c1 = Math.floor(Math.random() * 38); // Generate random number 0-37
-                    Totals[c1] += 1; // Increment corresponding index in Totals array
-                    document.getElementById('spinNumDisplay').textContent = "Spin Num: " + (spinCount + 1);
-                    let isLastSpin = (spinCount === numSpins - 1);
-                    populateTotalsTable(c1, isLastSpin); // Populate Totals table after each spin and apply blinking effect
-                    spinCount++;
-                    setTimeout(spin, spinDelay); // Delay before the next spin
-                }, 0); // Start the first spin immediately
-            } else {
-                // After all spins are done, export the results and start the next run if any
-                exportTotalsToCSV(Totals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
-                if (runIndex < numRuns - 1) {
-                    setTimeout(() => {
-                        singleRun(runIndex + 1); // Start the next run after a delay
-                    }, 1000); // Add a 1-second delay between runs
-                } else {
-                    document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
-                    endMultiSpin(); // End the multi-spin session
-                }
-            }
-        }
-
-        spin(); // Start the first spin
-    }
-
-    singleRun(0); // Start the first run
+// Function to generate a random integer between 0 (inclusive) and max (exclusive)
+function getRandomInt(max) {
+  const array = new Uint32Array(1);
+  window.crypto.getRandomValues(array);
+  return array[0] % max;
 }
 
-    
-    function endMultiSpin() {
-    // Assuming the Spin Num text is in a div with id "spinNum"
-    const spinNumElement = document.getElementById('spinNum');
+function runSimulation() {
+  clearArrays(); // Clear arrays before simulation
+  document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
 
-    if (spinNumElement) {
-        spinNumElement.style.display = 'none'; // Hides the element
-        // Or to clear the text: spinNumElement.textContent = '';
+  let allTotals = []; // Initialize array to store all Totals data
+
+  for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
+    for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
+      for (let n = 1; n <= 38; n++) {
+        let c1 = getRandomInt(38); // Use secure random number generator
+        Totals[c1] += 1; // Increment corresponding index in Totals array
+      }
     }
+    // After each run, store a copy of the Totals array
+    allTotals.push([...Totals]);
+  }
+
+  populateTotalsTable(); // Populate Totals table
+
+  // Export to CSV after all runs
+  exportTotalsToCSV(allTotals, `totals_data_simulation.csv`);
+}
+
+
+function multiSpin() {
+  let numRuns = parseInt(document.getElementById('x').value); // Get the number of runs
+  let numSpins = parseInt(document.getElementById('numSpins').value);
+  let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100; // Convert seconds to milliseconds
+  let allTotals = []; // Store all totals data
+        
+  // Function to perform a single run
+  function singleRun(runIndex) {
+    clearArrays(); // Clear arrays before each run
+    document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+    let spinCount = 0;
+
+    function spin() {
+      if (spinCount < numSpins) {
+        setTimeout(function () {
+          let c1 = getRandomInt(38); // Use secure random number generator
+          Totals[c1] += 1; // Increment corresponding index in Totals array
+          document.getElementById('spinNumDisplay').textContent = "Spin Num: " + (spinCount + 1);
+          document.getElementById('runNumDisplay').textContent = "Run Num: " + (runIndex + 1); // Update Run Num
+          let isLastSpin = (spinCount === numSpins - 1);
+          populateTotalsTable(c1, isLastSpin); // Populate Totals table after each spin and apply blinking effect
+          spinCount++;
+          setTimeout(spin, spinDelay); // Delay before the next spin
+        }, 0); // Start the first spin immediately
+      } else {
+      
+        // After all spins are done, save the Totals to allTotals array
+        allTotals.push([...Totals]); // Push a copy of the Totals array
+        
+        // After all spins are done, export the results and start the next run if any
+ 
+        if (runIndex < numRuns - 1) {
+              setTimeout(() => {
+                singleRun(runIndex + 1); // Start the next run after a delay
+              }, 100); // Add a 1-second delay between runs
+            } else {
+ 
+ 
+        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
+        
+        document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
+          endMultiSpin(); // End the multi-spin session
+        }
+      }
+    }
+
+    spin(); // Start the first spin
+  }
+
+  singleRun(0); // Start the first run
 }
 
     // Function to populate Totals table
@@ -387,7 +412,7 @@ function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
       // Replace 0 with empty string
       cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
       const isBlinking = (number === blinkCellNumber);
-      const blinkClass = isBlinking ? (isLastSpin ? 'yellow-blinking' : 'blinking') : '';
+      const blinkClass = isBlinking ? (isLastSpin ? 'blinking' : 'yellow-blinking') : '';
       tableOutput += `<td class='numeric ${blinkClass}'>${cellValue}</td>`; // Data cells with light gray background color
     });
 
@@ -408,6 +433,18 @@ function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
     window.onload = function() {
       populateTotalsTable();
     };
+    
+        
+    function endMultiSpin() {
+    // Assuming the Spin Num text is in a div with id "spinNum"
+    const spinNumElement = document.getElementById('spinNum');
+
+    if (spinNumElement) {
+        spinNumElement.style.display = 'none'; // Hides the element
+        // Or to clear the text: spinNumElement.textContent = '';
+    }
+}
+
   </script>
 </body>
 </html>

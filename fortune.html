@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -395,18 +396,32 @@ function computeAndUpdateTable() {
     
 }
 
-        function addRandomNumbersToWheel1Result() {
-    const randomNumbers = [];
-    for (let i = 0; i < 5; i++) {
-        randomNumbers.push(Math.floor(Math.random() * 47) + 1);
+function addRandomNumbersToWheel1Result() {
+    const uniqueNumbers = new Set();
+
+    // Generate unique random numbers between 1 and 47
+    while (uniqueNumbers.size < 5) {
+        uniqueNumbers.add(Math.floor(Math.random() * 47) + 1);
     }
-    randomNumbers.push(Math.floor(Math.random() * 27) + 1);
+
+    // Generate a unique random number between 1 and 27
+    let additionalNumber;
+    do {
+        additionalNumber = Math.floor(Math.random() * 27) + 1;
+    } while (uniqueNumbers.has(additionalNumber));
+
+    // Add the unique number to the set
+    uniqueNumbers.add(additionalNumber);
+
+    // Convert Set to Array and prepare the content
+    const randomNumbers = Array.from(uniqueNumbers);
 
     // Get the existing content and append the new numbers
     const existingContent = document.getElementById('wheel1Result').innerText;
     const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  M${randomNumbers[5]}`;
     document.getElementById('wheel1Result').innerText = newContent;
 }
+
 
 
 

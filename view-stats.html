@@ -69,7 +69,7 @@
     </style>
 </head>
 <body>
-    <br><br><br>
+    <br>
     <div class="header-container">
         <h1 class="header-text">Stats from CSV Data</h1>
         <div class="runs-text" id="runsCount"></div>
@@ -92,9 +92,9 @@
         const group2Columns = ['1', '13', '27', '10', '00'];
 
         let statsData = {
-            highHits: { 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0 },
-            group1: { 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0 },
-            group2: { 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0 }
+            highHits: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
+            group1: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
+            group2: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 }
         };
 
         if (csvData) {
@@ -128,7 +128,7 @@
                         if (group2Columns.includes(header)) {
                             group2Sum += numValue;
                         }
-                        if ([5, 6, 7, 8, 9, 10, 11].includes(numValue)) {
+                        if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(numValue)) {
                             statsData.highHits[numValue] += 1;
                         }
                     }
@@ -137,17 +137,17 @@
                 console.log(`Row data: ${JSON.stringify(row)}`);
                 console.log(`Group1Sum: ${group1Sum}, Group2Sum: ${group2Sum}`);
 
-                if ([5, 6, 7, 8, 9, 10, 11].includes(group1Sum)) {
+                if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(group1Sum)) {
                     statsData.group1[group1Sum] += 1;
                 }
-                if ([5, 6, 7, 8, 9, 10, 11].includes(group2Sum)) {
+                if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(group2Sum)) {
                     statsData.group2[group2Sum] += 1;
                 }
             });
 
             console.log(`Stats data after processing: ${JSON.stringify(statsData)}`);
 
-            for (let i = 5; i <= 11; i++) {
+            for (let i = 1; i <= 17; i++) {
                 const tr = document.createElement('tr');
                 const tdValue = document.createElement('td');
                 tdValue.textContent = i;

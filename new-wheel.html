@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -68,6 +69,9 @@
       background-color: #008CBA; /* Blue */
       color: white;
     }
+    .highlight-yellow {
+  		background-color: lightyellow !important;
+	}
 
     table {
       border-collapse: collapse;
@@ -152,6 +156,23 @@
       width: auto;
       max-width: 100%;
     }
+
+
+/* CSS for centering content and adding padding to cells */
+#TotalsTableContainer table td {
+  text-align: center;  /* Center the text horizontally */
+  vertical-align: middle;  /* Center the text vertically */
+  padding: 10px;  /* Add padding to ensure space within cells */
+  min-width: 40px;  /* Ensure minimum width to prevent flattening */
+  height: 30px;  /* Set a height to ensure all cells are the same size */
+}
+
+#TotalsTableContainer table th {
+  text-align: center;  /* Center the header text */
+  padding: 10px;  /* Add padding to ensure space in header cells */
+  min-width: 40px;  /* Ensure headers have consistent width with cells */
+}
+
 
     .blink {
       animation: blink 1s step-start infinite;
@@ -454,9 +475,12 @@ function populateTotalsTable() {
   for (let i = 0; i < numSlots / 2; i++) {
     let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                      (i % 2 === 0 ? 'red' : 'black');
+    // Check if the number is in the list of 10 specific numbers
+    let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+    let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
     // Add blinking effect to the updated cell
     let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
-    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    tableHTML += `<td class="${colorClass} ${backgroundColorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
   }
 
   tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
@@ -474,9 +498,12 @@ function populateTotalsTable() {
   for (let i = numSlots / 2; i < numSlots; i++) {
     let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                      (i % 2 === 0 ? 'red' : 'black');
+    // Check if the number is in the list of 10 specific numbers
+    let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+    let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
     // Add blinking effect to the updated cell
     let blinkClass = (i === finalIndex) ? 'blink-yellow' : '';
-    tableHTML += `<td class="${colorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    tableHTML += `<td class="${colorClass} ${backgroundColorClass} ${blinkClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
   }
 
   tableHTML += '</tr></tbody></table></div>';
@@ -493,6 +520,7 @@ function populateTotalsTable() {
   // Update the last updated index
   lastUpdatedIndex = finalIndex;
 }
+
 
     // Function to generate a formatted timestamp
     function getFormattedTimestamp() {

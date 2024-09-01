@@ -184,6 +184,9 @@
     .button-single:hover {
       background-color: darkblue;
     }
+    .light-yellow {
+      background-color: lightyellow !important;
+    }
   </style>
 </head>
 <body>
@@ -366,73 +369,73 @@ function multiSpin() {
       displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin);
     }
 
-// Function to display Totals array as a table with red/green formatting
-function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
-  let output = "";
+    // Function to display Totals array as a table with red/green formatting
+    function displayTotalsTableWithColors(Totals, blinkCellNumber, isLastSpin) {
+      let output = "";
 
-  // Define the two header orders
-  const headerOrder1 = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32];
-  const headerOrder2 = [17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+      // Define the two header orders
+      const headerOrder1 = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32];
+      const headerOrder2 = [17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
 
-  function generateTable(headerOrder, isSecondTable = false) {
-    let tableOutput = "<table>";
+      function generateTable(headerOrder, isSecondTable = false) {
+        let tableOutput = "<table>";
 
-    // Header row
-    tableOutput += "<tr>";
+        // Header row
+        tableOutput += "<tr>";
 
-    // Create the header cells
-    headerOrder.forEach((number, index) => {
-      const headerLabel = number.toString();
-      let colorClass;
-      if (headerLabel === '0' || headerLabel === '00') {
-        colorClass = 'green-header';
-      } else if (isSecondTable) { // For headerOrder2
-        colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with black and alternate
-      } else { // For headerOrder1
-        colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with red and alternate
+        // Create the header cells
+        headerOrder.forEach((number, index) => {
+          const headerLabel = number.toString();
+          let colorClass;
+          if (headerLabel === '0' || headerLabel === '00') {
+            colorClass = 'green-header';
+          } else if (isSecondTable) { // For headerOrder2
+            colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with black and alternate
+          } else { // For headerOrder1
+            colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with red and alternate
+          }
+          tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
+        });
+
+        // Close the header row
+        tableOutput += "</tr>";
+
+        // Data row with values
+        tableOutput += "<tr>";
+
+        // Display Totals in the order of headerOrder array
+        headerOrder.forEach((number) => {
+          let cellValue;
+          if (number === '00') { // Handle '00' as alias for 37
+            cellValue = Totals[37];
+          } else {
+            cellValue = Totals[number];
+          }
+          // Replace 0 with empty string
+          cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
+          const isBlinking = (number === blinkCellNumber);
+          const blinkClass = isBlinking ? (isLastSpin ? 'blinking' : 'yellow-blinking') : '';
+          const lightYellowClass = (number === 0 || number === 9 || number === 14 || number === 28 || number === 2 || number === 1 || number === 13 || number === 27 || number === 10 || number === '00') ? 'light-yellow' : ''; // Add the light-yellow class to the specified cells
+          tableOutput += `<td class='numeric ${blinkClass} ${lightYellowClass}'>${cellValue}</td>`; // Data cells with light gray background color
+        });
+
+        tableOutput += "</tr>";
+        tableOutput += "</table>";
+
+        return tableOutput;
       }
-      tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
-    });
 
-    // Close the header row
-    tableOutput += "</tr>";
+      // Generate both tables
+      output += generateTable(headerOrder1);
+      output += "<br>"; // Space between the two tables
+      output += generateTable(headerOrder2, true); // Pass true for the second table
 
-    // Data row with values
-    tableOutput += "<tr>";
-
-    // Display Totals in the order of headerOrder array
-    headerOrder.forEach((number) => {
-      let cellValue;
-      if (number === '00') { // Handle '00' as alias for 37
-        cellValue = Totals[37];
-      } else {
-        cellValue = Totals[number];
-      }
-      // Replace 0 with empty string
-      cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
-      const isBlinking = (number === blinkCellNumber);
-      const blinkClass = isBlinking ? (isLastSpin ? 'blinking' : 'yellow-blinking') : '';
-      tableOutput += `<td class='numeric ${blinkClass}'>${cellValue}</td>`; // Data cells with light gray background color
-    });
-
-    tableOutput += "</tr>";
-    tableOutput += "</table>";
-
-    return tableOutput;
-  }
-
-  // Generate both tables
-  output += generateTable(headerOrder1);
-  output += "<br>"; // Space between the two tables
-  output += generateTable(headerOrder2, true); // Pass true for the second table
-
-  document.getElementById('TotalsTableContainer').innerHTML = output; // Update TotalsTable content
-}
+      document.getElementById('TotalsTableContainer').innerHTML = output; // Update TotalsTable content
+    }
     // Call the populateTotalsTable function when the page loads
     window.onload = function() {
       populateTotalsTable();
     };
-    
         
     function endMultiSpin() {
     // Assuming the Spin Num text is in a div with id "spinNum"

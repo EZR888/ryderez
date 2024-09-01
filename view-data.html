@@ -71,6 +71,18 @@
         .violet {
             background-color: violet;
         }
+        .DarkKhaki {
+            background-color: DarkKhaki;
+        }
+        .DarkSeaGreen {
+            background-color: DarkSeaGreen;
+        }
+        .LightSteelBlue {
+            background-color: LightSteelBlue;
+        }
+        .Gold {
+            background-color: Gold;
+        }   
         tr:nth-child(1) th:nth-child(even) {
             background-color: red;
         }
@@ -256,6 +268,26 @@
                                         td.classList.remove('default-light-yellow');
                                         td.classList.add('violet');
                                     }
+                                } else if (group1Sum === 12) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('DarkKhaki');
+                                    }
+                                } else if (group1Sum === 13) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('DarkSeaGreen');
+                                    }
+                                } else if (group1Sum === 14) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('LightSteelBlue');
+                                    }
+                                } else if (group1Sum === 15) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('Gold');
+                                    }
                                 }
                             });
 
@@ -277,6 +309,26 @@
                                     if (!td.classList.contains('light-green')) {
                                         td.classList.remove('default-light-yellow');
                                         td.classList.add('violet');
+                                    }
+                                } else if (group2Sum === 12) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('DarkKhaki');
+                                    }
+                                } else if (group2Sum === 13) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('DarkSeaGreen');
+                                    }
+                                } else if (group2Sum === 14) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('LightSteelBlue');
+                                    }
+                                } else if (group2Sum === 15) {
+                                    if (!td.classList.contains('light-green')) {
+                                        td.classList.remove('default-light-yellow');
+                                        td.classList.add('Gold');
                                     }
                                 }
                             });

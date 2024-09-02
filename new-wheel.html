@@ -536,7 +536,6 @@ function populateTotalsTable() {
       return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
     }
 
-// Export Totals to CSV
 function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
   const formattedTimestamp = getFormattedTimestamp();
   const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
@@ -553,11 +552,12 @@ function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
   let csvContent = "data:text/csv;charset=utf-8,";
 
   // Add headers with '37' instead of '00'
-  csvContent += orderedSlotNumbers.map(number => number === 37 ? '00' : number).join(",") + "\n";
+  csvContent += orderedSlotNumbers.join(",") + "\n";
 
   // Add totals row
   csvContent += orderedTotals.join(",") + "\n";
 
+  // Create a link to download the CSV file
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -566,7 +566,6 @@ function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
   link.click();
   document.body.removeChild(link);
 }
-
 
 
     function clearAndResetTotals() {

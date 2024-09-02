@@ -285,7 +285,7 @@
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
-    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31];
+    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
     let slotAngle;
     let wheelSound;
     let soundLoaded = false;
@@ -392,7 +392,7 @@
         let angleStart = i * slotAngle * Math.PI / 180;
         let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
 
-        if (slotNumbers[i] === 0 || slotNumbers[i] === 37) {
+        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
           fill(0, 128, 0);
         } else {
           fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
@@ -495,7 +495,7 @@ function populateTotalsTable() {
     for (let i = numSlots / 2; i < numSlots; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
                        (i % 2 === 0 ? 'red' : 'black');
-      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, 37, 27, 10].includes(slotNumbers[i]);
+      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
       let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
       tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
     }
@@ -543,7 +543,7 @@ function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
   const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
 
   // Define the new order of slot numbers
-  const orderedSlotNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37];
+  const orderedSlotNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, '00'];
 
   // Reorder totals according to the new slot number order
   const orderedTotals = orderedSlotNumbers.map(number => {

@@ -377,50 +377,49 @@ function multiSpin() {
       const headerOrder1 = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17];
       const headerOrder2 = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
 
-function generateTable(headerOrder, isSecondTable = false) {
-  let tableOutput = "<table>";
+      function generateTable(headerOrder, isSecondTable = false) {
+        let tableOutput = "<table>";
 
-  // Header row
-  tableOutput += "<tr>";
+        // Header row
+        tableOutput += "<tr>";
 
-  // Create the header cells
-  headerOrder.forEach((number, index) => {
-    // Modify headerLabel to display '00' instead of '37'
-    const headerLabel = (number === 37) ? '00' : number.toString();
-    let colorClass;
-    if (headerLabel === '0' || headerLabel === '00') { // Check for '00' here
-      colorClass = 'green-header';
-    } else if (isSecondTable) { // For headerOrder2
-      colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with black and alternate
-    } else { // For headerOrder1
-      colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with red and alternate
-    }
-    tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
-  });
+        // Create the header cells
+        headerOrder.forEach((number, index) => {
+          const headerLabel = number.toString();
+          let colorClass;
+          if (headerLabel === '0' || headerLabel === '37') {
+            colorClass = 'green-header';
+          } else if (isSecondTable) { // For headerOrder2
+            colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with black and alternate
+          } else { // For headerOrder1
+            colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with red and alternate
+          }
+          tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
+        });
 
-  // Close the header row
-  tableOutput += "</tr>";
+        // Close the header row
+        tableOutput += "</tr>";
 
-  // Data row with values
-  tableOutput += "<tr>";
+        // Data row with values
+        tableOutput += "<tr>";
 
-  // Display Totals in the order of headerOrder array
-  headerOrder.forEach((number) => {
-    let cellValue;
-    cellValue = Totals[number];
-    // Replace 0 with empty string
-    cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
-    const isBlinking = (number === blinkCellNumber);
-    const blinkClass = isBlinking ? (isLastSpin ? 'blinking' : 'yellow-blinking') : '';
-    const lightYellowClass = (number === 0 || number === 9 || number === 14 || number === 28 || number === 2 || number === 1 || number === 13 || number === 27 || number === 10 || number === 37) ? 'light-yellow' : ''; // Add the light-yellow class to the specified cells
-    tableOutput += `<td class='numeric ${blinkClass} ${lightYellowClass}'>${cellValue}</td>`; // Data cells with light gray background color
-  });
+        // Display Totals in the order of headerOrder array
+        headerOrder.forEach((number) => {
+          let cellValue;
+          cellValue = Totals[number];
+          // Replace 0 with empty string
+          cellValue = (cellValue === 0) ? '&nbsp;' : cellValue; // Use non-breaking space for consistent row height
+          const isBlinking = (number === blinkCellNumber);
+          const blinkClass = isBlinking ? (isLastSpin ? 'blinking' : 'yellow-blinking') : '';
+          const lightYellowClass = (number === 0 || number === 9 || number === 14 || number === 28 || number === 2 || number === 1 || number === 13 || number === 27 || number === 10 || number === 37) ? 'light-yellow' : ''; // Add the light-yellow class to the specified cells
+          tableOutput += `<td class='numeric ${blinkClass} ${lightYellowClass}'>${cellValue}</td>`; // Data cells with light gray background color
+        });
 
-  tableOutput += "</tr>";
-  tableOutput += "</table>";
+        tableOutput += "</tr>";
+        tableOutput += "</table>";
 
-  return tableOutput;
-}
+        return tableOutput;
+      }
 
       // Generate both tables
       output += generateTable(headerOrder1);

@@ -231,9 +231,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
                     const th = document.createElement('th');
                     // Check if the header value is '37' and replace it with '00'
                     let headerValue = index >= 0 ? headerRow[index] : '';
-                    if (headerValue === '37') {
-                        headerValue = '00';
-                    }
+
                     th.textContent = headerValue;
                     if (th.textContent === '0' || th.textContent === '37') {
                         th.style.backgroundColor = 'green';

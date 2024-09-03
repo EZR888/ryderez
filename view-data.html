@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,6 +132,12 @@
         tr:nth-child(1) th:nth-child(odd) {
             background-color: black;
         }
+        th[data-col="0"], th[data-col="00"] {
+            background-color: green;
+        }
+        .red-text {
+            color: red;
+        }
         button {
             margin: 20px;
             padding: 10px 20px;
@@ -139,8 +146,11 @@
             border: none;
             color: white;
         }
-        #showStatsButton {
+        #saveButton {
             background-color: blue;
+        }
+        #showStatsButton {
+            background-color: purple;
         }
         .file-input-container {
             display: flex;
@@ -183,6 +193,7 @@
         <div class="file-input-container">
             <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
+            <button id="saveButton">Save Table</button>
             <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div>
@@ -203,9 +214,9 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     clearTable();
     
     const files = Array.from(event.target.files);
-    const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '18', '27', '10', '25', '29', '12', '8', '19', '31', '37'];
+    const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
     const group1Columns = ['14', '2', '0', '28', '9'];
-    const group2Columns = ['13', '1', '18', '27', '10'];
+    const group2Columns = ['13', '1', '37', '27', '10'];
     let headerIndices = [];
     let headerProcessed = false;
     let csvData = [];  // Array to store processed CSV data
@@ -219,20 +230,17 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             if (!headerProcessed) {
                 const headerRow = lines[0];
                 headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-                
-                console.log('Header Indices:', headerIndices); // Debugging statement
-                
                 const thead = table.querySelector('thead');
                 const tr = document.createElement('tr');
-                
-                
                 headerIndices.forEach(index => {
                     const th = document.createElement('th');
                     // Check if the header value is '37' and replace it with '00'
                     let headerValue = index >= 0 ? headerRow[index] : '';
-
-					th.textContent = String(headerValue).trim(); // Ensure consistent trimming and string conversion
-                    if (th.textContent === '0' || th.textContent === '18') {
+                    if (headerValue === '37') {
+                        headerValue = '00';
+                    }
+                    th.textContent = headerValue;
+                    if (th.textContent === '0' || th.textContent === '00') {
                         th.style.backgroundColor = 'green';
                     }
                     tr.appendChild(th);
@@ -262,7 +270,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
                     headerIndices.forEach(index => {
                         const td = document.createElement('td');
-                        let cellValue = index >= 0 ? Number(row[index]) : '';
+                        let cellValue = index >= 0 ? row[index] : '';
                         
                         // Change '0' to an empty space
                         if (cellValue === '0') {
@@ -289,7 +297,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
                             }
                         }
 
-                        if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
+                        if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 5) {
                             td.classList.remove('default-light-yellow', 'light-red');
                             td.classList.add('light-green');
                         }
@@ -391,6 +399,29 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
     processFile(files.shift());
 });
+
+        
+                document.getElementById('saveButton').addEventListener('click', function() {
+            const table = document.getElementById('csvTable');
+            let csvContent = '';
+            const rows = table.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('th, td');
+                let rowData = [];
+                cols.forEach(col => rowData.push(col.textContent));
+                csvContent += rowData.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'table.csv';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
 
             document.getElementById('showStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement

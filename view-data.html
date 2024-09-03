@@ -445,7 +445,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     clearTable();
 
     // Fetch the CSV file from the server
-    fetch('test.csv')
+    fetch('Totals_10000_fixed.csv')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);

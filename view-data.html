@@ -410,27 +410,61 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 });
 
         
-            document.getElementById('saveButton').addEventListener('click', function() {
-            const table = document.getElementById('csvTable');
-            let csvContent = '';
-            const rows = table.querySelectorAll('tr');
+ document.getElementById('saveButton').addEventListener('click', function() {
+    const table = document.getElementById('csvTable');
+    let csvContent = '';
+    const rows = table.querySelectorAll('tr');
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
 
-            rows.forEach(row => {
-                const cols = row.querySelectorAll('th, td');
-                let rowData = [];
-                cols.forEach(col => rowData.push(col.textContent));
-                csvContent += rowData.join(',') + '\n';
-            });
+    rows.forEach((row, rowIndex) => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'table.csv';
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        cols.forEach(col => {
+            let cellData = col.textContent;
+            
+            // Replace the header "00" with "37" in the first row (header row)
+            if (rowIndex === 0 && cellData === '00') {
+                cellData = '37';
+            }
+
+            rowData.push(cellData);
         });
+
+        csvContent += rowData.join(',') + '\n';
+    });
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+  
+        // Get the formatted timestamp
+        const timestamp = getFormattedTimestamp();
+        
+        // Set the download attribute with a filename including the row count and timestamp
+        link.setAttribute("download", `RunOf_${rowCount}_${timestamp}.csv`);
+        link.style.display = 'none';
+        
+    // Append the link to the body, click it and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Function to get formatted timestamp
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+}
+
+
 
             document.getElementById('showStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
@@ -623,6 +657,20 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             console.error('Error fetching the file:', error);
         });
 });
+
+    // Function to generate a formatted timestamp
+    function getFormattedTimestamp() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+    }
+    
+    
 
     </script>
 </body>

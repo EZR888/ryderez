@@ -203,9 +203,9 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     clearTable();
     
     const files = Array.from(event.target.files);
-    const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
+    const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '18', '27', '10', '25', '29', '12', '8', '19', '31', '37'];
     const group1Columns = ['14', '2', '0', '28', '9'];
-    const group2Columns = ['13', '1', '37', '27', '10'];
+    const group2Columns = ['13', '1', '18', '27', '10'];
     let headerIndices = [];
     let headerProcessed = false;
     let csvData = [];  // Array to store processed CSV data
@@ -224,13 +224,15 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
                 
                 const thead = table.querySelector('thead');
                 const tr = document.createElement('tr');
+                
+                
                 headerIndices.forEach(index => {
                     const th = document.createElement('th');
                     // Check if the header value is '37' and replace it with '00'
                     let headerValue = index >= 0 ? headerRow[index] : '';
 
 					th.textContent = String(headerValue).trim(); // Ensure consistent trimming and string conversion
-                    if (th.textContent === '0' || th.textContent === '37') {
+                    if (th.textContent === '0' || th.textContent === '18') {
                         th.style.backgroundColor = 'green';
                     }
                     tr.appendChild(th);

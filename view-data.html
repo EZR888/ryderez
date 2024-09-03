@@ -134,9 +134,6 @@
         th[data-col="0"], th[data-col="37"] {
             background-color: green;
         }
-        .red-text {
-            color: red;
-        }
         button {
             margin: 20px;
             padding: 10px 20px;
@@ -225,6 +222,9 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             if (!headerProcessed) {
                 const headerRow = lines[0];
                 headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+                
+                console.log('Header Indices:', headerIndices); // Debugging statement
+                
                 const thead = table.querySelector('thead');
                 const tr = document.createElement('tr');
                 headerIndices.forEach(index => {
@@ -232,7 +232,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
                     // Check if the header value is '37' and replace it with '00'
                     let headerValue = index >= 0 ? headerRow[index] : '';
 
-                    th.textContent = headerValue;
+					th.textContent = String(headerValue).trim(); // Ensure consistent trimming and string conversion
                     if (th.textContent === '0' || th.textContent === '37') {
                         th.style.backgroundColor = 'green';
                     }
@@ -263,7 +263,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
                     headerIndices.forEach(index => {
                         const td = document.createElement('td');
-                        let cellValue = index >= 0 ? row[index] : '';
+                        let cellValue = index >= 0 ? Number(row[index]) : '';
                         
                         // Change '0' to an empty space
                         if (cellValue === '0') {

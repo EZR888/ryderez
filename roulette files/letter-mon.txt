@@ -1,0 +1,38 @@
+1,Name: O
+2,Name: Z
+3,September has some significance.
+4,Name: E
+5,May has some significance.
+6,Name: S
+7,Name: Q
+8,October has some significance.
+9,December has some significance.
+10,Name: U
+11,August has some significance.
+12,Name: X
+13,March has some significance.
+14,Name: B
+15,Name: A
+16,July has some significance.
+17,Name: H
+18,Name: G
+19,Name: J
+20,April has some significance.
+21,Name: F
+22,Name: T
+23,Name: P
+24,Name: Y
+25,Name: C
+26,Name: D
+27,Name: V
+28,January has some significance.
+29,February has some significance.
+30,Name: K
+31,Name: N
+32,Name: l
+33,June has some significance.
+34,Name: I
+35,Name: R
+36,Name: W
+37,November has some significance.
+38,Name: M

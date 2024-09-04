@@ -220,32 +220,44 @@
     </table>
     <script>
     
-            // PDF generation logic
-        document.getElementById('savePdfButton').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+document.getElementById('savePdfButton').addEventListener('click', function() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-            html2canvas(document.querySelector("#csvTable")).then(canvas => {
-                const imgData = canvas.toDataURL("image/png");
-                const imgWidth = 190; // PDF width
-                const pageHeight = 295; // PDF height
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 10; // Initial position on PDF
+    html2canvas(document.querySelector("#csvTable")).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const imgWidth = 190; // PDF width
+        const pageHeight = 295; // PDF height
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 10; // Initial position on PDF
 
-                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
 
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    doc.addPage();
-                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            doc.addPage();
+            doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
 
-                doc.save("table.pdf");
-            });
-        });
+        // Get the formatted timestamp and row count for the file name
+        const timestamp = getFormattedTimestamp();
+
+        // Adjusted rowCount calculation
+        const table = document.querySelector('#csvTable');
+        let rowCount = table.querySelectorAll('tbody tr').length; // Try tbody first
+        if (rowCount === 0) {
+            rowCount = table.querySelectorAll('tr').length; // Fallback to tr directly under table
+        }
+
+        // Save the PDF with a similar format to the CSV
+        doc.save(`RunOf_${rowCount}_${timestamp}.pdf`);
+    });
+});
+
+
 
 
         function clearTable() {

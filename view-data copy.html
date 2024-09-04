@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,8 +188,10 @@
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- jsPDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- jsPDF AutoTable Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -222,41 +223,53 @@
     <script>
     
 document.getElementById('savePdfButton').addEventListener('click', function() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const { jsPDF } = window.jspdf;  // Access the jsPDF constructor
+    const doc = new jsPDF({ orientation: 'landscape' }); // Set orientation to landscape
 
-    html2canvas(document.querySelector("#csvTable")).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const imgWidth = 190; // PDF width
-        const pageHeight = 295; // PDF height
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 10; // Initial position on PDF
+    // Extract headers and data from the table
+    const table = document.querySelector('#csvTable');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+    );
 
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+    // Get the formatted timestamp and row count for the file name
+    const timestamp = getFormattedTimestamp();
+    const rowCount = data.length;
+    const filename = `RunOf_${rowCount}_${timestamp}.pdf`;
 
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            doc.addPage();
-            doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+    // Base font size for the table cells
+    const baseFontSize = 8;
+    const largerFontSize = baseFontSize * 1.2; // Increase font size by 20%
+
+    // Add the table to the PDF using autoTable
+    doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 20, // Start position on the page
+        theme: 'grid', // or 'striped', 'plain'
+        margin: { top: 20, left: 10, right: 10, bottom: 10 }, // Page margins
+        tableWidth: 'auto', // Automatically adjust table width
+        styles: {
+            fontSize: largerFontSize, // Increase font size
+            cellPadding: 2, // Adjust cell padding
+            overflow: 'linebreak', // Handle text overflow
+            fontStyle: 'bold' // Bold text
+        },
+        headStyles: {
+            fillColor: [0, 0, 255], // Set header background color to blue (RGB value)
+            textColor: [255, 255, 255], // Set header text color to white (RGB value)
+            fontSize: largerFontSize // Match header font size with data cells
+        },
+        didDrawPage: function () {
+            // Add title to the page
+            doc.setFontSize(16);
+            doc.text(filename.replace('.pdf', ''), 14, 10); // Page title
         }
-
-        // Get the formatted timestamp and row count for the file name
-        const timestamp = getFormattedTimestamp();
-
-        // Adjusted rowCount calculation
-        const table = document.querySelector('#csvTable');
-        let rowCount = table.querySelectorAll('tbody tr').length; // Try tbody first
-        if (rowCount === 0) {
-            rowCount = table.querySelectorAll('tr').length; // Fallback to tr directly under table
-        }
-
-        // Save the PDF with a similar format to the CSV
-        const fileName = `RunOf_${rowCount}_${timestamp}.pdf`;
-        doc.save(fileName);
     });
+
+    // Save the PDF
+    doc.save(filename);
 });
 
 

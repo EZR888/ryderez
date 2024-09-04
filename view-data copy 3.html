@@ -221,193 +221,67 @@
         <tbody></tbody>
     </table>
     <script>
-  
-  
- document.getElementById('savePdfButton').addEventListener('click', function() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape' });
+    
+document.getElementById('savePdfButton').addEventListener('click', function() {
+    const { jsPDF } = window.jspdf;  // Access the jsPDF constructor
+    const doc = new jsPDF({ orientation: 'landscape' }); // Set orientation to landscape
 
+    // Extract headers and data from the table
     const table = document.querySelector('#csvTable');
     const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
     const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
         Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
     );
 
+    // Get the formatted timestamp and row count for the file name
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
     const filename = `RunOf_${rowCount}_${timestamp}.pdf`;
 
+    // Base font size for the table cells
     const baseFontSize = 8;
-    const headerFontSize = baseFontSize * 0.9;
-    const cellFontSize = baseFontSize * 1.1;
+    const largerFontSize = baseFontSize * 1.2; // Increase font size by 20%
 
-    const columnCount = headers.length;
-    const pageWidth = doc.internal.pageSize.width - 20;
-    const columnWidth = pageWidth / columnCount;
-
-    // These are your group column indices; update as per your needs.
-    const group1Columns = [7, 8, 9, 10, 11];
-    const group2Columns = [26, 27, 28, 29, 30];
-
+    // Add the table to the PDF using autoTable
     doc.autoTable({
         head: [headers],
         body: data,
-        startY: 20,
-        theme: 'grid',
-        margin: { top: 20, left: 10, right: 10, bottom: 10 },
-        tableWidth: 'auto',
+        startY: 20, // Start position on the page
+        theme: 'grid', // or 'striped', 'plain'
+        margin: { top: 20, left: 10, right: 10, bottom: 10 }, // Page margins
+        tableWidth: 'auto', // Automatically adjust table width
         styles: {
-            fontSize: cellFontSize,
-            cellPadding: 2,
-            overflow: 'linebreak',
-            fontStyle: 'bold',
-            halign: 'center',
+            fontSize: largerFontSize, // Increase font size
+            cellPadding: 2, // Adjust cell padding
+            overflow: 'linebreak', // Handle text overflow
+            fontStyle: 'bold' // Bold text
         },
         headStyles: {
-            fontSize: headerFontSize,
-            textColor: [255, 255, 255],
-            halign: 'center',
+            fillColor: [0, 0, 255], // Set header background color to blue (RGB value)
+            textColor: [255, 255, 255], // Set header text color to white (RGB value)
+            fontSize: largerFontSize // Match header font size with data cells
         },
-        columnStyles: Array.from({ length: columnCount }, (_, i) => ({
-            cellWidth: columnWidth
-        })).reduce((acc, style, i) => {
-            acc[i] = style;
-            return acc;
-        }, {}),
-
         didParseCell: function (data) {
-            if (data.row.section === 'body') {
-                const row = data.row.raw;
-
-                // Calculate group sums
-                let group1Sum = 0;
-                let group2Sum = 0;
-
-                group1Columns.forEach(index => {
-                    const value = parseFloat(row[index]);
-                    if (!isNaN(value)) group1Sum += value;
-                });
-
-                group2Columns.forEach(index => {
-                    const value = parseFloat(row[index]);
-                    if (!isNaN(value)) group2Sum += value;
-                });
-
-                const sumConditions = {
-                    8: 'light-red',
-                    9: 'light-blue',
-                    10: 'light-orange',
-                    11: 'violet',
-                    12: 'DarkKhaki',
-                    13: 'DarkSeaGreen',
-                    14: 'LightSteelBlue',
-                    15: 'Gold'
-                };
-
-                // Apply background color based on group sums
-                let appliedColor = false;
-
-                if (group1Columns.includes(data.column.index)) {
-                    const group1CellStyle = sumConditions[group1Sum];
-                    if (group1CellStyle) {
-                        data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                        appliedColor = true;  // Mark that a color has been applied
-                    }
-                }
-
-                if (group2Columns.includes(data.column.index)) {
-                    const group2CellStyle = sumConditions[group2Sum];
-                    if (group2CellStyle) {
-                        data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                        appliedColor = true;  // Mark that a color has been applied
-                    }
-                }
-
-                // Handle individual cell values (>= 4)
-                const cellValue = parseFloat(data.cell.text);
-                if (!isNaN(cellValue) && cellValue >= 4) {
-                    data.cell.styles.fillColor = getColorForStyle('light-green');
-                    appliedColor = true;  // Mark that a color has been applied
-                }
-
-                // Apply light-yellow only if no other color has been applied
-                const lightYellowColumns = [7, 8, 9, 10, 11, 26, 27, 28, 29, 30];
-                if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                    data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-                }
-            }
-
-            if (data.row.section === 'head') {
-                // Keep the existing header color logic
-                if (data.column.index === 9 || data.column.index === 28) {
-                    data.cell.styles.fillColor = [6, 200, 43];
-                } else if (data.column.index % 2 === 0) {
-                    data.cell.styles.fillColor = [0, 0, 0];
-                } else {
-                    data.cell.styles.fillColor = [255, 0, 0];
-                }
+            const columnsToHighlight = [6, 7, 8, 9, 10, 25, 26, 27, 28, 29]; // Adjusted for zero-based indexing
+            
+            // Check if the cell is not part of the header
+            if (data.row.section === 'body' && columnsToHighlight.includes(data.column.index)) {
+                data.cell.styles.fillColor = [255, 255, 204]; // Light yellow background color (RGB: 255, 255, 204)
             }
         },
-
         didDrawPage: function () {
+            // Add title to the page
             doc.setFontSize(16);
-            doc.text(filename.replace('.pdf', ''), 14, 10);
+            doc.text(filename.replace('.pdf', ''), 14, 10); // Page title
         }
     });
 
+    // Save the PDF
     doc.save(filename);
 });
 
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
 
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
 
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
-
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
 
 
 

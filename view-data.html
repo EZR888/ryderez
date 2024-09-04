@@ -149,7 +149,10 @@
             background-color: blue;
         }
         #showStatsButton {
-            background-color: purple;
+            background-color: slategray;
+        }
+        #savePdfButton {
+            background-color: purple
         }
         .file-input-container {
             display: flex;
@@ -185,6 +188,8 @@
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -202,7 +207,8 @@
         <div class="file-input-container">
             <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="saveButton">Save Table</button>
+            <button id="saveButton">Save to CSV</button>
+            <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
             <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div>
@@ -213,11 +219,42 @@
         <tbody></tbody>
     </table>
     <script>
+    
+            // PDF generation logic
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            html2canvas(document.querySelector("#csvTable")).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const imgWidth = 190; // PDF width
+                const pageHeight = 295; // PDF height
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 10; // Initial position on PDF
+
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save("table.pdf");
+            });
+        });
+
+
         function clearTable() {
             console.log('Clearing table'); // Debugging statement
             document.querySelector('#csvTable thead').innerHTML = '';
             document.querySelector('#csvTable tbody').innerHTML = '';
         }
+        
+        
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
     clearTable();

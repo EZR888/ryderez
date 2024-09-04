@@ -149,7 +149,10 @@
             background-color: blue;
         }
         #showStatsButton {
-            background-color: purple;
+            background-color: slategray;
+        }
+        #savePdfButton {
+            background-color: purple
         }
         .file-input-container {
             display: flex;
@@ -185,6 +188,8 @@
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -202,7 +207,8 @@
         <div class="file-input-container">
             <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="saveButton">Save Table</button>
+            <button id="saveButton">Save to CSV</button>
+            <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
             <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div>
@@ -213,11 +219,42 @@
         <tbody></tbody>
     </table>
     <script>
+    
+            // PDF generation logic
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            html2canvas(document.querySelector("#csvTable")).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const imgWidth = 190; // PDF width
+                const pageHeight = 295; // PDF height
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 10; // Initial position on PDF
+
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save("table.pdf");
+            });
+        });
+
+
         function clearTable() {
             console.log('Clearing table'); // Debugging statement
             document.querySelector('#csvTable thead').innerHTML = '';
             document.querySelector('#csvTable tbody').innerHTML = '';
         }
+        
+        
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
     clearTable();
@@ -410,27 +447,61 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 });
 
         
-            document.getElementById('saveButton').addEventListener('click', function() {
-            const table = document.getElementById('csvTable');
-            let csvContent = '';
-            const rows = table.querySelectorAll('tr');
+ document.getElementById('saveButton').addEventListener('click', function() {
+    const table = document.getElementById('csvTable');
+    let csvContent = '';
+    const rows = table.querySelectorAll('tr');
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
 
-            rows.forEach(row => {
-                const cols = row.querySelectorAll('th, td');
-                let rowData = [];
-                cols.forEach(col => rowData.push(col.textContent));
-                csvContent += rowData.join(',') + '\n';
-            });
+    rows.forEach((row, rowIndex) => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'table.csv';
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        cols.forEach(col => {
+            let cellData = col.textContent;
+            
+            // Replace the header "00" with "37" in the first row (header row)
+            if (rowIndex === 0 && cellData === '00') {
+                cellData = '37';
+            }
+
+            rowData.push(cellData);
         });
+
+        csvContent += rowData.join(',') + '\n';
+    });
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+  
+        // Get the formatted timestamp
+        const timestamp = getFormattedTimestamp();
+        
+        // Set the download attribute with a filename including the row count and timestamp
+        link.setAttribute("download", `RunOf_${rowCount}_${timestamp}.csv`);
+        link.style.display = 'none';
+        
+    // Append the link to the body, click it and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Function to get formatted timestamp
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+}
+
+
 
             document.getElementById('showStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
@@ -623,6 +694,20 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             console.error('Error fetching the file:', error);
         });
 });
+
+    // Function to generate a formatted timestamp
+    function getFormattedTimestamp() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+    }
+    
+    
 
     </script>
 </body>

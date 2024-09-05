@@ -620,101 +620,100 @@ function processFile(file) {
                 tr.appendChild(td);
             });
 
+            // Apply background color based on the sum conditions
+            group1Cells.forEach(td => {
+                if (group1Sum === 8) {
+                    td.classList.remove('default-light-yellow');
+                    td.classList.add('light-red');
+                } else if (group1Sum === 9) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('light-blue');
+                    }
+                } else if (group1Sum === 10) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('light-orange');
+                    }
+                } else if (group1Sum === 11) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('violet');
+                    }
+                } else if (group1Sum === 12) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('DarkKhaki');
+                    }
+                } else if (group1Sum === 13) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('DarkSeaGreen');
+                    }
+                } else if (group1Sum === 14) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('LightSteelBlue');
+                    }
+                } else if (group1Sum === 15) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('Gold');
+                    }
+                }
+            });
 
-                    // Apply background color based on the sum conditions
-                    group1Cells.forEach(td => {
-                        if (group1Sum === 8) {
-                            td.classList.remove('default-light-yellow');
-                            td.classList.add('light-red');
-                        } else if (group1Sum === 9) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-blue');
-                            }
-                        } else if (group1Sum === 10) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-orange');
-                            }
-                        } else if (group1Sum === 11) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('violet');
-                            }
-                        } else if (group1Sum === 12) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkKhaki');
-                            }
-                        } else if (group1Sum === 13) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkSeaGreen');
-                            }
-                        } else if (group1Sum === 14) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('LightSteelBlue');
-                            }
-                        } else if (group1Sum === 15) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('Gold');
-                            }
-                        }
-                    });
+            group2Cells.forEach(td => {
+                if (group2Sum === 8) {
+                    td.classList.remove('default-light-yellow');
+                    td.classList.add('light-red');
+                } else if (group2Sum === 9) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('light-blue');
+                    }
+                } else if (group2Sum === 10) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('light-orange');
+                    }
+                } else if (group2Sum === 11) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('violet');
+                    }
+                } else if (group2Sum === 12) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('DarkKhaki');
+                    }
+                } else if (group2Sum === 13) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('DarkSeaGreen');
+                    }
+                } else if (group2Sum === 14) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('LightSteelBlue');
+                    }
+                } else if (group2Sum === 15) {
+                    if (!td.classList.contains('light-green')) {
+                        td.classList.remove('default-light-yellow');
+                        td.classList.add('Gold');
+                    }
+                }
+            });
 
-                    group2Cells.forEach(td => {
-                        if (group2Sum === 8) {
-                            td.classList.remove('default-light-yellow');
-                            td.classList.add('light-red');
-                        } else if (group2Sum === 9) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-blue');
-                            }
-                        } else if (group2Sum === 10) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-orange');
-                            }
-                        } else if (group2Sum === 11) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('violet');
-                            }
-                        } else if (group2Sum === 12) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkKhaki');
-                            }
-                        } else if (group2Sum === 13) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkSeaGreen');
-                            }
-                        } else if (group2Sum === 14) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('LightSteelBlue');
-                            }
-                        } else if (group2Sum === 15) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('Gold');
-                            }
-                        }
-                    });
+            table.querySelector('tbody').appendChild(tr);
+        });
+    };
+    reader.readAsText(file);  // Corrected line, removed extra closing bracket
+}
 
-                    table.querySelector('tbody').appendChild(tr);
-                });
-            }
-        };
-        reader.readAsText(file);
-    }
+// Trigger the process for the next file in the queue
+processFile(files.shift());  // Removed extra closing bracket
 
-    processFile(files.shift());
-});
 
 
         

@@ -223,14 +223,14 @@
     <script>
   
   
- document.getElementById('savePdfButton').addEventListener('click', function() {
+document.getElementById('savePdfButton').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 
     const table = document.querySelector('#csvTable');
-    const headers = ['#'].concat(Array.from(table.querySelectorAll('th')).slice(1).map(th => th.innerText));
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
     const data = Array.from(table.querySelectorAll('tbody tr')).map((tr, index) =>
-        [index + 1, ...Array.from(tr.querySelectorAll('td')).map(td => td.innerText)]
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
     );
 
     const timestamp = getFormattedTimestamp();
@@ -245,8 +245,8 @@
     const pageWidth = doc.internal.pageSize.width - 20;
     const columnWidth = pageWidth / columnCount;
 
-    const group1Columns = [7, 8, 9, 10, 11];
-    const group2Columns = [26, 27, 28, 29, 30];
+    const group1Columns = [8, 9, 10, 11, 12];
+    const group2Columns = [27, 28, 29, 30, 31];
 
     const sumConditions = {
         8: 'light-red',
@@ -327,7 +327,15 @@
                 cellWidth: columnWidth,
                 fillColor: getColorForStyle('light-green') // Set the background color for the first column
             },
-            ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
+            1: {
+                cellWidth: columnWidth,
+                fillColor: getColorForStyle('green') // Set the background color for column with header '0' and '00'
+            },
+            2: {
+                cellWidth: columnWidth,
+                fillColor: getColorForStyle('green') // Set the background color for column with header '0' and '00'
+            },
+            ...Array.from({ length: columnCount - 2 }, (_, i) => i + 2).reduce((acc, i) => {
                 acc[i] = { cellWidth: columnWidth };
                 return acc;
             }, {})
@@ -374,19 +382,21 @@
                     appliedColor = true;
                 }
 
-                const lightYellowColumns = [7, 8, 9, 10, 11, 26, 27, 28, 29, 30];
+                const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
                 if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
                     data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
                 }
             }
 
             if (data.row.section === 'head') {
-                if (data.column.index === 9 || data.column.index === 28) {
-                    data.cell.styles.fillColor = [6, 200, 43];
-                } else if (data.column.index % 2 === 0) {
+                if (data.column.index === 1) {
+                    // Set the background color of the 2nd data column header to black
                     data.cell.styles.fillColor = [0, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255]; // Optional: set text color to white for contrast
+                } else if (data.column.index % 2 === 0) {
+                    data.cell.styles.fillColor = [255, 0, 0]; // Red
                 } else {
-                    data.cell.styles.fillColor = [255, 0, 0];
+                    data.cell.styles.fillColor = [0, 0, 0]; // Black
                 }
             }
         },

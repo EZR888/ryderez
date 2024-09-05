@@ -785,21 +785,19 @@ fetch('Run_10000.csv')
 
         if (!headerProcessed) {
             const headerRow = lines[0];
-            // Remove the first column from columnOrder and headerRow
-            headerIndices = columnOrder.map(col => headerRow.indexOf(col)).slice(1);
+            headerIndices = columnOrder.map(col => headerRow.indexOf(col));
             const thead = table.querySelector('thead');
             const tr = document.createElement('tr');
 
-            // Add Line Number Header
+            // Add Line Number Header (as the first column)
             const thLineNumber = document.createElement('th');
-            thLineNumber.textContent = '#';
+            thLineNumber.textContent = '#';  // Line number header
             tr.appendChild(thLineNumber);
 
-            // Adjusted to include only columns after the first one
-            const adjustedHeaderRow = headerRow.slice(1); // Remove the first column header
+            // Add headers for the remaining columns (shifted by one)
             headerIndices.forEach(index => {
                 const th = document.createElement('th');
-                let headerValue = index < adjustedHeaderRow.length ? adjustedHeaderRow[index] : '';
+                let headerValue = index >= 0 ? headerRow[index] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
@@ -815,7 +813,7 @@ fetch('Run_10000.csv')
 
         for (let i = 1; i < lines.length; i++) {
             if (lines[i].some(cell => cell.trim())) {
-                csvData.push(lines[i].slice(1).map(cell => cell.trim()));  // Remove first column
+                csvData.push(lines[i]);  // Keep all columns
             }
         }
 
@@ -824,7 +822,7 @@ fetch('Run_10000.csv')
         csvData.forEach((row, rowIndex) => {
             const tr = document.createElement('tr');
 
-            // Add Line Number Cell (Row Header)
+            // Add Line Number Cell (as the first column)
             const tdLineNumber = document.createElement('td');
             tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
             tdLineNumber.style.backgroundColor = 'slategray'; // Set background color to slategray
@@ -838,24 +836,24 @@ fetch('Run_10000.csv')
 
             headerIndices.forEach((index, i) => {
                 const td = document.createElement('td');
-                let cellValue = row[i] || ''; // Adjust index for removed column
+                let cellValue = row[index] || ''; // Adjust index for full column row
                 if (cellValue === '0') {
                     cellValue = '';
                 }
                 td.textContent = cellValue;
 
-                if (i >= 0 && (group1Columns.includes(columnOrder[headerIndices[i]]) || group2Columns.includes(columnOrder[headerIndices[i]]))) {
+                if (i >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
                     td.classList.add('default-light-yellow');
                 }
 
-                if (i >= 0 && group1Columns.includes(columnOrder[headerIndices[i]])) {
+                if (i >= 0 && group1Columns.includes(columnOrder[i])) {
                     group1Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group1Sum += Number(cellValue);
                     }
                 }
 
-                if (i >= 0 && group2Columns.includes(columnOrder[headerIndices[i]])) {
+                if (i >= 0 && group2Columns.includes(columnOrder[i])) {
                     group2Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group2Sum += Number(cellValue);

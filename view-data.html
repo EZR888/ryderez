@@ -791,24 +791,17 @@ fetch('Run_10000.csv')
             // Add Line Number Header
             const th = document.createElement('th');
             th.textContent = '#';
-            th.style.color = 'red'; // Set color to red for line number header
             tr.appendChild(th);
             
-            headerIndices.forEach((index, i) => {
+            headerIndices.forEach(index => {
                 const th = document.createElement('th');
                 let headerValue = index >= 0 ? headerRow[index] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
                 th.textContent = headerValue;
-
-                // Set color for "0" and "00" as green
                 if (th.textContent === '0' || th.textContent === '00') {
                     th.style.backgroundColor = 'green';
-                    th.style.color = 'white';
-                } else {
-                    // Alternate between red and black for other headers
-                    th.style.color = i % 2 === 0 ? 'black' : 'red';
                 }
                 tr.appendChild(th);
             });
@@ -816,10 +809,9 @@ fetch('Run_10000.csv')
             headerProcessed = true;
         }
 
-        // Process CSV rows without slicing off the first column
         for (let i = 1; i < lines.length; i++) {
             if (lines[i].some(cell => cell.trim())) {
-                csvData.push(lines[i].map(cell => cell.trim()));  // Keep all columns, no slicing
+                csvData.push(lines[i].map(cell => cell.trim()));  // Remove first column
             }
         }
 
@@ -840,16 +832,14 @@ fetch('Run_10000.csv')
             let group1Cells = [];
             let group2Cells = [];
 
-            headerIndices.forEach((index, i) => {
+            headerIndices.forEach(index => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 ? row[index] : ''; // No index adjustment needed
-
+                let cellValue = index >= 0 ? row[index - 1] : ''; // Adjust index for removed column
                 if (cellValue === '0') {
                     cellValue = '';
                 }
                 td.textContent = cellValue;
 
-                // Colorize based on group1Columns and group2Columns
                 if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
                     td.classList.add('default-light-yellow');
                 }
@@ -876,7 +866,6 @@ fetch('Run_10000.csv')
                 tr.appendChild(td);
             });
 
-            // Handle color for group1Cells and group2Cells based on their sums
             group1Cells.forEach(td => {
                 if (group1Sum === 8) {
                     td.classList.remove('default-light-yellow');
@@ -967,7 +956,6 @@ fetch('Run_10000.csv')
     .catch(error => {
         console.error('Error fetching the file:', error);
     });
-
 });
 
     // Function to generate a formatted timestamp

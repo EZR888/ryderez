@@ -789,16 +789,17 @@ fetch('Run_10000.csv')
             headerIndices = columnOrder.map(col => headerRow.indexOf(col)).slice(1);
             const thead = table.querySelector('thead');
             const tr = document.createElement('tr');
-            
+
             // Add Line Number Header
-            const th = document.createElement('th');
-            th.textContent = '#';
-            tr.appendChild(th);
-            
+            const thLineNumber = document.createElement('th');
+            thLineNumber.textContent = '#';
+            tr.appendChild(thLineNumber);
+
             // Adjusted to include only columns after the first one
+            const adjustedHeaderRow = headerRow.slice(1); // Remove the first column header
             headerIndices.forEach(index => {
                 const th = document.createElement('th');
-                let headerValue = index >= 0 ? headerRow[index + 1] : '';
+                let headerValue = index < adjustedHeaderRow.length ? adjustedHeaderRow[index] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
@@ -822,7 +823,7 @@ fetch('Run_10000.csv')
 
         csvData.forEach((row, rowIndex) => {
             const tr = document.createElement('tr');
-            
+
             // Add Line Number Cell (Row Header)
             const tdLineNumber = document.createElement('td');
             tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
@@ -843,18 +844,18 @@ fetch('Run_10000.csv')
                 }
                 td.textContent = cellValue;
 
-                if (i >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(i) + 1]) || group2Columns.includes(columnOrder[headerIndices.indexOf(i) + 1]))) {
+                if (i >= 0 && (group1Columns.includes(columnOrder[headerIndices[i]]) || group2Columns.includes(columnOrder[headerIndices[i]]))) {
                     td.classList.add('default-light-yellow');
                 }
 
-                if (i >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(i) + 1])) {
+                if (i >= 0 && group1Columns.includes(columnOrder[headerIndices[i]])) {
                     group1Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group1Sum += Number(cellValue);
                     }
                 }
 
-                if (i >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(i) + 1])) {
+                if (i >= 0 && group2Columns.includes(columnOrder[headerIndices[i]])) {
                     group2Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group2Sum += Number(cellValue);
@@ -959,6 +960,7 @@ fetch('Run_10000.csv')
     .catch(error => {
         console.error('Error fetching the file:', error);
     });
+
 });
 
     // Function to generate a formatted timestamp

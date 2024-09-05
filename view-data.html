@@ -789,7 +789,7 @@ fetch('Run_10000.csv')
             const tr = document.createElement('tr');
             headerIndices.forEach(index => {
                 const th = document.createElement('th');
-                let headerValue = index >= 0 ? headerRow[index] : '';
+                let headerValue = index >= 1 ? headerRow[index] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
@@ -820,24 +820,24 @@ fetch('Run_10000.csv')
 
             headerIndices.forEach(index => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 ? row[index] : '';
+                let cellValue = index >= 1 ? row[index] : '';
                 if (cellValue === '0') {
                     cellValue = '';
                 }
                 td.textContent = cellValue;
 
-                if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
+                if (index >= 1 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
                     td.classList.add('default-light-yellow');
                 }
 
-                if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (index >= 1 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                     group1Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group1Sum += Number(cellValue);
                     }
                 }
 
-                if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (index >= 1 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                     group2Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group2Sum += Number(cellValue);

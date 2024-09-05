@@ -787,9 +787,15 @@ fetch('Run_10000.csv')
             headerIndices = columnOrder.map(col => headerRow.indexOf(col));
             const thead = table.querySelector('thead');
             const tr = document.createElement('tr');
+            
+            // Add Line Number Header
+            const th = document.createElement('th');
+            th.textContent = '#';
+            tr.appendChild(th);
+            
             headerIndices.forEach(index => {
                 const th = document.createElement('th');
-                let headerValue = index >= 1 ? headerRow[index] : '';
+                let headerValue = index >= 0 ? headerRow[index] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
@@ -805,14 +811,22 @@ fetch('Run_10000.csv')
 
         for (let i = 1; i < lines.length; i++) {
             if (lines[i].some(cell => cell.trim())) {
-                csvData.push(lines[i].map(cell => cell.trim()));
+                csvData.push(lines[i].slice(1).map(cell => cell.trim()));  // Remove first column
             }
         }
 
         document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`;
 
-        csvData.forEach(row => {
+        csvData.forEach((row, rowIndex) => {
             const tr = document.createElement('tr');
+            
+            // Add Line Number Cell (Row Header)
+            const tdLineNumber = document.createElement('td');
+            tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
+            tdLineNumber.style.backgroundColor = 'slategray'; // Set background color to slategray
+            tdLineNumber.style.color = 'white'; // Set text color to white for contrast
+            tr.appendChild(tdLineNumber);  // Append line number cell to the row
+
             let group1Sum = 0;
             let group2Sum = 0;
             let group1Cells = [];
@@ -820,24 +834,24 @@ fetch('Run_10000.csv')
 
             headerIndices.forEach(index => {
                 const td = document.createElement('td');
-                let cellValue = index >= 1 ? row[index] : '';
+                let cellValue = index >= 0 ? row[index - 1] : ''; // Adjust index for removed column
                 if (cellValue === '0') {
                     cellValue = '';
                 }
                 td.textContent = cellValue;
 
-                if (index >= 1 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
+                if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
                     td.classList.add('default-light-yellow');
                 }
 
-                if (index >= 1 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                     group1Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group1Sum += Number(cellValue);
                     }
                 }
 
-                if (index >= 1 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
                     group2Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group2Sum += Number(cellValue);
@@ -942,7 +956,6 @@ fetch('Run_10000.csv')
     .catch(error => {
         console.error('Error fetching the file:', error);
     });
-});
 
     // Function to generate a formatted timestamp
     function getFormattedTimestamp() {

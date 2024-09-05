@@ -792,19 +792,30 @@ fetch('Run_10000.csv')
             // Add Line Number Header (as the first column)
             const thLineNumber = document.createElement('th');
             thLineNumber.textContent = '#';  // Line number header
+            thLineNumber.style.color = 'red'; // Set initial red color for line number header
             tr.appendChild(thLineNumber);
 
             // Add headers for the remaining columns (shifted by one)
-            headerIndices.forEach(index => {
+            headerIndices.forEach((index, i) => {
                 const th = document.createElement('th');
                 let headerValue = index >= 0 ? headerRow[index] : '';
+
+                // Adjust header value for '37' to '00'
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
+
                 th.textContent = headerValue;
-                if (th.textContent === '0' || th.textContent === '00') {
+
+                // Set green color for "0" and "00"
+                if (headerValue === '0' || headerValue === '00') {
                     th.style.backgroundColor = 'green';
+                    th.style.color = 'white';
+                } else {
+                    // Alternate colors starting with black for the second column
+                    th.style.color = i % 2 === 0 ? 'black' : 'red';
                 }
+
                 tr.appendChild(th);
             });
             thead.appendChild(tr);

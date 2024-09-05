@@ -270,7 +270,8 @@
             'LightSteelBlue': [176, 196, 222],
             'Gold': [255, 215, 0],
             'light-green': [144, 238, 144],
-            'default-light-yellow': [255, 255, 224]
+            'default-light-yellow': [255, 255, 224],
+            'light-gray': [211, 211, 211] // Added light gray color
         };
         return colors[style] || [255, 255, 255];
     }
@@ -321,11 +322,12 @@
             fontSize: headerFontSize,
             textColor: [255, 255, 255],
             halign: 'center',
+            fillColor: [0, 0, 0] // Set header background color to black or another color if needed
         },
         columnStyles: {
             0: {
                 cellWidth: columnWidth,
-                fillColor: getColorForStyle('light-green') // Set the background color for the first column
+                fillColor: getColorForStyle('light-gray') // Set the background color for the header cells in the first column
             },
             ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
                 acc[i] = { cellWidth: columnWidth };
@@ -380,14 +382,8 @@
                 }
             }
 
-            if (data.row.section === 'head') {
-                if (data.column.index === 9 || data.column.index === 28) {
-                    data.cell.styles.fillColor = [6, 200, 43];
-                } else if (data.column.index % 2 === 0) {
-                    data.cell.styles.fillColor = [0, 0, 0];
-                } else {
-                    data.cell.styles.fillColor = [255, 0, 0];
-                }
+            if (data.row.section === 'head' && data.column.index === 0) {
+                data.cell.styles.fillColor = getColorForStyle('light-gray'); // Ensure header cell background color for the first column
             }
         },
 
@@ -405,6 +401,7 @@
 
     doc.save(filename);
 });
+
 
 
 

@@ -765,6 +765,7 @@ function getFormattedTimestamp() {
     clearTable();
 
 // Fetch the CSV file from the server
+// Fetch the CSV file from the server
 fetch('Run_10000.csv')
     .then(response => {
         if (!response.ok) {
@@ -784,7 +785,8 @@ fetch('Run_10000.csv')
 
         if (!headerProcessed) {
             const headerRow = lines[0];
-            headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+            // Remove the first column from columnOrder and headerRow
+            headerIndices = columnOrder.map(col => headerRow.indexOf(col)).slice(1);
             const thead = table.querySelector('thead');
             const tr = document.createElement('tr');
             
@@ -793,9 +795,10 @@ fetch('Run_10000.csv')
             th.textContent = '#';
             tr.appendChild(th);
             
+            // Adjusted to include only columns after the first one
             headerIndices.forEach(index => {
                 const th = document.createElement('th');
-                let headerValue = index >= 0 ? headerRow[index] : '';
+                let headerValue = index >= 0 ? headerRow[index + 1] : '';
                 if (headerValue === '37') {
                     headerValue = '00';
                 }
@@ -832,26 +835,26 @@ fetch('Run_10000.csv')
             let group1Cells = [];
             let group2Cells = [];
 
-            headerIndices.forEach(index => {
+            headerIndices.forEach((index, i) => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 ? row[index - 1] : ''; // Adjust index for removed column
+                let cellValue = row[i] || ''; // Adjust index for removed column
                 if (cellValue === '0') {
                     cellValue = '';
                 }
                 td.textContent = cellValue;
 
-                if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
+                if (i >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(i) + 1]) || group2Columns.includes(columnOrder[headerIndices.indexOf(i) + 1]))) {
                     td.classList.add('default-light-yellow');
                 }
 
-                if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (i >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(i) + 1])) {
                     group1Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group1Sum += Number(cellValue);
                     }
                 }
 
-                if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
+                if (i >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(i) + 1])) {
                     group2Cells.push(td);
                     if (!isNaN(cellValue) && cellValue !== '') {
                         group2Sum += Number(cellValue);

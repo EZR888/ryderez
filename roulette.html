@@ -261,7 +261,7 @@ function exportTotalsToCSV(array, rowCount) {
 
     // Correctly format the filename to include the row count and timestamp
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${rowCount}_${getFormattedTimestamp()}.csv`);
+    link.setAttribute("download", `Runs_${rowCount}_${getFormattedTimestamp()}.csv`);
 
     document.body.appendChild(link); // Required for Firefox
     link.click(); // Trigger the download
@@ -311,8 +311,11 @@ function runSimulation() {
 
   populateTotalsTable(); // Populate Totals table
 
-  // Export to CSV after all runs
-  exportTotalsToCSV(allTotals, `totals_data_simulation.csv`);
+  // Get the row count (number of runs)
+  const rowCount = allTotals.length;
+
+  // Export to CSV with the correct filename including row count and timestamp
+  exportTotalsToCSV(allTotals, rowCount);
 }
 
 
@@ -356,7 +359,7 @@ function multiSpin() {
         } else {
           // Export results to CSV with the new filename format
           const rowCount = allTotals.length; // Number of rows in the CSV (total runs)
-          exportTotalsToCSV(allTotals, `Run_${rowCount}_${timestamp}.csv`); // Use the new filename convention
+          exportTotalsToCSV(allTotals, rowCount); // Use the new filename convention
 
           document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
           endMultiSpin(); // End the multi-spin session

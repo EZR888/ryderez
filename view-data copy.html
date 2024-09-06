@@ -154,9 +154,6 @@
         #savePdfButton {
             background-color: purple
         }
-        #sortByHighestValue {
-            background-color: red
-        }
         .file-input-container {
             display: flex;
             align-items: center;
@@ -212,7 +209,6 @@
         <div class="file-input-container">
             <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="sortByHighestValue">Sort by Highest Value</button>
             <button id="saveButton">Save to CSV</button>
             <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
             <button id="showStatsButton">View Stats</button>
@@ -500,37 +496,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     let headerProcessed = false;
     let csvData = [];  // Array to store processed CSV data
     const table = document.getElementById('csvTable');
-    
-    
-document.getElementById('sortByHighestValue').addEventListener('click', function() {
-    console.log("Sort button clicked");
-    const tableBody = table.querySelector('tbody');
-    let rowsArray = Array.from(tableBody.rows);
-
-    rowsArray.sort((rowA, rowB) => {
-        // Get an array of cell values, ignoring the first column (line number)
-        const valuesA = Array.from(rowA.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
-        const valuesB = Array.from(rowB.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
-        
-        // Sort the values in each row in descending order
-        valuesA.sort((a, b) => b - a);
-        valuesB.sort((a, b) => b - a);
-
-        // Compare each cell in descending order
-        for (let i = 0; i < valuesA.length; i++) {
-            if (valuesA[i] !== valuesB[i]) {
-                return valuesB[i] - valuesA[i];  // Sort by the first non-equal value
-            }
-        }
-        return 0;  // If rows are identical, no sorting needed
-    });
-
-    tableBody.innerHTML = ''; // Clear current rows
-    rowsArray.forEach(row => tableBody.appendChild(row)); // Append sorted rows
-    console.log("Sorting complete", rowsArray);
-});
-
-
 
     function processFile(file) {
         const reader = new FileReader();

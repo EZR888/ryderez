@@ -242,26 +242,31 @@
     }
 
 // Function to export Totals array data to CSV format
-function exportTotalsToCSV(array, filename) {
+// Function to export Totals array data to CSV format
+function exportTotalsToCSV(array, rowCount) {
     let csvContent = "data:text/csv;charset=utf-8,";
 
     // Add headers to CSV
     let headers = [...Array(38).keys()];
     csvContent += headers.join(",") + "\n";
 
-        // Loop through Totals array to append values
-        array.forEach(row => {
-            csvContent += row.join(",") + "\n";
-        });
+    // Loop through Totals array to append values
+    array.forEach(row => {
+        csvContent += row.join(",") + "\n";
+    });
 
     // Encode and create a download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
+
+    // Correctly format the filename to include the row count and timestamp
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Totals_data_${getFormattedTimestamp()}.csv`);
+    link.setAttribute("download", `${rowCount}_${getFormattedTimestamp()}.csv`);
+
     document.body.appendChild(link); // Required for Firefox
     link.click(); // Trigger the download
 }
+
 
     // Event listener for the Save Data button
     // document.getElementById("Button").addEventListener("click", function() {
@@ -316,7 +321,10 @@ function multiSpin() {
   let numSpins = parseInt(document.getElementById('numSpins').value);
   let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100; // Convert seconds to milliseconds
   let allTotals = []; // Store all totals data
-        
+
+  // Get the formatted timestamp
+  const timestamp = getFormattedTimestamp();
+  
   // Function to perform a single run
   function singleRun(runIndex) {
     clearArrays(); // Clear arrays before each run
@@ -336,22 +344,21 @@ function multiSpin() {
           setTimeout(spin, spinDelay); // Delay before the next spin
         }, 0); // Start the first spin immediately
       } else {
-      
+
         // After all spins are done, save the Totals to allTotals array
         allTotals.push([...Totals]); // Push a copy of the Totals array
-        
+
         // After all spins are done, export the results and start the next run if any
- 
         if (runIndex < numRuns - 1) {
-              setTimeout(() => {
-                singleRun(runIndex + 1); // Start the next run after a delay
-              }, 100); // Add a 1-second delay between runs
-            } else {
- 
- 
-        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
-        
-        document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
+          setTimeout(() => {
+            singleRun(runIndex + 1); // Start the next run after a delay
+          }, 100); // Add a 1-second delay between runs
+        } else {
+          // Export results to CSV with the new filename format
+          const rowCount = allTotals.length; // Number of rows in the CSV (total runs)
+          exportTotalsToCSV(allTotals, `Run_${rowCount}_${timestamp}.csv`); // Use the new filename convention
+
+          document.getElementById('TotalsTableContainer').style.display = 'block'; // Ensure Totals table is displayed after all runs
           endMultiSpin(); // End the multi-spin session
         }
       }
@@ -362,6 +369,7 @@ function multiSpin() {
 
   singleRun(0); // Start the first run
 }
+
 
     // Function to populate Totals table
     function populateTotalsTable(blinkCellNumber = null, isLastSpin = false) {

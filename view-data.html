@@ -239,7 +239,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `RunOf_${rowCount}_${timestamp}.pdf`;
+    const filename = `Wheel_${rowCount}_${timestamp}.pdf`;
 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;
@@ -764,7 +764,7 @@ tr.appendChild(tdLineNumber);  // Append line number cell to the row
         const timestamp = getFormattedTimestamp();
         
         // Set the download attribute with a filename including the row count and timestamp
-        link.setAttribute("download", `RunOf_${rowCount}_${timestamp}.csv`);
+        link.setAttribute("download", `Wheel_${rowCount}_${timestamp}.csv`);
         link.style.display = 'none';
         
     // Append the link to the body, click it and remove it
@@ -800,7 +800,7 @@ function getFormattedTimestamp() {
     clearTable();
 
 // Fetch the CSV file from the server
-fetch('Run_10000.csv')
+fetch('Run_1000.csv')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);

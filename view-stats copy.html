@@ -119,8 +119,8 @@
 
                 // Start from index 1 to skip the line number
                 columnOrder.forEach((header, index) => {
-                    const adjustedIndex = index + 1; // Skip line number column
-                    const cellValue = row[adjustedIndex]; // Use adjusted index
+                    const adjustedIndex = index + 1; // Adjust index to account for the line number column
+                    const cellValue = row[adjustedIndex];
                     if (!isNaN(cellValue) && cellValue !== '') {
                         const numValue = Number(cellValue);
                         if (group1Columns.includes(header)) {

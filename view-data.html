@@ -731,207 +731,47 @@ tr.appendChild(tdLineNumber);  // Append line number cell to the row
 
 
         
- fetch('Run_10000.csv')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.text();
-    })
-    .then(csvText => {
-        // Normalize line breaks, trim whitespace, and remove empty rows
-        const normalizedText = csvText
-            .trim()  // Trim leading/trailing whitespace
-            .replace(/\r\n|\r|\n/g, '\n')  // Normalize line breaks
-            .split('\n')
-            .filter(line => line.trim() !== '')  // Remove empty rows
-            .map(line => line.split(',').map(cell => cell.trim()));  // Trim each cell
+ document.getElementById('saveButton').addEventListener('click', function() {
+    const table = document.getElementById('csvTable');
+    let csvContent = '';
+    const rows = table.querySelectorAll('tr');
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
 
-        const lines = normalizedText;
-        const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
-        const group1Columns = ['14', '2', '0', '28', '9'];
-        const group2Columns = ['13', '1', '37', '27', '10'];
-        let headerIndices = [];
-        let headerProcessed = false;
-        let csvData = [];
-        const table = document.getElementById('csvTable');
+    rows.forEach((row, rowIndex) => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
 
-        if (!headerProcessed) {
-            const headerRow = lines[0];
-            headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-            const thead = table.querySelector('thead');
-            const tr = document.createElement('tr');
-
-            // Add Line Number Header (as the first column)
-            const thLineNumber = document.createElement('th');
-            thLineNumber.textContent = '#';  // Line number header
-            tr.appendChild(thLineNumber);
-
-            // Add headers for the remaining columns (shifted by one)
-            headerIndices.forEach(index => {
-                const th = document.createElement('th');
-                let headerValue = index >= 0 ? headerRow[index] : '';
-                if (headerValue === '37') {
-                    headerValue = '00';
-                }
-                th.textContent = headerValue;
-                if (th.textContent === '0' || th.textContent === '00') {
-                    th.style.backgroundColor = 'green';
-                }
-                tr.appendChild(th);
-            });
-            thead.appendChild(tr);
-            headerProcessed = true;
-        }
-
-        for (let i = 1; i < lines.length; i++) {
-            if (lines[i].some(cell => cell.trim())) {
-                csvData.push(lines[i]);  // Keep all columns
+        cols.forEach(col => {
+            let cellData = col.textContent;
+            
+            // Replace the header "00" with "37" in the first row (header row)
+            if (rowIndex === 0 && cellData === '00') {
+                cellData = '37';
             }
-        }
 
-        document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`;
-
-        csvData.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr');
-
-            // Add Line Number Cell (as the first column)
-            const tdLineNumber = document.createElement('td');
-            tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
-            tdLineNumber.style.backgroundColor = 'slategray'; // Set background color to slategray
-            tdLineNumber.style.color = 'white'; // Set text color to white for contrast
-            tr.appendChild(tdLineNumber);  // Append line number cell to the row
-
-            let group1Sum = 0;
-            let group2Sum = 0;
-            let group1Cells = [];
-            let group2Cells = [];
-
-            headerIndices.forEach((index, i) => {
-                const td = document.createElement('td');
-                let cellValue = row[index] || ''; // Adjust index for full column row
-                if (cellValue === '0') {
-                    cellValue = '';
-                }
-                td.textContent = cellValue;
-
-                if (i >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
-                    td.classList.add('default-light-yellow');
-                }
-
-                if (i >= 0 && group1Columns.includes(columnOrder[i])) {
-                    group1Cells.push(td);
-                    if (!isNaN(cellValue) && cellValue !== '') {
-                        group1Sum += Number(cellValue);
-                    }
-                }
-
-                if (i >= 0 && group2Columns.includes(columnOrder[i])) {
-                    group2Cells.push(td);
-                    if (!isNaN(cellValue) && cellValue !== '') {
-                        group2Sum += Number(cellValue);
-                    }
-                }
-
-                if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
-                    td.classList.remove('default-light-yellow', 'light-red');
-                    td.classList.add('light-green');
-                }
-
-                tr.appendChild(td);
-            });
-
-            group1Cells.forEach(td => {
-                if (group1Sum === 8) {
-                    td.classList.remove('default-light-yellow');
-                    td.classList.add('light-red');
-                } else if (group1Sum === 9) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('light-blue');
-                    }
-                } else if (group1Sum === 10) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('light-orange');
-                    }
-                } else if (group1Sum === 11) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('violet');
-                    }
-                } else if (group1Sum === 12) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('DarkKhaki');
-                    }
-                } else if (group1Sum === 13) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('DarkSeaGreen');
-                    }
-                } else if (group1Sum === 14) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('LightSteelBlue');
-                    }
-                } else if (group1Sum === 15) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('Gold');
-                    }
-                }
-            });
-
-            group2Cells.forEach(td => {
-                if (group2Sum === 8) {
-                    td.classList.remove('default-light-yellow');
-                    td.classList.add('light-red');
-                } else if (group2Sum === 9) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('light-blue');
-                    }
-                } else if (group2Sum === 10) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('light-orange');
-                    }
-                } else if (group2Sum === 11) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('violet');
-                    }
-                } else if (group2Sum === 12) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('DarkKhaki');
-                    }
-                } else if (group2Sum === 13) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('DarkSeaGreen');
-                    }
-                } else if (group2Sum === 14) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('LightSteelBlue');
-                    }
-                } else if (group2Sum === 15) {
-                    if (!td.classList.contains('light-green')) {
-                        td.classList.remove('default-light-yellow');
-                        td.classList.add('Gold');
-                    }
-                }
-            });
-
-            table.querySelector('tbody').appendChild(tr);
+            rowData.push(cellData);
         });
-    })
-    .catch(error => {
-        console.error('Error fetching the file:', error);
+
+        csvContent += rowData.join(',') + '\n';
     });
 
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+  
+        // Get the formatted timestamp
+        const timestamp = getFormattedTimestamp();
+        
+        // Set the download attribute with a filename including the row count and timestamp
+        link.setAttribute("download", `Wheel_${rowCount}_${timestamp}.csv`);
+        link.style.display = 'none';
+        
+    // Append the link to the body, click it and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
 
 // Function to get formatted timestamp
 function getFormattedTimestamp() {

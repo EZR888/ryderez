@@ -800,7 +800,7 @@ function getFormattedTimestamp() {
     clearTable();
 
 // Fetch the CSV file from the server
-fetch('Run_10000.csv')
+fetch('Run_1k.csv')
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);

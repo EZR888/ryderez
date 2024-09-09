@@ -157,6 +157,9 @@
         #sortByHighestValue {
             background-color: red
         }
+        #sortByLowestValue {
+            background-color: lightcoral
+        }       
         .file-input-container {
             display: flex;
             align-items: center;
@@ -212,7 +215,8 @@
         <div class="file-input-container">
             <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="sortByHighestValue">Sort by Highest Value</button>
+            <button id="sortByHighestValue">Sort by Highest Value</button>          
+			<button id="sortByLowestValue">Sort by Lowest</button>
             <button id="saveButton">Save to CSV</button>
             <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
             <button id="showStatsButton">View Stats</button>
@@ -502,33 +506,58 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     const table = document.getElementById('csvTable');
     
     
+// Sort by highest order
 document.getElementById('sortByHighestValue').addEventListener('click', function() {
-    console.log("Sort button clicked");
+    console.log("Sort by Highest button clicked");
     const tableBody = table.querySelector('tbody');
     let rowsArray = Array.from(tableBody.rows);
 
     rowsArray.sort((rowA, rowB) => {
-        // Get an array of cell values, ignoring the first column (line number)
         const valuesA = Array.from(rowA.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
         const valuesB = Array.from(rowB.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
         
-        // Sort the values in each row in descending order
         valuesA.sort((a, b) => b - a);
         valuesB.sort((a, b) => b - a);
 
-        // Compare each cell in descending order
         for (let i = 0; i < valuesA.length; i++) {
             if (valuesA[i] !== valuesB[i]) {
-                return valuesB[i] - valuesA[i];  // Sort by the first non-equal value
+                return valuesB[i] - valuesA[i];  // Sort in descending order
             }
         }
-        return 0;  // If rows are identical, no sorting needed
+        return 0;
     });
 
     tableBody.innerHTML = ''; // Clear current rows
     rowsArray.forEach(row => tableBody.appendChild(row)); // Append sorted rows
-    console.log("Sorting complete", rowsArray);
+    console.log("Sorting by highest complete", rowsArray);
 });
+
+// Sort by lowest order
+document.getElementById('sortByLowestValue').addEventListener('click', function() {
+    console.log("Sort by Lowest button clicked");
+    const tableBody = table.querySelector('tbody');
+    let rowsArray = Array.from(tableBody.rows);
+
+    rowsArray.sort((rowA, rowB) => {
+        const valuesA = Array.from(rowA.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
+        const valuesB = Array.from(rowB.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
+        
+        valuesA.sort((a, b) => a - b);
+        valuesB.sort((a, b) => a - b);
+
+        for (let i = 0; i < valuesA.length; i++) {
+            if (valuesA[i] !== valuesB[i]) {
+                return valuesA[i] - valuesB[i];  // Sort in ascending order
+            }
+        }
+        return 0;
+    });
+
+    tableBody.innerHTML = ''; // Clear current rows
+    rowsArray.forEach(row => tableBody.appendChild(row)); // Append sorted rows
+    console.log("Sorting by lowest complete", rowsArray);
+});
+
 
 
 

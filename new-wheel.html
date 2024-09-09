@@ -462,6 +462,26 @@ function populateTotalsTable() {
   if (!tableContainer.querySelector('table')) {
     let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
 
+    // Header Row (Second Half)
+    for (let i = numSlots / 2; i < numSlots; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                       (i % 2 === 0 ? 'red-header' : 'black-header');
+      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+    }
+
+    tableHTML += '</tr></thead><tbody><tr>';
+
+    // Data Row (Second Half)
+    for (let i = numSlots / 2; i < numSlots; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                       (i % 2 === 0 ? 'red' : 'black');
+      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
+      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    }
+
+    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
+
     // Header Row (First Half)
     for (let i = 0; i < numSlots / 2; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
@@ -480,25 +500,6 @@ function populateTotalsTable() {
       tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
     }
 
-    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
-
-    // Header Row (Second Half)
-    for (let i = numSlots / 2; i < numSlots; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'red-header' : 'black-header');
-      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-    }
-
-    tableHTML += '</tr></thead><tbody><tr>';
-
-    // Data Row (Second Half)
-    for (let i = numSlots / 2; i < numSlots; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'red' : 'black');
-      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
-      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
-      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
-    }
 
     tableHTML += '</tr></tbody></table></div>';
     tableContainer.innerHTML = tableHTML;

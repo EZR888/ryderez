@@ -60,9 +60,16 @@
         .info-item[data-type="14"] {
             background-color: LightSteelBlue;
         }
-        .info-item2[data-type="15"] {
+        .info-item[data-type="15"] {
+            background-color: Thistle;
+        }
+        .info-item[data-type="16"] {
+            background-color: GreenYellow;
+        }
+        .info-item2[data-type="17"] {
             background-color: Gold;
         }
+    
         table {
             width: 100%;
             border-collapse: collapse;
@@ -203,14 +210,16 @@
     <div class="container">
         <div class="info-container">
             <h1>Spins Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div class="info-item" data-type="8">8</div>
-            <div class="info-item" data-type="9">9</div>
-            <div class="info-item" data-type="10">10</div>
-            <div class="info-item" data-type="11">11</div>
-            <div class="info-item" data-type="12">12</div>
-            <div class="info-item" data-type="13">13</div>
-            <div class="info-item" data-type="14">14</div>
-			<div class="info-item2 clickable" data-type="15" id="loadFromServer">15</div>
+            <div class="info-item" data-type="8">8 (1)</div>
+            <div class="info-item" data-type="9">9 (2)</div>
+            <div class="info-item" data-type="10">10 (3)</div>
+            <div class="info-item" data-type="11">11 (4)</div>
+            <div class="info-item" data-type="12">12 (5)</div>
+            <div class="info-item" data-type="13">13 (6)</div>
+            <div class="info-item" data-type="14">14 (7)</div>
+            <div class="info-item" data-type="15">15 (8)</div>
+            <div class="info-item" data-type="16">16 (9)</div>
+			<div class="info-item2 clickable" data-type="17" id="loadFromServer">17 (10)</div>
         </div>
         <div class="file-input-container">
             <h2>Select CSV file</h2>
@@ -264,7 +273,10 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
         12: 'DarkKhaki',
         13: 'DarkSeaGreen',
         14: 'LightSteelBlue',
-        15: 'Gold'
+        15: 'Gold',
+        16: 'Gold',
+        17: 'Gold'
+
     };
 
     function getColorForStyle(style) {
@@ -285,7 +297,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
 
     function drawColorLegend(startX) {
         const yStart = 10;
-        const boxSize = 8;
+        const boxSize = 10;
         const spacing = 2;
 
         const legendItems = [
@@ -296,7 +308,9 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
             { number: 12, color: 'DarkKhaki' },
             { number: 13, color: 'DarkSeaGreen' },
             { number: 14, color: 'LightSteelBlue' },
-            { number: 15, color: 'Gold' }
+            { number: 15, color: 'Gold' },
+            { number: 16, color: 'Gold' },
+            { number: 17, color: 'Gold' }
         ];
 
         doc.setFontSize(10);

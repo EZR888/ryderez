@@ -39,31 +39,31 @@
             color: black;
             font-weight: bold;
         }
-        .info-item2[data-type="8"] {
+        .info-item[data-type="8"] {
             background-color: lightcoral;
         }
-        .info-item2[data-type="9"] {
+        .info-item[data-type="9"] {
             background-color: lightblue;
         }
-        .info-item2[data-type="10"] {
+        .info-item[data-type="10"] {
             background-color: orange;
         }
-        .info-item2[data-type="11"] {
+        .info-item[data-type="11"] {
             background-color: violet;
         }
-        .info-item2[data-type="12"] {
+        .info-item[data-type="12"] {
             background-color: DarkKhaki;
         }
-        .info-item2[data-type="13"] {
+        .info-item[data-type="13"] {
             background-color: DarkSeaGreen;
         }
-        .info-item2[data-type="14"] {
+        .info-item[data-type="14"] {
             background-color: LightSteelBlue;
         }
-        .info-item2[data-type="15"] {
+        .info-item[data-type="15"] {
             background-color: Thistle;
         }
-        .info-item2[data-type="16"] {
+        .info-item[data-type="16"] {
             background-color: GreenYellow;
         }
         .info-item2[data-type="17"] {
@@ -210,17 +210,16 @@
     <div class="container">
         <div class="info-container">
             <h1>Spins Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<div class="info-item2 clickable" data-type="8">8 (1)</div>
-<div class="info-item2 clickable" data-type="9">9 (2)</div>
-<div class="info-item2 clickable" data-type="10">10 (3)</div>
-<div class="info-item2 clickable" data-type="11">11 (4)</div>
-<div class="info-item2 clickable" data-type="12">12 (5)</div>
-<div class="info-item2 clickable" data-type="13">13 (6)</div>
-<div class="info-item2 clickable" data-type="14">14 (7)</div>
-<div class="info-item2 clickable" data-type="15">15 (8)</div>
-<div class="info-item2 clickable" data-type="16">16 (9)</div>
-<div class="info-item2 clickable" data-type="17">17 (10)</div>
-
+            <div class="info-item" data-type="8">8 (1)</div>
+            <div class="info-item" data-type="9">9 (2)</div>
+            <div class="info-item" data-type="10">10 (3)</div>
+            <div class="info-item" data-type="11">11 (4)</div>
+            <div class="info-item" data-type="12">12 (5)</div>
+            <div class="info-item" data-type="13">13 (6)</div>
+            <div class="info-item" data-type="14">14 (7)</div>
+            <div class="info-item" data-type="15">15 (8)</div>
+            <div class="info-item" data-type="16">16 (9)</div>
+			<div class="info-item2 clickable" data-type="17" id="loadFromServer">17 (10)</div>
         </div>
         <div class="file-input-container">
             <h2>Select CSV file</h2>
@@ -825,28 +824,20 @@ function getFormattedTimestamp() {
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
             window.open('view-stats.html', '_blank');
         });
+        
+        // Existing code...
 
+	document.getElementById('loadFromServer').addEventListener('click', function() {
+    clearTable();
 
-// Load 1,00-10,000 run files from the web server via numbered / colored boxes
-//	document.getElementById('loadFromServer').addEventListener('click', function() {
-//    clearTable();
-
-document.querySelectorAll('.clickable').forEach(item => {
-    item.addEventListener('click', function() {
-        // Clear the table before fetching
-        clearTable();
-
-        // Fetch the CSV file dynamically based on the data-type
-        const dataType = this.getAttribute('data-type');
-        const fileName = `OnServer_${dataType}.csv`;
-
-        fetch(fileName)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.text();
-            })
+// Fetch the CSV file from the server
+fetch('Wheel_1000_2024-09-08-20-33-02.csv')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text();
+    })
     .then(csvText => {
         const lines = csvText.split('\n').map(line => line.split(','));
         const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];

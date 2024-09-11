@@ -833,12 +833,16 @@ document.getElementById('loadFromServer').addEventListener('click', function() {
   // Fetch the CSV file from the server
   const infoItemElements = document.querySelectorAll('.info-item2.clickable');
 
+  console.log('Number of info-item2 elements:', infoItemElements.length); // Check element selection
+
   infoItemElements.forEach(element => {
     element.addEventListener('click', function() {
       const dataType = element.getAttribute('data-type');
       const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
 
-      console.log('Fetching file:', fileName); // Log the filename being fetched
+      console.log('Clicked info item!'); // Check event triggering
+
+      console.log('Fetching file:', fileName); // Verify filename before fetch
 
       fetch(fileName)
         .then(response => response.text())

@@ -210,16 +210,16 @@
     <div class="container">
         <div class="info-container">
             <h1>Spins Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div class="info-item2 clickable" data-type="8" id="loadFromServer">8 (1)</div>
-            <div class="info-item2 clickable" data-type="9" id="loadFromServer">9 (2)</div>
-            <div class="info-item2 clickable" data-type="10" id="loadFromServer">10 (3)</div>
-            <div class="info-item2 clickable" data-type="11" id="loadFromServer">11 (4)</div>
-            <div class="info-item2 clickable" data-type="12" id="loadFromServer">12 (5)</div>
-            <div class="info-item2 clickable" data-type="13" id="loadFromServer">13 (6)</div>
-            <div class="info-item2 clickable" data-type="14" id="loadFromServer">14 (7)</div>
-            <div class="info-item2 clickable" data-type="15" id="loadFromServer">15 (8)</div>
-            <div class="info-item2 clickable" data-type="16" id="loadFromServer">16 (9)</div>
-			<div class="info-item2 clickable" data-type="17" id="loadFromServer">17 (10)</div>
+<div class="info-item2 clickable" data-type="8">8 (1)</div>
+<div class="info-item2 clickable" data-type="9">9 (2)</div>
+<div class="info-item2 clickable" data-type="10">10 (3)</div>
+<div class="info-item2 clickable" data-type="11">11 (4)</div>
+<div class="info-item2 clickable" data-type="12">12 (5)</div>
+<div class="info-item2 clickable" data-type="13">13 (6)</div>
+<div class="info-item2 clickable" data-type="14">14 (7)</div>
+<div class="info-item2 clickable" data-type="15">15 (8)</div>
+<div class="info-item2 clickable" data-type="16">16 (9)</div>
+<div class="info-item2 clickable" data-type="17">17 (10)</div>
         </div>
         <div class="file-input-container">
             <h2>Select CSV file</h2>
@@ -827,35 +827,28 @@ function getFormattedTimestamp() {
         
         // Existing code...
 
-document.getElementById('loadFromServer').addEventListener('click', function() {
-  clearTable();
+document.querySelectorAll('.info-item2.clickable').forEach(element => {
+  element.addEventListener('click', function() {
+    clearTable();
+    
+    const dataType = element.getAttribute('data-type');
+    const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
 
-  // Fetch the CSV file from the server
-  const infoItemElements = document.querySelectorAll('.info-item2.clickable');
+    console.log('Clicked info item!'); // Check event triggering
+    console.log('Fetching file:', fileName); // Verify filename before fetch
 
-  console.log('Number of info-item2 elements:', infoItemElements.length); // Check element selection
+    fetch(fileName)
+      .then(response => response.text())
+      .then(csvText => {
+        clearTable();
 
-  infoItemElements.forEach(element => {
-    element.addEventListener('click', function() {
-      const dataType = element.getAttribute('data-type');
-      const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
-
-      console.log('Clicked info item!'); // Check event triggering
-
-      console.log('Fetching file:', fileName); // Verify filename before fetch
-
-      fetch(fileName)
-        .then(response => response.text())
-        .then(csvText => {
-          clearTable();
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return csvText;
-        })
-        .then(csvText => {
-          // ... rest of your CSV processing logic
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return csvText;
+      })
+      .then(csvText => {
+        console.log('CSV data fetched successfully');
         })
         .catch(error => {
           console.error('Error fetching the file:', error);

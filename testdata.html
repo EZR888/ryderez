@@ -855,6 +855,10 @@ document.getElementById('loadFromServer').addEventListener('click', function() {
           return csvText;
         })
         .then(csvText => {
+          // ... rest of your CSV processing logic
+        })
+        .catch(error => {
+          console.error('Error fetching the file:', error);
         
                  console.log('CSV data fetched successfully'); // Log success message
 
@@ -1045,10 +1049,10 @@ document.getElementById('loadFromServer').addEventListener('click', function() {
             console.error('Network error encountered:', error);
             console.error('Check your internet connection or the server URL.');
           }
-      });
-     }); 
+        });
     });
   });
+});
 	
     // Function to generate a formatted timestamp
     function getFormattedTimestamp() {

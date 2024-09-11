@@ -838,8 +838,10 @@ infoItemElements.forEach(element => {
     const dataType = element.getAttribute('data-type');
     const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
 
-    fetch(fileName)
-      .then(response => {
+fetch(fileName)
+  .then(response => response.text())
+  .then(csvText => {
+    clearTable();  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -1033,7 +1035,7 @@ infoItemElements.forEach(element => {
      }); 
     });
   });
-
+	
     // Function to generate a formatted timestamp
     function getFormattedTimestamp() {
       const now = new Date();

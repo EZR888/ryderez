@@ -827,27 +827,33 @@ function getFormattedTimestamp() {
         
         // Existing code...
 
-	document.getElementById('loadFromServer').addEventListener('click', function() {
-    clearTable();
+document.getElementById('loadFromServer').addEventListener('click', function() {
+  clearTable();
 
-// Fetch the CSV file from the server
-const infoItemElements = document.querySelectorAll('.info-item2.clickable');
+  // Fetch the CSV file from the server
+  const infoItemElements = document.querySelectorAll('.info-item2.clickable');
 
-infoItemElements.forEach(element => {
-  element.addEventListener('click', function() {
-    const dataType = element.getAttribute('data-type');
-    const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
+  infoItemElements.forEach(element => {
+    element.addEventListener('click', function() {
+      const dataType = element.getAttribute('data-type');
+      const fileName = `OnServer_${dataType}.csv`; // Replace with your desired filename pattern
 
-fetch(fileName)
-  .then(response => response.text())
-  .then(csvText => {
-    clearTable();  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.text();
-      })
-    .then(csvText => {
+      console.log('Fetching file:', fileName); // Log the filename being fetched
+
+      fetch(fileName)
+        .then(response => response.text())
+        .then(csvText => {
+          clearTable();
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return csvText;
+        })
+        .then(csvText => {
+        
+                 console.log('CSV data fetched successfully'); // Log success message
+
         const lines = csvText.split('\n').map(line => line.split(','));
         const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
         const group1Columns = ['14', '2', '0', '28', '9'];
@@ -1031,6 +1037,10 @@ fetch(fileName)
     })
         .catch(error => {
           console.error('Error fetching the file:', error);
+          if (error.name === 'FetchError' || error.name === 'NetworkError') {
+            console.error('Network error encountered:', error);
+            console.error('Check your internet connection or the server URL.');
+          }
       });
      }); 
     });

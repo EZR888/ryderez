@@ -172,78 +172,73 @@
             generateTable(); // Regenerate the table
         });
 
-document.getElementById('savePdfButton').addEventListener('click', function() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape' });
+        // Save table content as PDF
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
 
-    const table = document.querySelector('#csvTable');
-    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
-    const data = Array.from(table.querySelectorAll('tbody tr')).map((tr) =>
-        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
-    );
+            const table = document.querySelector('#csvTable');
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+            const data = Array.from(table.querySelectorAll('tbody tr')).map((tr) =>
+                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+            );
 
-    const timestamp = getFormattedTimestamp();
-    const rowCount = data.length;
-    const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
+            const timestamp = getFormattedTimestamp();
+            const rowCount = data.length;
+            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
 
-    const baseFontSize = 8;
-    const headerFontSize = baseFontSize * 0.9;
-    const cellFontSize = baseFontSize * 1.1;
+            const baseFontSize = 8;
+            const headerFontSize = baseFontSize * 0.9;
+            const cellFontSize = baseFontSize * 1.1;
 
-    const columnCount = headers.length;
-    const pageWidth = doc.internal.pageSize.width - 20;
-    const columnWidth = pageWidth / columnCount;
+            const columnCount = headers.length;
+            const pageWidth = doc.internal.pageSize.width - 20;
+            const columnWidth = pageWidth / columnCount;
 
-    // Add the title to every page using didDrawPage
-    doc.autoTable({
-        head: [headers],
-        body: data,
-        startY: 15,
-        theme: 'grid',
-        margin: { top: 15, left: 10, right: 10, bottom: 10 },
-        styles: {
-            fontSize: cellFontSize,
-            cellPadding: 2,
-            fontStyle: 'bold',
-            halign: 'center',
-        },
-        headStyles: {
-            fontSize: headerFontSize,
-            textColor: [255, 255, 255],
-            fillColor: [0, 128, 0],
-            halign: 'center',
-        },
-        columnStyles: {
-            0: { cellWidth: columnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red background, white text for row headers
-            ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
-                acc[i] = { cellWidth: columnWidth };
-                return acc;
-            }, {})
-        },
-        didDrawPage: function (data) {
-            // Add the title to every page
             doc.setFontSize(12);
-            const titleX = 14;
-            const titleY = 10;  // Adjust the Y position to avoid overlapping the table
-            doc.text(filename.replace('.pdf', ''), titleX, titleY);
+            doc.text(filename.replace('.pdf', ''), 14, 15);
+
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 20,
+                theme: 'grid',
+                margin: { top: 10, left: 10, right: 10, bottom: 5 },
+                styles: {
+                    fontSize: cellFontSize,
+                    cellPadding: 2,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                },
+                headStyles: {
+                    fontSize: headerFontSize,
+                    textColor: [255, 255, 255],
+                    fillColor: [0, 128, 0],
+                    halign: 'center',
+                },
+                columnStyles: {
+                    0: { cellWidth: columnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red background, white text for row headers
+                    ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
+                        acc[i] = { cellWidth: columnWidth };
+                        return acc;
+                    }, {})
+                }
+            });
+
+            doc.save(filename);
+        });
+
+        // Helper function to get formatted timestamp
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
         }
-    });
-
-    doc.save(filename);
-});
-
-// Helper function to get formatted timestamp
-function getFormattedTimestamp() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
-}
-
     </script>
 </body>
 </html>

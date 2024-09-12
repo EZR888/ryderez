@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -166,7 +167,11 @@
         }
         #sortByLowestValue {
             background-color: lightcoral
-        }        
+        }   
+        #sortCols {
+            background-color: lightgreen;
+            color: black;
+        }     
         .file-input-container {
             display: flex;
             align-items: center;
@@ -226,6 +231,7 @@
             <input type="file" id="fileInput" accept=".csv" multiple>
             <button id="sortByHighestValue">Sort by Highest Value</button>
             <button id="sortByLowestValue">Reverse Sort</button>
+            <button id="sortCols">Sort Columns</button>
             <button id="saveButton">Save to CSV</button>
             <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
             <button id="showStatsButton">View Stats</button>
@@ -238,8 +244,11 @@
         <tbody></tbody>
     </table>
     <script>
-  
-  
+
+    document.getElementById('sortCols').addEventListener('click', function() {
+        window.open('sort.html', '_blank');  // Opens sort.html in a new tab or window
+    });
+
 document.getElementById('savePdfButton').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });

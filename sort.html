@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorted Table Visualization</title>
+<style>
+    body {
+        background-color: black;
+        color: lightgreen;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px; /* Add padding around the body */
+        font-size: 16px;
+    }
+    .container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto; /* Center the container horizontally */
+    }
+    input[type="file"] {
+        display: block;
+        margin-bottom: 20px; /* Add margin below the file input */
+        color: black;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 1px solid red;
+        color: black;
+        font-family: Arial, sans-serif;
+        table-layout: fixed; /* Enforces fixed column widths */
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+        width: 20px; /* Fixed width for all columns */
+        font-weight: bold;
+        overflow: hidden; /* Prevents content overflow */
+        text-overflow: ellipsis; /* Adds ellipsis for overflowing content */
+        white-space: nowrap; /* Prevents text wrapping */
+    }
+    th {
+        color: white;
+        background-color: green;
+    }
+    td {
+        background-color: lightgray;
+    }
+    /* Make the row headers (line numbers) bold and white */
+    td:first-child {
+        font-weight: bold;
+        background-color: red;
+        color: white; /* Row header text will be white */
+    }
+</style>
+</head>
+<body>
+    <input type="file" id="fileInput" />
+    <div id="tableContainer"></div>
+
+    <script>
+        function loadCSV(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const csvData = e.target.result;
+                parseCSVAndGenerateTable(csvData);
+            };
+
+            reader.readAsText(file);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', loadCSV);
+
+        function parseCSVAndGenerateTable(csvData) {
+            const rows = csvData.trim().split("\n").map(row => row.split(","));
+
+            // Remove and check the first row (header row)
+            let headers = rows.shift();
+            let hasRowHeaders = false;
+            if (headers[0] === "#") {
+                hasRowHeaders = true; // Detect row headers, first column is line numbers
+            }
+
+            // Convert rows to numbers where applicable
+            let rowData = rows.map(row => row.map(value => Number(value) || value));
+
+            // If there are row headers, remove the first column from each row before sorting
+            if (hasRowHeaders) {
+                rowData = rowData.map(row => row.slice(1)); // Remove the first column
+            }
+
+            // Sort each row by highest to lowest value (skip the line numbers if any)
+            rowData.forEach(row => row.sort((a, b) => b - a));
+
+            // Sort rows by the highest value in each row
+            rowData.sort((rowA, rowB) => Math.max(...rowB) - Math.max(...rowA));
+
+            // Create the HTML table and add a new header row with column numbers
+            let tableHtml = '<table><thead><tr>';
+
+            // Add the new line number column header
+            tableHtml += `<th>#</th>`;
+
+            // Add column headers dynamically
+            for (let i = 0; i < rowData[0].length; i++) {
+                tableHtml += `<th>${i + 1}</th>`;
+            }
+
+            tableHtml += '</tr></thead><tbody>';
+
+            // Add sorted rows back to the table with new line numbers
+            rowData.forEach((row, rowIndex) => {
+                tableHtml += '<tr>';
+                // Add new line numbers in the first column, with bold text
+                tableHtml += `<td><strong>${rowIndex + 1}</strong></td>`;
+
+                // Add the sorted row data
+                row.forEach(cell => {
+                    tableHtml += `<td>${cell}</td>`;
+                });
+
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+
+            document.getElementById('tableContainer').innerHTML = tableHtml;
+        }
+    </script>
+</body>
+</html>

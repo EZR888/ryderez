@@ -40,6 +40,14 @@
             background-color: blue;
             color: white;
         }
+        #viewDataButton {
+        	background-color: darkgreen;
+        	color: white;
+        }
+        #accessSim {
+        	background-color: slategray;
+        	color: white;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -85,11 +93,21 @@
             <input type="file" id="fileInput" accept=".csv" multiple>
             <button id="reverseSortButton">Reverse Sort</button>
             <button id="savePdfButton">Save to PDF</button>
+            <button id="viewDataButton">View Data</button>
         </div>
         <div id="tableContainer"></div>
     </div>
 
     <script>
+    
+    document.getElementById('viewDataButton').addEventListener('click', function() {
+    window.open('view-data.html', '_blank');
+	});
+
+    document.getElementById('accessSim').addEventListener('click', function() {
+    window.open('roulette.html', '_blank');
+	});
+
         let rowData = [];
 
         function loadCSV(event) {

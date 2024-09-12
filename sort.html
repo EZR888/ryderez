@@ -10,13 +10,12 @@
             color: lightgreen;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 20px; /* Add padding around the body */
             font-size: 16px;
         }
         .container {
             max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
+            margin: 0 10px; /* Smaller margin on the left and right (approx. 1/2 inch on the left) */
         }
         .button-group {
             display: flex;
@@ -156,7 +155,7 @@
 
                 // Add the sorted row data, replace "0" with empty space
                 row.forEach(cell => {
-                    tableHtml += `<td>${cell === 0 ? '' : cell}</td>`;
+                    tableHtml += `<td>${cell === "0" ? '' : cell}</td>`;
                 });
 
                 tableHtml += '</tr>';
@@ -202,9 +201,9 @@
             doc.autoTable({
                 head: [headers],
                 body: data,
-                startY: 25,
+                startY: 20,
                 theme: 'grid',
-                margin: { top: 25, left: 10, right: 10, bottom: 10 },
+                margin: { top: 5, left: 10, right: 10, bottom: 5 },
                 styles: {
                     fontSize: cellFontSize,
                     cellPadding: 2,

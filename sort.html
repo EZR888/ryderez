@@ -10,12 +10,12 @@
             color: lightgreen;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px; /* Add padding around the body */
+            padding: 20px;
             font-size: 16px;
         }
         .container {
             max-width: 1200px;
-            margin: 0 10px; /* Smaller margin on the left and right (approx. 1/2 inch on the left) */
+            margin: 0 10px;
         }
         .button-group {
             display: flex;
@@ -41,12 +41,12 @@
             color: white;
         }
         #viewDataButton {
-        	background-color: darkgreen;
-        	color: white;
+            background-color: darkgreen;
+            color: white;
         }
         #accessSim {
-        	background-color: slategray;
-        	color: white;
+            background-color: slategray;
+            color: white;
         }
         table {
             width: 100%;
@@ -55,13 +55,12 @@
             border: 1px solid red;
             color: black;
             font-family: Arial, sans-serif;
-            table-layout: fixed;
+            /* Remove table-layout to allow dynamic resizing */
         }
         th, td {
             border: 1px solid black;
             padding: 8px;
             text-align: center;
-            width: 20px;
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -74,11 +73,12 @@
         td {
             background-color: lightgray;
         }
-        /* Make the row headers (line numbers) bold and white */
+        /* Adjusted width for line number column */
         td:first-child {
             font-weight: bold;
             background-color: red;
             color: white;
+            min-width: 40px; /* Ensure enough space for 4-digit numbers */
         }
     </style>
 
@@ -100,14 +100,13 @@
     </div>
 
     <script>
-    
-    document.getElementById('viewDataButton').addEventListener('click', function() {
-    window.open('view-data.html', '_blank');
-	});
+        document.getElementById('viewDataButton').addEventListener('click', function() {
+            window.open('view-data.html', '_blank');
+        });
 
-    document.getElementById('accessSim').addEventListener('click', function() {
-    window.open('roulette.html', '_blank');
-	});
+        document.getElementById('accessSim').addEventListener('click', function() {
+            window.open('roulette.html', '_blank');
+        });
 
         let rowData = [];
 
@@ -128,51 +127,38 @@
         function parseCSVAndGenerateTable(csvData) {
             const rows = csvData.trim().split("\n").map(row => row.split(","));
 
-            // Remove and check the first row (header row)
             let headers = rows.shift();
             let hasRowHeaders = false;
             if (headers[0] === "#") {
-                hasRowHeaders = true; // Detect row headers, first column is line numbers
+                hasRowHeaders = true;
             }
 
-            // Convert rows to numbers where applicable
             rowData = rows.map(row => row.map(value => Number(value) || value));
 
-            // If there are row headers, remove the first column from each row before sorting
             if (hasRowHeaders) {
-                rowData = rowData.map(row => row.slice(1)); // Remove the first column
+                rowData = rowData.map(row => row.slice(1));
             }
 
-            // Sort each row by highest to lowest value (skip the line numbers if any)
             rowData.forEach(row => row.sort((a, b) => b - a));
-
-            // Sort rows by the highest value in each row
             rowData.sort((rowA, rowB) => Math.max(...rowB) - Math.max(...rowA));
 
             generateTable();
         }
 
         function generateTable() {
-            // Create the HTML table and add a new header row with column numbers
             let tableHtml = '<table id="csvTable"><thead><tr>';
-
-            // Add the new line number column header
             tableHtml += `<th>#</th>`;
 
-            // Add column headers dynamically
             for (let i = 0; i < rowData[0].length; i++) {
                 tableHtml += `<th>${i + 1}</th>`;
             }
 
             tableHtml += '</tr></thead><tbody>';
 
-            // Add sorted rows back to the table with new line numbers
             rowData.forEach((row, rowIndex) => {
                 tableHtml += '<tr>';
-                // Add new line numbers in the first column, with bold text
                 tableHtml += `<td><strong>${rowIndex + 1}</strong></td>`;
 
-                // Add the sorted row data, replace "0" with empty space
                 row.forEach(cell => {
                     tableHtml += `<td>${cell === "0" ? '' : cell}</td>`;
                 });
@@ -181,14 +167,12 @@
             });
 
             tableHtml += '</tbody></table>';
-
             document.getElementById('tableContainer').innerHTML = tableHtml;
         }
 
-        // Reverse the order of columns when the button is clicked
         document.getElementById('reverseSortButton').addEventListener('click', function() {
-            rowData = rowData.map(row => row.reverse()); // Reverse the columns
-            generateTable(); // Regenerate the table
+            rowData = rowData.map(row => row.reverse());
+            generateTable();
         });
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
@@ -211,9 +195,8 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
 
     const columnCount = headers.length;
     const pageWidth = doc.internal.pageSize.width - 20;
-    const columnWidth = pageWidth / columnCount;
+    const columnWidth = (pageWidth - 25) / (columnCount - 1); // Deduct smaller width for line number column
 
-    // Add the title to every page using didDrawPage
     doc.autoTable({
         head: [headers],
         body: data,
@@ -233,17 +216,16 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
             halign: 'center',
         },
         columnStyles: {
-            0: { cellWidth: columnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red background, white text for row headers
+            0: { cellWidth: 12, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Reduced width to 15
             ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
-                acc[i] = { cellWidth: columnWidth };
+                acc[i] = { cellWidth: columnWidth }; // Dynamically adjust other columns
                 return acc;
             }, {})
         },
         didDrawPage: function (data) {
-            // Add the title to every page
             doc.setFontSize(12);
             const titleX = 14;
-            const titleY = 10;  // Adjust the Y position to avoid overlapping the table
+            const titleY = 10;
             doc.text(filename.replace('.pdf', ''), titleX, titleY);
         }
     });
@@ -251,18 +233,17 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
     doc.save(filename);
 });
 
-// Helper function to get formatted timestamp
-function getFormattedTimestamp() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
-}
 
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+        }
     </script>
 </body>
 </html>

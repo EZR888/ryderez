@@ -71,30 +71,47 @@
             background-color: Gold;
         }
     
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border: 1px solid red;
-            color: black;
-            font-family: Arial, sans-serif;
-            table-layout: fixed; /* Enforces fixed column widths */
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-            width: 20px; /* Fixed width for all columns */
-            font-weight: bold;
-            overflow: hidden; /* Prevents content overflow */
-            text-overflow: ellipsis; /* Adds ellipsis for overflowing content */
-            white-space: nowrap; /* Prevents text wrapping */
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid red;
+    color: black;
+    font-family: Arial, sans-serif;
+    /* Remove table-layout fixed */
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevents text wrapping */
+}
+
+td:first-child, th:first-child {
+    width: 50px; /* Set a fixed width for the first column */
+    min-width: 50px; /* Ensure it doesn't shrink */
+    max-width: 50px; /* Ensure it doesn't expand */
+    background-color: slategray;
+    color: white;
+    text-align: center;
+}
+
+
         th {
             color: white;
         }
         td {
             background-color: lightgray;
+        }
+        td:first-child {
+            font-weight: bold;
+            background-color: red;
+            color: white;
+            min-width: 40px; /* Ensure enough space for 4-digit numbers */
         }
         .highlight {
             background-color: lightyellow;
@@ -355,7 +372,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
         },
         columnStyles: {
             0: {
-                cellWidth: columnWidth,
+                cellWidth: 15, 
                 fillColor: getColorForStyle('light-green')
             },
             1: {
@@ -633,6 +650,10 @@ const tdLineNumber = document.createElement('td');
 tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
 tdLineNumber.style.backgroundColor = 'slategray'; // Set background color to slategray
 tdLineNumber.style.color = 'white'; // Set text color to white for contrast
+tdLineNumber.style.width = '40px'; // Set fixed width to 40px (adjust as needed)
+tdLineNumber.style.minWidth = '50px'; // Set minimum width to 40px (adjust as needed)
+tdLineNumber.style.maxWidth = '50px'; // Ensure it doesn't expand beyond 40px
+tdLineNumber.style.textAlign = 'center'; // Center align text in the cell
 tr.appendChild(tdLineNumber);  // Append line number cell to the row
 
 

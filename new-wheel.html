@@ -285,7 +285,7 @@
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
-    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+    let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18 ];
     let slotAngle;
     let wheelSound;
     let soundLoaded = false;
@@ -494,7 +494,7 @@ function populateTotalsTable() {
     // Data Row (First Half)
     for (let i = numSlots / 2; i < numSlots; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'red' : 'black');
+                       (i % 2 === 0 ? 'black' : 'red');
       let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
       let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
       tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;

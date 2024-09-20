@@ -198,6 +198,8 @@
                 p.setup = function() {
                     p.createCanvas(390, 390).parent(canvasId);
                     p.background(0);
+                    ballX = wheelCenterX;
+  					ballY = wheelCenterY;
                     wheelCenterX = p.width / 2;
                     wheelCenterY = p.height / 2;
                     slotAngle = 360 / numSlots;

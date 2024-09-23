@@ -56,10 +56,12 @@
     .green-header {
       background-color: green;
       color: white;
+      font-size: 18px;
     }
     .black-header {
       background-color: black;
       color: white;
+      font-size: 18px;
     }
     .red-header {
       background-color: red;
@@ -402,9 +404,9 @@ function generateTable(headerOrder, isSecondTable = false) {
     if (headerLabel === '0' || headerLabel === '00') { // Check for '00' here
       colorClass = 'green-header';
     } else if (isSecondTable) { // For headerOrder2
-      colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with black and alternate
+      colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with black and alternate
     } else { // For headerOrder1
-      colorClass = (index % 2 === 0) ? 'black-header' : 'red-header'; // Start with red and alternate
+      colorClass = (index % 2 === 0) ? 'red-header' : 'black-header'; // Start with red and alternate
     }
     tableOutput += "<th class='bold " + colorClass + "'>" + headerLabel + "</th>";
   });

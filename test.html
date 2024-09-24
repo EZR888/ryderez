@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Reader</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .container h1 {
+            margin: 0;
+        }
+        .info-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .info-container .info-item {
+            width: 60px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            margin-right: 10px;
+            color: black;
+            font-weight: bold;
+        }
+        .info-item2[data-type="8"] {
+            background-color: lightcoral;
+        }
+        .info-item2[data-type="9"] {
+            background-color: lightblue;
+        }
+        .info-item2[data-type="10"] {
+            background-color: orange;
+        }
+        .info-item2[data-type="11"] {
+            background-color: violet;
+        }
+        .info-item2[data-type="12"] {
+            background-color: DarkKhaki;
+        }
+        .info-item2[data-type="13"] {
+            background-color: DarkSeaGreen;
+        }
+        .info-item2[data-type="14"] {
+            background-color: LightSteelBlue;
+        }
+        .info-item2[data-type="15"] {
+            background-color: Thistle;
+        }
+        .info-item2[data-type="16"] {
+            background-color: GreenYellow;
+        }
+        .info-item2[data-type="17"] {
+            background-color: Gold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        td:first-child, th:first-child {
+            width: 50px;
+            min-width: 50px;
+            max-width: 50px;
+            background-color: slategray;
+            color: white;
+            text-align: center;
+        }
+        th {
+            color: white;
+        }
+        td {
+            background-color: lightgray;
+        }
+        td:first-child {
+            font-weight: bold;
+            background-color: red;
+            color: white;
+            min-width: 40px;
+        }
+        .highlight {
+            background-color: lightyellow;
+            color: red;
+            font-weight: bold;
+        }
+        .light-red {
+            background-color: lightcoral;
+            font-weight: bold;
+        }
+        .default-light-yellow {
+            background-color: lightyellow;
+        }
+        .light-green {
+            background-color: lightgreen;
+            color: black;
+        }
+        .light-blue {
+            background-color: lightblue;
+        }
+        .light-orange {
+            background-color: orange;
+        }
+        .violet {
+            background-color: violet;
+        }
+        .DarkKhaki {
+            background-color: DarkKhaki;
+        }
+        .DarkSeaGreen {
+            background-color: DarkSeaGreen;
+        }
+        .LightSteelBlue {
+            background-color: LightSteelBlue;
+        }
+        .Gold {
+            background-color: Gold;
+        }
+        tr:nth-child(1) th:nth-child(even) {
+            background-color: black;
+        }
+        tr:nth-child(1) th:nth-child(odd) {
+            background-color: red;
+        }
+        th[data-col="0"], th[data-col="00"] {
+            background-color: green;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        #saveButton {
+            background-color: blue;
+        }
+        #showStatsButton {
+            background-color: slategray;
+        }
+        #savePdfButton {
+            background-color: purple;
+        }
+        #sortByHighestValue {
+            background-color: red;
+        }
+        #sortByLowestValue {
+            background-color: lightcoral;
+        }
+        #sortCols {
+            background-color: lightgreen;
+            color: black;
+        }
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .file-input-container > * {
+            margin-right: 5px;
+        }
+        .file-input-container #rowCount {
+            margin-left: 5px;
+        }
+        .row-count {
+            color: yellow;
+            font-size: 24px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 54px;
+        }
+        h2 {
+            font-size: 20px;
+            color: lightgray;
+        }
+        .info-item2 {
+            width: 60px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            margin-right: 10px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF AutoTable Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="info-container">
+            <h1>Spins Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="info-item2 clickable" data-type="8">8 (1)</div>
+            <div class="info-item2 clickable" data-type="9">9 (2)</div>
+            <div class="info-item2 clickable" data-type="10">10 (3)</div>
+            <div class="info-item2 clickable" data-type="11">11 (4)</div>
+            <div class="info-item2 clickable" data-type="12">12 (5)</div>
+            <div class="info-item2 clickable" data-type="13">13 (6)</div>
+            <div class="info-item2 clickable" data-type="14">14 (7)</div>
+            <div class="info-item2 clickable" data-type="15">15 (8)</div>
+            <div class="info-item2 clickable" data-type="16">16 (9)</div>
+            <div class="info-item2 clickable" data-type="17">17 (10)</div>
+        </div>
+        <div class="file-input-container">
+            <h2>Select CSV file</h2>
+            <input type="file" id="fileInput" accept=".csv" multiple>
+            <button id="sortByHighestValue">Sort by Highest Value</button>
+            <button id="sortByLowestValue">Reverse Sort</button>
+            <button id="sortCols">Sort Columns</button>
+            <button id="saveButton">Save to CSV</button>
+            <button id="savePdfButton">Save to PDF</button>
+            <button id="showStatsButton">View Stats</button>
+            <div id="rowCount" class="row-count">Runs: 0</div>
+        </div>
+    </div>
+
+    <table id="csvTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+    
+    <script>
+        // Reusable function to process CSV data and display it in the table
+        function displayCSVData(csvText) {
+            const lines = csvText.split('\n').map(line => line.split(','));
+            const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
+            const group1Columns = ['14', '2', '0', '28', '9'];
+            const group2Columns = ['13', '1', '37', '27', '10'];
+            let headerIndices = [];
+            let headerProcessed = false;
+            let csvData = [];
+            const table = document.getElementById('csvTable');
+
+            // Clear the table
+            clearTable();
+
+            if (!headerProcessed) {
+                const headerRow = lines[0];
+                headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+                const thead = table.querySelector('thead');
+                const tr = document.createElement('tr');
+
+                // Add Line Number Header
+                const thLineNumber = document.createElement('th');
+                thLineNumber.textContent = '#';
+                tr.appendChild(thLineNumber);
+
+                // Add headers for the remaining columns
+                headerIndices.forEach(index => {
+                    const th = document.createElement('th');
+                    let headerValue = index >= 0 ? headerRow[index] : '';
+                    if (headerValue === '37') {
+                        headerValue = '00';
+                    }
+                    th.textContent = headerValue;
+                    if (th.textContent === '0' || th.textContent === '00') {
+                        th.style.backgroundColor = 'green'; // Highlight '0' and '00'
+                    }
+                    tr.appendChild(th);
+                });
+                thead.appendChild(tr);
+                headerProcessed = true;
+            }
+
+            // Process each row of data
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].some(cell => cell.trim())) {
+                    csvData.push(lines[i]); // Filter out empty rows
+                }
+            }
+
+            document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`; // Display row count
+
+            // Loop through CSV data and build table rows
+            csvData.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+
+                // Add Line Number Cell
+                const tdLineNumber = document.createElement('td');
+                tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
+                tdLineNumber.style.backgroundColor = 'slategray'; // Styling line number cell
+                tdLineNumber.style.color = 'white';
+                tr.appendChild(tdLineNumber);
+
+                let group1Sum = 0;
+                let group2Sum = 0;
+                let group1Cells = [];
+                let group2Cells = [];
+
+                headerIndices.forEach((index, i) => {
+                    const td = document.createElement('td');
+                    let cellValue = row[index] || ''; // Adjust index for full column row
+                    if (cellValue === '0') {
+                        cellValue = '';
+                    }
+                    td.textContent = cellValue;
+
+                    // Highlight cells based on column groups
+                    if (i >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
+                        td.classList.add('default-light-yellow');
+                    }
+
+                    // Group 1 sum and styling
+                    if (i >= 0 && group1Columns.includes(columnOrder[i])) {
+                        group1Cells.push(td);
+                        if (!isNaN(cellValue) && cellValue !== '') {
+                            group1Sum += Number(cellValue);
+                        }
+                    }
+
+                    // Group 2 sum and styling
+                    if (i >= 0 && group2Columns.includes(columnOrder[i])) {
+                        group2Cells.push(td);
+                        if (!isNaN(cellValue) && cellValue !== '') {
+                            group2Sum += Number(cellValue);
+                        }
+                    }
+
+                    // Apply green background if cell value is 4 or higher
+                    if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
+                        td.classList.remove('default-light-yellow', 'light-red');
+                        td.classList.add('light-green');
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                // Apply color logic for group 1 based on group1Sum
+                group1Cells.forEach(td => {
+                    if (group1Sum === 8) td.classList.add('light-red');
+                    else if (group1Sum === 9) td.classList.add('light-blue');
+                    else if (group1Sum === 10) td.classList.add('light-orange');
+                    else if (group1Sum === 11) td.classList.add('violet');
+                    else if (group1Sum === 12) td.classList.add('DarkKhaki');
+                    else if (group1Sum === 13) td.classList.add('DarkSeaGreen');
+                    else if (group1Sum === 14) td.classList.add('LightSteelBlue');
+                    else if (group1Sum === 15) td.classList.add('Gold');
+                });
+
+                // Apply color logic for group 2 based on group2Sum
+                group2Cells.forEach(td => {
+                    if (group2Sum === 8) td.classList.add('light-red');
+                    else if (group2Sum === 9) td.classList.add('light-blue');
+                    else if (group2Sum === 10) td.classList.add('light-orange');
+                    else if (group2Sum === 11) td.classList.add('violet');
+                    else if (group2Sum === 12) td.classList.add('DarkKhaki');
+                    else if (group2Sum === 13) td.classList.add('DarkSeaGreen');
+                    else if (group2Sum === 14) td.classList.add('LightSteelBlue');
+                    else if (group2Sum === 15) td.classList.add('Gold');
+                });
+
+                table.querySelector('tbody').appendChild(tr);
+            });
+        }
+
+        // Clear table before processing new CSV data
+        function clearTable() {
+            document.querySelector('#csvTable thead').innerHTML = '';
+            document.querySelector('#csvTable tbody').innerHTML = '';
+        }
+
+        // Function to handle file input (Choose File button)
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const files = Array.from(event.target.files);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                displayCSVData(e.target.result); // Reuse the displayCSVData function
+            };
+            reader.readAsText(files[0]);
+        });
+
+        // Function to handle clickable text boxes
+        document.querySelectorAll('.info-item2.clickable').forEach(element => {
+            element.addEventListener('click', function() {
+                const dataType = element.getAttribute('data-type');
+                const fileName = `OnServer_${dataType}.csv`;
+
+                fetch(fileName)
+                    .then(response => response.text())
+                    .then(csvText => displayCSVData(csvText))  // Reuse the displayCSVData function
+                    .catch(error => console.error('Error fetching the file:', error));
+            });
+        });
+    </script>
+</body>
+</html>

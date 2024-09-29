@@ -93,7 +93,8 @@
         let statsData = {
             highHits: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
             group1: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
-            group2: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 }
+            group2: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
+            noHits: { cluster0: 0, cluster00: 0 } // Track no hits for cluster 0 and 00
         };
 
         if (csvData) {
@@ -117,10 +118,18 @@
                 let group1Sum = 0;
                 let group2Sum = 0;
 
-                // Start from index 1 to skip the line number
                 columnOrder.forEach((header, index) => {
-                    const adjustedIndex = index + 1; // Skip line number column
-                    const cellValue = row[adjustedIndex]; // Use adjusted index
+                    const adjustedIndex = index + 1;
+                    const cellValue = row[adjustedIndex];
+
+                    // Check if Cluster 0 or 00 has no hits (either '-' or '0')
+                    if (group1Columns.includes(header) && (cellValue === '-' || cellValue === '0')) {
+                        statsData.noHits.cluster0 += 1;
+                    }
+                    if (group2Columns.includes(header) && (cellValue === '-' || cellValue === '0')) {
+                        statsData.noHits.cluster00 += 1;
+                    }
+
                     if (!isNaN(cellValue) && cellValue !== '') {
                         const numValue = Number(cellValue);
                         if (group1Columns.includes(header)) {
@@ -135,9 +144,6 @@
                     }
                 });
 
-                console.log(`Row data: ${JSON.stringify(row)}`);
-                console.log(`Group1Sum: ${group1Sum}, Group2Sum: ${group2Sum}`);
-
                 if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(group1Sum)) {
                     statsData.group1[group1Sum] += 1;
                 }
@@ -146,8 +152,29 @@
                 }
             });
 
-            console.log(`Stats data after processing: ${JSON.stringify(statsData)}`);
+            // Add row "0" for no hits as the first data row
+            const trNoHits = document.createElement('tr');
+            const tdNoHitsLabel = document.createElement('td');
+            tdNoHitsLabel.textContent = '0';
+            trNoHits.appendChild(tdNoHitsLabel);
 
+            const tdCluster0NoHits = document.createElement('td');
+            tdCluster0NoHits.textContent = statsData.noHits.cluster0;
+            trNoHits.appendChild(tdCluster0NoHits);
+
+            const tdCluster00NoHits = document.createElement('td');
+            tdCluster00NoHits.textContent = statsData.noHits.cluster00;
+            trNoHits.appendChild(tdCluster00NoHits);
+
+            // Set the Times Hit column for row 0 to "-"
+            const tdHighHitsNoHits = document.createElement('td');
+            tdHighHitsNoHits.textContent = '-';
+            trNoHits.appendChild(tdHighHitsNoHits);
+
+            // Insert the row as the first in the tbody
+            tbody.insertBefore(trNoHits, tbody.firstChild);
+
+            // Now add the rest of the rows
             for (let i = 1; i <= 17; i++) {
                 const tr = document.createElement('tr');
                 const tdValue = document.createElement('td');

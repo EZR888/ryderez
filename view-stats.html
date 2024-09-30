@@ -85,16 +85,21 @@
             document.querySelector('#statsTable tbody').innerHTML = '';
         }
 
+        // Retrieve the CSV data from localStorage
         const csvData = JSON.parse(localStorage.getItem('csvData'));
+
+        // The column order for the table
         const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
-        const group1Columns = ['0', '9', '14', '28', '2'];
-        const group2Columns = ['1', '13', '27', '10', '00'];
+
+        // Define the clusters
+        const group1Columns = ['0', '9', '14', '28', '2']; // Cluster 0
+        const group2Columns = ['1', '13', '27', '10', '00']; // Cluster 00
 
         let statsData = {
             highHits: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
             group1: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
             group2: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0 },
-            noHits: { cluster0: 0, cluster00: 0 } // Track no hits for cluster 0 and 00
+            noHits: { cluster0: 0, cluster00: 0 } // Track no hits for Cluster 0 and Cluster 00
         };
 
         if (csvData) {
@@ -105,6 +110,7 @@
             // Update Runs count
             document.getElementById('runsCount').textContent = `Runs: ${csvData.length}`;
 
+            // Create the table header
             const header = ["Totals", "Cluster 0", "Cluster 00", "Times Hit"];
             const trHeader = document.createElement('tr');
             header.forEach(text => {
@@ -114,22 +120,39 @@
             });
             thead.appendChild(trHeader);
 
+            // Iterate through the CSV data
             csvData.forEach(row => {
                 let group1Sum = 0;
                 let group2Sum = 0;
+
+                // Track whether all 5 cells in the cluster are empty
+                let allGroup1Empty = true;
+                let allGroup2Empty = true;
 
                 columnOrder.forEach((header, index) => {
                     const adjustedIndex = index + 1;
                     const cellValue = row[adjustedIndex];
 
-                    // Check if Cluster 0 or 00 has no hits (either '-' or '0')
-                    if (group1Columns.includes(header) && (cellValue === '-' || cellValue === '0')) {
-                        statsData.noHits.cluster0 += 1;
-                    }
-                    if (group2Columns.includes(header) && (cellValue === '-' || cellValue === '0')) {
-                        statsData.noHits.cluster00 += 1;
+                    // Check if cell is undefined, null, or an empty string
+                    if (group1Columns.includes(header)) {
+                        if (cellValue === undefined || cellValue === null || cellValue === '') {
+                            // Keep allGroup1Empty true only if all cells are empty
+                            allGroup1Empty = allGroup1Empty && true;
+                        } else {
+                            allGroup1Empty = false; // Mark false if any cell has a value
+                        }
                     }
 
+                    if (group2Columns.includes(header)) {
+                        if (cellValue === undefined || cellValue === null || cellValue === '') {
+                            // Keep allGroup2Empty true only if all cells are empty
+                            allGroup2Empty = allGroup2Empty && true;
+                        } else {
+                            allGroup2Empty = false; // Mark false if any cell has a value
+                        }
+                    }
+
+                    // Handle numeric values for high hits
                     if (!isNaN(cellValue) && cellValue !== '') {
                         const numValue = Number(cellValue);
                         if (group1Columns.includes(header)) {
@@ -144,6 +167,15 @@
                     }
                 });
 
+                // Increment no-hits for the entire cluster if all 5 cells are empty
+                if (allGroup1Empty) {
+                    statsData.noHits.cluster0 += 1;
+                }
+                if (allGroup2Empty) {
+                    statsData.noHits.cluster00 += 1;
+                }
+
+                // Sum results for groups 1 and 2
                 if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(group1Sum)) {
                     statsData.group1[group1Sum] += 1;
                 }
@@ -155,15 +187,15 @@
             // Add row "0" for no hits as the first data row
             const trNoHits = document.createElement('tr');
             const tdNoHitsLabel = document.createElement('td');
-            tdNoHitsLabel.textContent = '0';
+            tdNoHitsLabel.textContent = '0'; // Row label
             trNoHits.appendChild(tdNoHitsLabel);
 
             const tdCluster0NoHits = document.createElement('td');
-            tdCluster0NoHits.textContent = statsData.noHits.cluster0;
+            tdCluster0NoHits.textContent = statsData.noHits.cluster0; // No hits in Cluster 0
             trNoHits.appendChild(tdCluster0NoHits);
 
             const tdCluster00NoHits = document.createElement('td');
-            tdCluster00NoHits.textContent = statsData.noHits.cluster00;
+            tdCluster00NoHits.textContent = statsData.noHits.cluster00; // No hits in Cluster 00
             trNoHits.appendChild(tdCluster00NoHits);
 
             // Set the Times Hit column for row 0 to "-"
@@ -171,10 +203,10 @@
             tdHighHitsNoHits.textContent = '-';
             trNoHits.appendChild(tdHighHitsNoHits);
 
-            // Insert the row as the first in the tbody
+            // Insert the "no hits" row at the top of the table
             tbody.insertBefore(trNoHits, tbody.firstChild);
 
-            // Now add the rest of the rows
+            // Now add the remaining rows (1 to 17)
             for (let i = 1; i <= 17; i++) {
                 const tr = document.createElement('tr');
                 const tdValue = document.createElement('td');

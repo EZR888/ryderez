@@ -302,7 +302,7 @@ td:first-child, th:first-child {
         }
 
         // Reusable function to process CSV data and display it in the table
- function displayCSVData(csvText) {
+ 	function displayCSVData(csvText) {
     clearTable();
 
     const lines = csvText.split('\n').map(line => line.split(','));
@@ -518,7 +518,7 @@ td:first-child, th:first-child {
         });
 
         // Event listener for 'savePdfButton' to save table to PDF
-document.getElementById('savePdfButton').addEventListener('click', function() {
+	document.getElementById('savePdfButton').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 

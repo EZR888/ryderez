@@ -456,6 +456,7 @@ td:first-child, th:first-child {
             const reader = new FileReader();
             reader.onload = function(e) {
                 displayCSVData(e.target.result);
+                document.getElementById('fileInput').value = ''; // Clear the file input value
             };
             reader.readAsText(files[0]);
         });

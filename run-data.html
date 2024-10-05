@@ -119,7 +119,7 @@ td:first-child, th:first-child {
             font-weight: bold;
         }
         .lightcoral {
-            background-color: lightcoral;
+            background-color: lightcoral !important;
             font-weight: bold;
         }
         .default-light-yellow {
@@ -409,44 +409,65 @@ td:first-child, th:first-child {
                 }
             }
 
-            // Apply green background if cell value is 4 or higher
-            if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
-                td.classList.remove('default-light-yellow', 'lightcoral');
-                td.classList.add('light-green');
-            }
+	
 
             tr.appendChild(td);
         });
+        
+console.log('Group 1 Sum:', group1Sum);
+console.log('Group 2 Sum:', group2Sum);
 
         // Apply color logic for group 1 based on group1Sum
-        group1Cells.forEach(td => {
-            if (group1Sum === 8) td.classList.add('lightcoral');
-            else if (group1Sum === 9) td.classList.add('light-blue');
-            else if (group1Sum === 10) td.classList.add('light-orange');
-            else if (group1Sum === 11) td.classList.add('violet');
-            else if (group1Sum === 12) td.classList.add('DarkKhaki');
-            else if (group1Sum === 13) td.classList.add('DarkSeaGreen');
-            else if (group1Sum === 14) td.classList.add('LightSteelBlue');
-            else if (group1Sum === 15) td.classList.add('Thistle');
-            else if (group1Sum === 16) td.classList.add('GreenYellow');
-            else if (group1Sum === 17) td.classList.add('Gold');
-        });
+    group1Cells.forEach(td => {
+    	if (group1Sum === 8) {
+        	td.classList.add('lightcoral');
+    	} else if (group1Sum === 9) {
+        	td.classList.add('light-blue');
+    	} else if (group1Sum === 10) {
+      		td.classList.add('light-orange');
+    	} else if (group1Sum === 11) {
+    		td.classList.add('violet');
+    	} else if (group1Sum === 12) {
+    		td.classList.add('DarkKhaki');
+    	} else if (group1Sum === 13) {
+    		td.classList.add('DarkSeaGreen');
+    	} else if (group1Sum === 14) {
+    		td.classList.add('LightSteelBlue');
+    	} else if (group1Sum === 15) {
+    		td.classList.add('Thistle');
+    	} else if (group1Sum === 16) {
+    		td.classList.add('GreenYellow');
+    	} else if (group1Sum === 17) {
+    		td.classList.add('Gold');
+        }
 
         // Apply color logic for group 2 based on group2Sum
-        group2Cells.forEach(td => {
-            if (group2Sum === 8) td.classList.add('lightcoral');
-            else if (group2Sum === 9) td.classList.add('light-blue');
-            else if (group2Sum === 10) td.classList.add('light-orange');
-            else if (group2Sum === 11) td.classList.add('violet');
-            else if (group2Sum === 12) td.classList.add('DarkKhaki');
-            else if (group2Sum === 13) td.classList.add('DarkSeaGreen');
-            else if (group2Sum === 14) td.classList.add('LightSteelBlue');
-            else if (group1Sum === 15) td.classList.add('Thistle');
-            else if (group1Sum === 16) td.classList.add('GreenYellow');
-            else if (group1Sum === 17) td.classList.add('Gold');
-        });
+    group2Cells.forEach(td => {
+    	if (group2Sum === 8) {
+        	td.classList.add('lightcoral');
+    	} else if (group2Sum === 9) {
+        	td.classList.add('light-blue');
+    	} else if (group2Sum === 10) {
+      		td.classList.add('light-orange');
+    	} else if (group2Sum === 11) {
+    		td.classList.add('violet');
+    	} else if (group2Sum === 12) {
+    		td.classList.add('DarkKhaki');
+    	} else if (group2Sum === 13) {
+    		td.classList.add('DarkSeaGreen');
+    	} else if (group2Sum === 14) {
+    		td.classList.add('LightSteelBlue');
+    	} else if (group2Sum === 15) {
+    		td.classList.add('Thistle');
+    	} else if (group2Sum === 16) {
+    		td.classList.add('GreenYellow');
+    	} else if (group2Sum === 17) {
+    		td.classList.add('Gold');
+        }
+    });
 
         table.querySelector('tbody').appendChild(tr);
+    });
     });
 }
 
@@ -692,15 +713,15 @@ td:first-child, th:first-child {
                         }
                     }
 
+                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
+                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                    }
+                    
                     const cellValue = parseFloat(data.cell.text);
                     if (!isNaN(cellValue) && cellValue >= 4) {
                         data.cell.styles.fillColor = getColorForStyle('light-green');
                         appliedColor = true;
-                    }
-
-                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
-                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
                     }
                 }
             }

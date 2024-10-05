@@ -126,7 +126,7 @@ td:first-child, th:first-child {
             background-color: lightyellow;
         }
         .light-green {
-            background-color: lightgreen;
+            background-color: lightgreen !important;
             color: black;
         }
         .light-blue {
@@ -338,7 +338,7 @@ td:first-child, th:first-child {
                 headerValue = '00';
             }
             th.textContent = headerValue;
-
+                    
             // Special case for '0' and '00'
             if (th.textContent === '0' || th.textContent === '00') {
                 th.style.backgroundColor = 'green'; // Keep '0' and '00' green
@@ -392,6 +392,11 @@ td:first-child, th:first-child {
             if (index >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
                 td.classList.add('default-light-yellow');
             }
+            
+                // Check if the cell value is greater than or equal to 4
+    if (!isNaN(cellValue) && Number(cellValue) >= 4) {
+        td.classList.add('light-green'); // Apply the light-green background
+    }
 
             // Group 1 sum and styling
             if (index >= 0 && group1Columns.includes(columnOrder[i])) {
@@ -413,9 +418,6 @@ td:first-child, th:first-child {
 
             tr.appendChild(td);
         });
-        
-console.log('Group 1 Sum:', group1Sum);
-console.log('Group 2 Sum:', group2Sum);
 
         // Apply color logic for group 1 based on group1Sum
     group1Cells.forEach(td => {
@@ -713,16 +715,17 @@ console.log('Group 2 Sum:', group2Sum);
                         }
                     }
 
-                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
-                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-                    }
-                    
-                    const cellValue = parseFloat(data.cell.text);
+                   const cellValue = parseFloat(data.cell.text);
                     if (!isNaN(cellValue) && cellValue >= 4) {
                         data.cell.styles.fillColor = getColorForStyle('light-green');
                         appliedColor = true;
                     }
+                    
+                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
+                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                    }
+                
                 }
             }
         },

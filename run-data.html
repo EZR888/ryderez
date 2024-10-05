@@ -544,6 +544,7 @@ td:first-child, th:first-child {
             document.body.removeChild(link);
         });
 
+// Event listener for 'savePdfButton' to save table to PDF
 document.getElementById('savePdfButton').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
@@ -580,7 +581,6 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
         15: 'Thistle',
         16: 'GreenYellow',
         17: 'Gold'
-
     };
 
     function getColorForStyle(style) {
@@ -738,7 +738,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
             doc.text(filename.replace('.pdf', ''), titleX, 15);
 
             const legendWidth = 8 * 8 + 7 * 2;
-            const xStart = pageWidth - legendWidth - 14;
+            const xStart = pageWidth - legendWidth - 50;  // Move legend to the left by 50 units (about 2 inches)
 
             drawColorLegend(xStart);
         }
@@ -746,6 +746,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
 
     doc.save(filename);
 });
+
 
   
   function getColorForStyle(style) {

@@ -740,14 +740,8 @@ td:first-child, th:first-child {
             data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
         }
     }
-                
-        // Apply light-green color if value >= 4
-        if (!isNaN(cellValue) && cellValue >= 4) {
-            data.cell.styles.fillColor = [144, 238, 144]; // RGB value for light-green
-            console.log('Applying light-green to cell with value:', cellValue); // Debugging statement
-        }
-            }
-        },
+},		
+        
         didDrawPage: function () {
             doc.setFontSize(16);
             const titleX = 14;

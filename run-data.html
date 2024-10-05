@@ -545,7 +545,7 @@ td:first-child, th:first-child {
         });
 
         // Event listener for 'savePdfButton' to save table to PDF
-	document.getElementById('savePdfButton').addEventListener('click', function() {
+document.getElementById('savePdfButton').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 
@@ -594,7 +594,8 @@ td:first-child, th:first-child {
             'LightSteelBlue': [176, 196, 222],
             'Thistle': [216, 191, 216],
             'GreenYellow': [173, 255, 47],
-            'Gold': [255, 215, 0]
+            'Gold': [255, 215, 0],
+            'default-light-yellow': [255, 255, 224] // Light yellow for default cluster columns
         };
         return colors[style] || [255, 255, 255];
     }
@@ -668,9 +669,9 @@ td:first-child, th:first-child {
         },
         didParseCell: function (data) {
             if (data.row.section === 'head') {
+                // Only apply green background to headers of '0' and '00' columns
                 if (data.column.index === 10 || data.column.index === 29) {
-                    data.cell.styles.fillColor = [0, 200, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
+                    data.cell.styles.fillColor = [0, 200, 0]; // Green for 0 and 00 column headers
                 } else if (data.column.index === 1) {
                     data.cell.styles.fillColor = [0, 0, 0];
                     data.cell.styles.textColor = [255, 255, 255];
@@ -681,67 +682,64 @@ td:first-child, th:first-child {
                 }
             }
 
-    if (data.row.section === 'body') {
-        const cellValue = parseFloat(data.cell.text);
+            if (data.row.section === 'body') {
+                const cellValue = parseFloat(data.cell.text);
 
-        // Skip the row header column (typically the first column)
-        if (data.column.index === 0) {
-            data.cell.styles.fillColor = [112, 128, 144]; // Slategray for the row header column
-            data.cell.styles.textColor = [255, 255, 255];
-            return; // Skip further color logic for this column
-        }
+                // Skip the row header column (typically the first column)
+                if (data.column.index === 0) {
+                    data.cell.styles.fillColor = [112, 128, 144]; // Slategray for the row header column
+                    data.cell.styles.textColor = [255, 255, 255];
+                    return; // Skip further color logic for this column
+                }
 
-        // Apply color logic for '0' and '00' clusters first
-        if (data.column.index === 10 || data.column.index === 29) {
-            data.cell.styles.fillColor = [0, 200, 0]; // Green for 0 and 00 clusters
-        } 
+                // Apply default light yellow for group 1 and group 2 columns
+                if (group1Columns.includes(data.column.index) || group2Columns.includes(data.column.index)) {
+                    data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                }
 
-        // Now apply light-green color if value >= 4 (this will override other colors)
-        if (!isNaN(cellValue) && cellValue >= 4) {
-            data.cell.styles.fillColor = [144, 238, 144]; // RGB value for light-green
-            console.log('Overriding with light-green for value >= 4:', cellValue); // Debugging statement
-        }
+                let appliedColor = false;
 
-        // Other cell styling based on group sums
-        let group1Sum = 0;
-        let group2Sum = 0;
-        const row = data.row.raw;
+                // Apply color logic for '0' and '00' clusters (only for headers, so no coloring here)
 
-        group1Columns.forEach(index => {
-            const value = parseFloat(row[index]);
-            if (!isNaN(value)) group1Sum += value;
-        });
+                // Now apply light-green color if value >= 4 (this will override other colors)
+                if (!isNaN(cellValue) && cellValue >= 4) {
+                    data.cell.styles.fillColor = [144, 238, 144]; // RGB value for light-green
+                    console.log('Overriding with light-green for value >= 4:', cellValue); // Debugging statement
+                    appliedColor = true;
+                }
 
-        group2Columns.forEach(index => {
-            const value = parseFloat(row[index]);
-            if (!isNaN(value)) group2Sum += value;
-        });
+                // If no color was applied and the cell falls within the sum-based column rules
+                if (!appliedColor) {
+                    let group1Sum = 0;
+                    let group2Sum = 0;
+                    const row = data.row.raw;
 
-        let appliedColor = false;
+                    group1Columns.forEach(index => {
+                        const value = parseFloat(row[index]);
+                        if (!isNaN(value)) group1Sum += value;
+                    });
 
-        if (group1Columns.includes(data.column.index)) {
-            const group1CellStyle = sumConditions[group1Sum];
-            if (group1CellStyle) {
-                data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                appliedColor = true;
+                    group2Columns.forEach(index => {
+                        const value = parseFloat(row[index]);
+                        if (!isNaN(value)) group2Sum += value;
+                    });
+
+                    if (group1Columns.includes(data.column.index)) {
+                        const group1CellStyle = sumConditions[group1Sum];
+                        if (group1CellStyle) {
+                            data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                        }
+                    }
+
+                    if (group2Columns.includes(data.column.index)) {
+                        const group2CellStyle = sumConditions[group2Sum];
+                        if (group2CellStyle) {
+                            data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                        }
+                    }
+                }
             }
-        }
-
-        if (group2Columns.includes(data.column.index)) {
-            const group2CellStyle = sumConditions[group2Sum];
-            if (group2CellStyle) {
-                data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                appliedColor = true;
-            }
-        }
-
-        const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
-        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-        }
-    }
-},		
-        
+        },
         didDrawPage: function () {
             doc.setFontSize(16);
             const titleX = 14;
@@ -756,6 +754,7 @@ td:first-child, th:first-child {
 
     doc.save(filename);
 });
+
 
   
   function getColorForStyle(style) {

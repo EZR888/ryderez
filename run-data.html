@@ -743,12 +743,12 @@ td:first-child, th:first-child {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
-            window.open('view-stats.html', '_blank');
+            window.open('run-stats.html', '_blank');
         });
 
         // Event listener for 'sortCols' button
         document.getElementById('sortCols').addEventListener('click', function() {
-            window.open('sort.html', '_blank');  // Opens sort.html in a new tab or window
+            window.open('column-sort.html', '_blank');  // Opens column-sort.html in a new tab or window
         });
 
         // Event listener for 'sortByHighestValue' button

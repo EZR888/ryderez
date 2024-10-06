@@ -470,27 +470,7 @@ function populateTotalsTable() {
 
   // Only create the table if it doesn't already exist
   if (!tableContainer.querySelector('table')) {
-    let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
-
-    // Header Row (Second Half)
-    for (let i = 0; i < numSlots / 2; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'black-header' : 'red-header');
-      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-    }
-
-    tableHTML += '</tr></thead><tbody><tr>';
-
-    // Data Row (Second Half)
-    for (let i = 0; i < numSlots / 2; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'black' : 'red');
-      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
-      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
-      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
-    }
-
-    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
+    let tableHTML = '<div class="table-half"><table id="TotalsTable2"><thead><tr>';
 
     // Header Row (First Half)
     for (let i = numSlots / 2; i < numSlots; i++) {
@@ -510,23 +490,53 @@ function populateTotalsTable() {
       tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
     }
 
+    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable1"><thead><tr>';
+
+    // Header Row (Second Half)
+    for (let i = 0; i < numSlots / 2; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                       (i % 2 === 0 ? 'black-header' : 'red-header');
+      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+    }
+
+    tableHTML += '</tr></thead><tbody><tr>';
+
+    // Data Row (Second Half)
+    for (let i = 0; i < numSlots / 2; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                       (i % 2 === 0 ? 'black' : 'red');
+      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
+      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    }
 
     tableHTML += '</tr></tbody></table></div>';
+    
     tableContainer.innerHTML = tableHTML;
   }
 
-  // Update the specific cell with the new total and blinking effect
-  let tableCells = document.querySelectorAll(`#TotalsTable1 td, #TotalsTable2 td`);
+  // Get the table cells from both halves
+  let firstHalfCells = document.querySelectorAll(`#TotalsTable2 td`); // Cells in the first table half
+  let secondHalfCells = document.querySelectorAll(`#TotalsTable1 td`); // Cells in the second table half
 
   // Remove blinking effect from the previously updated cell
-  if (lastUpdatedIndex !== null && tableCells[lastUpdatedIndex]) {
-    tableCells[lastUpdatedIndex].classList.remove('blink-yellow');
+  if (lastUpdatedIndex !== null) {
+    if (lastUpdatedIndex < numSlots / 2 && secondHalfCells[lastUpdatedIndex]) {
+      secondHalfCells[lastUpdatedIndex].classList.remove('blink-yellow');
+    } else if (lastUpdatedIndex >= numSlots / 2 && firstHalfCells[lastUpdatedIndex - numSlots / 2]) {
+      firstHalfCells[lastUpdatedIndex - numSlots / 2].classList.remove('blink-yellow');
+    }
   }
 
-  // Update the cell content and add blinking effect to the updated cell
-  if (finalIndex !== null && tableCells[finalIndex]) {
-    tableCells[finalIndex].textContent = Totals[finalIndex] === 0 ? '' : Totals[finalIndex];
-    tableCells[finalIndex].classList.add('blink-yellow');
+  // Update the correct cell in the correct half
+  if (finalIndex !== null) {
+    if (finalIndex < numSlots / 2) {
+      secondHalfCells[finalIndex].textContent = Totals[finalIndex] === 0 ? '' : Totals[finalIndex];
+      secondHalfCells[finalIndex].classList.add('blink-yellow');
+    } else {
+      firstHalfCells[finalIndex - numSlots / 2].textContent = Totals[finalIndex] === 0 ? '' : Totals[finalIndex];
+      firstHalfCells[finalIndex - numSlots / 2].classList.add('blink-yellow');
+    }
   }
 
   // Update the last updated index

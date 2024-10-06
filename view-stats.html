@@ -66,6 +66,13 @@
         .light-yellow {
             background-color: lightyellow;
         }
+        .quadrant-table th {
+            background-color: green; /* Green background for column headers */
+        }
+        .quadrant-table td {
+            background-color: lightyellow; /* Light yellow background for data cells */
+            color: black; /* Black text color for better visibility */
+        }
     </style>
 </head>
 <body>
@@ -83,7 +90,8 @@
     <div class="header-container">
         <h2 class="header-text">Quadrant Hits</h2>
     </div>
-    <table id="quadrantTable">
+
+    <table id="quadrantTable" class="quadrant-table">
         <thead>
             <tr>
                 <th>UpperLeft</th>
@@ -101,6 +109,11 @@
             </tr>
         </tbody>
     </table>
+                   
+    <!-- Inserted Image Above Quadrant Table -->
+<div style="text-align: center;">
+    <img src="quad.png" alt="Quadrant Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+</div>
 
 <script>
     if (localStorage.getItem('clearTable') === 'true') {

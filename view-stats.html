@@ -73,6 +73,10 @@
             background-color: lightyellow; /* Light yellow background for data cells */
             color: black; /* Black text color for better visibility */
         }
+        .quadrant-img {
+            max-width: 100%; /* Adjusts image to fit cell width */
+            height: auto; /* Keeps aspect ratio */
+        }
     </style>
 </head>
 <body>
@@ -91,24 +95,38 @@
         <h2 class="header-text">Quadrant Hits</h2>
     </div>
 
-    <!-- Quadrant Table (2x2) -->
+    <!-- Quadrant Table (2x2) with Images -->
     <table id="quadrantTable" class="quadrant-table">
         <tbody>
             <tr>
+                <td><img src="upleft.png" alt="Upper Left Image" class="quadrant-img"></td>
+                <td><img src="upright.png" alt="Upper Right Image" class="quadrant-img"></td>
+            </tr>
+            
+            <!-- Main data row for quadrant values -->
+            <tr>
                 <td id="UpperLeftHits">UpperLeft: 0</td>
                 <td id="UpperRightHits">UpperRight: 0</td>
+            </tr>
+                        <!-- Row with images for Lower Left and Lower Right quadrants -->
+            <tr>
+                <td><img src="lowleft.png" alt="Lower Left Image" class="quadrant-img"></td>
+                <td><img src="lowright.png" alt="Lower Right Image" class="quadrant-img"></td>
             </tr>
             <tr>
                 <td id="LowerLeftHits">LowerLeft: 0</td>
                 <td id="LowerRightHits">LowerRight: 0</td>
             </tr>
+
+
         </tbody>
     </table>
                    
-    <!-- Inserted Image Above Quadrant Table -->
+    <!-- Inserted Image below Quadrant Table 
 <div style="text-align: center;">
     <img src="quad.png" alt="Quadrant Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
 </div>
+-->
 
 <script>
     if (localStorage.getItem('clearTable') === 'true') {

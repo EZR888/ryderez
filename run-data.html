@@ -723,11 +723,18 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
                         }
                     }
 
-                    const cellValue = parseFloat(data.cell.text);
-                    if (!isNaN(cellValue) && cellValue >= 4) {
-                        data.cell.styles.fillColor = getColorForStyle('light-green');
-                        appliedColor = true;
-                    }
+                    const cellValue = parseFloat(data.cell.text);                  
+                    // Check if the cell value is equal to 3
+if (!isNaN(cellValue) && Number(cellValue) === 3) {
+    data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen'); // Apply the DarkSeaGreen background for values of 3
+    appliedColor = true;
+} else if (!isNaN(cellValue) && Number(cellValue) == 4) {
+    data.cell.styles.fillColor = getColorForStyle('Gold'); // Apply the Gold background for values of 4 
+    appliedColor = true;
+} else if (!isNaN(cellValue) && Number(cellValue) >= 5) {
+    data.cell.styles.fillColor = getColorForStyle('light-green'); // Apply the light-green background for values of 5 or greater
+    appliedColor = true;
+}
 
                     const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
                     if (!appliedColor && lightYellowColumns.includes(data.column.index)) {

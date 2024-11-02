@@ -397,11 +397,12 @@ td:first-child, th:first-child {
                 td.classList.add('default-light-yellow');
             }
             
-                // Check if the cell value is greater than or equal to 4
-    if (!isNaN(cellValue) && Number(cellValue) >= 4) {
-        td.classList.add('light-green'); // Apply the light-green background
-    }
-
+// Check if the cell value is equal to 3
+if (!isNaN(cellValue) && Number(cellValue) === 3) {
+    td.classList.add('purple'); // Apply the purple background
+} else if (!isNaN(cellValue) && Number(cellValue) >= 4) {
+    td.classList.add('light-green'); // Apply the light-green background for values 4 or greater
+}
             // Group 1 sum and styling
             if (index >= 0 && group1Columns.includes(columnOrder[i])) {
                 group1Cells.push(td);

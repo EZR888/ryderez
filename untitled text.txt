@@ -18,7 +18,6 @@ awk 'NR==651 {$0="      <th>15</th>"} 1' hits.html > foo.html
 awk 'NR==694 {$0="      <th>16</th>"} 1' foo.html > hits.html
 awk 'NR==737 {$0="      <th>17</th>"} 1' hits.html > foo.html
 awk 'NR==780 {$0="      <th>18</th>"} 1' foo.html > hits.html
-awk 'NR==823 {$0="      <th>19</th>"} 1' hits.html > foo.html
 awk 'NR==866 {$0="      <th>20</th>"} 1' foo.html > hits.html
 awk 'NR==909 {$0="      <th>21</th>"} 1' hits.html > foo.html
 awk 'NR==952 {$0="      <th>22</th>"} 1' foo.html > hits.html
@@ -2482,7 +2481,7 @@ So, the developer created something that works, ACCIDENTALLY. I think the cooles
 I can tell you so many stories that are outright mind-blowing. Impossible to be just coincidence. The most incredible ones being around the death of a friend.
 Ironically, what your story does is make the Ghost Radar even MORE incredible, niot less because the author chose to create an "entertainment" app and BS'd about using the sensors - a bit of showmanship there.
 2y
-Reply
+
 
 Author
 Seekers of the Paranormal

@@ -539,7 +539,7 @@ if (!isNaN(cellValue) && Number(cellValue) === 3) {
             const timestamp = getFormattedTimestamp();
 
             // Set the download attribute with a filename including the row count and timestamp
-            link.setAttribute("download", `Wheel_${rowCount}_${timestamp}.csv`);
+            link.setAttribute("download", `SaveCSV_${rowCount}_${timestamp}.csv`);
             link.style.display = 'none';
 
             // Append the link to the body, click it and remove it
@@ -558,11 +558,11 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
     const data = Array.from(table.querySelectorAll('tbody tr')).map((tr, index) =>
         Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
     );
-
+  
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `Wheel_${rowCount}_${timestamp}.pdf`;
-
+    const filename = `SavePDF_${rowCount}_${timestamp}.pdf`;
+ 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;
     const cellFontSize = baseFontSize * 1.1;

@@ -325,7 +325,7 @@ function exportTotalsToCSV(array, rowCount) {
 
     // Correctly format the filename to include the row count and timestamp
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Runs_${rowCount}_${getFormattedTimestamp()}.csv`);
+    link.setAttribute("download", `Sim_${rowCount}_${getFormattedTimestamp()}.csv`);
 
     document.body.appendChild(link); // Required for Firefox
     link.click(); // Trigger the download

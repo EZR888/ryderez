@@ -249,7 +249,7 @@ td:first-child, th:first-child {
         </div>
         <div class="file-input-container">
             <h2>Select CSV file</h2>
-            <input type="file" id="fileInput" accept=".csv" multiple>
+            <input type="file" id="fileInput" accept="*.csv" multiple>
             <button id="sortByHighestValue">Sort by Highest Value</button>
             <button id="sortByLowestValue">Reverse Sort</button>
             <button id="sortCols">Sort Columns</button>
@@ -266,7 +266,7 @@ td:first-child, th:first-child {
     </table>
 
     <script>
-        // Function to generate a formatted timestamp
+        // Function to generate a formatted timestamp // 
         function getFormattedTimestamp() {
             const now = new Date();
             const year = now.getFullYear();

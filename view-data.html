@@ -305,27 +305,41 @@ td:first-child, th:first-child {
             return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
         }
 
-        // Reusable function to process CSV data and display it in the table
- 	function displayCSVData(csvText) {
+let headerAdded = false;
+let rowCounter = 1; // Global counter to ensure row numbering across files is continuous
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = Array.from(event.target.files);
+
+    // Clear the table and reset header tracking for a new batch of files
     clearTable();
+    headerAdded = false;
+    rowCounter = 1; // Reset row counter to start fresh for each selection
 
+    files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            displayCSVData(e.target.result); // Pass only the CSV data
+        };
+        reader.readAsText(file);
+    });
+
+    document.getElementById('fileInput').value = ''; // Clear the file input after processing all files
+});
+
+function displayCSVData(csvText) {
     const lines = csvText.split('\n').map(line => line.split(','));
-    const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];    
-
-      const headerOrder1 = [];
-  
-    
+    const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
     let headerIndices = [];
-    let headerProcessed = false;
-    let csvData = [];
     const table = document.getElementById('csvTable');
 
     // Define `headerRow` properly from the first row of `lines`
     const headerRow = lines[0];  // First row is the header
 
-    if (!headerProcessed) {
+    // Add header row only once
+    if (!headerAdded) {
         headerIndices = columnOrder.map(col => headerRow.indexOf(col));
         const thead = table.querySelector('thead');
         const tr = document.createElement('tr');
@@ -337,7 +351,7 @@ td:first-child, th:first-child {
 
         // Add headers for the remaining columns
         let startIndex = columnOrder.indexOf('6'); // Start alternating colors from '6'
-        let altColorFlag = false; // Alternating flag for red and black
+        let altColorFlag = false;
 
         headerIndices.forEach((index, i) => {
             const th = document.createElement('th');
@@ -346,155 +360,140 @@ td:first-child, th:first-child {
                 headerValue = '00';
             }
             th.textContent = headerValue;
-                    
-            // Special case for '0' and '00'
+
+            // Apply colors for '0' and '00'
             if (th.textContent === '0' || th.textContent === '00') {
-                th.style.backgroundColor = 'green'; // Keep '0' and '00' green
+                th.style.backgroundColor = 'green';
             } else {
-                // Apply alternating red and black starting from index '6'
+                // Alternate red and black for columns
                 if (i >= startIndex) {
                     th.style.backgroundColor = altColorFlag ? 'red' : 'black';
-                    altColorFlag = !altColorFlag; // Toggle the flag for the next column
+                    altColorFlag = !altColorFlag;
                 }
             }
             tr.appendChild(th);
         });
         thead.appendChild(tr);
-        headerProcessed = true;
+        headerAdded = true;
     }
 
-    // Process each row of data
-    for (let i = 1; i < lines.length; i++) {
-        if (lines[i].some(cell => cell.trim())) {
-            csvData.push(lines[i]); // Filter out empty rows
+    // Loop through each data row and create table rows
+    for (let i = 1; i < lines.length; i++) { // Start at 1 to skip the header row
+        if (lines[i].some(cell => cell.trim())) { // Filter out empty rows
+            const tr = document.createElement('tr');
+
+            // Line number based on `rowCounter` for each new row
+            const tdLineNumber = document.createElement('td');
+            tdLineNumber.textContent = rowCounter++; // Increment rowCounter for each row
+            tdLineNumber.style.backgroundColor = 'slategray';
+            tdLineNumber.style.color = 'white';
+            tr.appendChild(tdLineNumber);
+
+            let group1Sum = 0;
+            let group2Sum = 0;
+            let group1Cells = [];
+            let group2Cells = [];
+
+            // Populate row cells
+            headerIndices.forEach((index, j) => {
+                const td = document.createElement('td');
+                let cellValue = index >= 0 ? lines[i][index] : '';
+                if (cellValue === '0') {
+                    cellValue = '';
+                }
+                td.textContent = cellValue;
+
+                // Highlight cells based on column groups
+                if (index >= 0 && (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j]))) {
+                    td.classList.add('default-light-yellow');
+                }
+
+                // Color cells based on values
+                if (!isNaN(cellValue) && Number(cellValue) === 3) {
+                    td.classList.add('DarkSeaGreen');
+                } else if (!isNaN(cellValue) && Number(cellValue) == 4) {
+                    td.classList.add('Gold');
+                } else if (!isNaN(cellValue) && Number(cellValue) >= 5) {
+                    td.classList.add('light-green');
+                }
+
+                // Group 1 sum and styling
+                if (index >= 0 && group1Columns.includes(columnOrder[j])) {
+                    group1Cells.push(td);
+                    if (!isNaN(cellValue) && cellValue !== '') {
+                        group1Sum += Number(cellValue);
+                    }
+                }
+
+                // Group 2 sum and styling
+                if (index >= 0 && group2Columns.includes(columnOrder[j])) {
+                    group2Cells.push(td);
+                    if (!isNaN(cellValue) && cellValue !== '') {
+                        group2Sum += Number(cellValue);
+                    }
+                }
+
+                tr.appendChild(td);
+            });
+
+            // Apply color logic for group 1 based on group1Sum
+            group1Cells.forEach(td => {
+                if (group1Sum === 8) td.classList.add('lightcoral');
+                else if (group1Sum === 9) td.classList.add('light-blue');
+                else if (group1Sum === 10) td.classList.add('light-orange');
+                else if (group1Sum === 11) td.classList.add('violet');
+                else if (group1Sum === 12) td.classList.add('DarkKhaki');
+                else if (group1Sum === 13) td.classList.add('DarkSeaGreen');
+                else if (group1Sum === 14) td.classList.add('LightSteelBlue');
+                else if (group1Sum === 15) td.classList.add('Thistle');
+                else if (group1Sum === 16) td.classList.add('GreenYellow');
+                else if (group1Sum === 17) td.classList.add('Gold');
+            });
+
+            // Apply color logic for group 2 based on group2Sum
+            group2Cells.forEach(td => {
+                if (group2Sum === 8) td.classList.add('lightcoral');
+                else if (group2Sum === 9) td.classList.add('light-blue');
+                else if (group2Sum === 10) td.classList.add('light-orange');
+                else if (group2Sum === 11) td.classList.add('violet');
+                else if (group2Sum === 12) td.classList.add('DarkKhaki');
+                else if (group2Sum === 13) td.classList.add('DarkSeaGreen');
+                else if (group2Sum === 14) td.classList.add('LightSteelBlue');
+                else if (group2Sum === 15) td.classList.add('Thistle');
+                else if (group2Sum === 16) td.classList.add('GreenYellow');
+                else if (group2Sum === 17) td.classList.add('Gold');
+            });
+
+            // Append the row to the table body
+            table.querySelector('tbody').appendChild(tr);
         }
     }
-
-    document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`; // Display row count
-
-    // Loop through CSV data and build table rows
-    csvData.forEach((row, rowIndex) => {
-        const tr = document.createElement('tr');
-
-        // Add Line Number Cell
-        const tdLineNumber = document.createElement('td');
-        tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
-        tdLineNumber.style.backgroundColor = 'slategray'; // Styling line number cell
-        tdLineNumber.style.color = 'white';
-        tr.appendChild(tdLineNumber);
-
-        let group1Sum = 0;
-        let group2Sum = 0;
-        let group1Cells = [];
-        let group2Cells = [];
-
-        headerIndices.forEach((index, i) => {
-            const td = document.createElement('td');
-            let cellValue = index >= 0 ? row[index] : '';
-            if (cellValue === '0') {
-                cellValue = '';
-            }
-            td.textContent = cellValue;
-
-            // Highlight cells based on column groups
-            if (index >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
-                td.classList.add('default-light-yellow');
-            }
-            
-// Check if the cell value is equal to 3
-if (!isNaN(cellValue) && Number(cellValue) === 3) {
-    td.classList.add('DarkSeaGreen'); // Apply the purple background
-} else if (!isNaN(cellValue) && Number(cellValue) == 4) {
-    td.classList.add('Gold'); // Apply the light-green background for values 4 or greater
-} else if (!isNaN(cellValue) && Number(cellValue) >= 5) {
-    td.classList.add('light-green'); // Apply the light-green background for values 4 or greater
 }
 
-            // Group 1 sum and styling
-            if (index >= 0 && group1Columns.includes(columnOrder[i])) {
-                group1Cells.push(td);
-                if (!isNaN(cellValue) && cellValue !== '') {
-                    group1Sum += Number(cellValue);
-                }
-            }
-
-            // Group 2 sum and styling
-            if (index >= 0 && group2Columns.includes(columnOrder[i])) {
-                group2Cells.push(td);
-                if (!isNaN(cellValue) && cellValue !== '') {
-                    group2Sum += Number(cellValue);
-                }
-            }
-
-	
-
-            tr.appendChild(td);
-        });
-
-        // Apply color logic for group 1 based on group1Sum
-    group1Cells.forEach(td => {
-    	if (group1Sum === 8) {
-        	td.classList.add('lightcoral');
-    	} else if (group1Sum === 9) {
-        	td.classList.add('light-blue');
-    	} else if (group1Sum === 10) {
-      		td.classList.add('light-orange');
-    	} else if (group1Sum === 11) {
-    		td.classList.add('violet');
-    	} else if (group1Sum === 12) {
-    		td.classList.add('DarkKhaki');
-    	} else if (group1Sum === 13) {
-    		td.classList.add('DarkSeaGreen');
-    	} else if (group1Sum === 14) {
-    		td.classList.add('LightSteelBlue');
-    	} else if (group1Sum === 15) {
-    		td.classList.add('Thistle');
-    	} else if (group1Sum === 16) {
-    		td.classList.add('GreenYellow');
-    	} else if (group1Sum === 17) {
-    		td.classList.add('Gold');
-        }
-
-        // Apply color logic for group 2 based on group2Sum
-    group2Cells.forEach(td => {
-    	if (group2Sum === 8) {
-        	td.classList.add('lightcoral');
-    	} else if (group2Sum === 9) {
-        	td.classList.add('light-blue');
-    	} else if (group2Sum === 10) {
-      		td.classList.add('light-orange');
-    	} else if (group2Sum === 11) {
-    		td.classList.add('violet');
-    	} else if (group2Sum === 12) {
-    		td.classList.add('DarkKhaki');
-    	} else if (group2Sum === 13) {
-    		td.classList.add('DarkSeaGreen');
-    	} else if (group2Sum === 14) {
-    		td.classList.add('LightSteelBlue');
-    	} else if (group2Sum === 15) {
-    		td.classList.add('Thistle');
-    	} else if (group2Sum === 16) {
-    		td.classList.add('GreenYellow');
-    	} else if (group2Sum === 17) {
-    		td.classList.add('Gold');
-        }
-    });
-
-        table.querySelector('tbody').appendChild(tr);
-    });
-    });
-}
 
         // Event listener for 'fileInput' change event
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const files = Array.from(event.target.files);
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                displayCSVData(e.target.result);
-                document.getElementById('fileInput').value = ''; // Clear the file input value
-            };
-            reader.readAsText(files[0]);
-        });
+// Event listener for 'fileInput' change event
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = Array.from(event.target.files);
+
+    // Clear the table before processing the batch of files
+    clearTable();
+    
+        headerAdded = false;  // Reset header tracking for a new batch of files
+
+    files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Display data without clearing the table each time
+            displayCSVData(e.target.result);
+        };
+        reader.readAsText(file);
+    });
+
+    // Clear the file input value after processing all files
+    document.getElementById('fileInput').value = '';
+});
+
 
         // Event listener for clickable elements
         document.querySelectorAll('.info-item2.clickable').forEach(element => {

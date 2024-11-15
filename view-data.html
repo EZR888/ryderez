@@ -249,7 +249,7 @@ td:first-child, th:first-child {
         </div>
         <div class="file-input-container">
             <h2>Select CSV file</h2>
-            <input type="file" id="fileInput" accept="*.csv" multiple>
+            <input type="file" id="fileInput" accept=".csv" multiple>
             <button id="sortByHighestValue">Sort by Highest Value</button>
             <button id="sortByLowestValue">Reverse Sort</button>
             <button id="sortCols">Sort Columns</button>
@@ -257,16 +257,17 @@ td:first-child, th:first-child {
             <button id="savePdfButton">Save to PDF</button>
             <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
-        </div>
+        </div> 
     </div>
-
+    
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
     </table>
 
     <script>
-        // Function to generate a formatted timestamp // 
+    
+           // Function to generate a formatted timestamp // 
         function getFormattedTimestamp() {
             const now = new Date();
             const year = now.getFullYear();
@@ -277,15 +278,8 @@ td:first-child, th:first-child {
             const seconds = String(now.getSeconds()).padStart(2, '0');
             return `${year}${month}${day}_${hours}${minutes}${seconds}`;
         }
-
-        // Function to clear the table before processing new CSV data
-        function clearTable() {
-            console.log('Clearing table'); // Debugging statement
-            document.querySelector('#csvTable thead').innerHTML = '';
-            document.querySelector('#csvTable tbody').innerHTML = '';
-        }
-
-        // Function to get color for a style
+        
+              // Function to get color for a style
         function getColorForStyle(style) {
             const colorMap = {
                 'default-light-yellow': [255, 255, 224],
@@ -304,44 +298,78 @@ td:first-child, th:first-child {
 
             return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
         }
+        
+        let headerAdded = false;
+        let rowCounter = 1;
 
-let headerAdded = false;
-let rowCounter = 1; // Global counter to ensure row numbering across files is continuous
+        function clearTable() {
+            document.querySelector('#csvTable thead').innerHTML = '';
+            document.querySelector('#csvTable tbody').innerHTML = '';
+            headerAdded = false;
+            rowCounter = 1;
+        }
 
-document.getElementById('fileInput').addEventListener('change', function(event) {
-    const files = Array.from(event.target.files);
+        function createHeaderRow(headerRow) {
+            if (!headerAdded) {
+                const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
+                const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+                const thead = document.getElementById('csvTable').querySelector('thead');
+                const tr = document.createElement('tr');
 
-    // Clear the table and reset header tracking for a new batch of files
-    clearTable();
-    headerAdded = false;
-    rowCounter = 1; // Reset row counter to start fresh for each selection
+                // Add Line Number Header
+                const thLineNumber = document.createElement('th');
+                thLineNumber.textContent = '#';
+                tr.appendChild(thLineNumber);
 
-    files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            displayCSVData(e.target.result); // Pass only the CSV data
-        };
-        reader.readAsText(file);
-    });
+                // Add headers for the remaining columns with alternating colors
+                let startIndex = columnOrder.indexOf('6');
+                let altColorFlag = false;
 
-    document.getElementById('fileInput').value = ''; // Clear the file input after processing all files
-});
+                headerIndices.forEach((index, i) => {
+                    const th = document.createElement('th');
+                    let headerValue = index >= 0 ? headerRow[index] : '';
+                    if (headerValue === '37') {
+                        headerValue = '00';
+                    }
+                    th.textContent = headerValue;
 
-function displayCSVData(csvText) {
+                    if (th.textContent === '0' || th.textContent === '00') {
+                        th.style.backgroundColor = 'green';
+                    } else {
+                        if (i >= startIndex) {
+                            th.style.backgroundColor = altColorFlag ? 'red' : 'black';
+                            altColorFlag = !altColorFlag;
+                        }
+                    }
+                    tr.appendChild(th);
+                });
+
+                thead.appendChild(tr);
+                headerAdded = true;
+            }
+        }
+
+        function createDataCell(cellValue) {
+            const td = document.createElement('td');
+            td.textContent = cellValue === '0' ? '' : cellValue;
+            const numValue = Number(cellValue);
+            if (numValue === 3) td.classList.add('DarkSeaGreen');
+            else if (numValue === 4) td.classList.add('Gold');
+            else if (numValue >= 5) td.classList.add('light-green');
+            return td;
+        }
+
+function displayCSVData(csvText, isFirstFile) {
     const lines = csvText.split('\n').map(line => line.split(','));
+    const tbody = document.querySelector('#csvTable tbody');
     const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
-    let headerIndices = [];
-    const table = document.getElementById('csvTable');
+    let headerIndices = columnOrder.map(col => lines[0].indexOf(col));
 
-    // Define `headerRow` properly from the first row of `lines`
-    const headerRow = lines[0];  // First row is the header
-
-    // Add header row only once
-    if (!headerAdded) {
-        headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-        const thead = table.querySelector('thead');
+    // Create header row only for the first file
+    if (isFirstFile && !headerAdded) {
+        const thead = document.querySelector('#csvTable thead');
         const tr = document.createElement('tr');
 
         // Add Line Number Header
@@ -349,27 +377,22 @@ function displayCSVData(csvText) {
         thLineNumber.textContent = '#';
         tr.appendChild(thLineNumber);
 
-        // Add headers for the remaining columns
-        let startIndex = columnOrder.indexOf('6'); // Start alternating colors from '6'
+        // Add headers with alternating colors
         let altColorFlag = false;
-
         headerIndices.forEach((index, i) => {
             const th = document.createElement('th');
-            let headerValue = index >= 0 ? headerRow[index] : '';
+            let headerValue = index >= 0 ? lines[0][index] : '';
             if (headerValue === '37') {
                 headerValue = '00';
             }
             th.textContent = headerValue;
 
-            // Apply colors for '0' and '00'
+            // Apply green for '0' and '00', alternating red and black for others
             if (th.textContent === '0' || th.textContent === '00') {
                 th.style.backgroundColor = 'green';
-            } else {
-                // Alternate red and black for columns
-                if (i >= startIndex) {
-                    th.style.backgroundColor = altColorFlag ? 'red' : 'black';
-                    altColorFlag = !altColorFlag;
-                }
+            } else if (i >= columnOrder.indexOf('6')) {
+                th.style.backgroundColor = altColorFlag ? 'red' : 'black';
+                altColorFlag = !altColorFlag;
             }
             tr.appendChild(th);
         });
@@ -377,14 +400,15 @@ function displayCSVData(csvText) {
         headerAdded = true;
     }
 
-    // Loop through each data row and create table rows
-    for (let i = 1; i < lines.length; i++) { // Start at 1 to skip the header row
-        if (lines[i].some(cell => cell.trim())) { // Filter out empty rows
+    // Process each row, skipping the header row if it's not the first file
+    const startRow = isFirstFile ? 1 : 1;
+    for (let i = startRow; i < lines.length; i++) {
+        if (lines[i].some(cell => cell.trim())) {
             const tr = document.createElement('tr');
 
-            // Line number based on `rowCounter` for each new row
+            // Add Line Number
             const tdLineNumber = document.createElement('td');
-            tdLineNumber.textContent = rowCounter++; // Increment rowCounter for each row
+            tdLineNumber.textContent = rowCounter++;
             tdLineNumber.style.backgroundColor = 'slategray';
             tdLineNumber.style.color = 'white';
             tr.appendChild(tdLineNumber);
@@ -403,96 +427,80 @@ function displayCSVData(csvText) {
                 }
                 td.textContent = cellValue;
 
-                // Highlight cells based on column groups
-                if (index >= 0 && (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j]))) {
+                // Apply background color based on value
+                if (!isNaN(cellValue)) {
+                    const numValue = Number(cellValue);
+                    if (numValue === 3) td.classList.add('DarkSeaGreen');
+                    else if (numValue === 4) td.classList.add('Gold');
+                    else if (numValue >= 5) td.classList.add('light-green');
+                }
+
+                // Apply light-yellow background to group columns
+                if (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j])) {
                     td.classList.add('default-light-yellow');
                 }
 
-                // Color cells based on values
-                if (!isNaN(cellValue) && Number(cellValue) === 3) {
-                    td.classList.add('DarkSeaGreen');
-                } else if (!isNaN(cellValue) && Number(cellValue) == 4) {
-                    td.classList.add('Gold');
-                } else if (!isNaN(cellValue) && Number(cellValue) >= 5) {
-                    td.classList.add('light-green');
-                }
-
-                // Group 1 sum and styling
-                if (index >= 0 && group1Columns.includes(columnOrder[j])) {
+                // Collect cells for group sums
+                if (group1Columns.includes(columnOrder[j])) {
                     group1Cells.push(td);
-                    if (!isNaN(cellValue) && cellValue !== '') {
-                        group1Sum += Number(cellValue);
-                    }
-                }
-
-                // Group 2 sum and styling
-                if (index >= 0 && group2Columns.includes(columnOrder[j])) {
+                    group1Sum += parseInt(cellValue) || 0;
+                } else if (group2Columns.includes(columnOrder[j])) {
                     group2Cells.push(td);
-                    if (!isNaN(cellValue) && cellValue !== '') {
-                        group2Sum += Number(cellValue);
-                    }
+                    group2Sum += parseInt(cellValue) || 0;
                 }
 
                 tr.appendChild(td);
             });
 
-            // Apply color logic for group 1 based on group1Sum
-            group1Cells.forEach(td => {
-                if (group1Sum === 8) td.classList.add('lightcoral');
-                else if (group1Sum === 9) td.classList.add('light-blue');
-                else if (group1Sum === 10) td.classList.add('light-orange');
-                else if (group1Sum === 11) td.classList.add('violet');
-                else if (group1Sum === 12) td.classList.add('DarkKhaki');
-                else if (group1Sum === 13) td.classList.add('DarkSeaGreen');
-                else if (group1Sum === 14) td.classList.add('LightSteelBlue');
-                else if (group1Sum === 15) td.classList.add('Thistle');
-                else if (group1Sum === 16) td.classList.add('GreenYellow');
-                else if (group1Sum === 17) td.classList.add('Gold');
-            });
+            // Apply group-based coloring for group sums
+            applyGroupColoring(group1Cells, group1Sum);
+            applyGroupColoring(group2Cells, group2Sum);
 
-            // Apply color logic for group 2 based on group2Sum
-            group2Cells.forEach(td => {
-                if (group2Sum === 8) td.classList.add('lightcoral');
-                else if (group2Sum === 9) td.classList.add('light-blue');
-                else if (group2Sum === 10) td.classList.add('light-orange');
-                else if (group2Sum === 11) td.classList.add('violet');
-                else if (group2Sum === 12) td.classList.add('DarkKhaki');
-                else if (group2Sum === 13) td.classList.add('DarkSeaGreen');
-                else if (group2Sum === 14) td.classList.add('LightSteelBlue');
-                else if (group2Sum === 15) td.classList.add('Thistle');
-                else if (group2Sum === 16) td.classList.add('GreenYellow');
-                else if (group2Sum === 17) td.classList.add('Gold');
-            });
-
-            // Append the row to the table body
-            table.querySelector('tbody').appendChild(tr);
+            tbody.appendChild(tr);
         }
     }
+
+    // Update row count after processing all rows
+    document.getElementById('rowCount').textContent = `Runs: ${document.querySelectorAll('#csvTable tbody tr').length}`;
 }
 
+function applyGroupColoring(cells, sum) {
+    const colorClasses = {
+        8: 'lightcoral',
+        9: 'light-blue',
+        10: 'light-orange',
+        11: 'violet',
+        12: 'DarkKhaki',
+        13: 'DarkSeaGreen',
+        14: 'LightSteelBlue',
+        15: 'Thistle',
+        16: 'GreenYellow',
+        17: 'Gold'
+    };
+    const colorClass = colorClasses[sum];
+    if (colorClass) cells.forEach(td => td.classList.add(colorClass));
+}
 
-        // Event listener for 'fileInput' change event
-// Event listener for 'fileInput' change event
 document.getElementById('fileInput').addEventListener('change', function(event) {
-    const files = Array.from(event.target.files);
-
-    // Clear the table before processing the batch of files
     clearTable();
+    const files = Array.from(event.target.files).filter(file => file.name.endsWith('.csv'));
     
-        headerAdded = false;  // Reset header tracking for a new batch of files
+    if (files.length === 0) {
+        alert("Please select .csv files only.");
+        return;
+    }
 
     files.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-            // Display data without clearing the table each time
-            displayCSVData(e.target.result);
+            displayCSVData(e.target.result, index === 0);
         };
         reader.readAsText(file);
     });
-
-    // Clear the file input value after processing all files
-    document.getElementById('fileInput').value = '';
 });
+
+        
+
 
 
         // Event listener for clickable elements
@@ -831,7 +839,8 @@ if (!isNaN(cellValue) && Number(cellValue) === 3) {
             tableBody.innerHTML = ''; // Clear current rows
             rowsArray.forEach(row => tableBody.appendChild(row)); // Append reversed rows
             console.log("Sorting by lowest complete", rowsArray);
-        });
+        });    
+
     </script>
 </body>
 </html>

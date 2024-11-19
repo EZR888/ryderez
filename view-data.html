@@ -525,8 +525,12 @@ function applyGroupColoring(cells, sum) {
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
     clearTable();
-    const files = Array.from(event.target.files).filter(file => file.name.endsWith('.csv'));
-    
+
+    // Get the files as an array and sort by filename
+    const files = Array.from(event.target.files)
+        .filter(file => file.name.endsWith('.csv'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
     if (files.length === 0) {
         alert("Please select .csv files only.");
         return;

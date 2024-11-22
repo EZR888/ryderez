@@ -99,6 +99,11 @@ td:first-child, th:first-child {
     color: white;
     text-align: center;
 }
+/* Bright green border between columns 6 and 17 */
+th:nth-child(21), td:nth-child(21) {
+    border-right: 5px solid purple; /* Thicker bright green border */
+}
+
         th {
             color: white;
         }
@@ -230,6 +235,7 @@ td:first-child, th:first-child {
     font-weight: bold;
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
+
 .header-red {
     background-color: red;
     color: white;
@@ -336,10 +342,17 @@ td:first-child, th:first-child {
 
 function createHeaderRow(headerRow) {
     if (!headerAdded) {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
         const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '6', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21'];
         const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
         const thead = document.getElementById('csvTable').querySelector('thead');
         const tr = document.createElement('tr');
+
+        // Debugging to verify values
+        console.log('Header Row:', headerRow);
+        console.log('Column Order:', columnOrder);
+        console.log('Header Indices:', headerIndices);
 
         // Add Line Number Header
         const thLineNumber = document.createElement('th');
@@ -347,8 +360,6 @@ function createHeaderRow(headerRow) {
         thLineNumber.style.backgroundColor = 'slategray';
         thLineNumber.style.color = 'white';
         tr.appendChild(thLineNumber);
-
-        let alternateColorFlag = false; // Start with black for column 17
 
         headerIndices.forEach((index, i) => {
             const th = document.createElement('th');
@@ -361,19 +372,26 @@ function createHeaderRow(headerRow) {
 
             th.textContent = headerValue;
 
-            // Debugging to verify header values
-            console.log(`Header Value: ${headerValue}, Index: ${index}, ColumnOrder: ${columnOrder[i]}`);
-
-            // Apply green for '0' and '00', otherwise alternate black and red
+            // Apply specific header colors
             if (headerValue === '0' || headerValue === '00') {
+                // Green for '0' and '00'
                 th.style.backgroundColor = 'green';
                 th.style.color = 'white';
                 console.log(`Header ${headerValue} set to green.`);
-            } else {
-                th.style.backgroundColor = alternateColorFlag ? 'red' : 'black';
+            } else if (redColumns.includes(headerValue)) {
+                // Red for specific columns
+                th.style.backgroundColor = 'red';
                 th.style.color = 'white';
-                alternateColorFlag = !alternateColorFlag; // Toggle color for next header
-                console.log(`Header ${headerValue} set to ${alternateColorFlag ? 'red' : 'black'}.`);
+                console.log(`Header ${headerValue} set to red.`);
+            } else if (blackColumns.includes(headerValue)) {
+                // Black for specific columns
+                th.style.backgroundColor = 'black';
+                th.style.color = 'white';
+                console.log(`Header ${headerValue} set to black.`);
+            } else {
+                // Default style for undefined columns
+                th.style.backgroundColor = 'lightgray';
+                th.style.color = 'black';
             }
 
             tr.appendChild(th);
@@ -383,6 +401,7 @@ function createHeaderRow(headerRow) {
         headerAdded = true;
     }
 }
+
 
 
         function createDataCell(cellValue) {
@@ -401,50 +420,16 @@ function displayCSVData(csvText, isFirstFile) {
     const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '6', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21'];
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
-    let headerIndices = columnOrder.map(col => lines[0].indexOf(col));
 
     // Create header row only for the first file
     if (isFirstFile && !headerAdded) {
-        const thead = document.querySelector('#csvTable thead');
-        const tr = document.createElement('tr');
-
-        // Add Line Number Header
-        const thLineNumber = document.createElement('th');
-        thLineNumber.textContent = '#';
-        thLineNumber.style.backgroundColor = 'slategray';
-        thLineNumber.style.color = 'white';
-        tr.appendChild(thLineNumber);
-
-        // Add headers with alternating black and red, starting with black
-        headerIndices.forEach((index, i) => {
-            const th = document.createElement('th');
-            let headerValue = index >= 0 ? lines[0][index] : '';
-            if (headerValue === '37') {
-                headerValue = '00'; // Convert '37' to '00'
-            }
-            th.textContent = headerValue;
-
-            // Apply colors
-            if (headerValue === '0' || headerValue === '00') {
-                // Green for '0' and '00'
-                th.style.backgroundColor = 'green';
-                th.style.color = 'white';
-            } else {
-                // Alternate black and red for other columns
-                const isBlack = (i % 2 === 0); // Even index = black, odd index = red
-                th.style.backgroundColor = isBlack ? 'black' : 'red';
-                th.style.color = 'white';
-            }
-
-            tr.appendChild(th);
-        });
-        thead.appendChild(tr);
-        headerAdded = true;
+        createHeaderRow(lines[0]); // Pass the header row to `createHeaderRow`
     }
 
+    const headerIndices = columnOrder.map(col => lines[0].indexOf(col));
+
     // Process each row, skipping the header row if it's not the first file
-    const startRow = isFirstFile ? 1 : 1;
-    for (let i = startRow; i < lines.length; i++) {
+    for (let i = 1; i < lines.length; i++) {
         if (lines[i].some(cell => cell.trim())) {
             const tr = document.createElement('tr');
 
@@ -505,6 +490,7 @@ function displayCSVData(csvText, isFirstFile) {
     // Update row count after processing all rows
     document.getElementById('rowCount').textContent = `Runs: ${document.querySelectorAll('#csvTable tbody tr').length}`;
 }
+
 
 function applyGroupColoring(cells, sum) {
     const colorClasses = {
@@ -629,7 +615,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
     const columnWidth = pageWidth / columnCount;
 
     const group1Columns = [8, 9, 10, 11, 12];
-    const group2Columns = [27, 28, 29, 30, 31];
+    const group2Columns = [28, 29, 30, 31, 32];
 
     const sumConditions = {
         8: 'light-red',
@@ -729,79 +715,98 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
                 return acc;
             }, {})
         },
-        didParseCell: function (data) {
-            if (data.row.section === 'head') {
-                if (data.column.index === 10 || data.column.index === 29) {
-                    data.cell.styles.fillColor = [0, 200, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (data.column.index === 1) {
-                    data.cell.styles.fillColor = [0, 0, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (data.column.index % 2 === 0) {
-                    data.cell.styles.fillColor = [255, 0, 0];
-                } else {
-                    data.cell.styles.fillColor = [0, 0, 0];
+didParseCell: function (data) {
+    if (data.row.section === 'head') {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00']; // For green columns
+
+        // Get the column index and header text
+        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
+
+        // Apply colors based on header value
+        if (greenColumns.includes(headerValue)) {
+            // Green for '0' and '00'
+            data.cell.styles.fillColor = [0, 200, 0]; // Green RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (redColumns.includes(headerValue)) {
+            // Red for specific columns
+            data.cell.styles.fillColor = [255, 0, 0]; // Red RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (blackColumns.includes(headerValue)) {
+            // Black for specific columns
+            data.cell.styles.fillColor = [0, 0, 0]; // Black RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else {
+            // Default color for undefined columns
+            data.cell.styles.fillColor = [200, 200, 200]; // Light gray
+            data.cell.styles.textColor = [0, 0, 0]; // Black text
+        }
+    }
+
+    if (data.row.section === 'body') {
+        const row = data.row.raw;
+
+        if (data.column.index === 0) {
+            // Line number column
+            data.cell.styles.fillColor = [112, 128, 144]; // Slategray
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else {
+            let group1Sum = 0;
+            let group2Sum = 0;
+
+            // Calculate sums for group columns
+            group1Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group1Sum += value;
+            });
+
+            group2Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group2Sum += value;
+            });
+
+            let appliedColor = false;
+
+            // Apply group-based coloring
+            if (group1Columns.includes(data.column.index)) {
+                const group1CellStyle = sumConditions[group1Sum];
+                if (group1CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                    appliedColor = true;
                 }
             }
 
-            if (data.row.section === 'body') {
-                const row = data.row.raw;
-
-                if (data.column.index === 0) {
-                    data.cell.styles.fillColor = [112, 128, 144]; // Slategray
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else {
-                    let group1Sum = 0;
-                    let group2Sum = 0;
-
-                    group1Columns.forEach(index => {
-                        const value = parseFloat(row[index]);
-                        if (!isNaN(value)) group1Sum += value;
-                    });
-
-                    group2Columns.forEach(index => {
-                        const value = parseFloat(row[index]);
-                        if (!isNaN(value)) group2Sum += value;
-                    });
-
-                    let appliedColor = false;
-
-                    if (group1Columns.includes(data.column.index)) {
-                        const group1CellStyle = sumConditions[group1Sum];
-                        if (group1CellStyle) {
-                            data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                            appliedColor = true;
-                        }
-                    }
-
-                    if (group2Columns.includes(data.column.index)) {
-                        const group2CellStyle = sumConditions[group2Sum];
-                        if (group2CellStyle) {
-                            data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                            appliedColor = true;
-                        }
-                    }
-
-                    const cellValue = parseFloat(data.cell.text);                  
-                    // Check if the cell value is equal to 3
-if (!isNaN(cellValue) && Number(cellValue) === 3) {
-    data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen'); // Apply the DarkSeaGreen background for values of 3
-    appliedColor = true;
-} else if (!isNaN(cellValue) && Number(cellValue) == 4) {
-    data.cell.styles.fillColor = getColorForStyle('Gold'); // Apply the Gold background for values of 4 
-    appliedColor = true;
-} else if (!isNaN(cellValue) && Number(cellValue) >= 5) {
-    data.cell.styles.fillColor = getColorForStyle('light-green'); // Apply the light-green background for values of 5 or greater
-    appliedColor = true;
-}
-
-                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
-                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-                    }
+            if (group2Columns.includes(data.column.index)) {
+                const group2CellStyle = sumConditions[group2Sum];
+                if (group2CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                    appliedColor = true;
                 }
             }
-        },
+
+            // Specific value-based coloring
+            const cellValue = parseFloat(data.cell.text);
+            if (!isNaN(cellValue) && cellValue === 3) {
+                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+                appliedColor = true;
+            } else if (!isNaN(cellValue) && cellValue === 4) {
+                data.cell.styles.fillColor = getColorForStyle('Gold');
+                appliedColor = true;
+            } else if (!isNaN(cellValue) && cellValue >= 5) {
+                data.cell.styles.fillColor = getColorForStyle('light-green');
+                appliedColor = true;
+            }
+
+            // Apply default light-yellow for specific columns if no color applied
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+            }
+        }
+    }
+},
+
         didDrawPage: function () {
             doc.setFontSize(16);
             const titleX = 14;

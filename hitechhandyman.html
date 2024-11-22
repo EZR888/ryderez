@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<script>
+var floatingButtonContainer = document.querySelector('.floating-button-div');
+var scrollY = window.scrollY;
+
+window.addEventListener('scroll', function() {
+  scrollY = window.scrollY;
+  floatingButtonContainer.style.top = scrollY + window.innerHeight - 150 + 'px';
+});
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senior Tech Help</title>
@@ -8,13 +19,13 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: #f9f9f9;
+            background-color:lightgray;
             color: #333;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #0073e6;
+            background-color: rgb(7,7,137);
             color: white;
             padding: 20px 10px;
             text-align: center;
@@ -40,6 +51,9 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        section h2 {
+    		margin-bottom: 0px; /* Adjust to desired spacing */
+		}
         h1 {
             color: white;
         }
@@ -67,13 +81,24 @@
         a:hover {
             text-decoration: underline;
         }
+        .fb {
+  			background-color: red;
+  			color: white;
+ 			 border: none;
+ 			 border-radius: 50%;
+ 			 padding: 20px;
+ 			 font-size: 16px;
+ 			 cursor: pointer;
+ 			 box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+		}
+
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Hi-Tech Handyman</h1>
-    <p>Your Trusted Companion for Technology Support</p>
+<header style="text-align: center;">
+    <img src="portal_files/HTH-LOGO.png" alt="Hi-Tech Handyman Logo" style="max-width: 100%; height: auto;" height="200" width="200">
+    <br>Your Trusted Companion for Technology Support<br>
 </header>
 
 <div class="content">
@@ -89,12 +114,12 @@
             <ul>
                 <li><strong>Consulting Services:</strong> We can help you decide what the best hi-tech hardware and software is good for your specific needs. Not too much; not too little; not too expensive.</li>
                 <li><strong>Device Setup:</strong> Smartphones, tablets, computers, and smart home devices.</li>
-                <li><strong>Troubleshooting:</strong> Solve issues with Wi-Fi, email, or devices.</li>
+                <li><strong>Troubleshooting:</strong> Resolve issues with Wi-Fi, email, or devices.</li>
                 <li><strong>Training Sessions:</strong> Learn to use apps, video call family, and more.</li>
                 <li><strong>Security Assistance:</strong> Stay safe online and avoid scams.</li>
                 <li><strong>Maintenance:</strong> Keep your devices running smoothly.</li>
-                <li><strong>Build Websites:</strong> We can build you a personal website to showcase memories, through photos and videos you might want to share with your family - like a family album, online.</li>
-                <li><strong>Create a Personal Portal Page:</strong> This is a webpage on your website that has links to all the places you typically like to go, all in one easy-to-access place.</li>
+                <li><strong>Build Websites:</strong> We can build you a personal website to showcase memories, through photos and videos you might want to share with your family - like a family photo album, only online.</li>
+                <li><strong>Create a Personal Portal Page:</strong> This is a free webpage on your own personal website that has links to all the places you typically like to go, all in one easy-to-access place.</li>
             </ul>
         </section>
 
@@ -104,6 +129,7 @@
                 <li><strong>Hardware:</strong> We are not hardware mechanics. We don't fix broken hardware - but we WILL let you know if it's broken, and, most likely, if it's fixable. Sometimes things appear broken, but it's just a bad cable, or a bad battery. We can help with that.</li>
             </ul>
         </section>
+
     </div>
 
     <!-- Column 2 -->
@@ -122,7 +148,7 @@
         <section>
             <h2>Why Choose Us?</h2>
             <ul>
-                <li><strong>Patience & Understanding:</strong> We take the time to explain everything in simple terms.</li>
+                <li><strong>Patience & Understanding:</strong> We take the time to explain everything in simple terms, both in person, and through detailed documentation we will provide you.</li>
                 <li><strong>Experienced Professionals:</strong> Our team has years of experience helping seniors with technology.</li>
                 <li><strong>Convenient Support Options:</strong> Get help at home, over the phone, or online.</li>
                 <li><strong>Affordable Pricing:</strong> Clear, reasonable rates for all services.</li>
@@ -147,19 +173,48 @@
                 <p>"Senior Tech Help made it so easy to stay in touch with my family online." – Bob, 68</p>
             </blockquote>
         </section>
+    
     </div>
+
+         <!-- Column 2 -->
+    <div class="column">       
+		<section id="contact-us">
+    		<h2>Contact Us</h2>
+    			<br>📞 <strong>Phone:</strong> (831) 383-8887
+    			<br>✉️ <strong>Email:</strong> <a href="mailto:ezr2drv@gmail.com">ezr2drv@gmail.com</a>
+    			<br>🌐 <strong>Website:</strong> <a href="#">http://www.ryderez.com/hitechhandyman</a>
+		</section>
+	</div>
+
+
+
 </div>
 
-<section>
-    <h2>Contact Us</h2>
-    <p>📞 <strong>Phone:</strong> (831) 383-8887</p>
-    <p>✉️ <strong>Email:</strong> <a href="mailto:ezr2drv@gmail.com">ezr2drv@gmail.com</a></p>
-    <p>🌐 <strong>Website:</strong> <a href="#">http://www.ryderez.com/hitechhandyman</a></p>
-</section>
+</div> <!-- End of .content -->
+
+<div class="floating-button-div" style="position: fixed; bottom: 150px; right: 20px;">
+    <button class="fb" onclick="scrollToContact()">
+        <b>CONTACT</b>
+    </button>
+</div>
 
 <footer>
     <p>© 2024 Hi-Tech Handyman. All Rights Reserved.</p>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var floatingButtonContainer = document.querySelector('.floating-button-div');
+    window.addEventListener('scroll', function() {
+        floatingButtonContainer.style.top = window.scrollY + window.innerHeight - 150 + 'px';
+    });
+});
+
+function scrollToContact() {
+    const contactSection = document.getElementById('contact-us');
+    contactSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+</script>
 </body>
 </html>

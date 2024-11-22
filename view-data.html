@@ -336,7 +336,7 @@ td:first-child, th:first-child {
 
 function createHeaderRow(headerRow) {
     if (!headerAdded) {
-        const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
+        const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '6', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21'];
         const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
         const thead = document.getElementById('csvTable').querySelector('thead');
         const tr = document.createElement('tr');
@@ -398,7 +398,7 @@ function createHeaderRow(headerRow) {
 function displayCSVData(csvText, isFirstFile) {
     const lines = csvText.split('\n').map(line => line.split(','));
     const tbody = document.querySelector('#csvTable tbody');
-    const columnOrder = ['17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
+    const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '6', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21'];
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
     let headerIndices = columnOrder.map(col => lines[0].indexOf(col));

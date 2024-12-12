@@ -379,34 +379,28 @@ async function getRandomLineFromLookupFile(filename) {
 
 //let messageTable = {}; // Initialize an empty object to store messages.
 
+// Avoid redeclaring the variable
+let wheel1ResultText = ''; // Declare once at the start
+
 function computeAndUpdateTable() {
-    if (!messageTable || Object.keys(messageTable).length === 0) {
-        console.error('Message table is not loaded or empty.');
-        return;
-    }
-// Map results of 0 and '00' to specific indices for Wheel 1 and Wheel 2
-let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
-// Fetch the corresponding line from the letter-mon.txt table
-let wheel1ResultText = messageTable[wheel1FinalResult] || `Name: ${wheel1FinalResult}`;
+    // Use the variable without redeclaring
+    wheel1ResultText = wheel1Table[wheel1FinalResult] || wheel1FinalResult;
 
+    let messageResultText = messageTable[computedValue] || computedValue;
 
-let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
+    document.getElementById('wheel1Result').innerText = wheel1ResultText;
 
-// Calculate the range based on the result of Wheel 2
-let max = (wheel2FinalResult * 38) + 1;
-let min = max - 38;
+    getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
+        document.getElementById('wheel2Result').innerText = trimmedLine;
 
-// Compute the final value using Wheel 1 as the index within the range
-let computedValue = min + (wheel1FinalResult - 1); // Adjust for zero-based index
-let wheel2ResultText = wheel1Table[computedValue];
+        addRandomNumbersToWheel1Result(); // Assuming this function updates Wheel 1 Result
+    });
 
-if (wheel2ResultText) {
-    // Trim the line to exclude the number and comma
-    const firstCommaIndex = wheel2ResultText.indexOf(',');
-    if (firstCommaIndex !== -1) {
-        wheel2ResultText = wheel2ResultText.substring(firstCommaIndex + 1).trim();
-    }
+    document.getElementById('messageResult').innerText = messageResultText;
+
+    console.log('Using Message Table:', messageTable);
 }
+
 
 // Update the second column's result
 document.getElementById('wheel2Result').innerText = wheel2ResultText;

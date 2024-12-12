@@ -528,23 +528,6 @@ document.getElementById('coinImage').addEventListener('click', () => {
             }
         }
 
-        // Load the lookup tables for both wheels and initialize sketches
-async function initializeWheels() {
-    try {
-        wheel1Table = await loadLookupTable('letter-mon.txt'); // Lookup for Wheel 1
-        wheel2Table = await loadLookupTable('fort.txt'); // Lookup for Wheel 2
-
-        new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table, () => {
-            // Callback for when wheel 1 finishes spinning
-            document.getElementById('startButton2').disabled = false;
-        }));
-        new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));
-    } catch (error) {
-        console.error('Error loading lookup tables:', error);
-    }
-}
-
-
         initializeWheels();
 
         // Manage button states

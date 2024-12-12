@@ -347,7 +347,10 @@ async function getRandomLineFromLookupFile(filename) {
     return randomLine;
 }
 
+let messageTable = {}; // Initialize an empty object to store messages.
+
 function computeAndUpdateTable() {
+let messageTable = {}; // Initialize an empty object to store messages.
     if (!messageTable || Object.keys(messageTable).length === 0) {
         console.error('Message table is not loaded or empty.');
         return;
@@ -355,7 +358,6 @@ function computeAndUpdateTable() {
 // Map results of 0 and '00' to specific indices for Wheel 1 and Wheel 2
 let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
 let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
-let messageTable = {}; // Initialize an empty object to store messages.
 
 // Calculate the range based on the result of Wheel 2
 let max = (wheel2FinalResult * 38) + 1;

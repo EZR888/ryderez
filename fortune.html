@@ -348,9 +348,10 @@ async function getRandomLineFromLookupFile(filename) {
 }
 
 let messageTable = {}; // Initialize an empty object to store messages.
-initializeWheels();
+
 
 function computeAndUpdateTable() {
+initializeWheels();
 let messageTable = {}; // Initialize an empty object to store messages.
     if (!messageTable || Object.keys(messageTable).length === 0) {
         console.error('Message table is not loaded or empty.');

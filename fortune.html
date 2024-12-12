@@ -386,6 +386,10 @@ function computeAndUpdateTable() {
     }
 // Map results of 0 and '00' to specific indices for Wheel 1 and Wheel 2
 let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
+// Fetch the corresponding line from the letter-mon.txt table
+let wheel1ResultText = messageTable[wheel1FinalResult] || `Name: ${wheel1FinalResult}`;
+
+
 let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
 
 // Calculate the range based on the result of Wheel 2
@@ -394,6 +398,19 @@ let min = max - 38;
 
 // Compute the final value using Wheel 1 as the index within the range
 let computedValue = min + (wheel1FinalResult - 1); // Adjust for zero-based index
+let wheel2ResultText = wheel1Table[computedValue];
+
+if (wheel2ResultText) {
+    // Trim the line to exclude the number and comma
+    const firstCommaIndex = wheel2ResultText.indexOf(',');
+    if (firstCommaIndex !== -1) {
+        wheel2ResultText = wheel2ResultText.substring(firstCommaIndex + 1).trim();
+    }
+}
+
+// Update the second column's result
+document.getElementById('wheel2Result').innerText = wheel2ResultText;
+
 
 console.log(`Computed Value: ${computedValue}`);
 

@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Fortune</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+            gap: 20px;
+            margin: 20px;
+        }
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .wheel-container button {
+            margin-top: 10px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            background-color: #333;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            color: white;
+        }
+        th {
+            background-color: #444;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button#saveDataButton {
+            background-color: red;
+        }
+        button#saveDataButton:hover {
+            background-color: darkred;
+        }
+        #coinTossResult {
+            position: relative;
+            display: inline-block;
+        }
+        @keyframes flip {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+        .lgreen-text {
+            color: lightgreen;
+            text-align: center;
+            font-size: 64px;
+        }
+        #coinImage {
+            width: 100px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            animation: flip 0.4s ease-in-out;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+   <h1 class="lgreen-text">Wheels of Fortune</h1>
+
+    <div class="container">
+        <div class="wheel-container">
+            <div id="output1"></div>
+            <button id="startButton1">Spin</button>
+        </div>
+        
+        <div class="wheel-container">
+            <div id="output2"></div>
+            <button id="startButton2">Spin</button>
+        </div>
+    </div>
+
+    <div id="coinTossDiv">
+        <div id="coinTossResult">
+            <img id="coinImage" src="default.png" alt="Coin Toss Result" />
+        </div>
+    </div>
+
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>First/Last Name or Month<br>SuperLotto</th>
+                <th>Message</th>
+                <th>Words</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="historyRow">
+                <td id="wheel1Result"></td>
+                <td id="messageResult"></td>
+                <td id="wheel2Result"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="beginButton">Restart</button>
+    <button id="saveDataButton">Save Data as CSV</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<script>
+
+document.getElementById('beginButton').addEventListener('click', () => {
+    location.reload();
+});
+
+let wheel1Result, wheel2Result;
+let wheel1Table, wheel2Table, fort2Table;
+let wheel1ResultText = ''; // Declare once at the start
+let soundLoaded = false;
+let wordCount = 1;
+
+async function loadLookupTable(filePath) {
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) {
+            throw new Error(`Failed to load file: ${filePath}`);
+        }
+        const text = await response.text();
+        return parseLookupTable(text);
+    } catch (error) {
+        console.error(`Error loading lookup table from ${filePath}:`, error);
+        return null;
+    }
+}
+
+function parseLookupTable(data) {
+    const table = {};
+    const lines = data.split('\n');
+    lines.forEach((line, index) => {
+        if (line.trim()) {
+            table[index + 1] = line.trim();
+        }
+    });
+    return table;
+}
+
+async function initializeWheels() {
+    try {
+        // Load and parse lookup tables
+        const messageTable = await loadLookupTable('letter-mon.txt');
+        wheel1Table = await loadLookupTable('fort.txt');
+        wheel2Table = {}; // Add Wheel 2 logic if required
+
+        if (!messageTable || Object.keys(messageTable).length === 0) {
+            throw new Error('Message table is empty or not loaded');
+        }
+
+        if (!wheel1Table || Object.keys(wheel1Table).length === 0) {
+            throw new Error('Wheel 1 table is empty or not loaded');
+        }
+
+        // Initialize the wheels (p5.js sketches)
+        new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table, () => {
+            document.getElementById('startButton2').disabled = false;
+        }));
+        new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));
+    } catch (error) {
+        console.error('Error initializing wheels:', error);
+    }
+}
+
+function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, onSpinComplete) {
+    return function(p) {
+        let wheelRadius = 185;
+        let ballRadius = 11;
+        let ballSpeed, ballAngle;
+        let isSpinning = false;
+        let minSpeed = 0.85;
+        let finalIndex;
+        let winningNumber;
+        let numSlots = 38;
+        let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+        let wheelCenterX, wheelCenterY;
+        let wheelSound;
+
+        p.setup = function() {
+            p.createCanvas(390, 390).parent(canvasId);
+            p.background(0);
+            wheelCenterX = p.width / 2;
+            wheelCenterY = p.height / 2;
+            loadAndPlaySound();
+
+            document.getElementById(startButtonId).addEventListener('click', () => {
+                startWheelSpin();
+            });
+        };
+
+        p.draw = function() {
+            p.background(0);
+            drawWheel();
+
+            if (isSpinning) {
+                ballAngle += ballSpeed;
+                ballSpeed *= 0.9945; // Friction
+
+                if (ballSpeed < minSpeed) {
+                    isSpinning = false;
+                    finalIndex = calculateSlotIndex();
+                    winningNumber = slotNumbers[finalIndex];
+                    moveBallToWinningSlot();
+
+                    if (wheelSound) {
+                        wheelSound.stop();
+                    }
+
+                    if (winningNumber !== undefined) {
+                        updateResults(wheelNumber, winningNumber);
+                        if (onSpinComplete) onSpinComplete();
+                    }
+                }
+
+                ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(ballAngle));
+                ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(ballAngle));
+                p.fill(255);
+                p.ellipse(ballX, ballY, ballRadius * 2);
+            }
+        }
+
+        function drawWheel() {
+            p.stroke(130, 69, 0);
+            p.strokeWeight(20);
+            p.noFill();
+            p.ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2);
+
+            p.stroke(139, 69, 19);
+            p.strokeWeight(4);
+            for (let i = 0; i < numSlots; i++) {
+                let angleStart = p.radians(i * 360 / numSlots);
+                let angleEnd = p.radians((i + 1) * 360 / numSlots);
+                p.fill((i % 2 === 0) ? 'red' : 'black');
+                if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
+                    p.fill('green');
+                }
+                p.arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, p.PIE);
+
+                let midAngle = (angleStart + angleEnd) / 2;
+                let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
+                let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
+                p.fill(255);
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(13);
+                p.text(slotNumbers[i], x, y);
+            }
+
+            p.fill(210, 180, 140);
+            p.ellipse(wheelCenterX, wheelCenterY, 30, 30);
+        }
+
+        function calculateSlotIndex() {
+            let normalizedAngle = (ballAngle % 360 + 360) % 360;
+            return Math.floor(normalizedAngle / (360 / numSlots)) % numSlots;
+        }
+
+        function moveBallToWinningSlot() {
+            if (!isSpinning) {
+                let centerAngle = (finalIndex + 0.5) * (360 / numSlots);
+                let correctedAngle = (360 - centerAngle + 360) % 360;
+
+                ballX = wheelCenterX + (wheelRadius - ballRadius) * p.cos(p.radians(correctedAngle));
+                ballY = wheelCenterY + (wheelRadius - ballRadius) * p.sin(p.radians(correctedAngle));
+            }
+        }
+
+        function loadAndPlaySound() {
+            wheelSound = new Howl({
+                src: ['wheel-ball.wav'],
+                loop: true,
+                onload: () => {
+                    soundLoaded = true;
+                },
+                onloaderror: (id, error) => {
+                    console.error('Sound loading error:', error);
+                }
+            });
+        }
+
+        function startWheelSpin() {
+            if (!isSpinning) {
+                if (soundLoaded) {
+                    wheelSound.play();
+                } else {
+                    console.error('Sound not loaded');
+                }
+                isSpinning = true;
+                ballAngle = p.random(360);
+                ballSpeed = p.random(5, 10);
+            }
+        }
+
+        function updateResults(wheelNumber, winningNumber) {
+            if (wheelNumber === 1) {
+                wheel1Result = winningNumber;
+                addRandomNumbersToWheel1Result();
+            } else if (wheelNumber === 2) {
+                wheel2Result = winningNumber;
+            }
+
+            if (wheel1Result && wheel2Result) {
+                computeAndUpdateTable();
+            }
+        }
+
+        async function computeAndUpdateTable() {
+            wheel1ResultText = wheel1Table[wheel1Result] || wheel1Result;
+            let messageResultText = messageTable[wheel1Result] || wheel1Result;
+
+            document.getElementById('wheel1Result').innerText = wheel1ResultText;
+
+            let randomLine = await getRandomLineFromLookupFile('lookup.txt');
+            document.getElementById('wheel2Result').innerText = randomLine;
+
+            document.getElementById('messageResult').innerText = messageResultText;
+        }
+
+        async function getRandomLineFromLookupFile(filename) {
+            const response = await fetch(filename);
+            const text = await response.text();
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const randomIndex = Math.floor(Math.random() * lines.length);
+            return lines[randomIndex].trim();
+        }
+
+        function addRandomNumbersToWheel1Result() {
+            const uniqueNumbers = new Set();
+            while (uniqueNumbers.size < 5) {
+                uniqueNumbers.add(Math.floor(Math.random() * 47) + 1);
+            }
+            let additionalNumber;
+            do {
+                additionalNumber = Math.floor(Math.random() * 27) + 1;
+            } while (uniqueNumbers.has(additionalNumber));
+
+            uniqueNumbers.add(additionalNumber);
+            const randomNumbers = Array.from(uniqueNumbers);
+            const existingContent = document.getElementById('wheel1Result').innerText;
+            const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  M${randomNumbers[5]}`;
+            document.getElementById('wheel1Result').innerText = newContent;
+        }
+    };
+}
+
+initializeWheels();
+
+document.getElementById('coinImage').addEventListener('click', () => {
+    let result = Math.random() > 0.5 ? 'Heads' : 'Tails';
+    let coinImage = document.getElementById('coinImage');
+
+    coinImage.src = result === 'Heads' ? 'heads.png' : 'tails.png';
+    coinImage.style.animation = 'none'; // Reset animation
+    coinImage.offsetHeight; // Reflow to restart
+    coinImage.style.animation = ''; // Reapply animation
+});
+
+document.getElementById('saveDataButton').addEventListener('click', () => {
+    exportTotalsToCSV('history.csv');
+});
+
+function exportTotalsToCSV(filename) {
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += 'Name / Month,Lucky Numbers,Message\n';
+
+    let wheel1ResultText = document.getElementById('wheel1Result').innerText;
+    let wheel2ResultText = document.getElementById('wheel2Result').innerText;
+    let messageText = document.getElementById('messageResult').innerText;
+
+    csvContent += `${wheel1ResultText || ''},${wheel2ResultText || ''},${messageText || ''}\n`;
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function clearHistoryTable() {
+    document.getElementById('wheel1Result').innerText = '';
+    document.getElementById('wheel2Result').innerText = '';
+    document.getElementById('messageResult').innerText = '';
+}
+
+</script>
+
+</body>
+</html>

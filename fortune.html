@@ -351,46 +351,40 @@ function computeAndUpdateTable() {
     // Handle substitutions for 0 and 00
     let wheel1FinalResult = (wheel1Result === 0) ? 37 : (wheel1Result === '00') ? 38 : wheel1Result;
     let wheel2FinalResult = (wheel2Result === 0) ? 37 : (wheel2Result === '00') ? 38 : wheel2Result;
+    let max = (((wheel2FinalResult + 1) * 38) / 2);
+    let min = (max - 38);
+    let computedValue = Math.floor(Math.random() * (max - min)) + min;
 
-    // Calculate the line number in the fort.txt file based on both wheel results
-    let lineIndex = (wheel1FinalResult - 1) * 38 + (wheel2FinalResult - 1);  // 0-based index
+    let wheel1ResultText = wheel1Table[wheel1FinalResult] || wheel1FinalResult;
 
-    // Ensure lineIndex is valid
-    if (lineIndex < 0 || lineIndex >= 1444) {
-        console.error("Invalid line index:", lineIndex);
-        return;
-    }
+    // Compute the product, divide by 2, and round
+    let messageResultText = messageTable[computedValue] || computedValue;
 
-    // Fetch the message from the fort.txt file
-    getLineFromFortFile(lineIndex).then(message => {
-        document.getElementById('messageResult').innerText = message || 'No message available';
-    }).catch(err => {
-        console.error("Error fetching message:", err);
-        document.getElementById('messageResult').innerText = 'Error fetching message';
+    // Update Wheel 1 and 2 results
+    document.getElementById('wheel1Result').innerText = wheel1ResultText;
+
+    // Append Wheel 2 result to the existing Wheel 1 result
+    getRandomLineFromLookupFile('fort.txt').then(trimmedLine => {
+        let wheel2ResultText = trimmedLine;
+        document.getElementById('wheel2Result').innerText = wheel2ResultText;
+
+        // Append random numbers after Wheel 2 update (for Wheel 1)
+        addRandomNumbersToWheel1Result(); // Assuming this function updates Wheel 1 Result
     });
 
-    // Optionally, add random numbers after Wheel 1 update if needed
-    addRandomNumbersToWheel1Result();  // Call this function if you want additional random numbers
-
-    // Update Wheel 1 result
-    document.getElementById('wheel1Result').innerText = wheel1Table[wheel1FinalResult] || wheel1FinalResult;
-}
-
-async function getLineFromFortFile(lineIndex) {
-    // Fetch the fort.txt file and split it into lines
-    const response = await fetch('fort.txt');
-    const text = await response.text();
-    const lines = text.split('\n');
-
-    // Check if the line index is valid
-    if (lineIndex < 0 || lineIndex >= lines.length) {
-        console.error("Line index out of range:", lineIndex);
-        return null;
+    // Populate messageResult with 12 random words
+    let messageWords = [];
+    for (let i = 0; i < 12; i++) {
+        getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
+            messageWords.push(trimmedLine);
+            if (messageWords.length === 12) {
+                document.getElementById('messageResult').innerText = messageWords.join(', ');
+            }
+        });
     }
-
-    return lines[lineIndex].trim();  // Return the line (message) from the fort.txt file
 }
 
+// Update the function to ensure the data isn't overwritten, but rather appended:
 function addRandomNumbersToWheel1Result() {
     const uniqueNumbers = new Set();
 
@@ -416,9 +410,6 @@ function addRandomNumbersToWheel1Result() {
     const newContent = `${existingContent ? existingContent + '\n' : ''}${randomNumbers.slice(0, 5).join(', ')}  M${randomNumbers[5]}`;
     document.getElementById('wheel1Result').innerText = newContent;
 }
-
-
-
 
                 function exportTotalsToCSV(filename) {
                     let csvContent = 'data:text/csv;charset=utf-8,';

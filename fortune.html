@@ -197,16 +197,16 @@ async function initializeWheels() {
         }
 
         // Initialize the wheels (p5.js sketches)
-        new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table, () => {
+        new p5(createWheelSketch('output1', 'startButton1', 1, wheel1Table, messageTable, () => {
             document.getElementById('startButton2').disabled = false;
         }));
-        new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table));
+        new p5(createWheelSketch('output2', 'startButton2', 2, wheel2Table, messageTable));
     } catch (error) {
         console.error('Error initializing wheels:', error);
     }
 }
 
-function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, onSpinComplete) {
+function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, messageTable, onSpinComplete) {
     return function(p) {
         let wheelRadius = 185;
         let ballRadius = 11;
@@ -251,7 +251,7 @@ function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, on
                     }
 
                     if (winningNumber !== undefined) {
-                        updateResults(wheelNumber, winningNumber);
+                        updateResults(wheelNumber, winningNumber, messageTable);
                         if (onSpinComplete) onSpinComplete();
                     }
                 }
@@ -334,7 +334,7 @@ function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, on
             }
         }
 
-        function updateResults(wheelNumber, winningNumber) {
+        function updateResults(wheelNumber, winningNumber, messageTable) {
             if (wheelNumber === 1) {
                 wheel1Result = winningNumber;
                 addRandomNumbersToWheel1Result();
@@ -343,11 +343,11 @@ function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, on
             }
 
             if (wheel1Result && wheel2Result) {
-                computeAndUpdateTable();
+                computeAndUpdateTable(messageTable);
             }
         }
 
-        async function computeAndUpdateTable() {
+        async function computeAndUpdateTable(messageTable) {
             wheel1ResultText = wheel1Table[wheel1Result] || wheel1Result;
             let messageResultText = messageTable[wheel1Result] || wheel1Result;
 
@@ -385,6 +385,7 @@ function createWheelSketch(canvasId, startButtonId, wheelNumber, lookupTable, on
         }
     };
 }
+
 
 initializeWheels();
 

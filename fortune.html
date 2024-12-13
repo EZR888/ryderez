@@ -376,17 +376,15 @@ async function computeAndUpdateTable() {
         addRandomNumbersToWheel1Result(); // Assuming this function updates Wheel 1 Result
     });
 
-    // Populate messageResult with 12 random words and add a 2-second delay between each
+    // Populate the second column with 12 random words with a 2-second delay
     let messageWords = [];
     for (let i = 0; i < 12; i++) {
         await delay(2000); // Wait for 2 seconds
         const trimmedLine = await getRandomLineFromLookupFile('lookup.txt');
         messageWords.push(trimmedLine);
 
-        // Update the messageResult after collecting all words
-        if (messageWords.length === 12) {
-            document.getElementById('messageResult').innerText = messageWords.join(', ');
-        }
+        // Update the column progressively after each word is fetched
+        document.getElementById('messageResult').innerText = messageWords.join(', ');
     }
 }
 

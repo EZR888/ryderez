@@ -379,10 +379,12 @@ function computeAndUpdateTable() {
             messageWords.push(trimmedLine);
             if (messageWords.length === 12) {
                 document.getElementById('messageResult').innerText = messageWords.join(', ');
+                setTimeout(addRandomWords, 2000); // Call itself after 1 second
             }
         });
     }
 }
+
 
 // Update the function to ensure the data isn't overwritten, but rather appended:
 function addRandomNumbersToWheel1Result() {

@@ -372,16 +372,24 @@ function computeAndUpdateTable() {
         addRandomNumbersToWheel1Result(); // Assuming this function updates Wheel 1 Result
     });
 
-    // Populate messageResult with 12 random words
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function populateMessageResult() {
     let messageWords = [];
     for (let i = 0; i < 12; i++) {
-        getRandomLineFromLookupFile('lookup.txt').then(trimmedLine => {
-            messageWords.push(trimmedLine);
-            if (messageWords.length === 12) {
-                document.getElementById('messageResult').innerText = messageWords.join(', ');
-                setTimeout(addRandomWords, 2000); // Call itself after 1 second
-            }
-        });
+        // Wait for 2 seconds before fetching the next word
+        await delay(2000);
+        
+        // Fetch a random line from lookup.txt
+        const trimmedLine = await getRandomLineFromLookupFile('lookup.txt');
+        messageWords.push(trimmedLine);
+        
+        // Update the messageResult element once all words are fetched
+        if (messageWords.length === 12) {
+            document.getElementById('messageResult').innerText = messageWords.join(', ');
+        }
     }
 }
 

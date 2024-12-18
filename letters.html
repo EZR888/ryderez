@@ -1,0 +1,166 @@
+Sure! To position the "RESET" button to the right of the "Engage" button on the same line, with some space between them, we can use a simple `div` container with `display: flex` to align them horizontally.
+
+Here’s the updated version of the code:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ouija Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #000;
+        }
+        .board {
+            position: relative;
+            width: 600px;
+            height: 300px;
+            background: khaki;
+            border: 5px solid #000;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .board .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px; /* space between rows */
+        }
+        .board .row div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #000;
+            border-radius: 5px;
+            background-color: #f4e8c1;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: black;
+            padding: 10px;
+            margin: 0 5px;
+        }
+        #buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* space between buttons */
+        }
+        #engage, #reset {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #engage:hover, #reset:hover {
+            background-color: #666;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board">
+        <!-- Letters will be dynamically generated here -->
+        <div class="row">
+            <div>Q</div>
+            <div>W</div>
+            <div>E</div>
+            <div>R</div>
+            <div>T</div>
+            <div>Y</div>
+            <div>U</div>
+            <div>I</div>
+            <div>O</div>
+            <div>P</div>
+        </div>
+        <div class="row">
+            <div>A</div>
+            <div>S</div>
+            <div>D</div>
+            <div>F</div>
+            <div>G</div>
+            <div>H</div>
+            <div>J</div>
+            <div>K</div>
+            <div>L</div>
+        </div>
+        <div class="row">
+            <div>Z</div>
+            <div>X</div>
+            <div>C</div>
+            <div>V</div>
+            <div>B</div>
+            <div>N</div>
+            <div>M</div>
+        </div>
+    </div>
+    <div id="buttons">
+        <button id="engage">Engage</button>
+        <button id="reset">Reset</button>
+    </div>
+    <div id="output">Selected: </div>
+
+    <script>
+        const output = document.getElementById('output');
+        const engageButton = document.getElementById('engage');
+        const resetButton = document.getElementById('reset');
+
+        // Get all the letter divs inside the rows
+        const letterDivs = document.querySelectorAll('.board .row div');
+
+        // Get random letter from the board
+        function getRandomLetter() {
+            const index = Math.floor(Math.random() * letterDivs.length);
+            return letterDivs[index];
+        }
+
+        // Handle Engage button
+        engageButton.addEventListener('click', () => {
+            const selectedLetter = getRandomLetter();
+            
+            // Highlight the selected letter
+            selectedLetter.style.backgroundColor = 'gold';
+
+            // Append the selected letter to the output with a space after each one
+            output.textContent += `${selectedLetter.textContent} `;
+        });
+
+        // Handle Reset button
+        resetButton.addEventListener('click', () => {
+            // Refresh the page
+            location.reload();
+        });
+    </script>
+</body>
+</html>
+```
+
+### Changes:
+- Added a `div` with the id `buttons` to group the "Engage" and "RESET" buttons.
+- Used `display: flex` on the `#buttons` container to arrange the buttons horizontally and added a `gap: 20px;` to space them out.
+
+### Result:
+- The "RESET" button will now be positioned to the right of the "Engage" button, with space in between them, and they will appear on the same line.
+
+Let me know if that works as expected!

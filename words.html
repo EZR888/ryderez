@@ -34,13 +34,24 @@
             font-size: 24px;
             color: white;
         }
+        #wordList {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            max-width: 80%;
+            overflow-wrap: break-word;
+        }
     </style>
 </head>
 <body>
     <button id="ai">AI</button>
     <div id="output">Selected Word: </div>
+    <div id="wordList">Running Word List: </div>
 
     <script>
+        // Array to keep track of the selected words
+        const selectedWords = [];
+
         // Handle AI button click
         document.getElementById('ai').addEventListener('click', () => {
             generateRandomNumbers();
@@ -51,11 +62,12 @@
             const rng1 = Math.floor(Math.random() * 38) + 1;  // RNG #1: Number between 1 and 38
             const rng2 = Math.floor(Math.random() * 66) + 1;  // RNG #2: Number between 1 and 66
 
-            // Output the random numbers to the console (for debugging)
-            console.log(`RNG #1: ${rng1}, RNG #2: ${rng2}`);
+            // Output the random numbers and the calculated line number to the console
+            const lineNumber = (rng1 - 1) * Math.floor(2508 / 38) + rng2;
+            console.log(`RNG #1: ${rng1}, RNG #2: ${rng2}, Line #: ${lineNumber}`);
 
             // Load and process the lookup.txt file
-            loadAndLookup(rng1, rng2);
+            loadAndLookup(rng1, rng2, lineNumber);
         }
 
         // Async function to fetch a random line from the lookup.txt file
@@ -84,12 +96,18 @@
         }
 
         // Load lookup.txt file and perform the lookup
-        async function loadAndLookup(rng1, rng2) {
+        async function loadAndLookup(rng1, rng2, lineNumber) {
             const file = 'lookup.txt'; // Path to the lookup.txt file
 
             try {
                 const word = await getRandomLineFromLookupFile(file, rng1, rng2);
                 document.getElementById('output').textContent = `Selected Word: ${word}`;
+                
+                // Add the word to the running list
+                selectedWords.push(word);
+                document.getElementById('wordList').textContent = 'Running Word List: ' + selectedWords.join(', ');
+
+                console.log(`Selected word from line ${lineNumber}: ${word}`);
             } catch (error) {
                 console.error('Error loading the lookup file:', error);
             }

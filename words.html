@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Word Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button id="ai">AI</button>
+    <div id="output">Selected Word: </div>
+
+    <script>
+        // Handle AI button click
+        document.getElementById('ai').addEventListener('click', () => {
+            generateRandomNumbers();
+        });
+
+        // Handle the two RNG selections
+        function generateRandomNumbers() {
+            const rng1 = Math.floor(Math.random() * 38) + 1;  // RNG #1: Number between 1 and 38
+            const rng2 = Math.floor(Math.random() * 66) + 1;  // RNG #2: Number between 1 and 66
+
+            // Output the random numbers to the console (for debugging)
+            console.log(`RNG #1: ${rng1}, RNG #2: ${rng2}`);
+
+            // Load and process the lookup.txt file
+            loadAndLookup(rng1, rng2);
+        }
+
+        // Async function to fetch a random line from the lookup.txt file
+        async function getRandomLineFromLookupFile(filename, rng1, rng2) {
+            const response = await fetch(filename);
+            const text = await response.text();
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+
+            // Calculate the range of lines based on rng1 (38 slices)
+            const sliceSize = Math.floor(lines.length / 38);  // 38 slices
+            const startLine = (rng1 - 1) * sliceSize;
+            const endLine = Math.min(rng1 * sliceSize, lines.length);
+
+            // Calculate the line number in the slice using rng2
+            const lineIndex = startLine + rng2 - 1;
+
+            // Get the selected line
+            const selectedLine = lines[lineIndex];
+            
+            // Extract the word after the first comma in the line
+            const firstCommaIndex = selectedLine.indexOf(',');
+            if (firstCommaIndex !== -1) {
+                return selectedLine.substring(firstCommaIndex + 1).trim(); // Return the word after comma
+            }
+            return 'No word found';
+        }
+
+        // Load lookup.txt file and perform the lookup
+        async function loadAndLookup(rng1, rng2) {
+            const file = 'lookup.txt'; // Path to the lookup.txt file
+
+            try {
+                const word = await getRandomLineFromLookupFile(file, rng1, rng2);
+                document.getElementById('output').textContent = `Selected Word: ${word}`;
+            } catch (error) {
+                console.error('Error loading the lookup file:', error);
+            }
+        }
+    </script>
+</body>
+</html>

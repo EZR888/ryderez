@@ -41,21 +41,34 @@
             max-width: 80%;
             overflow-wrap: break-word;
         }
+        #wordCounter {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <button id="ai">AI</button>
-    <div id="output">Selected Word: </div>
+    <button id="ai">Real Intelligence</button>
+    <div id="wordCounter">Word #: 0</div>
     <div id="wordList">Running Word List: </div>
 
     <script>
         // Array to keep track of the selected words
         const selectedWords = [];
+        let wordCount = 0; // Counter for the number of words selected
 
         // Handle AI button click
         document.getElementById('ai').addEventListener('click', () => {
+            wordCount++;
+            updateWordCount();
             generateRandomNumbers();
         });
+
+        // Update the Word Counter
+        function updateWordCount() {
+            document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
+        }
 
         // Handle the two RNG selections
         function generateRandomNumbers() {
@@ -101,7 +114,7 @@
 
             try {
                 const word = await getRandomLineFromLookupFile(file, rng1, rng2);
-                document.getElementById('output').textContent = `Selected Word: ${word}`;
+                // document.getElementById('output').textContent = `Selected Word: ${word}`;
                 
                 // Add the word to the running list
                 selectedWords.push(word);

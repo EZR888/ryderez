@@ -16,6 +16,11 @@
             background-color: #222;
             color: #fff;
         }
+        h1 {
+            color: #90ee90; /* Light green */
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
         button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -55,6 +60,7 @@
     </style>
 </head>
 <body>
+    <h1>Random Intelligence</h1>
     <button id="ai">Click For Word</button>
     <div id="wordCounter">Word #: 0</div>
     <div id="wordListContainer">
@@ -123,7 +129,7 @@
 
             try {
                 const word = await getRandomLineFromLookupFile(file, rng1, rng2);
-                // document.getElementById('output').textContent = `Selected Word: ${word}`;
+                //document.getElementById('output').textContent = `Selected Word: ${word}`;
                 
                 // Add the word to the running list
                 selectedWords.push(word);

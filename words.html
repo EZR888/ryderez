@@ -55,8 +55,7 @@
     </style>
 </head>
 <body>
-    <button id="ai">AI</button>
-    <div id="output">Selected Word: </div>
+    <button id="ai">Click For Word</button>
     <div id="wordCounter">Word #: 0</div>
     <div id="wordListContainer">
         <div>Running Word List</div>
@@ -124,7 +123,7 @@
 
             try {
                 const word = await getRandomLineFromLookupFile(file, rng1, rng2);
-                document.getElementById('output').textContent = `Selected Word: ${word}`;
+                // document.getElementById('output').textContent = `Selected Word: ${word}`;
                 
                 // Add the word to the running list
                 selectedWords.push(word);

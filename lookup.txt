@@ -24,7 +24,7 @@
 24,suit
 25,feet
 26,organize
-27,september
+27,September
 28,nose
 29,fold
 30,scent
@@ -101,7 +101,7 @@
 101,population
 102,beyond
 103,gain
-104,queen
+104,Queen
 105,marriage
 106,birth
 107,slippery
@@ -110,7 +110,7 @@
 110, 76
 111,disgust
 112,Lisa
-113,dip
+113,October
 114,rise
 115,nail
 116,cousin
@@ -145,7 +145,7 @@
 145,furniture
 146,quarter
 147,several
-148,bean
+148,panty
 149,rough
 150,farm
 151, 39
@@ -155,10 +155,10 @@
 155,skill
 156,hurry
 157,review
-158,may
+158,May
 159,product
 160,home
-161,ever
+161,brief
 162,customer
 163,swing
 164,spell
@@ -176,7 +176,7 @@
 176,discussion
 177,reserve
 178,modern
-179,january
+179,January
 180,dozen
 181,sailor
 182,hasten
@@ -300,7 +300,7 @@
 300,drawer
 301,city
 302,rail
-303,march
+303,March
 304,reduce
 305,hook
 306,daughter
@@ -590,7 +590,7 @@
 590,kneel
 591,reach
 592,Terri
-593,august
+593,August
 594,arch
 595,correction
 596,educate
@@ -825,7 +825,7 @@
 825,saddle
 826,bow
 827,congratulation
-828,february
+828,February
 829,nest
 830,receive
 831,cap
@@ -1039,7 +1039,7 @@
 1039,pile
 1040,blue
 1041,homecoming
-1042,july
+1042,July
 1043,scene
 1044,lawyer
 1045,steer
@@ -1211,7 +1211,7 @@
 1211,book
 1212,airplane
 1213,south
-1214,decenber
+1214,December
 1215,sure
 1216,ocean
 1217,likely
@@ -1479,7 +1479,7 @@
 1479,weaken
 1480,hole
 1481,ball
-1482,april
+1482,April
 1483,whip
 1484, 29
 1485,retire
@@ -1729,7 +1729,7 @@
 1729,all
 1730,cut
 1731,motor
-1732,silk
+1732,silky
 1733,cowboy
 1734,friendship
 1735,permanent
@@ -1844,11 +1844,11 @@
 1844,conquest
 1845,language
 1846,adopt
-1847,rob
+1847,Robert
 1848,smoke
 1849,equal
 1850,motherhood
-1851,plow
+1851,John
 1852,crime
 1853,repair
 1854,ideal
@@ -2272,7 +2272,7 @@
 2272,greed
 2273,playright
 2274,shirt
-2275,june
+2275,June
 2276,umbrella
 2277,capital
 2278,scorn
@@ -2486,7 +2486,7 @@
 2486,permit
 2487,inclusive
 2488,follow
-2489,november
+2489,November
 2490,shut
 2491,sad
 2492,ache

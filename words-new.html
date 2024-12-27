@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Word Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
+        h1 {
+            color: #90ee90; /* Light green */
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+        #wordCounter {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+        }
+        #wordListContainer {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            max-width: 80%;
+            text-align: center;
+        }
+        #wordList {
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+            overflow-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Intelligence</h1>
+    <button id="start">Start RNG</button>
+    <button id="stop" disabled>Stop RNG</button>
+    <div id="wordCounter">Word #: 0</div>
+    <div id="wordListContainer">
+        <div>Running Word List</div>
+        <div id="wordList"></div>
+    </div>
+
+    <script>
+        const selectedWords = [];
+        let wordCount = 0;
+        let rngInterval = null;
+
+        document.getElementById('start').addEventListener('click', startRNG);
+        document.getElementById('stop').addEventListener('click', stopRNG);
+
+        function startRNG() {
+            document.getElementById('start').disabled = true;
+            document.getElementById('stop').disabled = false;
+
+            rngInterval = setInterval(() => {
+                const rng1 = Math.floor(Math.random() * 66) + 1; // RNG1: Number between 1 and 66
+                const rng2 = Math.floor(Math.random() * 66) + 1; // RNG2: Number between 1 and 66
+
+                if (rng1 === rng2) {
+                    const sliceNumber = rng1; // Slice determined by matching RNG1 and RNG2
+                    const rng3 = Math.floor(Math.random() * 38) + 1; // RNG3: Number between 1 and 38
+
+                    console.log(`Match found! Slice: ${sliceNumber}, Word Index: ${rng3}`);
+
+                    loadAndLookup(sliceNumber, rng3);
+                }
+            }, 100); // Run RNG every 100ms
+        }
+
+        function stopRNG() {
+            clearInterval(rngInterval);
+            document.getElementById('start').disabled = false;
+            document.getElementById('stop').disabled = true;
+        }
+
+        function updateWordCount() {
+            document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
+        }
+
+        async function loadAndLookup(sliceNumber, wordIndex) {
+            const file = 'lookup.txt';
+
+            try {
+                const response = await fetch(file);
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+                const sliceSize = 38; // Each slice contains 38 lines
+
+                const startLine = (sliceNumber - 1) * sliceSize;
+                const endLine = Math.min(startLine + sliceSize, lines.length);
+                const selectedLine = lines.slice(startLine, endLine);
+
+                if (selectedLine.length > 0) {
+                    const words = selectedLine.join(' ').split(',').map(word => word.trim());
+                    const selectedWord = words[Math.min(wordIndex - 1, words.length - 1)] || 'No word found';
+
+                    selectedWords.push(selectedWord);
+                    wordCount++;
+                    updateWordCount();
+                    document.getElementById('wordList').textContent = selectedWords.join(', ');
+
+                    console.log(`Selected word: ${selectedWord}`);
+                } else {
+                    console.log('No valid lines in the selected slice.');
+                }
+            } catch (error) {
+                console.error('Error loading the lookup file:', error);
+            }
+        }
+    </script>
+</body>
+</html>

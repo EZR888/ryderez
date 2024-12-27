@@ -61,8 +61,7 @@
 </head>
 <body>
     <h1>Random Intelligence</h1>
-    <button id="start">Start RNG</button>
-    <button id="stop" disabled>Stop RNG</button>
+    <button id="ai">Click For Word</button>
     <div id="wordCounter">Word #: 0</div>
     <div id="wordListContainer">
         <div>Running Word List</div>
@@ -70,68 +69,73 @@
     </div>
 
     <script>
+        // Array to keep track of the selected words
         const selectedWords = [];
-        let wordCount = 0;
-        let rngInterval = null;
+        let wordCount = 0; // Counter for the number of words selected
 
-        document.getElementById('start').addEventListener('click', startRNG);
-        document.getElementById('stop').addEventListener('click', stopRNG);
+        // Handle AI button click
+        document.getElementById('ai').addEventListener('click', () => {
+            wordCount++;
+            updateWordCount();
+            generateRandomNumbers();
+        });
 
-        function startRNG() {
-            document.getElementById('start').disabled = true;
-            document.getElementById('stop').disabled = false;
-
-            rngInterval = setInterval(() => {
-                const rng1 = Math.floor(Math.random() * 66) + 1; // RNG1: Number between 1 and 66
-                const rng2 = Math.floor(Math.random() * 66) + 1; // RNG2: Number between 1 and 66
-
-                if (rng1 === rng2) {
-                    const sliceNumber = rng1; // Slice determined by matching RNG1 and RNG2
-                    const rng3 = Math.floor(Math.random() * 38) + 1; // RNG3: Number between 1 and 38
-
-                    console.log(`Match found! Slice: ${sliceNumber}, Word Index: ${rng3}`);
-
-                    loadAndLookup(sliceNumber, rng3);
-                }
-            }, 100); // Run RNG every 100ms
-        }
-
-        function stopRNG() {
-            clearInterval(rngInterval);
-            document.getElementById('start').disabled = false;
-            document.getElementById('stop').disabled = true;
-        }
-
+        // Update the Word Counter
         function updateWordCount() {
             document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
         }
 
-        async function loadAndLookup(sliceNumber, wordIndex) {
-            const file = 'lookup.txt';
+        // Handle the two RNG selections
+        function generateRandomNumbers() {
+            const rng1 = Math.floor(Math.random() * 38) + 1;  // RNG #1: Number between 1 and 38
+            const rng2 = Math.floor(Math.random() * 66) + 1;  // RNG #2: Number between 1 and 66
+
+            // Output the random numbers and the calculated line number to the console
+            const lineNumber = (rng1 - 1) * Math.floor(2508 / 38) + rng2;
+            console.log(`RNG #1: ${rng1}, RNG #2: ${rng2}, Line #: ${lineNumber}`);
+
+            // Load and process the lookup.txt file
+            loadAndLookup(rng1, rng2, lineNumber);
+        }
+
+        // Async function to fetch a random line from the lookup.txt file
+        async function getRandomLineFromLookupFile(filename, rng1, rng2) {
+            const response = await fetch(filename);
+            const text = await response.text();
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+
+            // Calculate the range of lines based on rng1 (38 slices)
+            const sliceSize = Math.floor(lines.length / 38);  // 38 slices
+            const startLine = (rng1 - 1) * sliceSize;
+            const endLine = Math.min(rng1 * sliceSize, lines.length);
+
+            // Calculate the line number in the slice using rng2
+            const lineIndex = startLine + rng2 - 1;
+
+            // Get the selected line
+            const selectedLine = lines[lineIndex];
+            
+            // Extract the word after the first comma in the line
+            const firstCommaIndex = selectedLine.indexOf(',');
+            if (firstCommaIndex !== -1) {
+                return selectedLine.substring(firstCommaIndex + 1).trim(); // Return the word after comma
+            }
+            return 'No word found';
+        }
+
+        // Load lookup.txt file and perform the lookup
+        async function loadAndLookup(rng1, rng2, lineNumber) {
+            const file = 'lookup.txt'; // Path to the lookup.txt file
 
             try {
-                const response = await fetch(file);
-                const text = await response.text();
-                const lines = text.split('\n').filter(line => line.trim() !== '');
-                const sliceSize = 38; // Each slice contains 38 lines
+                const word = await getRandomLineFromLookupFile(file, rng1, rng2);
+                //document.getElementById('output').textContent = `Selected Word: ${word}`;
+                
+                // Add the word to the running list
+                selectedWords.push(word);
+                document.getElementById('wordList').textContent = selectedWords.join(', ');
 
-                const startLine = (sliceNumber - 1) * sliceSize;
-                const endLine = Math.min(startLine + sliceSize, lines.length);
-                const selectedLine = lines.slice(startLine, endLine);
-
-                if (selectedLine.length > 0) {
-                    const words = selectedLine.join(' ').split(',').map(word => word.trim());
-                    const selectedWord = words[Math.min(wordIndex - 1, words.length - 1)] || 'No word found';
-
-                    selectedWords.push(selectedWord);
-                    wordCount++;
-                    updateWordCount();
-                    document.getElementById('wordList').textContent = selectedWords.join(', ');
-
-                    console.log(`Selected word: ${selectedWord}`);
-                } else {
-                    console.log('No valid lines in the selected slice.');
-                }
+                console.log(`Selected word from line ${lineNumber}: ${word}`);
             } catch (error) {
                 console.error('Error loading the lookup file:', error);
             }

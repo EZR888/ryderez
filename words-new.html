@@ -26,13 +26,15 @@
             padding: 10px 20px;
             font-size: 16px;
             border: none;
-            background-color: #444;
             color: white;
             cursor: pointer;
             border-radius: 5px;
         }
-        button:hover {
-            background-color: #666;
+        #start {
+            background-color: green;
+        }
+        #start:hover {
+            background-color: darkgreen;
         }
         #output {
             margin-top: 20px;
@@ -61,8 +63,7 @@
 </head>
 <body>
     <h1>Random Intelligence</h1>
-    <button id="start">Start RNG</button>
-    <button id="stop" disabled>Stop RNG</button>
+    <button id="start">Start</button>
     <div id="wordCounter">Word #: 0</div>
     <div id="wordListContainer">
         <div>Running Word List</div>
@@ -73,13 +74,21 @@
         const selectedWords = [];
         let wordCount = 0;
         let rngInterval = null;
+        const startButton = document.getElementById('start');
 
-        document.getElementById('start').addEventListener('click', startRNG);
-        document.getElementById('stop').addEventListener('click', stopRNG);
+        startButton.addEventListener('click', toggleRNG);
+
+        function toggleRNG() {
+            if (rngInterval) {
+                stopRNG();
+            } else {
+                startRNG();
+            }
+        }
 
         function startRNG() {
-            document.getElementById('start').disabled = true;
-            document.getElementById('stop').disabled = false;
+            startButton.textContent = 'Stop';
+            startButton.style.backgroundColor = 'red';
 
             rngInterval = setInterval(() => {
                 const rng1 = Math.floor(Math.random() * 66) + 1; // RNG1: Number between 1 and 66
@@ -98,8 +107,9 @@
 
         function stopRNG() {
             clearInterval(rngInterval);
-            document.getElementById('start').disabled = false;
-            document.getElementById('stop').disabled = true;
+            rngInterval = null;
+            startButton.textContent = 'Start';
+            startButton.style.backgroundColor = 'green';
         }
 
         function updateWordCount() {

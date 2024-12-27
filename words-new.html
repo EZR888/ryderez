@@ -46,6 +46,11 @@
             font-size: 18px;
             color: white;
         }
+        #timer {
+            margin-top: 10px;
+            font-size: 18px;
+            color: white;
+        }
         #wordListContainer {
             margin-top: 20px;
             font-size: 18px;
@@ -65,6 +70,7 @@
     <h1>Random Intelligence</h1>
     <button id="start">Start</button>
     <div id="wordCounter">Word #: 0</div>
+    <div id="timer">Time: 0 seconds</div>
     <div id="wordListContainer">
         <div>Running Word List</div>
         <div id="wordList"></div>
@@ -74,7 +80,11 @@
         const selectedWords = [];
         let wordCount = 0;
         let rngInterval = null;
+        let timerInterval = null;
+        let timer = 0;
+
         const startButton = document.getElementById('start');
+        const timerDisplay = document.getElementById('timer');
 
         startButton.addEventListener('click', toggleRNG);
 
@@ -90,6 +100,12 @@
             startButton.textContent = 'Stop';
             startButton.style.backgroundColor = 'red';
 
+            resetTimer();
+            timerInterval = setInterval(() => {
+                timer++;
+                updateTimerDisplay();
+            }, 1000);
+
             rngInterval = setInterval(() => {
                 const rng1 = Math.floor(Math.random() * 66) + 1; // RNG1: Number between 1 and 66
                 const rng2 = Math.floor(Math.random() * 66) + 1; // RNG2: Number between 1 and 66
@@ -101,15 +117,27 @@
                     console.log(`Match found! Slice: ${sliceNumber}, Word Index: ${rng3}`);
 
                     loadAndLookup(sliceNumber, rng3);
+                    resetTimer();
                 }
             }, 100); // Run RNG every 100ms
         }
 
         function stopRNG() {
             clearInterval(rngInterval);
+            clearInterval(timerInterval);
             rngInterval = null;
+            timerInterval = null;
             startButton.textContent = 'Start';
             startButton.style.backgroundColor = 'green';
+        }
+
+        function resetTimer() {
+            timer = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            timerDisplay.textContent = `Time: ${timer} seconds`;
         }
 
         function updateWordCount() {

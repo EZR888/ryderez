@@ -120,15 +120,19 @@
                 const selectedLine = lines.slice(startLine, endLine);
 
                 if (selectedLine.length > 0) {
-                    const words = selectedLine.join(' ').split(',').map(word => word.trim());
-                    const selectedWord = words[Math.min(wordIndex - 1, words.length - 1)] || 'No word found';
+                    const line = selectedLine[wordIndex - 1];
+                    if (line) {
+                        const word = line.split(',')[1]?.trim() || 'No word found';
 
-                    selectedWords.push(selectedWord);
-                    wordCount++;
-                    updateWordCount();
-                    document.getElementById('wordList').textContent = selectedWords.join(', ');
+                        selectedWords.push(word);
+                        wordCount++;
+                        updateWordCount();
+                        document.getElementById('wordList').textContent = selectedWords.join(', ');
 
-                    console.log(`Selected word: ${selectedWord}`);
+                        console.log(`Selected word: ${word}`);
+                    } else {
+                        console.log('Invalid word index.');
+                    }
                 } else {
                     console.log('No valid lines in the selected slice.');
                 }

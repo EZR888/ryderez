@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics View</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+        .runs-text {
+            color: yellow;
+            font-size: 24px;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            color: white;
+        }
+        td {
+            background-color: lightyellow;
+        }
+        .spacer {
+            background-color: black;
+        }
+
+        /* Top header row background color */
+        .header-top {
+            background-color: green;
+        }
+
+        /* Individual column header colors */
+        .black-header {
+            background-color: black;
+            color: white;
+        }
+
+        .red-header {
+            background-color: red;
+            color: white;
+        }
+
+        /* Total column header background color */
+        .blue-header {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <h1 class="header-text">Cluster Stats</h1>
+        <div class="runs-text" id="runsCount"></div>
+    </div>
+    <table id="statsTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Clear the table if needed
+        if (localStorage.getItem('clearTable') === 'true') {
+            localStorage.removeItem('clearTable');
+            document.querySelector('#statsTable thead').innerHTML = '';
+            document.querySelector('#statsTable tbody').innerHTML = '';
+        }
+
+        // Retrieve the CSV data from localStorage
+        const csvData = JSON.parse(localStorage.getItem('csvData'));
+
+        if (csvData) {
+            const table = document.getElementById('statsTable');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+
+            // Update Runs count
+            document.getElementById('runsCount').textContent = `Runs: ${csvData.length}`;
+
+            // Create the header row with the top row in green and specific columns in black/red
+            const headerRow = `
+                <tr class="header-top">
+                    <th colspan="6">Cluster 00</th>
+                    <th class="spacer"></th>
+                    <th colspan="6">Cluster 0</th>
+                </tr>
+                <tr>
+                    <th class="black-header">13</th>
+                    <th class="red-header">1</th>
+                    <th class="black-header">00</th>
+                    <th class="red-header">27</th>
+                    <th class="black-header">10</th>
+                    <th class="blue-header">Total</th>
+                    <th class="spacer"></th>
+                    <th class="red-header">9</th>
+                    <th class="black-header">28</th>
+                    <th class="red-header">0</th>
+                    <th class="black-header">2</th>
+                    <th class="red-header">14</th>
+                    <th class="blue-header">Total</th>
+                </tr>`;
+            thead.innerHTML = headerRow;
+
+            // Variables to track column totals
+            const columnTotalsGroup1 = new Array(5).fill(0); // Cluster 00: columns 8, 9, 10, 11, 12
+            const columnTotalsGroup2 = new Array(5).fill(0); // Cluster 0: columns 27, 28, 29, 30, 31
+            let grandTotalGroup1 = 0;
+            let grandTotalGroup2 = 0;
+
+            // Process the CSV data
+            csvData.forEach((row, rowIndex) => {
+                // Process Group 1 (Cluster 00)
+                [8, 9, 10, 11, 12].forEach((colIndex, index) => {
+                    const value = Number(row[colIndex]) || 0; // Ensure numeric conversion
+                    columnTotalsGroup1[index] += value; // Update column totals for Group 1
+                    grandTotalGroup1 += value; // Update total for Group 1
+                });
+
+                // Process Group 2 (Cluster 0)
+                [27, 28, 29, 30, 31].forEach((colIndex, index) => {
+                    const value = Number(row[colIndex]) || 0; // Ensure numeric conversion
+                    columnTotalsGroup2[index] += value; // Update column totals for Group 2
+                    grandTotalGroup2 += value; // Update total for Group 2
+                });
+            });
+
+            // Create a row with the column totals and the final totals
+            const totalsRow = document.createElement('tr');
+
+            // Add column totals for Group 1 (Cluster 00)
+            columnTotalsGroup1.forEach(total => {
+                const td = document.createElement('td');
+                td.textContent = total;
+                totalsRow.appendChild(td);
+            });
+
+            // Add Group 1 total
+            const group1TotalCell = document.createElement('td');
+            group1TotalCell.textContent = grandTotalGroup1;
+            totalsRow.appendChild(group1TotalCell);
+
+            // Spacer column
+            const spacer = document.createElement('td');
+            spacer.textContent = '';
+            spacer.className = 'spacer';
+            totalsRow.appendChild(spacer);
+
+            // Add column totals for Group 2 (Cluster 0)
+            columnTotalsGroup2.forEach(total => {
+                const td = document.createElement('td');
+                td.textContent = total;
+                totalsRow.appendChild(td);
+            });
+
+            // Add Group 2 total
+            const group2TotalCell = document.createElement('td');
+            group2TotalCell.textContent = grandTotalGroup2;
+            totalsRow.appendChild(group2TotalCell);
+
+            // Append the totals row to the table
+            tbody.appendChild(totalsRow);
+
+        } else {
+            alert('No data found. Please process a CSV file first.');
+        }
+    </script>
+</body>
+</html>

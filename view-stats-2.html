@@ -75,7 +75,6 @@
 <body>
     <div class="header-container">
         <h1 class="header-text">Cluster Stats</h1>
-        <div class="runs-text" id="runsCount"></div>
     </div>
     <table id="statsTable">
         <thead></thead>
@@ -97,9 +96,6 @@
             const table = document.getElementById('statsTable');
             const thead = table.querySelector('thead');
             const tbody = table.querySelector('tbody');
-
-            // Update Runs count
-            document.getElementById('runsCount').textContent = `Runs: ${csvData.length}`;
 
             // Create the header row with the top row in green and specific columns in black/red
             const headerRow = `

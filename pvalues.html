@@ -105,12 +105,12 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                processCSVData(e.target.result);
+                processCSVData(e.target.result, file.name);
             };
             reader.readAsText(file);
         });
 
-        function processCSVData(csvText) {
+        function processCSVData(csvText, fileName) {
             const rows = csvText.trim().split("\n");
 
             if (rows.length <= 1) {
@@ -118,20 +118,23 @@
                 return;
             }
 
-            const header = rows[0].split(",");
-            const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
+            const totalColumns = rows[0].split(",").length;
 
-            const totalColumns = header.length;
-            if (totalColumns !== 38) {
-                alert(`Expected 38 columns, but found ${totalColumns}. Please check your file.`);
+            // Check if file name begins with "SaveCSV" to determine if there is no header row
+            let startRowIndex = fileName.startsWith("SaveCSV") ? 0 : 1;
+
+            const dataRows = rows.slice(startRowIndex).map(row => row.split(",").map(Number));
+
+            if (totalColumns !== 39 && totalColumns !== 38) {
+                alert(`Expected 38 or 39 columns, but found ${totalColumns}. Please check your file.`);
                 return;
             }
 
-            const observed = Array(totalColumns).fill(0);
+            const observed = Array(totalColumns - 1).fill(0); // Skip the first column if 39 columns
             let totalSpins = 0;
 
             dataRows.forEach(row => {
-                row.forEach((value, colIndex) => {
+                row.slice(1).forEach((value, colIndex) => { // Ignore the first column
                     if (!isNaN(value)) {
                         observed[colIndex] += value;
                         totalSpins += value;
@@ -143,8 +146,9 @@
         }
 
         function finalizeResults(observed, totalSpins, totalColumns) {
-            const expectedFreq = totalSpins / totalColumns;
-            const expected = Array(totalColumns).fill(expectedFreq);
+            const totalColumnsToConsider = totalColumns === 39 ? 38 : totalColumns;
+            const expectedFreq = totalSpins / totalColumnsToConsider;
+            const expected = Array(totalColumnsToConsider).fill(expectedFreq);
 
             let chiSquare = 0;
             const contributions = [];
@@ -152,7 +156,7 @@
                 const exp = expected[i];
                 const contribution = Math.pow(obs - exp, 2) / exp;
                 chiSquare += contribution;
-                contributions.push({ number: i, contribution, observed: obs, expected: exp });
+                contributions.push({ number: i + 1, contribution, observed: obs, expected: exp }); // Numbers start from 1
             });
 
             contributions.sort((a, b) => b.contribution - a.contribution);
@@ -176,7 +180,7 @@
             ).join("<br>");
             document.getElementById("topContributors").innerHTML = topContributorsText;
 
-            const degreesOfFreedom = totalColumns - 1;
+            const degreesOfFreedom = totalColumnsToConsider - 1;
             const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
 
             const significanceLevel = 0.05;

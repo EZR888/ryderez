@@ -118,39 +118,31 @@
                 return;
             }
 
-            // If filename starts with "SaveCSV", skip the header row (process from row 0)
+            // Condition: Check if the file name starts with "SaveCSV" to process starting from row 0 (no header)
             let startRowIndex = fileName.startsWith("SaveCSV") ? 0 : 1;
+
             const dataRows = rows.slice(startRowIndex).map(row => row.split(",").map(Number));
 
-            // If the file starts with SaveCSV, treat it as 39 columns and ignore the first column
-            let totalColumns = rows[0].split(",").length;
-            if (fileName.startsWith("SaveCSV")) {
-                totalColumns = 39;  // Set columns to 39 for this case
-                dataRows.forEach((row, index) => {
-                    dataRows[index] = row.slice(1);  // Ignore the first column (index 0)
-                });
-            }
+            const totalColumns = rows[0].split(",").length;
 
-            if (totalColumns !== 38 && totalColumns !== 39) {
-                alert(`Expected 38 or 39 columns, but found ${totalColumns}. Please check your file.`);
+            if (totalColumns !== 38) {
+                alert(`Expected 38 columns, but found ${totalColumns}. Please check your file.`);
                 return;
             }
 
-            // Initialize observed array to track observed frequency
-            const observed = Array(38).fill(0);  // We only track 38 columns now
+            const observed = Array(totalColumns).fill(0);
             let totalSpins = 0;
 
-            // Process each row of data
             dataRows.forEach(row => {
                 row.forEach((value, colIndex) => {
                     if (!isNaN(value)) {
-                        observed[colIndex] += value;  // Add observed value for the column
-                        totalSpins += value;          // Add to the total spins
+                        observed[colIndex] += value;
+                        totalSpins += value;
                     }
                 });
             });
 
-            finalizeResults(observed, totalSpins, 38);  // Only process 38 columns for final analysis
+            finalizeResults(observed, totalSpins, totalColumns);
         }
 
         function finalizeResults(observed, totalSpins, totalColumns) {

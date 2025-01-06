@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette P-Values</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+
+        .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+
+        .results-container h3 {
+            color: lightgreen;
+            margin-bottom: 10px;
+        }
+
+        .results-container p {
+            color: white;
+            margin: 5px 0;
+        }
+
+        #explanation {
+            border: 1px solid lightgreen;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #222;
+            border-radius: 5px;
+            color: white;
+        }
+
+        #topContributors {
+            color: white;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            color: black;
+            background-color: lightgreen;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+
+        input[type="file"]:hover {
+            background-color: white;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+</head>
+<body>
+    <div class="header-container">
+        <h1 class="header-text">Roulette Data Analysis</h1>
+    </div>
+    <div class="results-container">
+        <input type="file" id="fileInput" accept=".csv">
+        <h3>Results:</h3>    
+        <p>Total Spins: <span id="totalSpins"></span></p>
+        <p>Chi-Square Value: <span id="chiSquare"></span></p>
+        <p>P-Value: <span id="pValue"></span></p>
+        <p>Conclusion: <span id="conclusion"></span></p>
+    
+        <h3>Explanation</h3>
+        <div id="explanation">
+            <!-- Explanation text will be dynamically added here -->
+        </div>
+
+        <h3>Top Contributors to Chi-Square</h3>
+        <div id="topContributors"></div>
+    </div>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file || !file.name.endsWith('.csv')) {
+                alert("Please select a valid .csv file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                processCSVData(e.target.result);
+            };
+            reader.readAsText(file);
+        });
+
+        function processCSVData(csvText) {
+            const rows = csvText.trim().split("\n");
+
+            if (rows.length <= 1) {
+                alert("The CSV file does not contain enough data.");
+                return;
+            }
+
+            const header = rows[0].split(",");
+            const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
+
+            const totalColumns = header.length;
+            if (totalColumns !== 38) {
+                alert(`Expected 38 columns, but found ${totalColumns}. Please check your file.`);
+                return;
+            }
+
+            const observed = Array(totalColumns).fill(0);
+            let totalSpins = 0;
+
+            dataRows.forEach(row => {
+                row.forEach((value, colIndex) => {
+                    if (!isNaN(value)) {
+                        observed[colIndex] += value;
+                        totalSpins += value;
+                    }
+                });
+            });
+
+            finalizeResults(observed, totalSpins, totalColumns);
+        }
+
+        function finalizeResults(observed, totalSpins, totalColumns) {
+            const expectedFreq = totalSpins / totalColumns;
+            const expected = Array(totalColumns).fill(expectedFreq);
+
+            let chiSquare = 0;
+            const contributions = [];
+            observed.forEach((obs, i) => {
+                const exp = expected[i];
+                const contribution = Math.pow(obs - exp, 2) / exp;
+                chiSquare += contribution;
+                contributions.push({ number: i, contribution, observed: obs, expected: exp });
+            });
+
+            contributions.sort((a, b) => b.contribution - a.contribution);
+
+            const threshold = 3.84;
+            const significantContributors = contributions.filter(c => c.contribution > threshold);
+
+            const explanationText = `
+                The analysis identifies significant contributors to the chi-square value based on their individual
+                contributions. Any contribution greater than ${threshold} indicates a notable deviation from the 
+                expected value, suggesting that the corresponding number(s) played a significant role in the 
+                overall result. However, the final conclusion is based on the p-value, which measures the likelihood
+                of observing the current chi-square value under the assumption that the wheel is fair. A p-value 
+                greater than 0.05 means there is no strong evidence to suggest the wheel is unfair, even if some numbers
+                contribute notably to the chi-square value.
+            `;
+            document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
+
+            const topContributorsText = significantContributors.map(c =>
+                `Number ${c.number}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+            ).join("<br>");
+            document.getElementById("topContributors").innerHTML = topContributorsText;
+
+            const degreesOfFreedom = totalColumns - 1;
+            const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
+
+            const significanceLevel = 0.05;
+            const conclusion = pValue < significanceLevel
+                ? "There is evidence that the wheel is unfair."
+                : "There is no evidence that the wheel is unfair.";
+
+            const clarification = pValue < significanceLevel
+                ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of fairness."
+                : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest the wheel is unfair.";
+
+            document.getElementById("totalSpins").textContent = totalSpins;
+            document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
+            document.getElementById("pValue").textContent = pValue.toFixed(3);
+            document.getElementById("conclusion").textContent = conclusion;
+            document.getElementById("explanation").innerHTML += `<p>${clarification}</p>`;
+        }
+    </script>
+</body>
+</html>

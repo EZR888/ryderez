@@ -165,8 +165,8 @@
                 contributions. Any contribution greater than ${threshold} indicates a notable deviation from the 
                 expected value, suggesting that the corresponding number(s) played a significant role in the 
                 overall result. However, the final conclusion is based on the p-value, which measures the likelihood
-                of observing the current chi-square value under the assumption that the wheel is fair. A p-value 
-                greater than 0.05 means there is no strong evidence to suggest the wheel is unfair, even if some numbers
+                of observing the current chi-square value under the assumption that there was no intentional influence. A p-value 
+                greater than 0.05 means there is no strong evidence to suggest intentional influence, even if some numbers
                 contribute notably to the chi-square value.
             `;
             document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
@@ -181,12 +181,12 @@
 
             const significanceLevel = 0.05;
             const conclusion = pValue < significanceLevel
-                ? "There is evidence that the wheel is unfair."
-                : "There is no evidence that the wheel is unfair.";
+                ? "There is evidence of intentional influence."
+                : "There is no evidence of intentional influence.";
 
             const clarification = pValue < significanceLevel
-                ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of fairness."
-                : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest the wheel is unfair.";
+                ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of intentional influence."
+                : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest intentional influence.";
 
             document.getElementById("totalSpins").textContent = totalSpins;
             document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);

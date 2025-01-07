@@ -183,7 +183,7 @@
             document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
 
             const topContributorsText = significantContributors.map(c =>
-                `Number ${c.number}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+                `Number ${c.number + 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
             ).join("<br>");
             document.getElementById("topContributors").innerHTML = topContributorsText;
 

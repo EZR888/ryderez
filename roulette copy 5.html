@@ -107,15 +107,9 @@
       color: lightgreen;
       text-align: center;
       font-size: 56px;
-    } 
-    .lred-text {
-      color: violet;
-      text-align: center;
-      font-size: 56px;
-    } 
-     
+    }  
     #viewDataButton {
-      background-color: SlateGray; 
+      background-color: SlateGray; /* Orange */
       color: black !important;
     }  
     .button-purple {
@@ -128,11 +122,6 @@
     
     .button-DarkKhaki {
       background-color: DarkKhaki;
-      color: black !important;
-    }
-    
-    .button-DarkSeaGreen {
-      background-color: DarkSeaGreen;
       color: black !important;
     }
 
@@ -199,23 +188,6 @@
         font-size: 24px; /* Increase font size */
       }
     }
-    
-        .button-container {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px 0;
-    }
-
-    .framed-section {
-        border: 2px solid lightgreen;
-        padding: 15px;
-        background-color: #222;
-        border-radius: 8px;
-        width: 45%; /* Adjust as needed to fit your layout */
-        box-sizing: border-box;
-    }
-
-
     /* Button Styles */
     .button {
       padding: 14px 30px; /* Increase padding for a larger button */
@@ -275,32 +247,26 @@
   <div class="container">
   <br><br><br><br>
     <div>
-    <button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewStatsButton" class="button button-DarkKhaki"><b>View Stats</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewPValueButton" class="button button-DarkSeaGreen"><b>View P-Values</b></button>
+    <button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewStatsButton" class="button button-DarkKhaki"><b>View Stats</b></button>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-purple" id="howToUseButton">How To Use</button>
   </div>
   <br>
   
     <h1 class="lgreen-text">Roulette Wheel Test Bed</h1>
     <div>
-<div class="button-container">
-    <div class="framed-section">
-        <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
-        <label style="color:red; display: inline-block; width: 300px;" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <input type="number" id="x" name="x" value="1" style="width: 10ch"><br>
-        <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
-        <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
+      <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
+      <label style="color:red; display: inline-block; width: 300px;" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+      <input type="number" id="x" name="x" value="1" style="width: 10ch"><br>
+      <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
+      <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
     </div>
-
-    <div class="framed-section">
-        <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
-        <label style="color:lightgreen; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <input type="number" id="numSpins" name="numSpins" value="38" style="width: 10ch"><br>
-        <label style="color:lightgreen; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
-    </div>
-</div>
-
-  <center><span id="runNumDisplay" style="color: yellow; font-size: 24px;">Run Num: 0</span>
+ <div>
+  <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
+  <label style="color:green; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+  <input type="number" id="numSpins" name="numSpins" value="38" style="width: 10ch"><br>
+  <label style="color:green; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+  <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
+  <span id="runNumDisplay" style="color: yellow; font-size: 24px; margin-left: 5ch;">Run Num: 0</span>
   <span id="spinNumDisplay" style="color: yellow; font-size: 24px; margin-left: 2ch;">Spin Num: 0</span><br><br>
 </div>
 
@@ -395,11 +361,6 @@ function exportTotalsToCSV(array, rowCount, prefix) {
         window.open('view-stats.html', '_blank');
       });
 
-        // New event listener for the View Stats button
-      	document.getElementById('viewPValueButton').addEventListener('click', () => {
-        window.open('pvalues.html', '_blank');
-      });
-      
 // Function to generate a random integer between 0 (inclusive) and max (exclusive)
 function getRandomInt(max) {
   const array = new Uint32Array(1);

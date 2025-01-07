@@ -399,7 +399,6 @@ th:nth-child(20), td:nth-child(20) {
             <button id="sortCols">Sort Columns</button>
             <button id="saveButton">Save to CSV</button>
             <button id="savePdfButton">Save to PDF</button>
-            <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div> 
     </div>
@@ -422,11 +421,11 @@ th:nth-child(20), td:nth-child(20) {
       });
       
         // New event listener for the View Stats button
-      	document.getElementById('viewStatsButton').addEventListener('click', () => {
-        window.open('view-stats.html', '_blank');
-      });
+      	//document.getElementById('viewStatsButton').addEventListener('click', () => {
+        //window.open('view-stats.html', '_blank');
+      //});
 
-        // New event listener for the View Stats button
+        // New event listener for the View P-Value button
       	document.getElementById('viewPValueButton').addEventListener('click', () => {
         window.open('pvalues.html', '_blank');
       });
@@ -976,7 +975,7 @@ didParseCell: function (data) {
 }		
 
         // Event listener for 'showStatsButton'
-        document.getElementById('showStatsButton').addEventListener('click', function() {
+        document.getElementById('viewStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data

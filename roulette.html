@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roulette Random Picker</title>
   <style>
+  
+      .framed-buttons {
+        border: 2px solid lightblue; /* Frame color */
+        padding: 15px;
+        background-color: #f9f9f9; /* Light background for contrast */
+        border-radius: 10px; /* Rounded corners */
+        display: inline-flex; /* Inline layout for buttons */
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        justify-content: space-around; /* Space between buttons */
+    }
+
+    .button {
+        font-size: 120%; /* 20% larger than 60% */
+        padding: 6px 12px; /* Increased padding by 20% */
+        margin: 5px; /* Keeps consistent spacing */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    }
+
+    .button-single {
+        background-color: salmon;
+        color: white;
+    }
+
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
     body {
       margin: 0;
       overflow: hidden;
@@ -118,9 +152,6 @@
       background-color: SlateGray; 
       color: black !important;
     }  
-    .button-purple {
-      background-color: purple;
-    }
 
     .button-purple:hover {
       background-color: darkviolet;
@@ -217,16 +248,6 @@
 
 
     /* Button Styles */
-    .button {
-      padding: 14px 30px; /* Increase padding for a larger button */
-      font-size: 24px; /* Increase font size */
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
     .button-run {
       background-color: red;
     }
@@ -250,22 +271,6 @@
       font-weight: bold;
       background-color: gray;
     }
-    .button-save:hover {
-      background-color: darkgray;
-    }
-    .button-single {
-      padding: 14px 30px; /* Increase padding for a larger button */
-      font-size: 24px; /* Increase font size */
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-      background-color: blue;
-    }
-    .button-single:hover {
-      background-color: darkblue;
-    }
     .light-yellow {
       background-color: lightyellow !important;
     }
@@ -275,8 +280,7 @@
   <div class="container">
   <br><br><br><br>
     <div>
-    <button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewStatsButton" class="button button-DarkKhaki"><b>View Stats</b></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewPValueButton" class="button button-DarkSeaGreen"><b>View P-Values</b></button>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-purple" id="howToUseButton">How To Use</button>
+    <button class="button button-purple" id="howToUseButton">How To Use</button>&nbsp;&nbsp;&nbsp;&nbsp;<button class="button button-single" id="singleSpinButton">Single Spin</button>&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewDataButton" class="button"><b>View Data</b></button>&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewStatsButton" class="button button-DarkKhaki"><b>View Stats</b></button>&nbsp;&nbsp;&nbsp;&nbsp;<button id="viewPValueButton" class="button button-DarkSeaGreen"><b>View P-Values</b></button>
   </div>
   <br>
   
@@ -285,9 +289,9 @@
 <div class="button-container">
     <div class="framed-section">
         <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
-        <label style="color:red; display: inline-block; width: 300px;" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <label style="color:salmon; display: inline-block; width: 300px;" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
         <input type="number" id="x" name="x" value="1" style="width: 10ch"><br>
-        <label style="color:red; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
+        <label style="color:salmon; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
         <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
     </div>
 

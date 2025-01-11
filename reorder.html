@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Column Reordering</title>
+</head>
+<body>
+    <h1>CSV Column Reordering Tool</h1>
+    
+    <input type="file" id="fileInput" accept=".csv" />
+    <button onclick="reorderColumns()">Reorder Columns</button>
+    <button onclick="downloadCSV()">Download Reordered CSV</button>
+    
+    <h3>Reordered Data:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        let csvData = [];
+
+        // Handle file upload
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    csvData = parseCSV(text);
+                    displayData(csvData);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Parse CSV data into an array of arrays
+        function parseCSV(text) {
+            const rows = text.split('\n').map(row => row.trim()).filter(row => row !== '');
+            return rows.map(row => row.split(','));
+        }
+
+        // Display the CSV data in the "output" element
+        function displayData(data) {
+            const output = document.getElementById('output');
+            output.textContent = data.map(row => row.join(',')).join('\n');
+        }
+
+        // Reorder columns (remove first column, then reorder)
+
+    function reorderColumns() {
+        if (csvData.length === 0) {
+            alert("No CSV data to reorder!");
+            return;
+        }
+
+        const header = csvData[0];
+        const desiredOrder = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18, 17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6]; // Custom order
+
+        // Remove the first column from the header and data
+        const newHeader = header.slice(1);  // Remove the first column from the header
+        console.log("New Header after removal:", newHeader);
+
+        const newData = csvData.slice(1).map(row => row.slice(1)); // Remove the first column from each row
+        console.log("Data after first column removal:", newData);
+
+        // Ensure the header and data are correctly aligned
+        if (newHeader.length !== desiredOrder.length) {
+            alert(`Mismatch in columns: expected ${desiredOrder.length} columns, but found ${newHeader.length}`);
+            return;
+        }
+
+        // Create a new array to hold the reordered data
+        const reorderedData = newData.map((row, rowIndex) => {
+            const reorderedRow = [];
+
+            // Check row before reordering
+            console.log(`Row before reordering (Index: ${rowIndex}):`, row);
+
+            // Reorder the columns based on the desired order
+            desiredOrder.forEach((index, desiredIndex) => {
+                if (index < row.length) {
+                    reorderedRow.push(row[index]);
+                    console.log(`Reordering: row[${index}] -> reorderedRow[${desiredIndex}] = ${row[index]}`);
+                } else {
+                    console.log(`Index ${index} out of bounds for row:`, row);
+                    reorderedRow.push('');  // Add empty value if index is out of bounds
+                }
+            });
+
+            // Check row after reordering
+            console.log(`Row after reordering (Index: ${rowIndex}):`, reorderedRow);
+            return reorderedRow;
+        });
+
+        // Add the reordered header back to the data
+        reorderedData.unshift(newHeader);
+
+        // Debugging: Log reordered data to the console
+        console.log("Reordered Data:", reorderedData);
+        displayData(reorderedData);
+    }
+
+    </script>
+</body>
+</html>

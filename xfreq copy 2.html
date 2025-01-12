@@ -304,87 +304,34 @@ function processCSVData(csvText) {
     }
 
     const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
-
-    // Initialize streaming variables
-    let n = 0; // Number of values processed
-    let mean = 0;
-    let M2 = 0; // Second moment
-    let M3 = 0; // Third moment
-    let M4 = 0; // Fourth moment
-    let min = Infinity;
-    let max = -Infinity;
-
-    const differences = [];
-    const maxHeap = new MaxHeap(); // For lower half
-    const minHeap = new MinHeap(); // For upper half
+    let totalSetA = 0;
+    let totalSetB = 0;
 
     dataRows.forEach(row => {
-        const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
-        const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
-        const diff = sumA - sumB;
-
-        differences.push(diff);
-
-        // Update streaming metrics
-        n++;
-        const delta = diff - mean;
-        const deltaN = delta / n;
-        const deltaNSquared = deltaN * deltaN;
-        const term1 = delta * deltaN * (n - 1);
-
-        mean += deltaN;
-        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
-        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
-        M2 += term1;
-
-        if (diff < min) min = diff;
-        if (diff > max) max = diff;
-
-        // Update heaps for median calculation
-        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
-            maxHeap.insert(diff);
-        } else {
-            minHeap.insert(diff);
-        }
-
-        // Balance heaps
-        if (maxHeap.size() > minHeap.size() + 1) {
-            minHeap.insert(maxHeap.extract());
-        } else if (minHeap.size() > maxHeap.size()) {
-            maxHeap.insert(minHeap.extract());
-        }
+        totalSetA += setAIndices.reduce((sum, idx) => sum + row[idx], 0);
+        totalSetB += setBIndices.reduce((sum, idx) => sum + row[idx], 0);
     });
 
-    const variance = M2 / n;
-    const stdDev = Math.sqrt(variance);
-    const skewness = (M3 / n) / Math.pow(stdDev, 3);
-    const kurtosis = (M4 / n) / (variance * variance) - 3;
+    const observedDifference = totalSetA - totalSetB;
 
-    // Compute median from heaps
-    const median = maxHeap.size() === minHeap.size()
-        ? (maxHeap.peek() + minHeap.peek()) / 2
-        : maxHeap.peek();
-
+    // Calculate frequency distribution and statistics
+    const differences = dataRows.map(row => {
+        const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
+        const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
+        return sumA - sumB;
+    });
+    
     const frequencyDistribution = calculateFrequencyDistribution(differences);
-
-    const stats = {
-        mean: mean.toFixed(2),
-        median: median.toFixed(2),
-        stdDev: stdDev.toFixed(2),
-        min,
-        max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
-    };
+    const stats = calculateDescriptiveStatistics(differences);
 
     // Save results to a CSV file
     const fileName = `FreqDist_${dataRows.length}.csv`;
     exportToCSV(frequencyDistribution, stats, fileName);
 
-    // Display results for smaller datasets
+    // Display results for 100,000 rows or fewer
     if (dataRows.length <= 100000) {
-        displayFrequencyDistribution(frequencyDistribution, 0);
-        displayDescriptiveStatistics(stats);
+        displayFrequencyDistribution(frequencyDistribution, observedDifference);
+        displayDescriptiveStatistics(differences);
     } else {
         alert(`Results have been saved to ${fileName}`);
     }
@@ -403,39 +350,34 @@ function generateRandomRuns() {
         return;
     }
 
-    // Initialize streaming variables
-    let n = 0; // Number of values processed
-    let mean = 0;
-    let M2 = 0; // Second moment
-    let M3 = 0; // Third moment
-    let M4 = 0; // Fourth moment
+    // Initialize statistics
     let min = Infinity;
     let max = -Infinity;
+    let sum = 0;
+    let sumSquared = 0;
+    let sumCubed = 0;
+    let sumFourth = 0;
 
-    const maxHeap = new MaxHeap(); // For lower half
-    const minHeap = new MinHeap(); // For upper half
+    const differences = [];
+    const maxHeap = new MaxHeap(); // For median calculation
+    const minHeap = new MinHeap(); // For median calculation
 
     for (let i = 0; i < numRuns; i++) {
         const totalSetA = getSumForSet(setAIndices);
         const totalSetB = getSumForSet(setBIndices);
         const diff = totalSetA - totalSetB;
 
-        // Update streaming metrics
-        n++;
-        const delta = diff - mean;
-        const deltaN = delta / n;
-        const deltaNSquared = deltaN * deltaN;
-        const term1 = delta * deltaN * (n - 1);
+        differences.push(diff);
 
-        mean += deltaN;
-        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
-        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
-        M2 += term1;
-
+        // Update statistics
         if (diff < min) min = diff;
         if (diff > max) max = diff;
+        sum += diff;
+        sumSquared += diff ** 2;
+        sumCubed += diff ** 3;
+        sumFourth += diff ** 4;
 
-        // Update heaps for median calculation
+        // Update heaps for median
         if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
             maxHeap.insert(diff);
         } else {
@@ -450,17 +392,26 @@ function generateRandomRuns() {
         }
     }
 
-    const variance = M2 / n;
+    // Calculate final metrics
+    const mean = sum / numRuns;
+    const variance = sumSquared / numRuns - mean ** 2;
     const stdDev = Math.sqrt(variance);
-    const skewness = (M3 / n) / Math.pow(stdDev, 3);
-    const kurtosis = (M4 / n) / (variance * variance) - 3;
-
-    // Compute median from heaps
     const median = maxHeap.size() === minHeap.size()
         ? (maxHeap.peek() + minHeap.peek()) / 2
         : maxHeap.peek();
 
-    const frequencyDistribution = calculateFrequencyDistribution([...maxHeap.heap, ...minHeap.heap]);
+    // Calculate skewness and kurtosis for smaller datasets
+    let skewness = "N/A (Not computed for large runs)";
+    let kurtosis = "N/A (Not computed for large runs)";
+    if (numRuns <= 100000) {
+        skewness = ((sumCubed / numRuns) - 3 * mean * variance - mean ** 3) / (stdDev ** 3);
+        kurtosis = ((sumFourth / numRuns) - 4 * mean * (sumCubed / numRuns) +
+            6 * mean ** 2 * variance + mean ** 4) / (stdDev ** 4);
+        skewness = skewness.toFixed(2);
+        kurtosis = kurtosis.toFixed(2);
+    }
+
+    const frequencyDistribution = calculateFrequencyDistribution(differences);
 
     const stats = {
         mean: mean.toFixed(2),
@@ -468,17 +419,21 @@ function generateRandomRuns() {
         stdDev: stdDev.toFixed(2),
         min,
         max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
+        skewness,
+        kurtosis,
     };
 
     // Save results to a CSV file
     const fileName = `FreqDist_${numRuns}.csv`;
     exportToCSV(frequencyDistribution, stats, fileName);
 
-    // Display results in the UI
-    displayFrequencyDistribution(frequencyDistribution, 0);
-    displayDescriptiveStatistics(stats);
+    // Display results for smaller runs
+    if (numRuns <= 100000) {
+        displayFrequencyDistribution(frequencyDistribution, 0);
+        displayDescriptiveStatistics(stats);
+    } else {
+        alert(`Results have been saved to ${fileName}`);
+    }
 }
 
     

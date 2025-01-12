@@ -157,106 +157,97 @@
         </div>
     </div>
     <div class="header-container">
-        <h1 class="header-text">Roulette Data Analysis</h1>
-    </div>
-    <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv">
-        <h3>Results:</h3>    
-        <p>Total Spins: <span id="totalSpins"></span></p>
-        <p>Conclusion: <span id="conclusion"></span></p>
-        <h3>Explanation</h3>
-        <div id="explanation"></div>
-    </div>
-    
-<script>
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (!file || !file.name.endsWith('.csv')) {
-            alert("Please select a valid .csv file.");
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            processCSVData(e.target.result);
-        };
-        reader.readAsText(file);
-    });
+   <h1>Roulette Data Analysis</h1>
+    <input type="file" id="fileInput" accept=".csv">
+    <button id="saveBaseline">Save Baseline to CSV</button>
+    <pre id="output"></pre>
 
-    function processCSVData(csvText) {
-        const rows = csvText.trim().split("\n");
-        if (rows.length <= 1) {
-            alert("The CSV file does not contain enough data.");
-            return;
-        }
-
-        const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
-        const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
-        const setBIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
-
-        let totalSetA = 0;
-        let totalSetB = 0;
-
-        // Sum the values for Set A and Set B
-        dataRows.forEach(row => {
-            totalSetA += setAIndices.reduce((sum, idx) => sum + row[idx], 0);
-            totalSetB += setBIndices.reduce((sum, idx) => sum + row[idx], 0);
-        });
-
-        console.log("Total Set A:", totalSetA);
-        console.log("Total Set B:", totalSetB);
-
-        const observedDifference = totalSetA - totalSetB;
-        console.log("Observed Difference (A - B):", observedDifference);
-
-        const simulationDifferences = simulateDifferenceDistribution(10000, dataRows.length, 0.5);
-
-        displayResults(totalSetA, totalSetB, observedDifference);
-        displayFrequencyDistribution(simulationDifferences, observedDifference);
-    }
-
-    function simulateDifferenceDistribution(numSimulations, numTrials, probability = 0.5) {
-        const differences = [];
-        for (let i = 0; i < numSimulations; i++) {
-            let simulatedSetA = 0;
-            let simulatedSetB = 0;
-            for (let j = 0; j < numTrials; j++) {
-                const outcome = Math.random() < probability ? 1 : 0;
-                if (Math.random() < 0.5) simulatedSetA += outcome;
-                else simulatedSetB += outcome;
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file || !file.name.endsWith('.csv')) {
+                alert("Please select a valid .csv file.");
+                return;
             }
-            differences.push(simulatedSetA - simulatedSetB);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                processCSVData(e.target.result);
+            };
+            reader.readAsText(file);
+        });
+
+        let frequencyDistribution = {};
+
+        function processCSVData(csvText) {
+            const rows = csvText.trim().split("\n");
+            if (rows.length <= 1) {
+                alert("The CSV file does not contain enough data.");
+                return;
+            }
+
+            const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
+            const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
+            const setBIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
+
+            let totalSetA = 0;
+            let totalSetB = 0;
+
+            // Calculate totals for Set A and Set B
+            dataRows.forEach(row => {
+                totalSetA += setAIndices.reduce((sum, idx) => sum + row[idx], 0);
+                totalSetB += setBIndices.reduce((sum, idx) => sum + row[idx], 0);
+            });
+
+            const observedDifference = totalSetA - totalSetB;
+
+            frequencyDistribution = calculateFrequencyDistribution(dataRows);
+
+            displayResults(totalSetA, totalSetB, observedDifference);
         }
-        return differences;
-    }
 
-    function displayResults(observedA, observedB, observedDifference) {
-        document.getElementById("totalSpins").textContent = ` Top: ${observedA}, Bottom: ${observedB}`;
-        document.getElementById("conclusion").textContent = ` Observed Difference: ${observedDifference}`;
-    }
+        function calculateFrequencyDistribution(dataRows) {
+            const differences = dataRows.map(row => {
+                const setA = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18].reduce((sum, idx) => sum + row[idx], 0);
+                const setB = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6].reduce((sum, idx) => sum + row[idx], 0);
+                return setA - setB;
+            });
 
-    function displayFrequencyDistribution(simulationDifferences, observedDifference) {
-        const frequency = {};
+            const frequency = {};
+            differences.forEach(diff => {
+                frequency[diff] = (frequency[diff] || 0) + 1;
+            });
 
-        // Count the occurrences of each difference
-        simulationDifferences.forEach(diff => {
-            frequency[diff] = (frequency[diff] || 0) + 1;
+            return frequency;
+        }
+
+        function displayResults(totalSetA, totalSetB, observedDifference) {
+            const output = document.getElementById("output");
+            output.textContent = `Total Set A: ${totalSetA}\nTotal Set B: ${totalSetB}\nObserved Difference: ${observedDifference}`;
+        }
+
+        document.getElementById('saveBaseline').addEventListener('click', function() {
+            if (!Object.keys(frequencyDistribution).length) {
+                alert("No frequency distribution calculated. Upload a valid .csv file first.");
+                return;
+            }
+            saveFrequencyDistributionToCSV(frequencyDistribution);
         });
 
-        // Sort keys numerically for better visualization
-        const sortedKeys = Object.keys(frequency).sort((a, b) => Number(a) - Number(b));
+        function saveFrequencyDistributionToCSV(frequency) {
+            const csvContent = "Difference,Frequency\n" +
+                Object.entries(frequency)
+                    .map(([difference, freq]) => `${difference},${freq}`)
+                    .join("\n");
 
-        console.log("Frequency Distribution:", frequency);
-
-        // Create a visual representation
-        const explanationElement = document.getElementById("explanation");
-        explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
-        sortedKeys.forEach(key => {
-            const isObserved = Number(key) === observedDifference;
-            explanationElement.innerHTML += `<li>${key}: ${frequency[key]} ${isObserved ? "(Observed)" : ""}</li>`;
-        });
-        explanationElement.innerHTML += `</ul>`;
-    }
-</script>
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "baseline_frequency_distribution.csv";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
 
 </body>
 </html>

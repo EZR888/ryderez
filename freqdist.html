@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette P-Values</title>
+    <title>Roulette Data Frequency Distribution</title>
     <style>
+    
+            table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            font-weight: bold;
+        }
+        .difference-header {
+            background-color: slategray;
+            color: white;
+        }
+        .frequency-header {
+            background-color: green;
+            color: white;
+        }
+        .difference {
+            background-color: blue;
+            color: white;
+        }
+        .frequency {
+            background-color: lightyellow;
+            color: black;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        
         .framed-buttons {
             border: 2px solid lightblue;
             padding: 15px;
@@ -157,10 +190,48 @@
         </div>
     </div>
     <div class="header-container">
-   <h1>Roulette Data Analysis</h1>
+   <h1>Roulette Data Frequency Distribution</h1>
     <input type="file" id="fileInput" accept=".csv">
     <button id="saveBaseline">Save to CSV</button>
     <pre id="output"></pre>
+    
+        <table>
+        <thead>
+            <tr>
+                <th class="difference-header">Difference</th>
+                <th class="frequency-header">Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="difference">0</td><td class="frequency">12783</td></tr>
+            <tr><td class="difference">2</td><td class="frequency">12185</td></tr>
+            <tr><td class="difference">4</td><td class="frequency">10437</td></tr>
+            <tr><td class="difference">6</td><td class="frequency">8036</td></tr>
+            <tr><td class="difference">8</td><td class="frequency">5660</td></tr>
+            <tr><td class="difference">10</td><td class="frequency">3477</td></tr>
+            <tr><td class="difference">12</td><td class="frequency">2019</td></tr>
+            <tr><td class="difference">14</td><td class="frequency">976</td></tr>
+            <tr><td class="difference">16</td><td class="frequency">456</td></tr>
+            <tr><td class="difference">18</td><td class="frequency">153</td></tr>
+            <tr><td class="difference">20</td><td class="frequency">64</td></tr>
+            <tr><td class="difference">22</td><td class="frequency">18</td></tr>
+            <tr><td class="difference">24</td><td class="frequency">2</td></tr>
+            <tr><td class="difference">26</td><td class="frequency">4</td></tr>
+            <tr><td class="difference">-2</td><td class="frequency">12234</td></tr>
+            <tr><td class="difference">-6</td><td class="frequency">8169</td></tr>
+            <tr><td class="difference">-10</td><td class="frequency">3573</td></tr>
+            <tr><td class="difference">-14</td><td class="frequency">979</td></tr>
+            <tr><td class="difference">-12</td><td class="frequency">1980</td></tr>
+            <tr><td class="difference">-4</td><td class="frequency">10529</td></tr>
+            <tr><td class="difference">-8</td><td class="frequency">5560</td></tr>
+            <tr><td class="difference">-16</td><td class="frequency">452</td></tr>
+            <tr><td class="difference">-18</td><td class="frequency">173</td></tr>
+            <tr><td class="difference">-22</td><td class="frequency">17</td></tr>
+            <tr><td class="difference">-20</td><td class="frequency">59</td></tr>
+            <tr><td class="difference">-24</td><td class="frequency">4%</td></tr>
+        </tbody>
+    </table>
+    
 
     <script>
         document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -247,6 +318,8 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+        
+        
     </script>
 
 </body>

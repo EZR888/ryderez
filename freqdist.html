@@ -243,7 +243,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "baseline_frequency_distribution.csv";
+            a.download = "freq_dist.csv";
             a.click();
             URL.revokeObjectURL(url);
         }

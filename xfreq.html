@@ -165,7 +165,7 @@
         <input type="file" id="fileInput" accept=".csv">
                   
         <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
-        <input type="number" id="numRuns" min="1" max="20000000" value="100">
+        <input type="number" id="numRuns" min="1" max="50000000" value="100">
         <button id="runButton">Run</button>
         
         <h3>Descriptive Statistics</h3>
@@ -399,8 +399,8 @@ function generateRandomRuns() {
     explanationElement.innerHTML = "";
 
     // Enforce input limit
-    if (numRuns > 20000000 || numRuns < 1) {
-        alert("Please enter a valid number between 1 and 20,000,000.");
+    if (numRuns > 50000000 || numRuns < 1) {
+        alert("Please enter a valid number between 1 and 50,000,000.");
         return;
     }
 

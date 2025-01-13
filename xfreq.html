@@ -537,13 +537,13 @@ function displayDescriptiveStatistics(stats) {
     const statsElement = document.getElementById("statistics");
     statsElement.innerHTML = `
         <ul>
-            <li><strong>Mean:</strong> ${stats.mean}</li>
-            <li><strong>Median:</strong> ${stats.median}</li>
-            <li><strong>Standard Deviation:</strong> ${stats.stdDev}</li>
-            <li><strong>Minimum:</strong> ${stats.min}</li>
-            <li><strong>Maximum:</strong> ${stats.max}</li>
-            <li><strong>Skewness:</strong> ${stats.skewness}</li>
-            <li><strong>Kurtosis:</strong> ${stats.kurtosis}</li>
+            <li><strong>Mean:</strong><span style="color: white;"> ${stats.mean}</span></li>
+            <li><strong>Median:</strong><span style="color: white;"> ${stats.median}</span></li>
+            <li><strong>Standard Deviation:</strong><span style="color: white;"> ${stats.stdDev}</span></li>
+            <li><strong>Minimum:</strong><span style="color: white;"> ${stats.min}</span></li>
+            <li><strong>Maximum:</strong><span style="color: white;"> ${stats.max}</span></li>
+            <li><strong>Skewness:</strong><span style="color: white;"> ${stats.skewness}</span></li>
+            <li><strong>Kurtosis:</strong><span style="color: white;"> ${stats.kurtosis}</span></li>
         </ul>
     `;
 }

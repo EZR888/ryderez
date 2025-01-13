@@ -535,8 +535,8 @@ function displayFrequencyDistribution(frequencyDistribution, observedDifference)
         const isObserved = Number(key) === observedDifference;
         tableHTML += `
             <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
-                <td style="padding: 8px; border-bottom: 1px solid #444;">${key}</td>
-                <td style="padding: 8px; border-bottom: 1px solid #444;">${frequencyDistribution[key]}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${key}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${frequencyDistribution[key]}</td>
             </tr>
         `;
     });

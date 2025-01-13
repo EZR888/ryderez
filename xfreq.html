@@ -563,13 +563,13 @@ function displayDescriptiveStatistics(stats) {
     const statsElement = document.getElementById("statistics");
     statsElement.innerHTML = `
         <ul>
-            <li><strong>Mean:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
-            <li><strong>Median:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
-            <li><strong>Standard Deviation:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
-            <li><strong>Minimum:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
-            <li><strong>Maximum:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
-            <li><strong>Skewness:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
-            <li><strong>Kurtosis:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
+            <li><strong><span style="color: salmon;">Mean:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
+            <li><strong><span style="color: salmon;">Median:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
+            <li><strong><span style="color: salmon;">Standard Deviation:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
+            <li><strong><span style="color: salmon;">Minimum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
+            <li><strong><span style="color: salmon;">Maximum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
+            <li><strong><span style="color: salmon;">Skewness:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
+            <li><strong><span style="color: salmon;">Kurtosis:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
         </ul>
     `;
 }

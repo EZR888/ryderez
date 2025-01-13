@@ -170,7 +170,7 @@
         
         <h3>Descriptive Statistics</h3>
         <div id="statistics"></div>
-        <h3>Explanation</h3>
+        <h3>Frequency Distribution</h3>
         <div id="explanation"></div>
     </div>
 
@@ -519,7 +519,7 @@ function displayFrequencyDistribution(frequencyDistribution, observedDifference)
     const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
 
     const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
+    //explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
     sortedKeys.forEach(key => {
         const isObserved = Number(key) === observedDifference;
         explanationElement.innerHTML += `<li>${key}: ${frequencyDistribution[key]} ${isObserved ? "(Observed)" : ""}</li>`;

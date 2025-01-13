@@ -518,39 +518,13 @@ function calculateDescriptiveStatistics(differences) {
 function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
     const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
 
-    // Create a table with headers
-    let tableHTML = `
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 2px solid lightgreen;">
-                    <th style="padding: 8px; color: salmon;">Difference</th>
-                    <th style="padding: 8px; color: salmon;">Frequency</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    // Populate table rows
+    const explanationElement = document.getElementById("explanation");
+    //explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
     sortedKeys.forEach(key => {
         const isObserved = Number(key) === observedDifference;
-        tableHTML += `
-            <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
-                <td style="padding: 8px; border-bottom: 1px solid #444;">${key}</td>
-                <td style="padding: 8px; border-bottom: 1px solid #444;">${frequencyDistribution[key]}</td>
-            </tr>
-        `;
+        explanationElement.innerHTML += `<li>${key}: ${frequencyDistribution[key]} ${isObserved ? "(Observed)" : ""}</li>`;
     });
-
-    tableHTML += `
-            </tbody>
-        </table>
-    `;
-
-    // Insert the table into the explanation section
-    const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = `
-        ${tableHTML}
-    `;
+    explanationElement.innerHTML += `</ul>`;
 }
 
 function displayDescriptiveStatistics(stats) {

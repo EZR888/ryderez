@@ -249,13 +249,15 @@
             reader.readAsText(file);
         });
 
-        function processCSVData(csvText, fileName) {
+function processCSVData(csvText, fileName) {
             const rows = csvText.trim().split("\n");
 
             if (rows.length <= 1) {
                 alert("The CSV file does not contain enough data.");
                 return;
             }
+
+// const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
 
             // If filename starts with "SaveCSV", skip the header row (process from row 0)
             let startRowIndex = fileName.startsWith("SaveCSV") ? 0 : 1;

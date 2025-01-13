@@ -369,8 +369,9 @@ function processCSVData(csvText) {
 
     const stats = {
         mean: mean.toFixed(2),
-        median: median.toFixed(2),
+        variance: variance.toFixed(2), // Ensure variance is included
         stdDev: stdDev.toFixed(2),
+        median: median.toFixed(2),
         min,
         max,
         skewness: skewness.toFixed(2),
@@ -479,7 +480,11 @@ function generateRandomRuns() {
 
     // Display results in the UI
     displayFrequencyDistribution(frequencyDistribution, 0);
-    displayDescriptiveStatistics(stats);
+    displayDescriptiveStatistics(stats); // Pass stats here after definition
+    
+    // Debugging log
+    console.log(stats);
+
 }
 
     
@@ -549,10 +554,9 @@ function displayFrequencyDistribution(frequencyDistribution, observedDifference)
 
     // Insert the table into the explanation section
     const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = `
-        ${tableHTML}
-    `;
+    explanationElement.innerHTML = tableHTML;
 }
+
 
 function displayDescriptiveStatistics(stats) {
     if (!stats || typeof stats !== "object") {

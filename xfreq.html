@@ -388,14 +388,14 @@ function processConcatenatedCSVData(csvText) {
     // NOW calculate frequencyDistribution and stats
     const frequencyDistribution = calculateFrequencyDistribution(differences);
     const stats = {
-        mean: mean.toFixed(2),
-        variance: variance.toFixed(2),
-        stdDev: stdDev.toFixed(2),
-        median: median.toFixed(2),
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        median: median.toFixed(4),
         min,
         max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4),
     };
 
     const fileName = `FreqDist_${dataRows.length}.csv`;
@@ -486,14 +486,14 @@ function processCSVData(csvText) {
     const frequencyDistribution = calculateFrequencyDistribution(differences);
 
     const stats = {
-        mean: mean.toFixed(2),
-        variance: variance.toFixed(2), // Ensure variance is included
-        stdDev: stdDev.toFixed(2),
-        median: median.toFixed(2),
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4), // Ensure variance is included
+        stdDev: stdDev.toFixed(4),
+        median: median.toFixed(4),
         min,
         max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4),
     };
 
     // Save results to a CSV file
@@ -582,14 +582,14 @@ function generateRandomRuns() {
     const frequencyDistribution = calculateFrequencyDistribution([...maxHeap.heap, ...minHeap.heap]);
 
     const stats = {
-        mean: mean.toFixed(2),
-        variance: variance.toFixed(2), // Variance added here
-        stdDev: stdDev.toFixed(2),
-        median: median.toFixed(2),
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4), // Variance added here
+        stdDev: stdDev.toFixed(4),
+        median: median.toFixed(4),
         min,
         max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4),
     };
 
     // Save results to a CSV file
@@ -628,13 +628,13 @@ function calculateDescriptiveStatistics(differences) {
     }
 
     return {
-        mean: jStat.mean(differences).toFixed(2),
-        median: jStat.median(differences).toFixed(2),
-        stdDev: jStat.stdev(differences).toFixed(2),
+        mean: jStat.mean(differences).toFixed(4),
+        median: jStat.median(differences).toFixed(4),
+        stdDev: jStat.stdev(differences).toFixed(4),
         min: Math.min(...differences),
         max: Math.max(...differences),
-        skewness: jStat.skewness(differences).toFixed(2),
-        kurtosis: jStat.kurtosis(differences).toFixed(2),
+        skewness: jStat.skewness(differences).toFixed(4),
+        kurtosis: jStat.kurtosis(differences).toFixed(4),
     };
 }
 

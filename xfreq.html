@@ -167,7 +167,7 @@
                   
         <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
         <input type="number" id="numRuns" min="1" max="50000000" value="100">
-        <button id="runButton">Run</button>
+    	<button id="runButton">Run</button>
         
         <h3>Descriptive Statistics</h3>
         <div id="statistics"></div>
@@ -280,22 +280,134 @@ class MaxHeap extends MinHeap {
 
 
 document.getElementById('fileInput').addEventListener('change', function(event) {
-  const files = event.target.files;  // Get all selected files
+    const files = event.target.files;
+    let allCSVData = ""; // Accumulate CSV data here
+    let filesRead = 0;
 
-  // Loop through each selected file and process it individually
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (!file || !file.name.endsWith('.csv')) {
-      alert("Please select a valid .csv file.");
-      continue;
+    if (files.length === 0) return; // Handle no files selected
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file || !file.name.endsWith('.csv')) {
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            filesRead++; // Important for correct completion check
+            if (filesRead === files.length) {
+                if (allCSVData === "") {
+                    alert("No valid CSV files were selected.");
+                    return;
+                }
+                processConcatenatedCSVData(allCSVData);
+            }
+            continue;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            allCSVData += e.target.result + "\n"; // Add newline between files
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+        };
+        reader.onerror = function() {
+            alert(`Error reading file: ${file.name}`);
+            filesRead++; // Still increment to avoid getting stuck
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+        };
+        reader.readAsText(file);
     }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      processCSVData(e.target.result);
-    };
-    reader.readAsText(file);
-  }
 });
+
+function processConcatenatedCSVData(csvText) {
+    const rows = csvText.trim().split("\n");
+    const nonEmptyRows = rows.filter(row => row.trim() !== "");
+
+    if (nonEmptyRows.length <= 1) {
+        alert("The combined CSV data does not contain enough data.");
+        return;
+    }
+
+    const dataRows = nonEmptyRows.slice(1).map(row => row.split(",").map(Number));
+
+    // Initialize streaming variables (moved inside the function)
+    let n = 0;
+    let mean = 0;
+    let M2 = 0;
+    let M3 = 0;
+    let M4 = 0;
+    let min = Infinity;
+    let max = -Infinity;
+    const differences = [];
+    const maxHeap = new MaxHeap();
+    const minHeap = new MinHeap();
+
+    dataRows.forEach(row => {
+        const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
+        const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
+        const diff = sumA - sumB;
+        differences.push(diff);
+
+        n++;
+        const delta = diff - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
+
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+
+        if (diff < min) min = diff;
+        if (diff > max) max = diff;
+
+        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
+            maxHeap.insert(diff);
+        } else {
+            minHeap.insert(diff);
+        }
+
+        if (maxHeap.size() > minHeap.size() + 1) {
+            minHeap.insert(maxHeap.extract());
+        } else if (minHeap.size() > maxHeap.size()) {
+            maxHeap.insert(minHeap.extract());
+        }
+    });
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
+    const median = maxHeap.size() === minHeap.size()
+        ? (maxHeap.peek() + minHeap.peek()) / 2
+        : maxHeap.peek();
+
+    // NOW calculate frequencyDistribution and stats
+    const frequencyDistribution = calculateFrequencyDistribution(differences);
+    const stats = {
+        mean: mean.toFixed(2),
+        variance: variance.toFixed(2),
+        stdDev: stdDev.toFixed(2),
+        median: median.toFixed(2),
+        min,
+        max,
+        skewness: skewness.toFixed(2),
+        kurtosis: kurtosis.toFixed(2),
+    };
+
+    const fileName = `FreqDist_${dataRows.length}.csv`;
+    exportToCSV(frequencyDistribution, stats, fileName);
+
+    if (dataRows.length <= 100000) {
+        displayFrequencyDistribution(frequencyDistribution, 0);
+        displayDescriptiveStatistics(stats);
+    } else {
+        alert(`Results have been saved to ${fileName}`);
+    }
+}
 
     document.getElementById("runButton").addEventListener("click", generateRandomRuns);
 

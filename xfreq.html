@@ -162,7 +162,7 @@
 
     <div class="results-container">
 
-        <input type="file" id="fileInput" accept=".csv">
+        <input type="file" id="fileInput" accept=".csv" multiple>
                   
         <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
         <input type="number" id="numRuns" min="1" max="50000000" value="100">
@@ -278,18 +278,23 @@ class MaxHeap extends MinHeap {
 }
 
 
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (!file || !file.name.endsWith('.csv')) {
-            alert("Please select a valid .csv file.");
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            processCSVData(e.target.result);
-        };
-        reader.readAsText(file);
-    });
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const files = event.target.files;  // Get all selected files
+
+  // Loop through each selected file and process it individually
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (!file || !file.name.endsWith('.csv')) {
+      alert("Please select a valid .csv file.");
+      continue;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      processCSVData(e.target.result);
+    };
+    reader.readAsText(file);
+  }
+});
 
     document.getElementById("runButton").addEventListener("click", generateRandomRuns);
 

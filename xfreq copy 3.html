@@ -165,13 +165,13 @@
         <input type="file" id="fileInput" accept=".csv">
                   
         <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
-        <input type="number" id="numRuns" min="1" max="2000000" value="1000">
+        <input type="number" id="numRuns" min="1" max="50000000" value="100">
         <button id="runButton">Run</button>
         
-        <h3>Explanation</h3>
-        <div id="explanation"></div>
         <h3>Descriptive Statistics</h3>
         <div id="statistics"></div>
+        <h3>Frequency Distribution</h3>
+        <div id="explanation"></div>
     </div>
 
 <script>
@@ -304,34 +304,88 @@ function processCSVData(csvText) {
     }
 
     const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
-    let totalSetA = 0;
-    let totalSetB = 0;
+
+    // Initialize streaming variables
+    let n = 0; // Number of values processed
+    let mean = 0;
+    let M2 = 0; // Second moment
+    let M3 = 0; // Third moment
+    let M4 = 0; // Fourth moment
+    let min = Infinity;
+    let max = -Infinity;
+
+    const differences = [];
+    const maxHeap = new MaxHeap(); // For lower half
+    const minHeap = new MinHeap(); // For upper half
 
     dataRows.forEach(row => {
-        totalSetA += setAIndices.reduce((sum, idx) => sum + row[idx], 0);
-        totalSetB += setBIndices.reduce((sum, idx) => sum + row[idx], 0);
-    });
-
-    const observedDifference = totalSetA - totalSetB;
-
-    // Calculate frequency distribution and statistics
-    const differences = dataRows.map(row => {
         const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
         const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
-        return sumA - sumB;
+        const diff = sumA - sumB;
+
+        differences.push(diff);
+
+        // Update streaming metrics
+        n++;
+        const delta = diff - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
+
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+
+        if (diff < min) min = diff;
+        if (diff > max) max = diff;
+
+        // Update heaps for median calculation
+        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
+            maxHeap.insert(diff);
+        } else {
+            minHeap.insert(diff);
+        }
+
+        // Balance heaps
+        if (maxHeap.size() > minHeap.size() + 1) {
+            minHeap.insert(maxHeap.extract());
+        } else if (minHeap.size() > maxHeap.size()) {
+            maxHeap.insert(minHeap.extract());
+        }
     });
-    
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
+    // Compute median from heaps
+    const median = maxHeap.size() === minHeap.size()
+        ? (maxHeap.peek() + minHeap.peek()) / 2
+        : maxHeap.peek();
+
     const frequencyDistribution = calculateFrequencyDistribution(differences);
-    const stats = calculateDescriptiveStatistics(differences);
+
+    const stats = {
+        mean: mean.toFixed(2),
+        variance: variance.toFixed(2), // Ensure variance is included
+        stdDev: stdDev.toFixed(2),
+        median: median.toFixed(2),
+        min,
+        max,
+        skewness: skewness.toFixed(2),
+        kurtosis: kurtosis.toFixed(2),
+    };
 
     // Save results to a CSV file
     const fileName = `FreqDist_${dataRows.length}.csv`;
     exportToCSV(frequencyDistribution, stats, fileName);
 
-    // Display results for 100,000 rows or fewer
+    // Display results for smaller datasets
     if (dataRows.length <= 100000) {
-        displayFrequencyDistribution(frequencyDistribution, observedDifference);
-        displayDescriptiveStatistics(differences);
+        displayFrequencyDistribution(frequencyDistribution, 0);
+        displayDescriptiveStatistics(stats);
     } else {
         alert(`Results have been saved to ${fileName}`);
     }
@@ -345,39 +399,44 @@ function generateRandomRuns() {
     explanationElement.innerHTML = "";
 
     // Enforce input limit
-    if (numRuns > 2000000 || numRuns < 1) {
-        alert("Please enter a valid number between 1 and 2,000,000.");
+    if (numRuns > 50000000 || numRuns < 1) {
+        alert("Please enter a valid number between 1 and 50,000,000.");
         return;
     }
 
-    // Initialize statistics
+    // Initialize streaming variables
+    let n = 0; // Number of values processed
+    let mean = 0;
+    let M2 = 0; // Second moment
+    let M3 = 0; // Third moment
+    let M4 = 0; // Fourth moment
     let min = Infinity;
     let max = -Infinity;
-    let sum = 0;
-    let sumSquared = 0;
-    let sumCubed = 0;
-    let sumFourth = 0;
 
-    const differences = [];
-    const maxHeap = new MaxHeap(); // For median calculation
-    const minHeap = new MinHeap(); // For median calculation
+    const maxHeap = new MaxHeap(); // For lower half
+    const minHeap = new MinHeap(); // For upper half
 
     for (let i = 0; i < numRuns; i++) {
         const totalSetA = getSumForSet(setAIndices);
         const totalSetB = getSumForSet(setBIndices);
         const diff = totalSetA - totalSetB;
 
-        differences.push(diff);
+        // Update streaming metrics
+        n++;
+        const delta = diff - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
 
-        // Update statistics
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+
         if (diff < min) min = diff;
         if (diff > max) max = diff;
-        sum += diff;
-        sumSquared += diff ** 2;
-        sumCubed += diff ** 3;
-        sumFourth += diff ** 4;
 
-        // Update heaps for median
+        // Update heaps for median calculation
         if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
             maxHeap.insert(diff);
         } else {
@@ -392,48 +451,40 @@ function generateRandomRuns() {
         }
     }
 
-    // Calculate final metrics
-    const mean = sum / numRuns;
-    const variance = sumSquared / numRuns - mean ** 2;
+    const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
+    // Compute median from heaps
     const median = maxHeap.size() === minHeap.size()
         ? (maxHeap.peek() + minHeap.peek()) / 2
         : maxHeap.peek();
 
-    // Calculate skewness and kurtosis for smaller datasets
-    let skewness = "N/A (Not computed for large runs)";
-    let kurtosis = "N/A (Not computed for large runs)";
-    if (numRuns <= 100000) {
-        skewness = ((sumCubed / numRuns) - 3 * mean * variance - mean ** 3) / (stdDev ** 3);
-        kurtosis = ((sumFourth / numRuns) - 4 * mean * (sumCubed / numRuns) +
-            6 * mean ** 2 * variance + mean ** 4) / (stdDev ** 4);
-        skewness = skewness.toFixed(2);
-        kurtosis = kurtosis.toFixed(2);
-    }
-
-    const frequencyDistribution = calculateFrequencyDistribution(differences);
+    const frequencyDistribution = calculateFrequencyDistribution([...maxHeap.heap, ...minHeap.heap]);
 
     const stats = {
         mean: mean.toFixed(2),
-        median: median.toFixed(2),
+        variance: variance.toFixed(2), // Variance added here
         stdDev: stdDev.toFixed(2),
+        median: median.toFixed(2),
         min,
         max,
-        skewness,
-        kurtosis,
+        skewness: skewness.toFixed(2),
+        kurtosis: kurtosis.toFixed(2),
     };
 
     // Save results to a CSV file
     const fileName = `FreqDist_${numRuns}.csv`;
     exportToCSV(frequencyDistribution, stats, fileName);
 
-    // Display results for smaller runs
-    if (numRuns <= 100000) {
-        displayFrequencyDistribution(frequencyDistribution, 0);
-        displayDescriptiveStatistics(stats);
-    } else {
-        alert(`Results have been saved to ${fileName}`);
-    }
+    // Display results in the UI
+    displayFrequencyDistribution(frequencyDistribution, 0);
+    displayDescriptiveStatistics(stats); // Pass stats here after definition
+    
+    // Debugging log
+    console.log(stats);
+
 }
 
     
@@ -473,14 +524,39 @@ function calculateDescriptiveStatistics(differences) {
 function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
     const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
 
-    const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
+    // Create a table with headers
+    let tableHTML = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid lightgreen;">
+                    <th style="padding: 8px; color: salmon;">Difference</th>
+                    <th style="padding: 8px; color: salmon;">Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Populate table rows
     sortedKeys.forEach(key => {
         const isObserved = Number(key) === observedDifference;
-        explanationElement.innerHTML += `<li>${key}: ${frequencyDistribution[key]} ${isObserved ? "(Observed)" : ""}</li>`;
+        tableHTML += `
+            <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${key}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${frequencyDistribution[key]}</td>
+            </tr>
+        `;
     });
-    explanationElement.innerHTML += `</ul>`;
+
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+
+    // Insert the table into the explanation section
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = tableHTML;
 }
+
 
 function displayDescriptiveStatistics(stats) {
     if (!stats || typeof stats !== "object") {
@@ -492,34 +568,36 @@ function displayDescriptiveStatistics(stats) {
     const statsElement = document.getElementById("statistics");
     statsElement.innerHTML = `
         <ul>
-            <li><strong>Mean:</strong> ${stats.mean}</li>
-            <li><strong>Median:</strong> ${stats.median}</li>
-            <li><strong>Standard Deviation:</strong> ${stats.stdDev}</li>
-            <li><strong>Minimum:</strong> ${stats.min}</li>
-            <li><strong>Maximum:</strong> ${stats.max}</li>
-            <li><strong>Skewness:</strong> ${stats.skewness}</li>
-            <li><strong>Kurtosis:</strong> ${stats.kurtosis}</li>
+            <li><strong><span style="color: salmon;"> Mean:</span></strong><strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
+            <li><strong><span style="color: salmon;">Variance:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.variance}</span></li>
+            <li><strong><span style="color: salmon;">Standard Deviation:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
+            <li><strong><span style="color: salmon;">Median:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
+            <li><strong><span style="color: salmon;">Minimum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
+            <li><strong><span style="color: salmon;">Maximum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
+            <li><strong><span style="color: salmon;">Skewness:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
+            <li><strong><span style="color: salmon;">Kurtosis:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
         </ul>
     `;
 }
 
-
-
 function exportToCSV(frequencyDistribution, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Frequency Distribution:\n";
-    csvContent += "Difference,Frequency\n";
 
-    Object.entries(frequencyDistribution).forEach(([key, value]) => {
-        csvContent += `${key},${value}\n`;
-    });
-
-    csvContent += "\nDescriptive Statistics:\n";
+    // Add Metrics Data at the Top
+    csvContent += "Descriptive Statistics:\n";
     csvContent += "Metric,Value\n";
     Object.entries(stats).forEach(([key, value]) => {
         csvContent += `${key},${value}\n`;
     });
 
+    // Add Frequency Distribution Data Below
+    csvContent += "\nFrequency Distribution:\n";
+    csvContent += "Difference,Frequency\n";
+    Object.entries(frequencyDistribution).forEach(([key, value]) => {
+        csvContent += `${key},${value}\n`;
+    });
+
+    // Encode and Trigger the Download
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);

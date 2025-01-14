@@ -165,7 +165,7 @@
         <input type="file" id="fileInput" accept=".csv">
                   
         <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
-        <input type="number" id="numRuns" min="1" max="2000000" value="1000">
+        <input type="number" id="numRuns" min="1" max="50000000" value="100">
         <button id="runButton">Run</button>
         
         <h3>Descriptive Statistics</h3>
@@ -305,90 +305,71 @@ function processCSVData(csvText) {
 
     const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
 
-    // Initialize streaming variables
     let n = 0; // Number of values processed
     let mean = 0;
     let M2 = 0; // Second moment
-    let M3 = 0; // Third moment
-    let M4 = 0; // Fourth moment
-    let min = Infinity;
-    let max = -Infinity;
-
-    const differences = [];
-    const maxHeap = new MaxHeap(); // For lower half
-    const minHeap = new MinHeap(); // For upper half
+    let differences = [];
 
     dataRows.forEach(row => {
         const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
         const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
         const diff = sumA - sumB;
-
         differences.push(diff);
 
-        // Update streaming metrics
+        // Update metrics
         n++;
         const delta = diff - mean;
-        const deltaN = delta / n;
-        const deltaNSquared = deltaN * deltaN;
-        const term1 = delta * deltaN * (n - 1);
-
-        mean += deltaN;
-        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
-        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
-        M2 += term1;
-
-        if (diff < min) min = diff;
-        if (diff > max) max = diff;
-
-        // Update heaps for median calculation
-        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
-            maxHeap.insert(diff);
-        } else {
-            minHeap.insert(diff);
-        }
-
-        // Balance heaps
-        if (maxHeap.size() > minHeap.size() + 1) {
-            minHeap.insert(maxHeap.extract());
-        } else if (minHeap.size() > maxHeap.size()) {
-            maxHeap.insert(minHeap.extract());
-        }
+        mean += delta / n;
+        M2 += delta * (diff - mean);
     });
 
     const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
-    const skewness = (M3 / n) / Math.pow(stdDev, 3);
-    const kurtosis = (M4 / n) / (variance * variance) - 3;
 
-    // Compute median from heaps
-    const median = maxHeap.size() === minHeap.size()
-        ? (maxHeap.peek() + minHeap.peek()) / 2
-        : maxHeap.peek();
-
-    const frequencyDistribution = calculateFrequencyDistribution(differences);
-
+    // Display full-range stats
     const stats = {
-        mean: mean.toFixed(2),
-        median: median.toFixed(2),
-        stdDev: stdDev.toFixed(2),
-        min,
-        max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
+        mean: mean.toFixed(8),
+        variance: variance.toFixed(8),
+        stdDev: stdDev.toFixed(8),
+        min: Math.min(...differences),
+        max: Math.max(...differences),
     };
 
-    // Save results to a CSV file
-    const fileName = `FreqDist_${dataRows.length}.csv`;
-    exportToCSV(frequencyDistribution, stats, fileName);
+    displayDescriptiveStatistics(stats);
 
-    // Display results for smaller datasets
-    if (dataRows.length <= 100000) {
-        displayFrequencyDistribution(frequencyDistribution, 0);
-        displayDescriptiveStatistics(stats);
-    } else {
-        alert(`Results have been saved to ${fileName}`);
-    }
+    // Filter and compute stats for a specific range (-30 to 30)
+    const filteredDifferences = differences.filter(diff => diff >= -30 && diff <= 30);
+    const filteredStats = calculateStatistics(filteredDifferences);
+
+    displayFilteredStatistics(filteredStats);
+    plotHistogram(differences, filteredDifferences);
 }
+
+function calculateStatistics(values) {
+    if (values.length === 0) return null;
+
+    let mean = 0;
+    let M2 = 0;
+    const n = values.length;
+
+    values.forEach(value => {
+        const delta = value - mean;
+        mean += delta / n;
+        M2 += delta * (value - mean);
+    });
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+
+    return {
+        mean: mean.toFixed(8),
+        variance: variance.toFixed(8),
+        stdDev: stdDev.toFixed(8),
+        min: Math.min(...values),
+        max: Math.max(...values),
+    };
+}
+
 
 function generateRandomRuns() {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
@@ -398,8 +379,8 @@ function generateRandomRuns() {
     explanationElement.innerHTML = "";
 
     // Enforce input limit
-    if (numRuns > 2000000 || numRuns < 1) {
-        alert("Please enter a valid number between 1 and 2,000,000.");
+    if (numRuns > 50000000 || numRuns < 1) {
+        alert("Please enter a valid number between 1 and 50,000,000.");
         return;
     }
 
@@ -462,15 +443,17 @@ function generateRandomRuns() {
 
     const frequencyDistribution = calculateFrequencyDistribution([...maxHeap.heap, ...minHeap.heap]);
 
-    const stats = {
-        mean: mean.toFixed(2),
-        median: median.toFixed(2),
-        stdDev: stdDev.toFixed(2),
-        min,
-        max,
-        skewness: skewness.toFixed(2),
-        kurtosis: kurtosis.toFixed(2),
-    };
+	const stats = {
+    mean: mean.toFixed(6),
+    variance: variance.toFixed(6),
+    stdDev: stdDev.toFixed(6),
+    median: median.toFixed(6),
+    min,
+    max,
+    skewness: skewness.toFixed(6),
+    kurtosis: kurtosis.toFixed(6),
+};
+
 
     // Save results to a CSV file
     const fileName = `FreqDist_${numRuns}.csv`;
@@ -478,11 +461,15 @@ function generateRandomRuns() {
 
     // Display results in the UI
     displayFrequencyDistribution(frequencyDistribution, 0);
-    displayDescriptiveStatistics(stats);
+    displayDescriptiveStatistics(stats); // Pass stats here after definition
+    
+    // Debugging log
+    console.log(stats);
+
 }
 
     
-    function getSumForSet(indices) {
+function getSumForSet(indices) {
         let sum = 0;
         indices.forEach(index => {
             sum += Math.floor(Math.random() * 38) + 1;
@@ -496,6 +483,24 @@ function calculateFrequencyDistribution(differences) {
         frequency[diff] = (frequency[diff] || 0) + 1;
     });
     return frequency;
+}
+
+function calculateFrequencyDistribution(data) {
+    const frequency = {};
+    data.forEach(value => {
+        frequency[value] = (frequency[value] || 0) + 1;
+    });
+    return frequency;
+}
+
+function generateHistogramHTML(histogram) {
+    const sortedKeys = Object.keys(histogram).sort((a, b) => a - b);
+    let html = `<table><thead><tr><th>Value</th><th>Frequency</th></tr></thead><tbody>`;
+    sortedKeys.forEach(key => {
+        html += `<tr><td>${key}</td><td>${histogram[key]}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    return html;
 }
     
 function calculateDescriptiveStatistics(differences) {
@@ -518,53 +523,100 @@ function calculateDescriptiveStatistics(differences) {
 function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
     const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
 
-    const explanationElement = document.getElementById("explanation");
-    //explanationElement.innerHTML = `<strong>Frequency Distribution:</strong><br><ul>`;
+    // Create a table with headers
+    let tableHTML = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid lightgreen;">
+                    <th style="padding: 8px; color: salmon;">Difference</th>
+                    <th style="padding: 8px; color: salmon;">Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Populate table rows
     sortedKeys.forEach(key => {
         const isObserved = Number(key) === observedDifference;
-        explanationElement.innerHTML += `<li>${key}: ${frequencyDistribution[key]} ${isObserved ? "(Observed)" : ""}</li>`;
+        tableHTML += `
+            <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${key}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${frequencyDistribution[key]}</td>
+            </tr>
+        `;
     });
-    explanationElement.innerHTML += `</ul>`;
+
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+
+    // Insert the table into the explanation section
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = tableHTML;
 }
 
-function displayDescriptiveStatistics(stats) {
-    if (!stats || typeof stats !== "object") {
-        console.error("Invalid statistics data provided for display.");
-        alert("An error occurred while displaying statistics.");
-        return;
-    }
 
+function displayDescriptiveStatistics(stats) {
     const statsElement = document.getElementById("statistics");
     statsElement.innerHTML = `
+        <h4>Full Range Statistics</h4>
         <ul>
-            <li><strong>Mean:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
-            <li><strong>Median:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
-            <li><strong>Standard Deviation:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
-            <li><strong>Minimum:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
-            <li><strong>Maximum:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
-            <li><strong>Skewness:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
-            <li><strong>Kurtosis:</strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
+            <li>Mean: ${stats.mean}</li>
+            <li>Variance: ${stats.variance}</li>
+            <li>Standard Deviation: ${stats.stdDev}</li>
+            <li>Min: ${stats.min}</li>
+            <li>Max: ${stats.max}</li>
         </ul>
     `;
 }
 
+function displayFilteredStatistics(stats) {
+    const statsElement = document.getElementById("filtered-statistics");
+    statsElement.innerHTML = `
+        <h4>Filtered Range Statistics (-30 to 30)</h4>
+        <ul>
+            <li>Mean: ${stats.mean}</li>
+            <li>Variance: ${stats.variance}</li>
+            <li>Standard Deviation: ${stats.stdDev}</li>
+            <li>Min: ${stats.min}</li>
+            <li>Max: ${stats.max}</li>
+        </ul>
+    `;
+}
 
+function plotHistogram(fullData, filteredData) {
+    const fullHistogram = calculateFrequencyDistribution(fullData);
+    const filteredHistogram = calculateFrequencyDistribution(filteredData);
+
+    const container = document.getElementById("explanation");
+
+    container.innerHTML = `
+        <h4>Full Range Histogram</h4>
+        ${generateHistogramHTML(fullHistogram)}
+        <h4>Filtered Range Histogram (-30 to 30)</h4>
+        ${generateHistogramHTML(filteredHistogram)}
+    `;
+}
 
 function exportToCSV(frequencyDistribution, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Frequency Distribution:\n";
-    csvContent += "Difference,Frequency\n";
 
-    Object.entries(frequencyDistribution).forEach(([key, value]) => {
-        csvContent += `${key},${value}\n`;
-    });
-
-    csvContent += "\nDescriptive Statistics:\n";
+    // Add Metrics Data at the Top
+    csvContent += "Descriptive Statistics:\n";
     csvContent += "Metric,Value\n";
     Object.entries(stats).forEach(([key, value]) => {
         csvContent += `${key},${value}\n`;
     });
 
+    // Add Frequency Distribution Data Below
+    csvContent += "\nFrequency Distribution:\n";
+    csvContent += "Difference,Frequency\n";
+    Object.entries(frequencyDistribution).forEach(([key, value]) => {
+        csvContent += `${key},${value}\n`;
+    });
+
+    // Encode and Trigger the Download
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -575,5 +627,8 @@ function exportToCSV(frequencyDistribution, stats, fileName) {
 }
     
 </script>
+
+<div id="filtered-statistics"></div>
+
 </body>
 </html>

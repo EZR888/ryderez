@@ -50,15 +50,25 @@
       cursor: pointer;
     }
     
-    
-        .container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            flex-direction: column;
-            padding: 20px;
-        }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }   
+    body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+    }
+    .container h1 {
+            margin: 0;
+    }
 
     .button {
         font-size: 120%; /* 20% larger than 60% */
@@ -102,14 +112,6 @@
       color: black !important;
     }
     
-        body {
-            background-color: black;
-            color: lightgreen;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            font-size: 16px;
-        }
         .header-container {
             text-align: center;
             margin: 20px 0;
@@ -208,10 +210,9 @@
 </head>
 <body>
     <div class="container">
-        <br><br>
         <div>
             <div class="framed-section2">
-                &nbsp;&nbsp;&nbsp;<button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
                 <button class="button button-sim" id="simButton">Simulator</button>
                 <button id="viewDataButton" class="button">View Data</button>
                 <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>

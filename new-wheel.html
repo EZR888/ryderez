@@ -255,10 +255,59 @@
         font-size: 12px;
       }
     }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    } 
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    
   </style>
 </head>
 <body>
   <br><br>
+  
+          <div>
+            <div class="framed-section2">
+                &nbsp;&nbsp;&nbsp;<button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
+                <button class="button button-single" id="singleSpinButton">Single Spin</button>
+            </div>
+        </div>
+        
   <div class="flex-frame">  <!-- Flexbox frame added here -->
     <h1 class="lgreen-text">Roulette Wheel</h1>
     <div class="wheel-container">
@@ -268,9 +317,7 @@
     <div class="button-container">
       <button id="startButton" class="button"><b>Spin</b></button>
       <button id="saveDataButton" class="button"><b>Save Data</b></button>
-      <button id="accessSimulatorButton" class="button"><b>Simulator</b></button>
       <button id="resetButton" class="button"><b>Reset Count</b></button>
-      <button id="viewDataButton" class="button"><b>View Data</b></button>
     </div>
     <div class="table-container">
       <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
@@ -280,6 +327,36 @@
   <br><br>
   
   <script>
+  
+         	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
     // Roulette Wheel Variables
     let wheelRadius = 280;
     let wheelCenterX;
@@ -324,7 +401,7 @@
         exportTotalsToCSV(Totals);
       });
 
-      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+      document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.location.href = 'roulette.html';
       });
       

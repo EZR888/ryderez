@@ -284,6 +284,27 @@
     .light-yellow {
       background-color: lightyellow !important;
     }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
   </style>
 </head>
 <body>
@@ -292,10 +313,12 @@
         <div>
             <div class="framed-section2">
                 <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
                 <button id="viewDataButton" class="button">View Data</button>
-                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
                 <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
-                <button class="button button-single" id="singleSpinButton">Single Spin</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
+                <button class="button button-single" id="singleSpinButton">Single Spin</button>      
             </div>
         </div>
         <br>
@@ -389,17 +412,10 @@ function exportTotalsToCSV(array, rowCount, prefix) {
     document.body.appendChild(link); // Required for Firefox
     link.click(); // Trigger the download
 }
-
-    // Event listener for the Save Data button
-    // document.getElementById("Button").addEventListener("click", function() {
-    //        exportTotalsToCSV(allTotals, `totals_data_run${runIndex + 1}.csv`); // Export results to CSV
-    // });
     
-
-    
-    	// Event listener for the Single Spin button
-    	document.getElementById('singleSpinButton').addEventListener('click', () => {
-        window.open('new-wheel.html', '_blank');
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
       });
       
         // New event listener for the View Data button
@@ -407,14 +423,23 @@ function exportTotalsToCSV(array, rowCount, prefix) {
         window.open('view-data.html', '_blank');
       });
       
-        // New event listener for the View Stats button
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
       	document.getElementById('viewStatsButton').addEventListener('click', () => {
         window.open('view-stats.html', '_blank');
       });
 
-        // New event listener for the View Stats button
-      	document.getElementById('viewPValueButton').addEventListener('click', () => {
-        window.open('pvalues.html', '_blank');
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
       });
       
 // Function to generate a random integer between 0 (inclusive) and max (exclusive)
@@ -592,6 +617,8 @@ function generateTable(headerOrder, isSecondTable = false) {
         modal.style.display = 'none';
       }
     }
+    
+    
   </script>
 </body>
 </html>

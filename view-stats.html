@@ -173,6 +173,37 @@
             max-width: 100%; /* Adjusts image to fit cell width */
             height: auto; /* Keeps aspect ratio */
         }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    }
     </style>
 </head>
 <body>
@@ -181,10 +212,12 @@
         <div>
             <div class="framed-section2">
                 &nbsp;&nbsp;&nbsp;<button class="button button-purple" id="howToUseButton">How To Use</button>
-                <button class="button button-single" id="singleSpinButton">Simulator</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
                 <button id="viewDataButton" class="button">View Data</button>
-                <!-- <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button> -->
                 <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
+                <button class="button button-single" id="singleSpinButton">Single Spin</button>
             </div>
         </div>
         
@@ -251,24 +284,33 @@
 
 <script>
 
-      	// Event listener for the Single Spin button
-    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
         window.open('roulette.html', '_blank');
-        });
+      });
       
         // New event listener for the View Data button
       	document.getElementById('viewDataButton').addEventListener('click', () => {
         window.open('view-data.html', '_blank');
       });
       
-        // New event listener for the View Stats button
-      	//document.getElementById('viewStatsButton').addEventListener('click', () => {
-        //window.open('view-stats.html', '_blank');
-      //});
-
         // New event listener for the View P-Value button
       	document.getElementById('viewPValueButton').addEventListener('click', () => {
         window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
       });
       
       

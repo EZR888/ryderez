@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -393,14 +391,29 @@ function processConcatenatedCSVData(csvText) {
     const rows = csvText.trim().split("\n");
     const nonEmptyRows = rows.filter(row => row.trim() !== "");
 
+    // Check if there is only one file and it has just one data row
+    if (nonEmptyRows.length === 2) {
+        alert('When processing a one-run CSV file, please also select the file FreqDest_control.csv.');
+        return; // Exit the function
+    }
+
     if (nonEmptyRows.length <= 1) {
         alert("The combined CSV data does not contain enough data.");
         return;
     }
 
+    const headerRow = nonEmptyRows[0];
     const dataRows = nonEmptyRows.slice(1).map(row => row.split(",").map(Number));
 
-    // Initialize streaming variables (moved inside the function)
+    console.log("Header Row:", headerRow);
+    console.log("Data Rows Before Processing:", dataRows);
+
+    // Continue with calculations if valid
+    calculateAndExportStatistics(dataRows, headerRow);
+}
+
+function calculateAndExportStatistics(dataRows, headerRow) {
+    // Initialize streaming variables
     let n = 0;
     let mean = 0;
     let M2 = 0;
@@ -454,7 +467,6 @@ function processConcatenatedCSVData(csvText) {
         ? (maxHeap.peek() + minHeap.peek()) / 2
         : maxHeap.peek();
 
-    // NOW calculate frequencyDistribution and stats
     const frequencyDistribution = calculateFrequencyDistribution(differences);
     const stats = {
         mean: mean.toFixed(4),

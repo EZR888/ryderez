@@ -437,9 +437,89 @@ function processConcatenatedCSVData(csvText) {
     console.log("Header Row:", headerRow);
     console.log("Data Rows Before Processing:", dataRows);
 
-    // Continue with calculations if valid
-    calculateAndExportStatistics(dataRows, headerRow);
-    console.log("Processing CSV data:", csvText);
+    const differences = [];
+    let n = 0; // Number of values processed
+    let mean = 0;
+    let M2 = 0; // Second moment
+    let M3 = 0; // Third moment
+    let M4 = 0; // Fourth moment
+    let min = Infinity;
+    let max = -Infinity;
+
+    const maxHeap = new MaxHeap(); // For lower half
+    const minHeap = new MinHeap(); // For upper half
+
+    // Process each row
+    dataRows.forEach(counts => {
+        // Calculate sums for top and bottom groups
+        const { sumA, sumB } = calculateGroupSums(counts, setAIndices, setBIndices);
+        const diff = sumA - sumB;
+
+        // Log values for validation
+        console.log("Counts:", counts);
+        console.log("Sum A:", sumA, "Sum B:", sumB, "Difference:", diff);
+
+        differences.push(diff);
+
+        // Update streaming metrics
+        n++;
+        const delta = diff - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
+
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+
+        if (diff < min) min = diff;
+        if (diff > max) max = diff;
+
+        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
+            maxHeap.insert(diff);
+        } else {
+            minHeap.insert(diff);
+        }
+
+        if (maxHeap.size() > minHeap.size() + 1) {
+            minHeap.insert(maxHeap.extract());
+        } else if (minHeap.size() > maxHeap.size()) {
+            maxHeap.insert(minHeap.extract());
+        }
+    });
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
+    const median = maxHeap.size() === minHeap.size()
+        ? (maxHeap.peek() + minHeap.peek()) / 2
+        : maxHeap.peek();
+
+    const frequencyDistribution = calculateFrequencyDistribution(differences);
+
+    const stats = {
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        median: median.toFixed(4),
+        min,
+        max,
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4),
+    };
+
+    const fileName = `FreqDist_${dataRows.length}.csv`;
+    exportToCSV(frequencyDistribution, stats, fileName);
+
+    if (dataRows.length <= 100000) {
+        displayFrequencyDistribution(frequencyDistribution, 0);
+        displayDescriptiveStatistics(stats);
+    } else {
+        alert(`Results have been saved to ${fileName}`);
+    }
 }
 
 
@@ -554,6 +634,10 @@ function processCSVData(csvText) {
         const sumA = setAIndices.reduce((sum, idx) => sum + row[idx], 0);
         const sumB = setBIndices.reduce((sum, idx) => sum + row[idx], 0);
         const diff = sumA - sumB;
+        
+            // Log values for validation
+    console.log("Row Data:", row);
+    console.log("Sum A:", sumA, "Sum B:", sumB, "Difference:", diff);
 
         differences.push(diff);
 
@@ -648,40 +732,44 @@ function generateRandomRuns() {
     const maxHeap = new MaxHeap(); // For lower half
     const minHeap = new MinHeap(); // For upper half
 
-    for (let i = 0; i < numRuns; i++) {
-        const totalSetA = getSumForSet(setAIndices);
-        const totalSetB = getSumForSet(setBIndices);
-        const diff = totalSetA - totalSetB;
+for (let i = 0; i < numRuns; i++) {
+    const counts = getRandomCounts(38); // Simulate 38 picks for this run
 
-        // Update streaming metrics
-        n++;
-        const delta = diff - mean;
-        const deltaN = delta / n;
-        const deltaNSquared = deltaN * deltaN;
-        const term1 = delta * deltaN * (n - 1);
+    // Calculate sums for top and bottom groups
+    const { sumA: totalSetA, sumB: totalSetB } = calculateGroupSums(counts, setAIndices, setBIndices);
+    const diff = totalSetA - totalSetB;
 
-        mean += deltaN;
-        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
-        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
-        M2 += term1;
+    // Log values for debugging
+    console.log(`Run ${i + 1}: Counts = ${counts}, Sum A = ${totalSetA}, Sum B = ${totalSetB}, Difference = ${diff}`);
 
-        if (diff < min) min = diff;
-        if (diff > max) max = diff;
+    // Update streaming metrics
+    n++;
+    const delta = diff - mean;
+    const deltaN = delta / n;
+    const deltaNSquared = deltaN * deltaN;
+    const term1 = delta * deltaN * (n - 1);
 
-        // Update heaps for median calculation
-        if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
-            maxHeap.insert(diff);
-        } else {
-            minHeap.insert(diff);
-        }
+    mean += deltaN;
+    M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+    M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+    M2 += term1;
 
-        // Balance heaps
-        if (maxHeap.size() > minHeap.size() + 1) {
-            minHeap.insert(maxHeap.extract());
-        } else if (minHeap.size() > maxHeap.size()) {
-            maxHeap.insert(minHeap.extract());
-        }
+    if (diff < min) min = diff;
+    if (diff > max) max = diff;
+
+    // Update heaps for median calculation
+    if (maxHeap.size() === 0 || diff <= maxHeap.peek()) {
+        maxHeap.insert(diff);
+    } else {
+        minHeap.insert(diff);
     }
+
+    // Balance heaps
+    if (maxHeap.size() > minHeap.size() + 1) {
+        minHeap.insert(maxHeap.extract());
+    } else if (minHeap.size() > maxHeap.size()) {
+        maxHeap.insert(minHeap.extract());
+    }}
 
     const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
@@ -720,13 +808,24 @@ function generateRandomRuns() {
 }
 
     
-    function getSumForSet(indices) {
-        let sum = 0;
-        indices.forEach(index => {
-            sum += Math.floor(Math.random() * 38) + 1;
-        });
-        return sum;
+function getRandomCounts(numPicks) {
+    // Create an array to count occurrences for numbers 1 through 38
+    const counts = Array(38).fill(0);
+
+    // Randomly pick numbers and count occurrences
+    for (let i = 0; i < numPicks; i++) {
+        const pickedNumber = Math.floor(Math.random() * 38); // 0 to 37 (representing 1 to 38)
+        counts[pickedNumber]++;
     }
+
+    return counts;
+}
+
+function calculateGroupSums(counts, setAIndices, setBIndices) {
+    const sumA = setAIndices.reduce((sum, idx) => sum + counts[idx], 0);
+    const sumB = setBIndices.reduce((sum, idx) => sum + counts[idx], 0);
+    return { sumA, sumB };
+}
 
 function calculateFrequencyDistribution(differences) {
     const frequency = {};

@@ -451,28 +451,52 @@ function loadDefaultCSV(userCSVData) {
 
 function processConcatenatedCSVData(csvData) {
     const rows = csvData.trim().split("\n");
-    const nonEmptyRows = rows.filter(row => row.trim() !== "");
 
-    if (nonEmptyRows.length <= 1) {
+    if (rows.length <= 1) {
         alert("The combined CSV data does not contain enough data.");
         return;
     }
 
-    if (nonEmptyRows.length === 2) {
-        console.warn("Detected a one-run CSV file. Adding a default row of zeros.");
-        loadDefaultCSV(csvData);
-        return;
+    const dataRows = [];
+
+    rows.forEach(row => {
+        const values = row.split(",").map(value => value.trim());
+
+        // Detect and skip all header rows that match 0-37 pattern
+        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+
+        if (isHeader) {
+            console.log("Header row detected and skipped:", row);
+            return; // Skip header row
+        }
+
+        // Convert values to numbers, replacing null/empty with 0
+        const numericValues = values.map(val => {
+            if (val === "" || isNaN(val)) {
+                return 0; // Replace empty or non-numeric values with 0
+            }
+            return Number(val);
+        });
+
+        // Ensure valid data row length
+        if (numericValues.length === 38) {
+            dataRows.push(numericValues);
+        }
+    });
+
+    // If only one data row exists, add a default row of ones
+    if (dataRows.length === 1) {
+        console.warn("Detected a one-run CSV file. Adding a default row of ones.");
+        const onesRow = new Array(38).fill(1);
+        dataRows.push(onesRow);
     }
 
-    const headerRow = nonEmptyRows[0];
-    const dataRows = nonEmptyRows.slice(1).map(row => row.split(",").map(Number));
-
-    console.log("Header Row:", headerRow);
     console.log("Data Rows Before Processing:", dataRows);
 
     // Call processData with the parsed data
     processData(dataRows);
 }
+
 
 function calculateAndExportStatistics(dataRows, headerRow) {
     // Initialize streaming variables

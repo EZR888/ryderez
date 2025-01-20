@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -439,7 +440,7 @@ document.getElementById('fileInput').addEventListener('change', function (event)
 
 function loadDefaultCSV(userCSVData) {
     const defaultCSV = `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0`;
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1`;
     isLoadingDefaultCSV = true; // Set the flag to indicate the default file is being processed
 
     // Combine user-selected data with default data
@@ -758,17 +759,51 @@ function calculateDescriptiveStatistics(differences) {
         throw new TypeError("The 'differences' argument must be a non-empty array.");
     }
 
+    let n = 0;
+    let mean = 0;
+    let M2 = 0, M3 = 0, M4 = 0;
+    let min = Infinity;
+    let max = -Infinity;
+
+    differences.forEach(x => {
+        n++;
+        const delta = x - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
+
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+
+        if (x < min) min = x;
+        if (x > max) max = x;
+    });
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
     return {
-        mean: jStat.mean(differences).toFixed(4),
-        variance: jStat.variance(differences).toFixed(4),
-        stdDev: jStat.stdev(differences).toFixed(4),
-        median: jStat.median(differences).toFixed(4),
-        min: Math.min(...differences),
-        max: Math.max(...differences),
-        skewness: jStat.skewness(differences).toFixed(4),
-        kurtosis: jStat.kurtosis(differences).toFixed(4),
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        median: calculateMedian(differences),
+        min,
+        max,
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4),
     };
 }
+
+function calculateMedian(arr) {
+    const sorted = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4);
+}
+
 
 
 function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
@@ -844,13 +879,13 @@ function displayResults(differences, stats) {
 
     Object.keys(differences).forEach(category => {
         let categoryLabel = categoryLabels[category] || category;
-        let tableHTML = `<h3>${categoryLabel} Statistics and Frequency Distribution</h3>`;
+        let tableHTML = `<h3><center>${categoryLabel} Statistics and Frequency Distribution</h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
-                        <th style="padding: 8px;">Metric</th>
-                        <th style="padding: 8px;">Value</th>
-                        <th style="padding: 8px;">Difference</th>
-                        <th style="padding: 8px;">Frequency</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">Difference</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                       </tr>`;
 
         const frequencyCount = calculateFrequencyDistribution(differences[category]);
@@ -860,26 +895,28 @@ function displayResults(differences, stats) {
 
         for (let i = 0; i < maxLength; i++) {
             const metric = metricKeys[i] || "";
+            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);  // Capitalize first letter
             const value = metric ? stats[category][metric] : "";
             const difference = frequencyKeys[i] || "";
             const frequency = difference ? frequencyCount[difference] : "";
 
             tableHTML += `<tr>
-                <td style="padding: 8px;">${metric}</td>
-                <td style="padding: 8px;">${value}</td>
-                <td style="padding: 8px;">${difference}</td>
-                <td style="padding: 8px;">${frequency}</td>
+                <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
+                <td style="padding: 8px; text-align: center;">${value}</td>
+                <td style="padding: 8px; text-align: center;">${difference}</td>
+                <td style="padding: 8px; text-align: center;">${frequency}</td>
             </tr>`;
         }
 
-        tableHTML += `</table><br/>`;  // Add a line break between categories for better readability
+        tableHTML += `</table><br/>`;
         explanationElement.innerHTML += tableHTML;
     });
 }
 
+
 function exportToCSV(differences, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Category,Metric,Value,,Difference,Frequency\n";
+    csvContent += "Category,Metric,Value,sDifference,Frequency\n";
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
@@ -887,14 +924,14 @@ function exportToCSV(differences, stats, fileName) {
 
         // Ensure each metric aligns with difference and frequency values
         const metrics = [
-            { name: "mean", value: values.mean },
-            { name: "variance", value: values.variance },
-            { name: "stdDev", value: values.stdDev },
-            { name: "median", value: values.median },
-            { name: "min", value: values.min },
-            { name: "max", value: values.max },
-            { name: "skewness", value: values.skewness },
-            { name: "kurtosis", value: values.kurtosis }
+            { name: "Mean", value: values.mean },
+            { name: "Variance", value: values.variance },
+            { name: "StdDev", value: values.stdDev },
+            { name: "Median", value: values.median },
+            { name: "Min", value: values.min },
+            { name: "Max", value: values.max },
+            { name: "Skewness", value: values.skewness },
+            { name: "Kurtosis", value: values.kurtosis }
         ];
 
         const frequencyKeys = Object.keys(frequencyDistribution);
@@ -903,7 +940,7 @@ function exportToCSV(differences, stats, fileName) {
             const difference = frequencyKeys[i] || "";
             const frequency = difference ? frequencyDistribution[difference] : "";
 
-            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},,${difference},${frequency}\n`;
+            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
         }
 
         csvContent += "\n"; // Blank row between categories

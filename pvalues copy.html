@@ -236,8 +236,6 @@
     </div>
     <div class="results-container">
         <input type="file" id="fileInput" accept=".csv" multiple>
-        <button id="saveButton" style="display:none;">Save Results</button>
-
         <h3>Results:</h3>    
         <p>Total Spins: <span id="totalSpins"></span></p>
         <p>Chi-Square Value: <span id="chiSquare"></span></p>
@@ -293,8 +291,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         alert("No files selected.");
         return;
     }
-    
-    processedFileNames = [...files].map(file => file.name); // Store filenames for later use
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -363,9 +359,6 @@ function processConcatenatedCSVData(csvData) {
     console.log("Data Rows Before Processing:", dataRows);
 
     processData(dataRows);
-    
-    document.getElementById('saveButton').style.display = 'block';  // Show save button after processing
-
 }
 
 function processData(rows) {
@@ -383,37 +376,6 @@ function processData(rows) {
 
     finalizeResults(observed, totalSpins, 38);
 }
-
-// Save results function
-document.getElementById('saveButton').addEventListener('click', function() {
-    let outputText = "Processed File(s):\n" + processedFileNames.join(", ") + "\n\n";
-    
-    // Capture displayed content
-    const explanation = document.getElementById("explanation").innerText;
-    const topContributors = document.getElementById("topContributors").innerText;
-    const totalSpins = document.getElementById("totalSpins").textContent;
-    const chiSquare = document.getElementById("chiSquare").textContent;
-    const pValue = document.getElementById("pValue").textContent;
-    const conclusion = document.getElementById("conclusion").textContent;
-
-    outputText += "Chi-Square Analysis Results:\n";
-    outputText += `Total Spins: ${totalSpins}\n`;
-    outputText += `Chi-Square Value: ${chiSquare}\n`;
-    outputText += `P-Value: ${pValue}\n`;
-    outputText += `Conclusion: ${conclusion}\n\n`;
-
-    outputText += "Significant Contributors:\n" + topContributors + "\n\n";
-    outputText += "Explanation:\n" + explanation + "\n";
-
-    // Convert to Blob and trigger download
-    const blob = new Blob([outputText], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "Processed_Results.txt";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
 
 function processCSVData(csvText, fileName) {
             const rows = csvText.trim().split("\n");

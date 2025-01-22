@@ -327,13 +327,21 @@ const left = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9,
 const right = [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];  
 
 function calculateAllSums(counts) {
+    let leftSum = sumColumns(counts, left);
+    let rightSum = sumColumns(counts, right);
+
+    // Adjusting left and right sums by considering half of 0 and 37 columns
+    leftSum = leftSum - (counts[37] / 2) + (counts[0] / 2);
+    rightSum = rightSum - (counts[0] / 2) + (counts[37] / 2);
+
     return {
         topBottomDiff: sumColumns(counts, TopIndices) - sumColumns(counts, BottomIndices),
-		leftRightDiff: sumColumns(counts, left) - sumColumns(counts, right),
+        leftRightDiff: leftSum - rightSum,
         cDiff: sumColumns(counts, cTop) - sumColumns(counts, cBottom),
         zzDiff: sumColumns(counts, zzCluster) - sumColumns(counts, zCluster)
     };
 }
+
 
 function sumColumns(counts, indices) {
     return indices.reduce((sum, idx) => sum + counts[idx], 0);

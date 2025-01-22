@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -452,28 +451,52 @@ function loadDefaultCSV(userCSVData) {
 
 function processConcatenatedCSVData(csvData) {
     const rows = csvData.trim().split("\n");
-    const nonEmptyRows = rows.filter(row => row.trim() !== "");
 
-    if (nonEmptyRows.length <= 1) {
+    if (rows.length <= 1) {
         alert("The combined CSV data does not contain enough data.");
         return;
     }
 
-    if (nonEmptyRows.length === 2) {
-        console.warn("Detected a one-run CSV file. Adding a default row of zeros.");
-        loadDefaultCSV(csvData);
-        return;
+    const dataRows = [];
+
+    rows.forEach(row => {
+        const values = row.split(",").map(value => value.trim());
+
+        // Detect and skip all header rows that match 0-37 pattern
+        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+
+        if (isHeader) {
+            console.log("Header row detected and skipped:", row);
+            return; // Skip header row
+        }
+
+        // Convert values to numbers, replacing null/empty with 0
+        const numericValues = values.map(val => {
+            if (val === "" || isNaN(val)) {
+                return 0; // Replace empty or non-numeric values with 0
+            }
+            return Number(val);
+        });
+
+        // Ensure valid data row length
+        if (numericValues.length === 38) {
+            dataRows.push(numericValues);
+        }
+    });
+
+    // If only one data row exists, add a default row of ones
+    if (dataRows.length === 1) {
+        console.warn("Detected a one-run CSV file. Adding a default row of ones.");
+        const onesRow = new Array(38).fill(1);
+        dataRows.push(onesRow);
     }
 
-    const headerRow = nonEmptyRows[0];
-    const dataRows = nonEmptyRows.slice(1).map(row => row.split(",").map(Number));
-
-    console.log("Header Row:", headerRow);
     console.log("Data Rows Before Processing:", dataRows);
 
     // Call processData with the parsed data
     processData(dataRows);
 }
+
 
 function calculateAndExportStatistics(dataRows, headerRow) {
     // Initialize streaming variables
@@ -890,15 +913,16 @@ function displayResults(differences, stats) {
 
         const frequencyCount = calculateFrequencyDistribution(differences[category]);
         const metricKeys = Object.keys(stats[category]);
-        const frequencyKeys = Object.keys(frequencyCount);
-        const maxLength = Math.max(metricKeys.length, frequencyKeys.length);
+        const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
+
+        const maxLength = Math.max(metricKeys.length, sortedFrequencyKeys.length);
 
         for (let i = 0; i < maxLength; i++) {
             const metric = metricKeys[i] || "";
-            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);  // Capitalize first letter
+            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);
             const value = metric ? stats[category][metric] : "";
-            const difference = frequencyKeys[i] || "";
-            const frequency = difference ? frequencyCount[difference] : "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = difference !== "" ? frequencyCount[difference] : "";
 
             tableHTML += `<tr>
                 <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
@@ -916,13 +940,15 @@ function displayResults(differences, stats) {
 
 function exportToCSV(differences, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Category,Metric,Value,sDifference,Frequency\n";
+    csvContent += "Category,Metric,Value,Difference,Frequency\n";
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(differences[category]);
 
-        // Ensure each metric aligns with difference and frequency values
+        // Sort frequency distribution by difference (numeric sorting)
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+
         const metrics = [
             { name: "Mean", value: values.mean },
             { name: "Variance", value: values.variance },
@@ -934,11 +960,10 @@ function exportToCSV(differences, stats, fileName) {
             { name: "Kurtosis", value: values.kurtosis }
         ];
 
-        const frequencyKeys = Object.keys(frequencyDistribution);
-        for (let i = 0; i < metrics.length || i < frequencyKeys.length; i++) {
+        for (let i = 0; i < Math.max(metrics.length, sortedFrequencyKeys.length); i++) {
             const metric = metrics[i] || { name: "", value: "" };
-            const difference = frequencyKeys[i] || "";
-            const frequency = difference ? frequencyDistribution[difference] : "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
 
             csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
         }
@@ -954,7 +979,6 @@ function exportToCSV(differences, stats, fileName) {
     link.click();
     document.body.removeChild(link);
 }
-
 
     
 </script>

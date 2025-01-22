@@ -315,20 +315,21 @@ class MaxHeap extends MinHeap {
 const TopIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
 const BottomIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
 
-const leftTop = [5, 22, 34, 15, 3, 24, 36, 13, 1];
-const leftBottom = [17, 32, 20, 7, 11, 30, 26, 9, 28];
-const rightTop = [27, 10, 25, 29, 12, 8, 19, 31, 18];
-const rightBottom = [2, 14, 35, 23, 4, 16, 33, 21, 6];
+const leftTop = [5, 22, 34, 15, 3];
+const leftBottom = [17, 32, 20, 7, 11];
+const rightTop = [12, 8, 19, 31, 18];
+const rightBottom = [4, 16, 33, 21, 6];
 const cTop = [24, 36, 13, 1, 0, 27, 10, 25, 29];
 const cBottom = [30, 26, 9, 28, 0, 2, 14, 35, 23];
 const zzCluster = [13, 1, 0, 27, 10];
 const zCluster = [9, 28, 0, 2, 14];
+const left = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28]; 
+const right = [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];  
 
 function calculateAllSums(counts) {
     return {
         topBottomDiff: sumColumns(counts, TopIndices) - sumColumns(counts, BottomIndices),
-        leftRightDiff1: (sumColumns(counts, leftTop) + sumColumns(counts, leftBottom)) - (sumColumns(counts, rightTop) + sumColumns(counts, rightBottom)),
-        leftRightDiff2: (sumColumns(counts, leftTop) + sumColumns(counts, rightBottom)) - (sumColumns(counts, rightTop) + sumColumns(counts, leftBottom)),
+		leftRightDiff: sumColumns(counts, left) - sumColumns(counts, right),
         cDiff: sumColumns(counts, cTop) - sumColumns(counts, cBottom),
         zzDiff: sumColumns(counts, zzCluster) - sumColumns(counts, zCluster)
     };
@@ -343,17 +344,15 @@ function processData(rows) {
     let statsCollection = {};
     const differences = {
         topBottom: [],
-        leftRight1: [],
-        leftRight2: [],
+        leftRight: [],
         cGroup: [],
         zzGroup: []
     };
 
     rows.forEach(counts => {
-        const { topBottomDiff, leftRightDiff1, leftRightDiff2, cDiff, zzDiff } = calculateAllSums(counts);
+        const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
         differences.topBottom.push(topBottomDiff);
-        differences.leftRight1.push(leftRightDiff1);
-        differences.leftRight2.push(leftRightDiff2);
+        differences.leftRight.push(leftRightDiff);
         differences.cGroup.push(cDiff);
         differences.zzGroup.push(zzDiff);
     });
@@ -695,33 +694,29 @@ function generateRandomRuns() {
 
     const differences = {
         topBottom: [],
-        leftRight1: [],
-        leftRight2: [],
+        leftRight: [],
         cGroup: [],
         zzGroup: []
     };
 
     const heaps = {
         topBottom: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        leftRight1: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        leftRight2: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
+        leftRight: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
         cGroup: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
         zzGroup: { maxHeap: new MaxHeap(), minHeap: new MinHeap() }
     };
 
     for (let i = 0; i < numRuns; i++) {
     const counts = getRandomCounts(38); // Simulate 38 picks for this run
-        const { topBottomDiff, leftRightDiff1, leftRightDiff2, cDiff, zzDiff } = calculateAllSums(counts);
+        const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
 
         differences.topBottom.push(topBottomDiff);
-        differences.leftRight1.push(leftRightDiff1);
-        differences.leftRight2.push(leftRightDiff2);
+        differences.leftRight.push(leftRightDiff);
         differences.cGroup.push(cDiff);
         differences.zzGroup.push(zzDiff);
 
         updateHeaps(heaps.topBottom, topBottomDiff);
-        updateHeaps(heaps.leftRight1, leftRightDiff1);
-        updateHeaps(heaps.leftRight2, leftRightDiff2);
+        updateHeaps(heaps.leftRight, leftRightDiff);
         updateHeaps(heaps.cGroup, cDiff);
         updateHeaps(heaps.zzGroup, zzDiff);
     }
@@ -890,8 +885,7 @@ function displayDescriptiveStatistics(stats) {
 
 const categoryLabels = {
     topBottom: "Top - Bottom",
-    leftRight1: "Left - Right",
-    leftRight2: "X Quadrant",
+    leftRight: "Left - Right",
     cGroup: "Center 9",
     zzGroup: "00 - 0"
 };

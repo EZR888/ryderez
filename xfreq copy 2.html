@@ -913,16 +913,15 @@ function displayResults(differences, stats) {
 
         const frequencyCount = calculateFrequencyDistribution(differences[category]);
         const metricKeys = Object.keys(stats[category]);
-        const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
-
-        const maxLength = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+        const frequencyKeys = Object.keys(frequencyCount);
+        const maxLength = Math.max(metricKeys.length, frequencyKeys.length);
 
         for (let i = 0; i < maxLength; i++) {
             const metric = metricKeys[i] || "";
-            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);
+            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);  // Capitalize first letter
             const value = metric ? stats[category][metric] : "";
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyCount[difference] : "";
+            const difference = frequencyKeys[i] || "";
+            const frequency = difference ? frequencyCount[difference] : "";
 
             tableHTML += `<tr>
                 <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
@@ -940,15 +939,13 @@ function displayResults(differences, stats) {
 
 function exportToCSV(differences, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Category,Metric,Value,Difference,Frequency\n";
+    csvContent += "Category,Metric,Value,sDifference,Frequency\n";
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(differences[category]);
 
-        // Sort frequency distribution by difference (numeric sorting)
-        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-
+        // Ensure each metric aligns with difference and frequency values
         const metrics = [
             { name: "Mean", value: values.mean },
             { name: "Variance", value: values.variance },
@@ -960,10 +957,11 @@ function exportToCSV(differences, stats, fileName) {
             { name: "Kurtosis", value: values.kurtosis }
         ];
 
-        for (let i = 0; i < Math.max(metrics.length, sortedFrequencyKeys.length); i++) {
+        const frequencyKeys = Object.keys(frequencyDistribution);
+        for (let i = 0; i < metrics.length || i < frequencyKeys.length; i++) {
             const metric = metrics[i] || { name: "", value: "" };
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+            const difference = frequencyKeys[i] || "";
+            const frequency = difference ? frequencyDistribution[difference] : "";
 
             csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
         }
@@ -979,6 +977,7 @@ function exportToCSV(differences, stats, fileName) {
     link.click();
     document.body.removeChild(link);
 }
+
 
     
 </script>

@@ -357,50 +357,20 @@ function processData(rows) {
         zzGroup: []
     };
 
-    // New group sums
-    const groupSums = {
-        left: [],
-        right: [],
-        cTop: [],
-        cBottom: [],
-        zzCluster: [],
-        zCluster: []
-    };
-
     rows.forEach(counts => {
-        let leftSum = sumColumns(counts, left) - (counts[37] / 2) + (counts[0] / 2);
-        let rightSum = sumColumns(counts, right) - (counts[0] / 2) + (counts[37] / 2);
-
-        const topBottomDiff = sumColumns(counts, TopIndices) - sumColumns(counts, BottomIndices);
-        const leftRightDiff = leftSum - rightSum;
-        const cDiff = sumColumns(counts, cTop) - sumColumns(counts, cBottom);
-        const zzDiff = sumColumns(counts, zzCluster) - sumColumns(counts, zCluster);
-
+        const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
         differences.topBottom.push(topBottomDiff);
         differences.leftRight.push(leftRightDiff);
         differences.cGroup.push(cDiff);
         differences.zzGroup.push(zzDiff);
-
-        // Store group sums
-        groupSums.left.push(leftSum);
-        groupSums.right.push(rightSum);
-        groupSums.cTop.push(sumColumns(counts, cTop));
-        groupSums.cBottom.push(sumColumns(counts, cBottom));
-        groupSums.zzCluster.push(sumColumns(counts, zzCluster));
-        groupSums.zCluster.push(sumColumns(counts, zCluster));
     });
 
     Object.keys(differences).forEach(category => {
         statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
     });
 
-    Object.keys(groupSums).forEach(group => {
-        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-    });
-
-    // Pass groupSums to exportToCSV and displayResults
-    exportToCSV(differences, groupSums, statsCollection, `FreqDist_Analysis.csv`);
-    displayResults(differences, groupSums, statsCollection);
+    exportToCSV(differences, statsCollection, `FreqDist_Analysis.csv`);
+    displayResults(differences, statsCollection);
 }
 
        	// Event listener for the Simulator button
@@ -520,6 +490,13 @@ function processConcatenatedCSVData(csvData) {
             dataRows.push(numericValues);
         }
     });
+
+    // If only one data row exists, add a default row of ones
+    if (dataRows.length === 1) {
+        console.warn("Detected a one-run CSV file. Adding a default row of ones.");
+        const onesRow = new Array(38).fill(1);
+        dataRows.push(onesRow);
+    }
 
     console.log("Data Rows Before Processing:", dataRows);
 
@@ -921,13 +898,11 @@ const categoryLabels = {
     zzGroup: "00 - 0"
 };
 
-function displayResults(differences, groupSums, stats) {
+function displayResults(differences, stats) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
 
-    const allCategories = { ...differences, ...groupSums };
-
-    Object.keys(allCategories).forEach(category => {
+    Object.keys(differences).forEach(category => {
         let categoryLabel = categoryLabels[category] || category;
         let tableHTML = `<h3><center>${categoryLabel} Statistics and Frequency Distribution</h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
@@ -938,7 +913,7 @@ function displayResults(differences, groupSums, stats) {
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                       </tr>`;
 
-        const frequencyCount = calculateFrequencyDistribution(allCategories[category]);
+        const frequencyCount = calculateFrequencyDistribution(differences[category]);
         const metricKeys = Object.keys(stats[category]);
         const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
 
@@ -965,15 +940,13 @@ function displayResults(differences, groupSums, stats) {
 }
 
 
-function exportToCSV(differences, groupSums, stats, fileName) {
+function exportToCSV(differences, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Category,Metric,Value,Difference,Frequency\n";
 
-    const allCategories = { ...differences, ...groupSums };
-
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
+        const frequencyDistribution = calculateFrequencyDistribution(differences[category]);
 
         // Sort frequency distribution by difference (numeric sorting)
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);

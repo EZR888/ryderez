@@ -235,7 +235,7 @@
         <h1 class="header-text">Data Analysis</h1>
     </div>
     <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv" multiple>
+        <input type="file" id="fileInput" accept=".csv">
         <button id="saveButton" style="display:none;" class="button-sim">Save Results</button>
 
         <h3>Results:</h3>    
@@ -386,7 +386,7 @@ function processData(rows) {
 
 // Save results function
 document.getElementById('saveButton').addEventListener('click', function() {
-    let outputText = "Processed File(s):\n" + processedFileNames.join(", ") + "\n\n";
+    let outputText = "Processed File:\n" + processedFileNames.join(", ") + "\n\n";
     
     // Capture displayed content
     const explanation = document.getElementById("explanation").innerText;
@@ -409,7 +409,7 @@ document.getElementById('saveButton').addEventListener('click', function() {
     const blob = new Blob([outputText], { type: "text/plain" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "Processed_Results.txt";
+    link.download = "pvalueOutput.txt";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

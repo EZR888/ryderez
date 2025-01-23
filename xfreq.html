@@ -930,8 +930,10 @@ function displayResults(differences, groupSums, stats) {
         }
 
         let categoryLabel = categoryLabels[category] || category;
+		let formattedCategoryLabel = `<span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span>`;
+
         let columnHeader = totalCategories.includes(category) ? "Total" : "Difference";
-        let tableHTML = `<h3><center>${categoryLabel} Statistics and Frequency Distribution</h3>`;
+        let tableHTML = `<h3><center>${formattedCategoryLabel}</h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>

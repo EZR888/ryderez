@@ -346,8 +346,8 @@ function calculateAllSums(counts) {
 function processData(rows) {
     let statsCollection = {};
     const differences = {
-        topBottom: [],
-        leftRight: [],
+        topBottomDiff: [],
+        leftRightDiff: [],
         cDiff: [],
         zzDiff: []
     };
@@ -363,8 +363,8 @@ function processData(rows) {
         }
 
         const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
-        differences.topBottom.push(topBottomDiff);
-        differences.leftRight.push(leftRightDiff);
+        differences.topBottomDiff.push(topBottomDiff);
+        differences.leftRightDiff.push(leftRightDiff);
         differences.cDiff.push(cDiff);
         differences.zzDiff.push(zzDiff);
     });
@@ -684,10 +684,9 @@ function generateRandomRuns() {
         return;
     }
 
-    // Proper initialization of differences and group sums
     const differences = {
-        topBottom: [],
-        leftRight: [],
+        topBottomDiff: [],
+        leftRightDiff: [],
         cDiff: [],
         zzDiff: []
     };
@@ -702,12 +701,15 @@ function generateRandomRuns() {
             const counts = getRandomCounts(38);
             const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
 
-            differences.topBottom.push(topBottomDiff);
-            differences.leftRight.push(leftRightDiff);
+            differences.topBottomDiff.push(topBottomDiff);
+            differences.leftRightDiff.push(leftRightDiff);
             differences.cDiff.push(cDiff);
             differences.zzDiff.push(zzDiff);
 
             for (const key in groupIndices) {
+                if (!groupSums[key]) {
+                    groupSums[key] = []; // Ensure it's initialized
+                }
                 groupSums[key].push(sumColumns(counts, groupIndices[key]));
             }
         }
@@ -892,12 +894,28 @@ function displayDescriptiveStatistics(stats) {
 }
 
 const categoryLabels = {
-    topBottom: "Top - Bottom",
-    leftRight: "Left - Right",
-    cGroup: "Center 9",
-    zzGroup: "00 - 0"
-    
+    topBottomDiff: "Top - Bottom: ",
+    leftRightDiff: "Left - Right: ",
+    cDiff: "Center 9 - Center 9: ",
+    zzDiff: "00 - 0: ",
+    topIndices: "Top: ",
+    bottomIndices: "Bottom: ",
+    leftTop: "Left Top: ",
+    leftBottom: "Left Bottom: ",
+    rightTop: "Right Top: ",
+    rightBottom: "Right Bottom: ",
+    cTop: "Center Top: ",
+    cBottom: "Center Bottom: ",
+    zzCluster: "00 Cluster: ",
+    zCluster: "0 Cluster: ",
+    left: "Left: ",
+    right: "Right: "
 };
+
+const totalCategories = [
+    "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
+    "cTop", "cBottom", "zzCluster", "zCluster", "left", "right"
+];
 
 function displayResults(differences, groupSums, stats) {
     const explanationElement = document.getElementById("explanation");
@@ -908,16 +926,17 @@ function displayResults(differences, groupSums, stats) {
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) {
             console.warn(`Missing statistics for category: ${category}`);
-            return; 
+            return;
         }
 
         let categoryLabel = categoryLabels[category] || category;
+        let columnHeader = totalCategories.includes(category) ? "Total" : "Difference";
         let tableHTML = `<h3><center>${categoryLabel} Statistics and Frequency Distribution</h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Difference</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                       </tr>`;
 
@@ -947,7 +966,6 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-
 function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Category,Metric,Value,Difference,Frequency\n";
@@ -962,6 +980,7 @@ function exportToCSV(differences, groupSums, stats, fileName) {
 
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category] || []);
+        let columnHeader = totalCategories.includes(category) ? "Total" : "Difference";
 
         if (!frequencyDistribution) {
             console.error(`No frequency distribution found for category: ${category}`);
@@ -989,7 +1008,7 @@ function exportToCSV(differences, groupSums, stats, fileName) {
             csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
         }
 
-        csvContent += "\n"; 
+        csvContent += "\n";
     });
 
     const encodedUri = encodeURI(csvContent);

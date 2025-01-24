@@ -753,7 +753,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
     // Display a prompt to the user
-    const choice = confirm("Do you want to save as 'Single Row' (OK) or 'Split Row' (Cancel)?");
+    const choice = confirm("Do you want to save as 'Split Row' (Cancel) 'Single Row' (OK) ?");
 
     if (choice) {
         savePDFSingle();  // Call function for Single Row layout

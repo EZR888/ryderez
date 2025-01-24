@@ -879,24 +879,24 @@ doc.autoTable({
         let appliedColor = false;
         const cellValue = parseFloat(data.cell.raw);
 
-        if (!isNaN(cellValue)) {
-            if (cellValue === 3) {
-                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
-                appliedColor = true;
-            } else if (cellValue === 4) {
-                data.cell.styles.fillColor = getColorForStyle('Gold');
-                appliedColor = true;
-            } else if (cellValue === 5) {
-                data.cell.styles.fillColor = getColorForStyle('lightcoral');
-                appliedColor = true;
-            } else if (cellValue === 6) {
-                data.cell.styles.fillColor = getColorForStyle('light-orange');
-                appliedColor = true;
-            } else if (cellValue >= 7) {
-                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
-                appliedColor = true;
-            }
-        }
+       // if (!isNaN(cellValue)) {
+       //     if (cellValue === 3) {
+       //         data.cell.styles.fillColor = getColorForStyle('light-red');
+       //         appliedColor = true;
+       //     } else if (cellValue === 4) {
+       //         data.cell.styles.fillColor = getColorForStyle('Gold');
+       //         appliedColor = true;
+       //     } else if (cellValue === 5) {
+       //         data.cell.styles.fillColor = getColorForStyle('violet');
+       //         appliedColor = true;
+       //     } else if (cellValue === 6) {
+       //         data.cell.styles.fillColor = getColorForStyle('light-orange');
+       //         appliedColor = true;
+       //     } else if (cellValue >= 7) {
+       //         data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+       //         appliedColor = true;
+       //     }
+      //  }
 
         if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
             data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
@@ -1140,16 +1140,25 @@ didParseCell: function (data) {
 
             // Specific value-based coloring
             const cellValue = parseFloat(data.cell.text);
-            if (!isNaN(cellValue) && cellValue === 3) {
+            
+        if (!isNaN(cellValue)) {
+            if (cellValue === 3) {
                 data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
                 appliedColor = true;
-            } else if (!isNaN(cellValue) && cellValue === 4) {
+            } else if (cellValue === 4) {
                 data.cell.styles.fillColor = getColorForStyle('Gold');
                 appliedColor = true;
-            } else if (!isNaN(cellValue) && cellValue >= 5) {
+            } else if (cellValue === 5) {
                 data.cell.styles.fillColor = getColorForStyle('light-green');
                 appliedColor = true;
+            } else if (cellValue === 6) {
+                data.cell.styles.fillColor = getColorForStyle('light-orange');
+                appliedColor = true;
+            } else if (cellValue >= 7) {
+                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+                appliedColor = true;
             }
+        }
 
             // Apply default light-yellow for specific columns if no color applied
             const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];

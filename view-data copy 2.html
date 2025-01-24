@@ -851,118 +851,145 @@ function savePDFSplit() {
     const processedData = [];
 
     // Process each row of data
-    data.forEach((row, index) => {
-        const rowNumber = index + 1;
+data.forEach((row, index) => {
+    const rowNumber = index + 1;  // Adding row numbers
 
-        // First half with row number
-        const topHalf = topHalfIndices.map(idx => row[idx] || "");
-        topHalf[0] = rowNumber.toString(); 
+    // First half with row number
+    const topHalf = topHalfIndices.map(idx => row[idx] || "");
+    topHalf[0] = rowNumber.toString(); // Add row number only to first half
 
-        // Second half with an empty cell for row number space
-        const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
-        bottomHalf[0] = ''; 
+    // Second half with an empty cell for row number space
+    const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
+    bottomHalf[0] = ''; // Empty cell in second half
 
-        // Push the first half of the header with row #
-        processedData.push(topHalfHeaders);
-        processedData.push(topHalf);
+    // Push the first half of the header with row #
+    processedData.push(topHalfHeaders);
+    processedData.push(topHalf);
 
-        // Push the second half of the header with empty cell instead of row number
-        const bottomHeaderRow = [...bottomHalfHeaders];
-        bottomHeaderRow[0] = '';
+    // Push the second half of the header with empty cell instead of row number
+    const bottomHeaderRow = [...bottomHalfHeaders];
+    bottomHeaderRow[0] = '';  // Ensure empty cell for second half header row
 
-        processedData.push(bottomHeaderRow);
-        processedData.push(bottomHalf);
+    processedData.push(bottomHeaderRow);
+    processedData.push(bottomHalf);
 
-        // Add an empty row for spacing
-        processedData.push(Array(topHalfHeaders.length).fill(''));
-    });
+    // Add an empty row for spacing
+    processedData.push(Array(topHalfHeaders.length).fill(''));
+});
 
-    const timestamp = getFormattedTimestamp();
-    const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
+const timestamp = getFormattedTimestamp();
+const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
 
-    doc.autoTable({
-        body: processedData,
-        startY: 20,  // Decreased starting Y position
-        theme: 'grid',
-        margin: { top: 20, left: 16, right: 16, bottom: 10 },  // Reduced margins
-        styles: {
-            fontSize: 10,  // Reduced font size
-            cellPadding: 1.5,  // Reduced padding
-            overflow: 'linebreak',
-            fontStyle: 'bold',
-            halign: 'center',
-        },
-        headStyles: {
-            fontSize: 6,  // Slightly smaller header font size
-            textColor: [255, 255, 255],
-            fillColor: [0, 51, 102],
-            halign: 'center',
-        },
-        didParseCell: function (data) {
-            const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
-            const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
-            const greenColumns = ['0', '00'];
-            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+doc.autoTable({
+    body: processedData,
+    startY: 25,
+    theme: 'grid',
+    margin: { top: 25, left: 10, right: 10, bottom: 10 },
+    styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        fontStyle: 'bold',
+        halign: 'center',
+    },
+    headStyles: {
+        fontSize: 7,
+        textColor: [255, 255, 255],
+        fillColor: [0, 51, 102], // Correct header color
+        halign: 'center',
+    },
+    didParseCell: function (data) {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00'];  // For green columns
+        const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
 
-            const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
+        const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
 
-            if (isHeaderRow) {
-                const headerValue = data.cell.raw.trim();
-                if (greenColumns.includes(headerValue)) {
-                    data.cell.styles.fillColor = [0, 200, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (redColumns.includes(headerValue)) {
-                    data.cell.styles.fillColor = [255, 0, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (blackColumns.includes(headerValue)) {
-                    data.cell.styles.fillColor = [0, 0, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else {
-                    data.cell.styles.fillColor = [200, 200, 200];
-                    data.cell.styles.textColor = [0, 0, 0];
-                }
-                return;
+        if (isHeaderRow) {
+            const headerValue = data.cell.raw.trim();
+            if (greenColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [0, 200, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (redColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [255, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (blackColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [0, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else {
+                data.cell.styles.fillColor = [200, 200, 200];
+                data.cell.styles.textColor = [0, 0, 0];
             }
+            return;
+        }
 
-            if (data.column.index === 0) {
-                if (data.cell.raw === '#') {
-                    data.cell.styles.fillColor = [112, 128, 144];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (data.row.raw.every(cell => cell === "")) {
-                    data.cell.styles.fillColor = [255, 255, 255];
-                    data.cell.styles.textColor = [0, 0, 0];
-                } else {
-                    data.cell.styles.fillColor = [211, 211, 211];
-                    data.cell.styles.textColor = [0, 0, 0];
-                }
-                return;
-            }
-
-            if (data.row.raw.every(cell => cell === "")) {
+        if (data.column.index === 0) {
+            if (data.cell.raw === '#') {
+                data.cell.styles.fillColor = [112, 128, 144];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (data.row.raw.every(cell => cell === "")) {
                 data.cell.styles.fillColor = [255, 255, 255];
                 data.cell.styles.textColor = [0, 0, 0];
-                return;
-            }
-
-            let appliedColor = false;
-            const cellValue = parseFloat(data.cell.raw);
-
-            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-                appliedColor = true;
-            }
-
-            if (!appliedColor) {
+            } else {
                 data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.textColor = [0, 0, 0];
             }
-        },
-        didDrawPage: function () {
-            doc.setFontSize(12);  // Smaller title font
-            doc.text(filename.replace('.pdf', ''), 14, 10);  // Moved closer to top
+            return;
         }
-    });
 
-    doc.save(filename);
+        if (data.row.raw.every(cell => cell === "")) {
+            data.cell.styles.fillColor = [255, 255, 255];
+            data.cell.styles.textColor = [0, 0, 0];
+            return;
+        }
+
+        let appliedColor = false;
+        const cellValue = parseFloat(data.cell.raw);
+
+       // if (!isNaN(cellValue)) {
+       //     if (cellValue === 3) {
+       //         data.cell.styles.fillColor = getColorForStyle('light-red');
+       //         appliedColor = true;
+       //     } else if (cellValue === 4) {
+       //         data.cell.styles.fillColor = getColorForStyle('Gold');
+       //         appliedColor = true;
+       //     } else if (cellValue === 5) {
+       //         data.cell.styles.fillColor = getColorForStyle('violet');
+       //         appliedColor = true;
+       //     } else if (cellValue === 6) {
+       //         data.cell.styles.fillColor = getColorForStyle('light-orange');
+       //         appliedColor = true;
+       //     } else if (cellValue >= 7) {
+       //         data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+       //         appliedColor = true;
+       //     }
+      //  }
+
+        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+            appliedColor = true;
+        }
+
+        if (!appliedColor) {
+            data.cell.styles.fillColor = [211, 211, 211];
+        }
+    },
+    didDrawPage: function (data) {
+        const currentY = doc.autoTable.previous.finalY || 25;
+        const pageHeight = doc.internal.pageSize.height;
+
+        // Check if adding the next set of 4 rows exceeds the page height
+        if (currentY + (4 * 10) > pageHeight - 20) {
+            doc.addPage();
+        }
+
+        doc.setFontSize(16);
+        doc.text(filename.replace('.pdf', ''), 14, 15);
+    }
+});
+
+doc.save(filename);
 }
 
 // Function to get the correct color based on the provided style

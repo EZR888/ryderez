@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,39 @@
     <!-- Include all your CSS styles -->
     <title>CSV Reader</title>
     <style>
+    
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
         body {
             background-color: black;
             color: lightgreen;
@@ -186,9 +220,6 @@ th:nth-child(20), td:nth-child(20) {
         #saveButton {
             background-color: blue;
         }
-        #showStatsButton {
-            background-color: slategray;
-        }
         #savePdfButton {
             background-color: purple;
         }
@@ -225,6 +256,11 @@ th:nth-child(20), td:nth-child(20) {
            font-size: 20px;
            color: lightgray;
         }
+        h3 {
+           font-size: 30px;
+           color: black;
+        }
+    
         .info-item2 {
     width: 60px;
     height: 40px;
@@ -255,7 +291,76 @@ th:nth-child(20), td:nth-child(20) {
     background-color: lightgray;
     color: black;
 }
+      .framed-buttons {
+        border: 2px solid lightblue; /* Frame color */
+        padding: 15px;
+        background-color: #f9f9f9; /* Light background for contrast */
+        border-radius: 10px; /* Rounded corners */
+        display: inline-flex; /* Inline layout for buttons */
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        justify-content: space-around; /* Space between buttons */
+    }
 
+    .button {
+        font-size: 120%; /* 20% larger than 60% */
+        padding: 6px 12px; /* Increased padding by 20% */
+        margin: 5px; /* Keeps consistent spacing */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    }
+
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray; 
+      color: black !important;
+    }  
+
+    .button-purple:hover {
+      background-color: darkviolet;
+    }
+    
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {	
+        background-color: violet;
+        color: black;
+    }
+    
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    }
 
     </style>
     <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
@@ -263,6 +368,32 @@ th:nth-child(20), td:nth-child(20) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
+    <div class="container">
+        <div>
+            <div class="framed-section2">
+&nbsp;&nbsp;&nbsp;<button id="howToUseButton"class="button button-purple">How To Use</button>
+                <button id="simButton" class="button button-sim">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
+                <button id="singleSpinButton"class="button button-single">Single Spin</button>
+            </div>
+        </div>
+        <br>
+    </div>    
+               <!-- Instructions Modal -->
+        <div id="instructionsModal" class="modal">
+            <div class="modal-content">
+                <button class="close-button" id="closeModalButton">&times;</button>
+                <h3>Instructions</h3>
+                <p>Select a .csv file that starts with "Multi" or "SaveCSV"<br><br>
+                   Clicking a colored box will load a run of whatever the number is in parens, times 1,000.<br><br>
+                   Currently, the 8 (1) box will actually load a 10,000 row run.<br><br>
+                </p>
+            </div>
+        </div>
+        
     <!-- Your HTML content remains the same -->
     <div class="container">
         <div class="info-container">
@@ -279,14 +410,13 @@ th:nth-child(20), td:nth-child(20) {
             <div class="info-item2 clickable" data-type="17">17 (10)</div>
         </div>
         <div class="file-input-container">
-            <h2>Select CSV file</h2>
+            <h2>Select CSV File</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
             <button id="sortByHighestValue">Sort by Highest Value</button>
             <button id="sortByLowestValue">Reverse Sort</button>
             <button id="sortCols">Sort Columns</button>
             <button id="saveButton">Save to CSV</button>
             <button id="savePdfButton">Save to PDF</button>
-            <button id="showStatsButton">View Stats</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div> 
     </div>
@@ -295,8 +425,39 @@ th:nth-child(20), td:nth-child(20) {
         <thead></thead>
         <tbody></tbody>
     </table>
+  </div>
 
-    <script>
+  <script>
+    
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
     
            // Function to generate a formatted timestamp // 
         function getFormattedTimestamp() {
@@ -721,10 +882,12 @@ didParseCell: function (data) {
         const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
         const greenColumns = ['0', '00']; // For green columns
 
-        // Get the column index and header text
-        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
+        // Default lightgray background for all cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
 
         // Apply colors based on header value
+        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
+
         if (greenColumns.includes(headerValue)) {
             // Green for '0' and '00'
             data.cell.styles.fillColor = [0, 200, 0]; // Green RGB
@@ -737,15 +900,14 @@ didParseCell: function (data) {
             // Black for specific columns
             data.cell.styles.fillColor = [0, 0, 0]; // Black RGB
             data.cell.styles.textColor = [255, 255, 255]; // White text
-        } else {
-            // Default color for undefined columns
-            data.cell.styles.fillColor = [200, 200, 200]; // Light gray
-            data.cell.styles.textColor = [0, 0, 0]; // Black text
         }
     }
 
     if (data.row.section === 'body') {
         const row = data.row.raw;
+
+        // Default lightgray background for all body cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
 
         if (data.column.index === 0) {
             // Line number column
@@ -807,6 +969,7 @@ didParseCell: function (data) {
     }
 },
 
+
         didDrawPage: function () {
             doc.setFontSize(16);
             const titleX = 14;
@@ -842,7 +1005,7 @@ didParseCell: function (data) {
 }		
 
         // Event listener for 'showStatsButton'
-        document.getElementById('showStatsButton').addEventListener('click', function() {
+        document.getElementById('viewStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
@@ -895,5 +1058,27 @@ didParseCell: function (data) {
         });    
 
     </script>
+    
+    <script>
+    // Modal functionality
+    const modal = document.getElementById('instructionsModal');
+    const howToUseButton = document.getElementById('howToUseButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    howToUseButton.onclick = function() {
+      modal.style.display = 'flex';
+    }
+
+    closeModalButton.onclick = function() {
+      modal.style.display = 'none';
+    }
+
+    // Close the modal if clicked outside of the modal content
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>

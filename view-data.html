@@ -751,8 +751,200 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             document.body.removeChild(link);
         });
 
-// Event listener for 'savePdfButton' to save table to PDF
 document.getElementById('savePdfButton').addEventListener('click', function() {
+    // Display a prompt to the user
+    const choice = confirm("Do you want to save as 'Single Row' (OK) or 'Split Row' (Cancel)?");
+
+    if (choice) {
+        savePDFSingle();  // Call function for Single Row layout
+    } else {
+        savePDFSplit();   // Call function for Split Row layout
+    }
+});
+
+function savePDFSplit() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    const table = document.querySelector('#csvTable');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+    );
+
+    // Define split indices (keeping index 0 for row numbers)
+    const topHalfIndices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    const bottomHalfIndices = [0,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+
+    // Extract header rows including row header
+    const topHalfHeaders = topHalfIndices.map(idx => headers[idx]);
+    const bottomHalfHeaders = bottomHalfIndices.map(idx => headers[idx]);
+
+    const processedData = [];
+
+    // Process each row of data
+data.forEach((row, index) => {
+    const rowNumber = index + 1;  // Adding row numbers
+
+    // First half with row number
+    const topHalf = topHalfIndices.map(idx => row[idx] || "");
+    topHalf[0] = rowNumber.toString(); // Add row number only to first half
+
+    // Second half with an empty cell for row number space
+    const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
+    bottomHalf[0] = ''; // Empty cell in second half
+
+    // Push the first half of the header with row #
+    processedData.push(topHalfHeaders);
+    processedData.push(topHalf);
+
+    // Push the second half of the header with empty cell instead of row number
+    const bottomHeaderRow = [...bottomHalfHeaders];
+    bottomHeaderRow[0] = '';  // Ensure empty cell for second half header row
+
+    processedData.push(bottomHeaderRow);
+    processedData.push(bottomHalf);
+
+    // Add an empty row for spacing
+    processedData.push(Array(topHalfHeaders.length).fill(''));
+});
+
+const timestamp = getFormattedTimestamp();
+const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
+
+doc.autoTable({
+    body: processedData,
+    startY: 25,
+    theme: 'grid',
+    margin: { top: 25, left: 10, right: 10, bottom: 10 },
+    styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        fontStyle: 'bold',
+        halign: 'center',
+    },
+    headStyles: {
+        fontSize: 7,
+        textColor: [255, 255, 255],
+        fillColor: [0, 51, 102], // Correct header color
+        halign: 'center',
+    },
+    didParseCell: function (data) {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00'];  // For green columns
+        const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+
+        const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
+
+        if (isHeaderRow) {
+            const headerValue = data.cell.raw.trim();
+            if (greenColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [0, 200, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (redColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [255, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (blackColumns.includes(headerValue)) {
+                data.cell.styles.fillColor = [0, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else {
+                data.cell.styles.fillColor = [200, 200, 200];
+                data.cell.styles.textColor = [0, 0, 0];
+            }
+            return;
+        }
+
+        if (data.column.index === 0) {
+            if (data.cell.raw === '#') {
+                data.cell.styles.fillColor = [112, 128, 144];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (data.row.raw.every(cell => cell === "")) {
+                data.cell.styles.fillColor = [255, 255, 255];
+                data.cell.styles.textColor = [0, 0, 0];
+            } else {
+                data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.textColor = [0, 0, 0];
+            }
+            return;
+        }
+
+        if (data.row.raw.every(cell => cell === "")) {
+            data.cell.styles.fillColor = [255, 255, 255];
+            data.cell.styles.textColor = [0, 0, 0];
+            return;
+        }
+
+        let appliedColor = false;
+        const cellValue = parseFloat(data.cell.raw);
+
+        if (!isNaN(cellValue)) {
+            if (cellValue === 3) {
+                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+                appliedColor = true;
+            } else if (cellValue === 4) {
+                data.cell.styles.fillColor = getColorForStyle('Gold');
+                appliedColor = true;
+            } else if (cellValue === 5) {
+                data.cell.styles.fillColor = getColorForStyle('lightcoral');
+                appliedColor = true;
+            } else if (cellValue === 6) {
+                data.cell.styles.fillColor = getColorForStyle('light-orange');
+                appliedColor = true;
+            } else if (cellValue >= 7) {
+                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+                appliedColor = true;
+            }
+        }
+
+        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+            appliedColor = true;
+        }
+
+        if (!appliedColor) {
+            data.cell.styles.fillColor = [211, 211, 211];
+        }
+    },
+    didDrawPage: function (data) {
+        const currentY = doc.autoTable.previous.finalY || 25;
+        const pageHeight = doc.internal.pageSize.height;
+
+        // Check if adding the next set of 4 rows exceeds the page height
+        if (currentY + (4 * 10) > pageHeight - 20) {
+            doc.addPage();
+        }
+
+        doc.setFontSize(16);
+        doc.text(filename.replace('.pdf', ''), 14, 15);
+    }
+});
+
+doc.save(`SplitRow_${getFormattedTimestamp()}.pdf`);
+}
+
+// Function to get the correct color based on the provided style
+function getColorForStyle(style) {
+    const colorMap = {
+        'lightcoral': [255, 204, 204],
+        'light-blue': [173, 216, 230],
+        'light-orange': [255, 165, 0],
+        'violet': [238, 130, 238],
+        'DarkKhaki': [189, 183, 107],
+        'DarkSeaGreen': [143, 188, 143],
+        'LightSteelBlue': [176, 196, 222],
+        'Thistle': [216, 191, 216],
+        'GreenYellow': [173, 255, 47],
+        'Gold': [255, 215, 0],
+        'light-green': [144, 238, 144],
+        'default-light-yellow': [255, 255, 224]
+    };
+
+    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
+}
+
+function savePDFSingle() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 
@@ -981,27 +1173,9 @@ didParseCell: function (data) {
         }
     });
 
-    doc.save(filename);
-});
+    doc.save(`SingleRow_${getFormattedTimestamp()}.pdf`);
+}
 
-
-  
-  function getColorForStyle(style) {
-    const colorMap = {
-        'lightcoral': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Thistle': [255, 215, 0],
-        'GreenYellow': [144, 238, 144],
-        'Gold': [255, 255, 224]
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}		
 
         // Event listener for 'showStatsButton'
         document.getElementById('viewStatsButton').addEventListener('click', function() {
@@ -1078,6 +1252,8 @@ didParseCell: function (data) {
         modal.style.display = 'none';
       }
     }
+    
+
   </script>
 </body>
 </html>

@@ -361,73 +361,12 @@ th:nth-child(20), td:nth-child(20) {
             margin: 10px 0;
     }
 
-
-<!-- Modal Styles -->
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    text-align: center;
-    border-radius: 8px;
-  }
-
-  .modal-content button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  #splitRowBtn {
-    background-color: #007bff;
-    color: white;
-  }
-
-  #singleRowBtn {
-    background-color: #28a745;
-    color: white;
-  }
-
-  #splitRowBtn:hover {
-    background-color: #0056b3;
-  }
-
-  #singleRowBtn:hover {
-    background-color: #218838;
-  }
-
     </style>
     <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-
-<!-- Custom Modal -->
-<div id="savePdfModal" class="modal">
-  <div class="modal-content">
-    <h2>Select PDF Format</h2>
-    <p>Choose how you want to save the PDF:</p>
-    <button id="splitRowBtn">Split Row</button>
-    <button id="singleRowBtn">Single Row</button>
-  </div>
-</div>
-
-
     <div class="container">
         <div>
             <div class="framed-section2">
@@ -813,22 +752,15 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         });
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
-    // Show the modal
-    document.getElementById('savePdfModal').style.display = 'block';
-});
+    // Display a prompt to the user
+    const choice = confirm("Do you want to save as 'Split Row' (Cancel) 'Single Row' (OK) ?");
 
-// Handle 'Split Row' button click
-document.getElementById('splitRowBtn').addEventListener('click', function() {
-    document.getElementById('savePdfModal').style.display = 'none';
-    savePDFSplit();  // Call function for Split Row layout
+    if (choice) {
+        savePDFSingle();  // Call function for Single Row layout
+    } else {
+        savePDFSplit();   // Call function for Split Row layout
+    }
 });
-
-// Handle 'Single Row' button click
-document.getElementById('singleRowBtn').addEventListener('click', function() {
-    document.getElementById('savePdfModal').style.display = 'none';
-    savePDFSingle();  // Call function for Single Row layout
-});
-
 
 function savePDFSplit() {
     const { jsPDF } = window.jspdf;
@@ -989,7 +921,7 @@ doc.autoTable({
     }
 });
 
-doc.save(filename);
+doc.save(`SplitRow_${getFormattedTimestamp()}.pdf`);
 }
 
 // Function to get the correct color based on the provided style
@@ -1250,7 +1182,7 @@ didParseCell: function (data) {
         }
     });
 
-    doc.save(filename);
+    doc.save(`SingleRow_${getFormattedTimestamp()}.pdf`);
 }
 
 

@@ -211,8 +211,6 @@
 
 <script>
 
-let totalRuns = 0;
-
 class MinHeap {
     constructor() {
         this.heap = [];
@@ -489,9 +487,6 @@ function processConcatenatedCSVData(csvData) {
         }
     });
 
-    totalRuns = rows.length - 1;  // Counting the number of data rows (excluding header)
-    console.log("Total Runs from file:", totalRuns);
-
     console.log("Data Rows Before Processing:", dataRows);
 
     // Call processData with the parsed data
@@ -577,11 +572,7 @@ function calculateAndExportStatistics(dataRows, headerRow) {
     }
 }
 
-document.getElementById("runButton").addEventListener("click", () => {
-    totalRuns = parseInt(document.getElementById("numRuns").value, 10) || 0;
-    console.log("Total Runs from input:", totalRuns);
-    generateRandomRuns();
-});
+    document.getElementById("runButton").addEventListener("click", generateRandomRuns);
 
     const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
     const setBIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
@@ -841,6 +832,45 @@ function calculateMedian(arr) {
     return sorted.length % 2 !== 0 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4);
 }
 
+
+
+function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
+    const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
+
+    // Create a table with headers
+    let tableHTML = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid lightgreen;">
+                    <th style="padding: 8px; color: salmon;">Difference</th>
+                    <th style="padding: 8px; color: salmon;">Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Populate table rows
+    sortedKeys.forEach(key => {
+        const isObserved = Number(key) === observedDifference;
+        tableHTML += `
+            <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${key}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${frequencyDistribution[key]}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+
+    // Insert the table into the explanation section
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = tableHTML;
+}
+
+
 function displayDescriptiveStatistics(stats) {
     if (!stats || typeof stats !== "object") {
         console.error("Invalid statistics data provided for display.");
@@ -892,7 +922,6 @@ function displayResults(differences, groupSums, stats) {
     explanationElement.innerHTML = "";
 
     const allCategories = { ...differences, ...groupSums };
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
 
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) {
@@ -901,19 +930,16 @@ function displayResults(differences, groupSums, stats) {
         }
 
         let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
-        let tableHTML = `<h3><center><span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>`;
-        
+		let formattedCategoryLabel = `<span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span>`;
+
+        let columnHeader = totalCategories.includes(category) ? "Total" : "Difference";
+        let tableHTML = `<h3><center>${formattedCategoryLabel}</h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
                       </tr>`;
 
         const frequencyCount = calculateFrequencyDistribution(allCategories[category] || []);
@@ -928,14 +954,12 @@ function displayResults(differences, groupSums, stats) {
             const value = metric ? stats[category][metric] : "";
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyCount[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
             tableHTML += `<tr>
                 <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
                 <td style="padding: 8px; text-align: center;">${value}</td>
                 <td style="padding: 8px; text-align: center;">${difference}</td>
                 <td style="padding: 8px; text-align: center;">${frequency}</td>
-                <td style="padding: 8px; text-align: center;">${pValue}</td>
             </tr>`;
         }
 
@@ -944,24 +968,32 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-// Update exportToCSV function
 function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
+    csvContent += "Category,Metric,Value,Difference,Frequency\n";
+
+    const allCategories = { ...differences, ...groupSums };
 
     Object.entries(stats).forEach(([category, values]) => {
-        let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
-        csvContent += `Category,Metric,Value,${columnHeader},Frequency,P-Value\n`;
+        if (!allCategories[category]) {
+            console.warn(`Missing data for category: ${category}`);
+            return;
+        }
 
-        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category] || []);
+        let columnHeader = totalCategories.includes(category) ? "Total" : "Difference";
+
+        if (!frequencyDistribution) {
+            console.error(`No frequency distribution found for category: ${category}`);
+            return;
+        }
+
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
 
         const metrics = [
             { name: "Mean", value: values.mean },
+            { name: "Variance", value: values.variance },
             { name: "StdDev", value: values.stdDev },
             { name: "Median", value: values.median },
             { name: "Min", value: values.min },
@@ -974,9 +1006,8 @@ function exportToCSV(differences, groupSums, stats, fileName) {
             const metric = metrics[i] || { name: "", value: "" };
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
-            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
+            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
         }
 
         csvContent += "\n";

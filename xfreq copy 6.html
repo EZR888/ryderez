@@ -892,7 +892,6 @@ function displayResults(differences, groupSums, stats) {
     explanationElement.innerHTML = "";
 
     const allCategories = { ...differences, ...groupSums };
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
 
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) {
@@ -901,34 +900,31 @@ function displayResults(differences, groupSums, stats) {
         }
 
         let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
-        let tableHTML = `<h3><center><span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>`;
-        
+        let formattedCategoryLabel = `<span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span>`;
+
+        let tableHTML = `<h3><center>${formattedCategoryLabel}</center></h3>`;
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">Difference</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
                       </tr>`;
 
         const frequencyCount = calculateFrequencyDistribution(allCategories[category] || []);
-        const metricKeys = Object.keys(stats[category]);
         const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
-
-        const maxLength = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+        let maxLength = Math.max(Object.keys(stats[category]).length, sortedFrequencyKeys.length);
 
         for (let i = 0; i < maxLength; i++) {
+            const metricKeys = Object.keys(stats[category]);
             const metric = metricKeys[i] || "";
             const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
             const value = metric ? stats[category][metric] : "";
+
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyCount[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
+            const pValue = totalRuns > 0 && frequency ? (frequency / totalRuns).toFixed(6) : 'N/A';
 
             tableHTML += `<tr>
                 <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
@@ -944,39 +940,36 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-// Update exportToCSV function
 function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
+    csvContent += "Category,Metric,Value,Difference,Frequency,P-Value\n";
+
+    const allCategories = { ...differences, ...groupSums };
 
     Object.entries(stats).forEach(([category, values]) => {
-        let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
-        csvContent += `Category,Metric,Value,${columnHeader},Frequency,P-Value\n`;
+        if (!allCategories[category]) {
+            console.warn(`Missing data for category: ${category}`);
+            return;
+        }
 
-        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category] || []);
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
 
-        const metrics = [
-            { name: "Mean", value: values.mean },
-            { name: "StdDev", value: values.stdDev },
-            { name: "Median", value: values.median },
-            { name: "Min", value: values.min },
-            { name: "Max", value: values.max },
-            { name: "Skewness", value: values.skewness },
-            { name: "Kurtosis", value: values.kurtosis }
-        ];
+        csvContent += `${categoryLabel},\n`;
 
-        for (let i = 0; i < Math.max(metrics.length, sortedFrequencyKeys.length); i++) {
-            const metric = metrics[i] || { name: "", value: "" };
+        let maxLength = Math.max(Object.keys(values).length, sortedFrequencyKeys.length);
+
+        for (let i = 0; i < maxLength; i++) {
+            const metricKeys = Object.keys(values);
+            const metric = metricKeys[i] || "";
+            const value = metric ? values[metric] : "";
+
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
+            const pValue = totalRuns > 0 && frequency ? (frequency / totalRuns).toFixed(6) : 'N/A';
 
-            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
+            csvContent += `,${metric},${value},${difference},${frequency},${pValue}\n`;
         }
 
         csvContent += "\n";

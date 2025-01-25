@@ -1,0 +1,59 @@
+import numpy as np
+
+# Define the simulation parameters
+num_trials = 100000  # Number of simulations
+num_positions = 38  # Length of the number sequence
+num_values = 5  # Possible values (0 to 4)
+
+# Function to generate a random sequence
+def generate_sequence():
+    return np.random.randint(0, num_values, num_positions)
+
+# Function to check conditions
+def check_conditions(sequence):
+    first_half = sequence[:19]
+    second_half = sequence[19:]
+
+    # Condition 1: More than 90% of non-zero numbers in first half
+    non_zero_first_half = np.count_nonzero(first_half)
+    non_zero_total = np.count_nonzero(sequence)
+    if non_zero_total > 0 and (non_zero_first_half / non_zero_total) > 0.90:
+        return True
+
+    # Condition 2: More than 90% of non-zero numbers in second half
+    non_zero_second_half = np.count_nonzero(second_half)
+    if non_zero_total > 0 and (non_zero_second_half / non_zero_total) > 0.90:
+        return True
+
+    # Condition 3: No numbers greater than zero in center 5 of first half
+    center_first_half = first_half[7:12]
+    if np.all(center_first_half == 0):
+        return True
+
+    # Condition 4: No numbers greater than zero in center 5 of second half
+    center_second_half = second_half[7:12]
+    if np.all(center_second_half == 0):
+        return True
+
+    # Condition 5: 90% of non-zero numbers in first 7 of each half
+    first_7_first_half = np.count_nonzero(first_half[:7])
+    first_7_second_half = np.count_nonzero(second_half[:7])
+    total_14 = first_7_first_half + first_7_second_half
+    if non_zero_total > 0 and (total_14 / non_zero_total) > 0.90:
+        return True
+
+    # Condition 6: 90% of non-zero numbers in last 7 of each half
+    last_7_first_half = np.count_nonzero(first_half[-7:])
+    last_7_second_half = np.count_nonzero(second_half[-7:])
+    total_14_end = last_7_first_half + last_7_second_half
+    if non_zero_total > 0 and (total_14_end / non_zero_total) > 0.90:
+        return True
+
+    return False
+
+# Run the simulation
+matches = sum(check_conditions(generate_sequence()) for _ in range(num_trials))
+
+# Calculate the estimated probability
+estimated_odds = num_trials / matches if matches > 0 else None
+estimated_odds

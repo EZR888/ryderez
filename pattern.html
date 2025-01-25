@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Matching - Exact and Reversed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: lightgreen;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: salmon;
+            border: none;
+            color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .match {
+            color: lightgreen;
+            font-weight: bold;
+        }
+        .no-match {
+            color: salmon;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pattern Matching - Exact and Reversed</h1>
+    <button id="generateButton">Start Matching</button>
+    <div id="result"></div>
+
+    <script>
+        let attempts = 0;
+        let searching = false;
+
+        function generateRandomNumbers() {
+            const numbers = [];
+            for (let i = 0; i < 38; i++) {
+                numbers.push(Math.floor(Math.random() * 5)); // Random number between 0-4
+            }
+            return numbers;
+        }
+
+        function extractPattern(arr, start, length) {
+            return arr.slice(start, start + length);
+        }
+
+        function calculateOdds() {
+            const numValues = 5; // Numbers range from 0 to 4
+            const patternLength = 5;
+
+            // Calculate odds of a specific 5-number pattern occurring
+            const singlePatternOdds = Math.pow(numValues, patternLength);
+            const combinedOdds = singlePatternOdds * singlePatternOdds;
+
+            return `1 in ${combinedOdds.toLocaleString()}`;
+        }
+
+        function checkPatternMatch(firstHalf, secondHalf) {
+            const reversedSecondHalf = [...secondHalf].reverse();
+
+            const isExactMatch = firstHalf.toString() === secondHalf.toString();
+            const isReversedMatch = firstHalf.toString() === reversedSecondHalf.toString();
+
+            if (isExactMatch && isReversedMatch) {
+                return "Both Exact and Reversed Match";
+            } else if (isExactMatch) {
+                return "Exact Match";
+            } else if (isReversedMatch) {
+                return "Reversed Match";
+            } else {
+                return "No Match";
+            }
+        }
+
+        function runPatternCheck() {
+            if (!searching) return;
+
+            attempts++;
+            const numbers = generateRandomNumbers();
+            console.log(`Attempt ${attempts}:`, numbers);
+
+            const firstHalf = numbers.slice(0, 19);
+            const secondHalf = numbers.slice(19, 38);
+
+            const positions = {
+                "First 5": { first: extractPattern(firstHalf, 0, 5), second: extractPattern(secondHalf, 0, 5) },
+                "Centered 5": { first: extractPattern(firstHalf, 7, 5), second: extractPattern(secondHalf, 7, 5) },
+                "Last 5": { first: extractPattern(firstHalf, 14, 5), second: extractPattern(secondHalf, 14, 5) }
+            };
+
+            let resultText = `<strong>Generated Numbers:</strong> ${numbers.join(', ')}\n\n`;
+            let matchFound = false;
+
+            for (const [position, { first, second }] of Object.entries(positions)) {
+                const reversedSecond = [...second].reverse();
+                const matchType = checkPatternMatch(first, second);
+
+                resultText += `<strong>${position}:</strong>\n`;
+                resultText += `  First Half:  ${first.join(', ')}\n`;
+                resultText += `  Second Half: ${second.join(', ')}\n`;
+                resultText += `  Reversed:    ${reversedSecond.join(', ')}\n`;
+
+                if (matchType !== "No Match") {
+                    resultText += `  <span class="match">${matchType} Found!</span>\n\n`;
+                    matchFound = true;
+                } else {
+                    resultText += `  <span class="no-match">No Match</span>\n\n`;
+                }
+            }
+
+            if (matchFound) {
+                resultText += `<strong>Match found after ${attempts} attempts!</strong>\n`;
+                const odds = calculateOdds();
+                resultText += `<strong>Odds of Occurrence:</strong> ${odds}\n`;
+                document.getElementById('result').innerHTML = resultText;
+                disableButtons();
+                searching = false;
+            } else {
+                setTimeout(runPatternCheck, 10); // Continue searching
+            }
+        }
+
+        function disableButtons() {
+            document.getElementById("generateButton").disabled = true;
+        }
+
+        function enableButtons() {
+            document.getElementById("generateButton").disabled = false;
+        }
+
+        document.getElementById("generateButton").addEventListener("click", () => {
+            attempts = 0;
+            searching = true;
+            document.getElementById('result').innerHTML = "<strong>Searching...</strong>";
+            runPatternCheck();
+        });
+    </script>
+
+</body>
+</html>

@@ -315,6 +315,7 @@ class MaxHeap extends MinHeap {
 }
 
 const groupIndices = {
+    fullRow: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18, 17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6],
     topIndices: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18],
     bottomIndices: [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6],
     leftTop: [5, 22, 34, 15, 3],
@@ -325,7 +326,7 @@ const groupIndices = {
     cBottom: [30, 26, 9, 28, 0, 2, 14, 35, 23],
     zzCluster: [13, 1, 37, 27, 10],
     zCluster: [9, 28, 0, 2, 14],
-	Left: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28],
+    Left: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28],
     Right: [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6]
 };
 
@@ -864,6 +865,7 @@ function displayDescriptiveStatistics(stats) {
 }
 
 const categoryLabels = {
+    fullRow: "Full Row: ",
     topBottomDiff: "Top - Bottom: ",
     leftRightDiff: "Left - Right: ",
     cDiff: "Center 9, Top - Bottom: ",
@@ -891,7 +893,7 @@ function displayResults(differences, groupSums, stats) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
 
-    const allCategories = { ...differences, ...groupSums };
+    const allCategories = { fullRow: groupSums.fullRow, ...differences, ...groupSums };
     const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
 
     Object.keys(allCategories).forEach(category => {
@@ -901,11 +903,8 @@ function displayResults(differences, groupSums, stats) {
         }
 
         let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
 
-        // Add an image above the section title
         let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
 
         let tableHTML = `
@@ -914,7 +913,7 @@ function displayResults(differences, groupSums, stats) {
             ${imageHTML}
             <br>
         `;
-        
+
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
@@ -952,18 +951,20 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-// Update exportToCSV function to include image references in the CSV header section
+// Export results to CSV
 function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
     const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
 
+    // Add fullRow first
+    csvContent += `Category,Metric,Value,Total,Frequency,P-Value\n`;
+    csvContent += `Full Row\n`;
+
     Object.entries(stats).forEach(([category, values]) => {
         let categoryLabel = categoryLabels[category] || category;
-        
-        // Determine the correct column header based on the category
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
 
-        csvContent += `Category,Metric,Value,${columnHeader},Frequency,P-Value\n`;
+        csvContent += `${categoryLabel},Metric,Value,${columnHeader},Frequency,P-Value\n`;
 
         const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
@@ -984,7 +985,7 @@ function exportToCSV(differences, groupSums, stats, fileName) {
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
             const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
-            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
+            csvContent += `${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
         }
 
         csvContent += "\n";

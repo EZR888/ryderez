@@ -904,8 +904,16 @@ function displayResults(differences, groupSums, stats) {
         
         // Determine the correct column header based on the category
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
-        let tableHTML = `<h3><center><span style="color: orange;">${categoryLabel}</span><span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>`;
+
+        // Add an image above the section title
+        let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
+
+        let tableHTML = `
+            <h3><center><span style="color: orange;">${categoryLabel}</span>
+            <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
+            ${imageHTML}
+            <br>
+        `;
         
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
@@ -944,7 +952,7 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-// Update exportToCSV function
+// Update exportToCSV function to include image references in the CSV header section
 function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
     const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
@@ -954,7 +962,7 @@ function exportToCSV(differences, groupSums, stats, fileName) {
         
         // Determine the correct column header based on the category
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-        
+
         csvContent += `Category,Metric,Value,${columnHeader},Frequency,P-Value\n`;
 
         const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);

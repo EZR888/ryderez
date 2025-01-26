@@ -238,7 +238,11 @@
         <input type="file" id="fileInput" accept=".csv">
         <button id="saveButton" style="display:none;" class="button-sim">Save Results</button>
 
-        <h3>Results:</h3>    
+        <h3>Results:</h3> 
+        
+        <canvas id="chiSquareChart"></canvas>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
         <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
         <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
         <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
@@ -460,62 +464,99 @@ function processCSVData(csvText, fileName) {
             finalizeResults(observed, totalSpins, 38);  // Only process 38 columns for final analysis
         }
 
+const largeDatasetProportions = [
+    0.0000003, 0.0000018, 0.0000099, 0.0000424, 0.0001812, 0.0005803, 
+    0.0017357, 0.0043827, 0.0098505, 0.0196751, 0.0351415, 0.0562093, 
+    0.0810839, 0.10461, 0.12223, 0.1286142, 0.1220283, 0.1048083, 
+    0.0809959, 0.0562573, 0.0351892, 0.0196751, 0.0098004, 0.0043691, 
+    0.0017038, 0.000592, 0.0001805, 0.0000393, 0.0000101, 0.0000016, 0.0000003
+];
+
 function finalizeResults(observed, totalSpins, totalColumns) {
-    const expectedFreq = totalSpins / totalColumns;
-    const expected = Array(totalColumns).fill(expectedFreq);
+    // Expected values based on large dataset proportions
+    const expected = largeDatasetProportions.map(p => p * totalSpins);
 
     let chiSquare = 0;
     const contributions = [];
+
     observed.forEach((obs, i) => {
         const exp = expected[i];
         const contribution = Math.pow(obs - exp, 2) / exp;
         chiSquare += contribution;
 
-        // Debug: Log observed values and contributions
         console.log(`Column ${i}: Observed = ${obs}, Expected = ${exp.toFixed(2)}, Contribution = ${contribution.toFixed(2)}`);
 
-        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp }); // Add 1 to `i` for display
+        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
     });
 
     contributions.sort((a, b) => b.contribution - a.contribution);
 
-    const threshold = 3.84;
+    // Calculate the critical threshold dynamically
+    const significanceLevel = 0.05;
+    const threshold = jStat.chisquare.inv(1 - significanceLevel, 1);
+    
     const significantContributors = contributions.filter(c => c.contribution > threshold);
 
     const explanationText = `
-        The analysis identifies significant contributors to the chi-square value based on their individual
-        contributions. Any contribution greater than ${threshold} indicates a notable deviation from the 
-        expected value, suggesting that the corresponding number(s) played a significant role in the 
-        overall result. However, the final conclusion is based on the p-value, which measures the likelihood
-        of observing the current chi-square value under the assumption that there was no intentional influence. A p-value 
-        greater than 0.05 means there is no strong evidence to suggest intentional influence, even if some numbers
-        contribute notably to the chi-square value.
+        This analysis compares the current dataset to a large benchmark set.
+        Numbers with contributions exceeding ${threshold.toFixed(2)} indicate notable differences.
+        A p-value greater than 0.05 means no strong evidence of bias.
     `;
     document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
 
     const topContributorsText = significantContributors.map(c =>
         `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
     ).join("<br>");
-    document.getElementById("topContributors").innerHTML = topContributorsText;
+    document.getElementById("topContributors").innerHTML = topContributorsText || "<p>No significant deviations found.</p>";
 
+    // Degrees of freedom and P-value calculation
     const degreesOfFreedom = totalColumns - 1;
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
 
-    const significanceLevel = 0.05;
     const conclusion = pValue < significanceLevel
         ? "There is evidence of intentional influence."
         : "There is no evidence of intentional influence.";
-
-    const clarification = pValue < significanceLevel
-        ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of intentional influence."
-        : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest intentional influence.";
 
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
     document.getElementById("pValue").textContent = pValue.toFixed(3);
     document.getElementById("conclusion").textContent = conclusion;
-    document.getElementById("explanation").innerHTML += `<p>${clarification}</p>`;
+
+    generateChart(observed, expected);
 }
+
+// Function to generate visualization using Chart.js
+function generateChart(observed, expected) {
+    const ctx = document.getElementById('chiSquareChart').getContext('2d');
+    if (window.myChart) window.myChart.destroy();
+
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({ length: observed.length }, (_, i) => i + 1),
+            datasets: [
+                {
+                    label: 'Observed',
+                    data: observed,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                },
+                {
+                    label: 'Expected (Large Dataset)',
+                    data: expected,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Observed vs Expected Frequencies (Large Dataset)' }
+            }
+        }
+    });
+}
+
 
 </script>
     

@@ -49,11 +49,13 @@
         .container {
             width: 100%;
             display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
             padding: 20px;
+            box-sizing: border-box;
         }
+
         .container h1 {
             margin: 0;
         }
@@ -270,7 +272,17 @@ th:nth-child(20), td:nth-child(20) {
     font-weight: bold;
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
-
+.framed-section2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;  /* Center buttons inside the frame */
+    align-items: center;
+    padding: 20px;
+    border: 2px solid lightgreen;
+    border-radius: 10px;
+    background-color: black;
+    width: 100%;
+}
 .header-red {
     background-color: red;
     color: white;
@@ -430,14 +442,14 @@ th:nth-child(20), td:nth-child(20) {
 
     <div class="container">
         <div>
-            <div class="framed-section2">
-&nbsp;&nbsp;&nbsp;<button id="howToUseButton"class="button button-purple">How To Use</button>
-                <button id="simButton" class="button button-sim">Simulator</button>
+            <div class="framed-section2" >
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
                 <button id="viewDataButton" class="button">View Data</button>
-                <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
                 <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
-                <button id="singleSpinButton"class="button button-single">Single Spin</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
             </div>
         </div>
         <br>

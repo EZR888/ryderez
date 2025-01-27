@@ -235,18 +235,12 @@
         <h1 class="header-text">Data Analysis</h1>
     </div>
     <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv">
-        <button id="saveButton" style="display:none;" class="button-sim">Save Results</button>
-
-        <h3>Results:</h3> 
-        
-        <canvas id="chiSquareChart"></canvas>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
-        <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
-        <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
-        <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
-        <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
+        <input type="file" id="fileInput" accept=".csv" multiple>
+        <h3>Results:</h3>    
+        <p>Total Spins: <span id="totalSpins"></span></p>
+        <p>Chi-Square Value: <span id="chiSquare"></span></p>
+        <p>P-Value: <span id="pValue"></span></p>
+        <p>Conclusion: <span id="conclusion"></span></p>
     
         <h3>Explanation</h3>
         <div id="explanation">
@@ -297,8 +291,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         alert("No files selected.");
         return;
     }
-    
-    processedFileNames = [...files].map(file => file.name); // Store filenames for later use
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -367,9 +359,6 @@ function processConcatenatedCSVData(csvData) {
     console.log("Data Rows Before Processing:", dataRows);
 
     processData(dataRows);
-    
-    document.getElementById('saveButton').style.display = 'block';  // Show save button after processing
-
 }
 
 function processData(rows) {
@@ -387,37 +376,6 @@ function processData(rows) {
 
     finalizeResults(observed, totalSpins, 38);
 }
-
-// Save results function
-document.getElementById('saveButton').addEventListener('click', function() {
-    let outputText = "Processed File:\n" + processedFileNames.join(", ") + "\n\n";
-    
-    // Capture displayed content
-    const explanation = document.getElementById("explanation").innerText;
-    const topContributors = document.getElementById("topContributors").innerText;
-    const totalSpins = document.getElementById("totalSpins").textContent;
-    const chiSquare = document.getElementById("chiSquare").textContent;
-    const pValue = document.getElementById("pValue").textContent;
-    const conclusion = document.getElementById("conclusion").textContent;
-
-    outputText += "Chi-Square Analysis Results:\n";
-    outputText += `Total Spins: ${totalSpins}\n`;
-    outputText += `Chi-Square Value: ${chiSquare}\n`;
-    outputText += `P-Value: ${pValue}\n`;
-    outputText += `Conclusion: ${conclusion}\n\n`;
-
-    outputText += "Significant Contributors:\n" + topContributors + "\n\n";
-    outputText += "Explanation:\n" + explanation + "\n";
-
-    // Convert to Blob and trigger download
-    const blob = new Blob([outputText], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "pvalueOutput.txt";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
 
 function processCSVData(csvText, fileName) {
             const rows = csvText.trim().split("\n");
@@ -464,99 +422,62 @@ function processCSVData(csvText, fileName) {
             finalizeResults(observed, totalSpins, 38);  // Only process 38 columns for final analysis
         }
 
-const largeDatasetProportions = [
-    0.0000003, 0.0000018, 0.0000099, 0.0000424, 0.0001812, 0.0005803, 
-    0.0017357, 0.0043827, 0.0098505, 0.0196751, 0.0351415, 0.0562093, 
-    0.0810839, 0.10461, 0.12223, 0.1286142, 0.1220283, 0.1048083, 
-    0.0809959, 0.0562573, 0.0351892, 0.0196751, 0.0098004, 0.0043691, 
-    0.0017038, 0.000592, 0.0001805, 0.0000393, 0.0000101, 0.0000016, 0.0000003
-];
-
 function finalizeResults(observed, totalSpins, totalColumns) {
-    // Expected values based on large dataset proportions
-    const expected = largeDatasetProportions.map(p => p * totalSpins);
+    const expectedFreq = totalSpins / totalColumns;
+    const expected = Array(totalColumns).fill(expectedFreq);
 
     let chiSquare = 0;
     const contributions = [];
-
     observed.forEach((obs, i) => {
         const exp = expected[i];
         const contribution = Math.pow(obs - exp, 2) / exp;
         chiSquare += contribution;
 
+        // Debug: Log observed values and contributions
         console.log(`Column ${i}: Observed = ${obs}, Expected = ${exp.toFixed(2)}, Contribution = ${contribution.toFixed(2)}`);
 
-        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
+        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp }); // Add 1 to `i` for display
     });
 
     contributions.sort((a, b) => b.contribution - a.contribution);
 
-    // Calculate the critical threshold dynamically
-    const significanceLevel = 0.05;
-    const threshold = jStat.chisquare.inv(1 - significanceLevel, 1);
-    
+    const threshold = 3.84;
     const significantContributors = contributions.filter(c => c.contribution > threshold);
 
     const explanationText = `
-        This analysis compares the current dataset to a large benchmark set.
-        Numbers with contributions exceeding ${threshold.toFixed(2)} indicate notable differences.
-        A p-value greater than 0.05 means no strong evidence of bias.
+        The analysis identifies significant contributors to the chi-square value based on their individual
+        contributions. Any contribution greater than ${threshold} indicates a notable deviation from the 
+        expected value, suggesting that the corresponding number(s) played a significant role in the 
+        overall result. However, the final conclusion is based on the p-value, which measures the likelihood
+        of observing the current chi-square value under the assumption that there was no intentional influence. A p-value 
+        greater than 0.05 means there is no strong evidence to suggest intentional influence, even if some numbers
+        contribute notably to the chi-square value.
     `;
     document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
 
     const topContributorsText = significantContributors.map(c =>
         `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
     ).join("<br>");
-    document.getElementById("topContributors").innerHTML = topContributorsText || "<p>No significant deviations found.</p>";
+    document.getElementById("topContributors").innerHTML = topContributorsText;
 
-    // Degrees of freedom and P-value calculation
     const degreesOfFreedom = totalColumns - 1;
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
 
+    const significanceLevel = 0.05;
     const conclusion = pValue < significanceLevel
         ? "There is evidence of intentional influence."
         : "There is no evidence of intentional influence.";
+
+    const clarification = pValue < significanceLevel
+        ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of intentional influence."
+        : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest intentional influence.";
 
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
     document.getElementById("pValue").textContent = pValue.toFixed(3);
     document.getElementById("conclusion").textContent = conclusion;
-
-    generateChart(observed, expected);
+    document.getElementById("explanation").innerHTML += `<p>${clarification}</p>`;
 }
-
-// Function to generate visualization using Chart.js
-function generateChart(observed, expected) {
-    const ctx = document.getElementById('chiSquareChart').getContext('2d');
-    if (window.myChart) window.myChart.destroy();
-
-    window.myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Array.from({ length: observed.length }, (_, i) => i + 1),
-            datasets: [
-                {
-                    label: 'Observed',
-                    data: observed,
-                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                },
-                {
-                    label: 'Expected (Large Dataset)',
-                    data: expected,
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'top' },
-                title: { display: true, text: 'Observed vs Expected Frequencies (Large Dataset)' }
-            }
-        }
-    });
-}
-
 
 </script>
     

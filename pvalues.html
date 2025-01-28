@@ -236,11 +236,13 @@
     </div>
     <div class="results-container">
         <input type="file" id="fileInput" accept=".csv" multiple>
+        <button id="saveButton" style="display:none;" class="button-sim">Save Results</button>
+
         <h3>Results:</h3>    
-        <p>Total Spins: <span id="totalSpins"></span></p>
-        <p>Chi-Square Value: <span id="chiSquare"></span></p>
-        <p>P-Value: <span id="pValue"></span></p>
-        <p>Conclusion: <span id="conclusion"></span></p>
+        <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
+        <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
+        <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
+        <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
     
         <h3>Explanation</h3>
         <div id="explanation">
@@ -291,6 +293,8 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         alert("No files selected.");
         return;
     }
+    
+    processedFileNames = [...files].map(file => file.name); // Store filenames for later use
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -359,6 +363,9 @@ function processConcatenatedCSVData(csvData) {
     console.log("Data Rows Before Processing:", dataRows);
 
     processData(dataRows);
+    
+    document.getElementById('saveButton').style.display = 'block';  // Show save button after processing
+
 }
 
 function processData(rows) {
@@ -376,6 +383,37 @@ function processData(rows) {
 
     finalizeResults(observed, totalSpins, 38);
 }
+
+// Save results function
+document.getElementById('saveButton').addEventListener('click', function() {
+    let outputText = "Processed File:\n" + processedFileNames.join(", ") + "\n\n";
+    
+    // Capture displayed content
+    const explanation = document.getElementById("explanation").innerText;
+    const topContributors = document.getElementById("topContributors").innerText;
+    const totalSpins = document.getElementById("totalSpins").textContent;
+    const chiSquare = document.getElementById("chiSquare").textContent;
+    const pValue = document.getElementById("pValue").textContent;
+    const conclusion = document.getElementById("conclusion").textContent;
+
+    outputText += "Chi-Square Analysis Results:\n";
+    outputText += `Total Spins: ${totalSpins}\n`;
+    outputText += `Chi-Square Value: ${chiSquare}\n`;
+    outputText += `P-Value: ${pValue}\n`;
+    outputText += `Conclusion: ${conclusion}\n\n`;
+
+    outputText += "Significant Contributors:\n" + topContributors + "\n\n";
+    outputText += "Explanation:\n" + explanation + "\n";
+
+    // Convert to Blob and trigger download
+    const blob = new Blob([outputText], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "pvalueOutput.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
 
 function processCSVData(csvText, fileName) {
             const rows = csvText.trim().split("\n");
@@ -433,32 +471,13 @@ function finalizeResults(observed, totalSpins, totalColumns) {
         const contribution = Math.pow(obs - exp, 2) / exp;
         chiSquare += contribution;
 
-        // Debug: Log observed values and contributions
-        console.log(`Column ${i}: Observed = ${obs}, Expected = ${exp.toFixed(2)}, Contribution = ${contribution.toFixed(2)}`);
-
-        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp }); // Add 1 to `i` for display
+        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
     });
 
     contributions.sort((a, b) => b.contribution - a.contribution);
 
     const threshold = 3.84;
     const significantContributors = contributions.filter(c => c.contribution > threshold);
-
-    const explanationText = `
-        The analysis identifies significant contributors to the chi-square value based on their individual
-        contributions. Any contribution greater than ${threshold} indicates a notable deviation from the 
-        expected value, suggesting that the corresponding number(s) played a significant role in the 
-        overall result. However, the final conclusion is based on the p-value, which measures the likelihood
-        of observing the current chi-square value under the assumption that there was no intentional influence. A p-value 
-        greater than 0.05 means there is no strong evidence to suggest intentional influence, even if some numbers
-        contribute notably to the chi-square value.
-    `;
-    document.getElementById("explanation").innerHTML = `<p>${explanationText}</p>`;
-
-    const topContributorsText = significantContributors.map(c =>
-        `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
-    ).join("<br>");
-    document.getElementById("topContributors").innerHTML = topContributorsText;
 
     const degreesOfFreedom = totalColumns - 1;
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
@@ -468,16 +487,33 @@ function finalizeResults(observed, totalSpins, totalColumns) {
         ? "There is evidence of intentional influence."
         : "There is no evidence of intentional influence.";
 
-    const clarification = pValue < significanceLevel
-        ? "The p-value is below the significance level (0.05), indicating strong evidence against the assumption of intentional influence."
-        : "The p-value is above the significance level (0.05), indicating insufficient evidence to suggest intentional influence.";
-
+    // Display results
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
     document.getElementById("pValue").textContent = pValue.toFixed(3);
     document.getElementById("conclusion").textContent = conclusion;
-    document.getElementById("explanation").innerHTML += `<p>${clarification}</p>`;
+
+    // Change color of "Conclusion" text if intentional influence is detected
+    if (pValue < significanceLevel) {
+        document.getElementById("conclusion").style.color = "yellow";
+    } else {
+        document.getElementById("conclusion").style.color = "white";
+    }
+
+    // Display top contributors and change color if intentional influence is detected
+    const topContributorsText = significantContributors.map(c =>
+        `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+    ).join("<br>");
+    const topContributorsDiv = document.getElementById("topContributors");
+    topContributorsDiv.innerHTML = topContributorsText;
+
+    if (pValue < significanceLevel) {
+        topContributorsDiv.style.color = "yellow";
+    } else {
+        topContributorsDiv.style.color = "white";
+    }
 }
+
 
 </script>
     

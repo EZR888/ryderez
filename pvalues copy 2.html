@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roulette P-Values</title>
     <style>
@@ -12,7 +13,7 @@
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
-        }
+        }   
         body {
             background-color: black;
             color: lightgreen;
@@ -48,26 +49,26 @@
         <h1 class="header-text">Data Analysis</h1>
     </div>
     <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv">
+        <input type="file" id="fileInput" accept=".csv" multiple>
         <button id="runButton">Run Analysis</button>
-        <h3>Results:</h3>
+        <h3>Results:</h3> 
         <canvas id="chiSquareChart"></canvas>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
         <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
         <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
         <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
-        <h3>Top Contributors to Chi-Square:</h3>
-        <div id="topContributors"></div>
     </div>
 </div>
 
 <script>
 document.getElementById('runButton').addEventListener('click', function() {
+    // Generate large dataset
     const numLargeRuns = 10000000; // 10 million spins
     const largeDatasetCounts = generateLargeDataset(numLargeRuns);
     const largeDatasetProportions = calculateProportions(largeDatasetCounts);
 
+    // Process uploaded CSV data
     const fileInput = document.getElementById('fileInput');
     if (fileInput.files.length === 0) {
         alert("Please upload a CSV file.");
@@ -81,16 +82,18 @@ document.getElementById('runButton').addEventListener('click', function() {
         const observedCounts = processCSVData(csvData);
         const totalSpins = observedCounts.reduce((a, b) => a + b, 0);
 
+        // Perform Chi-Square analysis
         performChiSquareAnalysis(observedCounts, largeDatasetProportions, totalSpins);
     };
     reader.readAsText(file);
 });
 
 function generateLargeDataset(numRuns) {
-    const counts = Array(38).fill(0);
+    const counts = Array(38).fill(0); // Initialize counts for numbers 0–37
+
     for (let i = 0; i < numRuns; i++) {
         for (let j = 0; j < 38; j++) {
-            const spin = Math.floor(Math.random() * 38);
+            const spin = Math.floor(Math.random() * 38); // Random number from 0–37
             counts[spin]++;
         }
     }
@@ -108,11 +111,14 @@ function processCSVData(csvData) {
 
     rows.forEach((row, index) => {
         const values = row.split(",").map(Number);
+
+        // Skip the header row by checking if it matches 0-37
         const isHeader = values.length === 38 && values.every((val, idx) => val === idx);
         if (index === 0 && isHeader) {
             console.log("Header row detected and skipped:", row);
             return;
         }
+
         if (values.length === 38) {
             values.forEach((val, idx) => counts[idx] += val);
         } else {
@@ -127,19 +133,13 @@ function processCSVData(csvData) {
 function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
     const expected = expectedProportions.map(p => p * totalSpins);
     let chiSquare = 0;
-    const contributions = [];
 
     observed.forEach((obs, i) => {
         const exp = expected[i];
         const contribution = Math.pow(obs - exp, 2) / exp;
         chiSquare += contribution;
-        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
+        console.log(`Number ${i + 1}: Observed = ${obs}, Expected = ${exp.toFixed(2)}, Contribution = ${contribution.toFixed(2)}`);
     });
-
-    contributions.sort((a, b) => b.contribution - a.contribution);
-
-    const threshold = 3.84; // Critical value for p < 0.05, df = 1
-    const significantContributors = contributions.filter(c => c.contribution > threshold);
 
     const degreesOfFreedom = observed.length - 1; // 38 - 1 = 37
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
@@ -148,29 +148,11 @@ function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
         ? "There is evidence of non-randomness."
         : "No evidence of non-randomness.";
 
-    // Update UI
+    // Update the UI
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
     document.getElementById("pValue").textContent = pValue.toFixed(3);
     document.getElementById("conclusion").textContent = conclusion;
-
-    if (pValue < 0.05) {
-        document.getElementById("conclusion").style.color = "yellow";
-    } else {
-        document.getElementById("conclusion").style.color = "white";
-    }
-
-    const topContributorsText = significantContributors.map(c =>
-        `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
-    ).join("<br>");
-    const topContributorsDiv = document.getElementById("topContributors");
-    topContributorsDiv.innerHTML = topContributorsText;
-
-    if (pValue < 0.05) {
-        topContributorsDiv.style.color = "yellow";
-    } else {
-        topContributorsDiv.style.color = "lightgreen";
-    }
 
     generateChart(observed, expected);
 }

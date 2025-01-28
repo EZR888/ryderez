@@ -160,17 +160,17 @@ function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
         document.getElementById("conclusion").style.color = "white";
     }
 
-    const topContributorsText = significantContributors.map(c =>
-        `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
-    ).join("<br>");
-    const topContributorsDiv = document.getElementById("topContributors");
-    topContributorsDiv.innerHTML = topContributorsText;
+const topContributorsText = significantContributors.map(c =>
+    `Number ${c.number}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+).join("<br>");
+const topContributorsDiv = document.getElementById("topContributors");
+topContributorsDiv.innerHTML = topContributorsText;
 
-    if (pValue < 0.05) {
-        topContributorsDiv.style.color = "yellow";
-    } else {
-        topContributorsDiv.style.color = "lightgreen";
-    }
+if (pValue < 0.05) {
+    topContributorsDiv.style.color = "yellow";
+} else {
+    topContributorsDiv.style.color = "lightgreen";
+}
 
     generateChart(observed, expected);
 }

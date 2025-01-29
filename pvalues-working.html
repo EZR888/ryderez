@@ -64,7 +64,7 @@
 <script>
 document.getElementById('runButton').addEventListener('click', function() {
     // Generate large dataset
-    const numLargeRuns = 10000000; // 10 million spins
+    const numLargeRuns = 100000000; // 100 million spins
     const largeDatasetCounts = generateLargeDataset(numLargeRuns);
     const largeDatasetProportions = calculateProportions(largeDatasetCounts);
 
@@ -87,18 +87,6 @@ document.getElementById('runButton').addEventListener('click', function() {
     };
     reader.readAsText(file);
 });
-
-function generateLargeDataset(numRuns) {
-    const counts = Array(38).fill(0); // Initialize counts for numbers 0–37
-
-    for (let i = 0; i < numRuns; i++) {
-        for (let j = 0; j < 38; j++) {
-            const spin = Math.floor(Math.random() * 38); // Random number from 0–37
-            counts[spin]++;
-        }
-    }
-    return counts;
-}
 
 function calculateProportions(dataset) {
     const totalSpins = dataset.reduce((sum, count) => sum + count, 0);
@@ -187,6 +175,58 @@ function generateChart(observed, expected) {
         }
     });
 }
+
+function generateLargeDataset(numRuns) {
+    const counts = Array(38).fill(0); // Initialize counts for numbers 0–37
+
+    // Simulate numRuns of 38 random spins each
+    for (let i = 0; i < numRuns; i++) {
+        for (let j = 0; j < 38; j++) {
+            const spin = Math.floor(Math.random() * 38); // Random number from 0–37
+            counts[spin]++;
+        }
+    }
+
+    // Correct expected frequency per number
+    const expectedFrequency = numRuns; // Each number should appear numRuns times on average
+    const expectedCounts = Array(38).fill(expectedFrequency);
+
+    // Calculate chi-square contributions and p-values
+    const pValues = [];
+    for (let i = 0; i < 38; i++) {
+        const observed = counts[i];
+        const expected = expectedCounts[i];
+        const chiSquareContribution = Math.pow(observed - expected, 2) / expected;
+
+        // Degrees of freedom for each test = 1
+        const pValue = 1 - jStat.chisquare.cdf(chiSquareContribution, 1);
+        pValues.push(pValue.toFixed(6)); // Keep 6 decimal places for p-values
+    }
+
+    // Export to CSV
+    exportPValuesToCSV(counts, expectedCounts, pValues, numRuns);
+
+    return counts;
+}
+
+// Function to export p-values to CSV
+function exportPValuesToCSV(observedCounts, expectedCounts, pValues, numRuns) {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += `Number,Observed,Expected,P-Value\n`;
+
+    for (let i = 0; i < 38; i++) {
+        csvContent += `${pValues[i]},`;
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `PValues_Run_${numRuns}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 </script>
 
 </body>

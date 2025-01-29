@@ -48,63 +48,139 @@
         <h1 class="header-text">Data Analysis</h1>
     </div>
     <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv">
-        <button id="runButton">Run Analysis</button>
-        <h3>Results:</h3>
+        <input type="file" id="fileInput" accept=".csv" multiple>
+    <!-- <button id="runButton">Run Analysis</button> -->
+        <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies, Based on 100 million Runs:</span></h3>
         <canvas id="chiSquareChart"></canvas>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
         <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
         <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
         <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
-        <h3>Top Contributors to Chi-Square:</h3>
+        <h3><span style="color: lightgreen;">Top Contributors to Chi-Square:</span></h3>
         <div id="topContributors"></div>
     </div>
 </div>
 
 <script>
-document.getElementById('runButton').addEventListener('click', function() {
-    const numLargeRuns = 10000000; // 10 million spins
-    const largeDatasetCounts = generateLargeDataset(numLargeRuns);
-    const largeDatasetProportions = calculateProportions(largeDatasetCounts);
+//document.getElementById('runButton').addEventListener('click', function() {
+//    const numLargeRuns = 10000000; // 10 million spins
+//    const largeDatasetCounts = generateLargeDataset(numLargeRuns);
+//    const largeDatasetProportions = calculateProportions(largeDatasetCounts);
 
-    const fileInput = document.getElementById('fileInput');
-    if (fileInput.files.length === 0) {
-        alert("Please upload a CSV file.");
-        return;
-    }
+//    const fileInput = document.getElementById('fileInput');
+//    if (fileInput.files.length === 0) {
+//        alert("Please upload a CSV file.");
+//        return;
+//    }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const csvData = e.target.result;
-        const observedCounts = processCSVData(csvData);
-        const totalSpins = observedCounts.reduce((a, b) => a + b, 0);
+//    const file = fileInput.files[0];
+//    const reader = new FileReader();
+//    reader.onload = function(e) {
+//        const csvData = e.target.result;
+//        const observedCounts = processCSVData(csvData);
+//        const totalSpins = observedCounts.reduce((a, b) => a + b, 0);
 
-        performChiSquareAnalysis(observedCounts, largeDatasetProportions, totalSpins);
-    };
-    reader.readAsText(file);
-});
+//        performChiSquareAnalysis(observedCounts, largeDatasetProportions, totalSpins);
+//    };
+//    reader.readAsText(file);
+//});
 
-function generateLargeDataset(numRuns) {
-    const counts = Array(38).fill(0);
-    for (let i = 0; i < numRuns; i++) {
-        for (let j = 0; j < 38; j++) {
-            const spin = Math.floor(Math.random() * 38);
-            counts[spin]++;
-        }
-    }
-    return counts;
+//function generateLargeDataset(numRuns) {
+//    const counts = Array(38).fill(0);
+//    for (let i = 0; i < numRuns; i++) {
+//        for (let j = 0; j < 38; j++) {
+//            const spin = Math.floor(Math.random() * 38);
+//            counts[spin]++;
+//        }
+//    }
+//   return counts;
+//}
+
+//function calculateProportions(dataset) {
+//    const totalSpins = dataset.reduce((sum, count) => sum + count, 0);
+//    return dataset.map(count => count / totalSpins);
+//}
+
+
+//function processCSVData(csvData) {
+//    const rows = csvData.trim().split("\n");
+//    const counts = Array(38).fill(0);
+
+//    rows.forEach((row, index) => {
+//        const values = row.split(",").map(Number);
+//        const isHeader = values.length === 38 && values.every((val, idx) => val === idx);
+//        if (index === 0 && isHeader) {
+//            console.log("Header row detected and skipped:", row);
+//            return;
+//        }
+//        if (values.length === 38) {
+//            values.forEach((val, idx) => counts[idx] += val);
+//        } else {
+//            console.warn("Invalid row length detected and skipped:", row);
+//        }
+//    });
+
+//    console.log("Observed Counts from CSV:", counts);
+//    return counts;
+//}
+
+// Precomputed P-values from a 100 million run
+const precomputedPValues = [
+    0.328371, 0.320564, 0.187269, 0.695280, 0.746468, 0.836557, 0.416906, 0.794401, 
+    0.040540, 0.408294, 0.515757, 0.783009, 0.391777, 0.911854, 0.468207, 0.827663, 
+    0.675655, 0.169939, 0.109421, 0.279119, 0.029257, 0.273692, 0.065271, 0.817703, 
+    0.489189, 0.527648, 0.233497, 0.653215, 0.163438, 0.919789, 0.861944, 0.323545, 
+    0.000958, 0.855583, 0.440825, 0.623568, 0.089564, 0.445702
+];
+
+// Function to process multiple uploaded CSVs and compare p-values
+function processMultipleCSVFiles(files) {
+    let totalCounts = Array(38).fill(0); // Aggregated counts
+    let totalFiles = files.length;
+    let filesProcessed = 0;
+    let totalSpins = 0;
+    let filenames = [];
+
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const { counts, spins } = processCSVData(e.target.result);
+            filenames.push(file.name);
+
+            // Aggregate counts from all files
+            totalCounts = totalCounts.map((val, i) => val + counts[i]);
+            totalSpins += spins;
+
+            filesProcessed++;
+
+            // After all files are processed, analyze results
+            if (filesProcessed === totalFiles) {
+                const expectedFrequency = totalSpins / 38;
+                const expectedCounts = Array(38).fill(expectedFrequency);
+
+                // Compute observed p-values
+                const observedPValues = totalCounts.map((observed, i) => {
+                    const chiSquareContribution = Math.pow(observed - expectedCounts[i], 2) / expectedCounts[i];
+                    return (1 - jStat.chisquare.cdf(chiSquareContribution, 1)).toFixed(6);
+                });
+
+                // Perform Chi-Square Analysis & Update UI
+                performChiSquareAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins);
+
+                // Export results to CSV
+                exportPValueComparisonToCSV(totalCounts, expectedCounts, observedPValues, precomputedPValues, filenames);
+            }
+        };
+        reader.readAsText(file);
+    });
 }
 
-function calculateProportions(dataset) {
-    const totalSpins = dataset.reduce((sum, count) => sum + count, 0);
-    return dataset.map(count => count / totalSpins);
-}
-
+// Function to process a single CSV file and extract counts
 function processCSVData(csvData) {
     const rows = csvData.trim().split("\n");
     const counts = Array(38).fill(0);
+    let totalSpins = 0;
 
     rows.forEach((row, index) => {
         const values = row.split(",").map(Number);
@@ -114,18 +190,20 @@ function processCSVData(csvData) {
             return;
         }
         if (values.length === 38) {
-            values.forEach((val, idx) => counts[idx] += val);
+            values.forEach((val, idx) => {
+                counts[idx] += val;
+                totalSpins += val;
+            });
         } else {
             console.warn("Invalid row length detected and skipped:", row);
         }
     });
 
-    console.log("Observed Counts from CSV:", counts);
-    return counts;
+    return { counts, spins: totalSpins };
 }
 
-function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
-    const expected = expectedProportions.map(p => p * totalSpins);
+// Function to update UI and display Chi-Square results
+function performChiSquareAnalysis(observed, expected, observedPValues, totalSpins) {
     let chiSquare = 0;
     const contributions = [];
 
@@ -133,15 +211,12 @@ function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
         const exp = expected[i];
         const contribution = Math.pow(obs - exp, 2) / exp;
         chiSquare += contribution;
-        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
+        contributions.push({ number: i, contribution, observed: obs, expected: exp });
     });
 
     contributions.sort((a, b) => b.contribution - a.contribution);
 
-    const threshold = 3.84; // Critical value for p < 0.05, df = 1
-    const significantContributors = contributions.filter(c => c.contribution > threshold);
-
-    const degreesOfFreedom = observed.length - 1; // 38 - 1 = 37
+    const degreesOfFreedom = observed.length - 1;
     const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
 
     const conclusion = pValue < 0.05
@@ -151,30 +226,27 @@ function performChiSquareAnalysis(observed, expectedProportions, totalSpins) {
     // Update UI
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
-    document.getElementById("pValue").textContent = pValue.toFixed(3);
+    document.getElementById("pValue").textContent = pValue.toFixed(6);
     document.getElementById("conclusion").textContent = conclusion;
+    document.getElementById("conclusion").style.color = pValue < 0.05 ? "yellow" : "white";
 
-    if (pValue < 0.05) {
-        document.getElementById("conclusion").style.color = "yellow";
-    } else {
-        document.getElementById("conclusion").style.color = "white";
-    }
-
-const topContributorsText = significantContributors.map(c =>
-    `Number ${c.number}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+    // Display Top Contributors
+const topContributorsText = contributions.slice(0, 5).map(c =>
+    `<span style="color: DarkKhaki;">Number ${c.number}:</span> 
+     <span style="color: lightgreen;">Observed = ${c.observed}</span>, 
+     <span style="color: cyan;">Expected = ${c.expected.toFixed(2)}</span>, 
+     <span style="color: orange;">Contribution = ${c.contribution.toFixed(2)}</span>`
 ).join("<br>");
-const topContributorsDiv = document.getElementById("topContributors");
-topContributorsDiv.innerHTML = topContributorsText;
 
-if (pValue < 0.05) {
-    topContributorsDiv.style.color = "yellow";
-} else {
-    topContributorsDiv.style.color = "lightgreen";
-}
+    
+    
+    document.getElementById("topContributors").innerHTML = topContributorsText || "No significant contributors.";
 
+    // Generate Chart
     generateChart(observed, expected);
 }
 
+// Function to generate the chart
 function generateChart(observed, expected) {
     const ctx = document.getElementById('chiSquareChart').getContext('2d');
     if (window.myChart) window.myChart.destroy();
@@ -182,7 +254,7 @@ function generateChart(observed, expected) {
     window.myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: Array.from({ length: observed.length }, (_, i) => i + 1),
+            labels: Array.from({ length: observed.length }, (_, i) => i),
             datasets: [
                 {
                     label: 'Observed',
@@ -190,7 +262,7 @@ function generateChart(observed, expected) {
                     backgroundColor: 'rgba(255, 99, 132, 0.7)',
                 },
                 {
-                    label: 'Expected (Large Dataset)',
+                    label: 'Expected (Static Dataset)',
                     data: expected,
                     backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 }
@@ -200,11 +272,42 @@ function generateChart(observed, expected) {
             responsive: true,
             plugins: {
                 legend: { position: 'top' },
-                title: { display: true, text: 'Observed vs Expected Frequencies (Large Dataset)' }
+                title: { display: true, text: 'Observed vs Expected Frequencies (Static Dataset)' }
             }
         }
     });
 }
+
+// Function to export p-value comparison to CSV
+function exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPValues, precomputedPValues, filenames) {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += `Files Processed:, ${filenames.join(" | ")}\n\n`;
+    csvContent += `Number,Observed,Expected,Observed P-Value,Precomputed P-Value\n`;
+
+    for (let i = 0; i < 38; i++) {
+        csvContent += `${i},${observedCounts[i]},${expectedCounts[i].toFixed(2)},${observedPValues[i]},${precomputedPValues[i]}\n`;
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `PValue_Comparison.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Handle multiple file input
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = event.target.files;
+    if (files.length === 0) {
+        alert("Please upload at least one CSV file.");
+        return;
+    }
+    processMultipleCSVFiles(files);
+});
+
+
 </script>
 
 </body>

@@ -349,9 +349,7 @@ const precomputedPValues = [
 
 // Function to process multiple uploaded CSVs and compare p-values
 function processMultipleCSVFiles(files) {
-    let totalCounts = Array(38).fill(0); // Aggregated counts
-    let totalFiles = files.length;
-    let filesProcessed = 0;
+    let totalCounts = Array(38).fill(0);
     let totalSpins = 0;
     let filenames = [];
 
@@ -365,10 +363,7 @@ function processMultipleCSVFiles(files) {
             totalCounts = totalCounts.map((val, i) => val + counts[i]);
             totalSpins += spins;
 
-            filesProcessed++;
-
-            // After all files are processed, analyze results
-            if (filesProcessed === totalFiles) {
+            if (filenames.length === files.length) { // Process when all files are read
                 const expectedFrequency = totalSpins / 38;
                 const expectedCounts = Array(38).fill(expectedFrequency);
 
@@ -381,7 +376,7 @@ function processMultipleCSVFiles(files) {
                 // Perform Chi-Square Analysis & Update UI
                 performChiSquareAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins);
 
-                // Export results to CSV
+                // Export CSV file
                 exportPValueComparisonToCSV(totalCounts, expectedCounts, observedPValues, precomputedPValues, filenames);
             }
         };
@@ -389,7 +384,7 @@ function processMultipleCSVFiles(files) {
     });
 }
 
-// Function to process a single CSV file and extract counts
+// Function to process CSV and extract counts
 function processCSVData(csvData) {
     const rows = csvData.trim().split("\n");
     const counts = Array(38).fill(0);
@@ -397,11 +392,13 @@ function processCSVData(csvData) {
 
     rows.forEach((row, index) => {
         const values = row.split(",").map(Number);
-        const isHeader = values.length === 38 && values.every((val, idx) => val === idx);
-        if (index === 0 && isHeader) {
-            console.log("Header row detected and skipped:", row);
+
+        // Skip header row (only log once per file)
+        if (index === 0 && values.length === 38 && values.every((val, idx) => val === idx)) {
+            if (index === 0) console.log("⚠️ Skipped header row:", row);
             return;
         }
+
         if (values.length === 38) {
             values.forEach((val, idx) => {
                 counts[idx] += val;
@@ -415,7 +412,23 @@ function processCSVData(csvData) {
     return { counts, spins: totalSpins };
 }
 
-// Function to update UI and display Chi-Square results
+// Function to calculate cumulative probabilities
+function calculateCumulativeProbabilities(pValues) {
+    const cumulativePValues = Array(pValues.length).fill(0);
+
+    // Sort in ascending order for cumulative sum from lowest value
+    let sortedIndices = [...pValues.keys()].sort((a, b) => a - b);
+
+    let cumulativeSum = 0;
+    sortedIndices.forEach(i => {
+        cumulativeSum += parseFloat(pValues[i]); // Add p-value to cumulative sum
+        cumulativePValues[i] = cumulativeSum.toFixed(6);
+    });
+
+    return cumulativePValues;
+}
+
+// Function to update UI and display Chi-Square results with cumulative probabilities
 function performChiSquareAnalysis(observed, expected, observedPValues, totalSpins) {
     let chiSquare = 0;
     const contributions = [];
@@ -436,6 +449,10 @@ function performChiSquareAnalysis(observed, expected, observedPValues, totalSpin
         ? "There is evidence of non-randomness."
         : "No evidence of non-randomness.";
 
+    // Calculate cumulative probabilities
+    const cumulativeObservedPValues = calculateCumulativeProbabilities(observedPValues);
+    const cumulativePrecomputedPValues = calculateCumulativeProbabilities(precomputedPValues);
+
     // Update UI
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
@@ -443,21 +460,21 @@ function performChiSquareAnalysis(observed, expected, observedPValues, totalSpin
     document.getElementById("conclusion").textContent = conclusion;
     document.getElementById("conclusion").style.color = pValue < 0.05 ? "yellow" : "white";
 
-    // Display Top Contributors
-const topContributorsText = contributions.slice(0, 5).map(c =>
-    `<span style="color: DarkKhaki;">Number ${c.number}:</span> 
-     <span style="color: lightgreen;">Observed = ${c.observed}</span>, 
-     <span style="color: cyan;">Expected = ${c.expected.toFixed(2)}</span>, 
-     <span style="color: orange;">Contribution = ${c.contribution.toFixed(2)}</span>`
-).join("<br>");
+    // Display Top Contributors with cumulative p-values
+    const topContributorsText = contributions.slice(0, 5).map(c =>
+        `<span style="color: DarkKhaki;">Number ${c.number}:</span> 
+         <span style="color: lightgreen;">Observed = ${c.observed}</span>, 
+         <span style="color: cyan;">Expected = ${c.expected.toFixed(2)}</span>, 
+         <span style="color: orange;">Contribution = ${c.contribution.toFixed(2)}</span>, 
+         <span style="color: violet;">Cumulative P-Value = ${cumulativeObservedPValues[c.number]}</span>`
+    ).join("<br>");
 
-    
-    
     document.getElementById("topContributors").innerHTML = topContributorsText || "No significant contributors.";
 
     // Generate Chart
     generateChart(observed, expected);
 }
+
 
 // Function to generate the chart
 function generateChart(observed, expected) {
@@ -491,24 +508,87 @@ function generateChart(observed, expected) {
     });
 }
 
-// Function to export p-value comparison to CSV
-function exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPValues, precomputedPValues, filenames) {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += `Files Processed:, ${filenames.join(" | ")}\n\n`;
-    csvContent += `Number,Observed,Expected,Observed P-Value,Precomputed P-Value\n`;
+function exportFilenamesToTxt(filenames) {
+    console.log("Attempting to download TXT file...");
 
-    for (let i = 0; i < 38; i++) {
-        csvContent += `${i},${observedCounts[i]},${expectedCounts[i].toFixed(2)},${observedPValues[i]},${precomputedPValues[i]}\n`;
+    if (!filenames || filenames.length === 0) {
+        console.error("No filenames available to export.");
+        return;
     }
 
-    const encodedUri = encodeURI(csvContent);
+    let txtContent = "Files Processed:\n" + filenames.join("\n");
+    console.log("TXT Content:", txtContent);  // 🟢 Debugging - See if file content is created
+
+    const blob = new Blob([txtContent], { type: "text/plain" });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `PValue_Comparison.csv`);
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "Processed_Files.txt";
+
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+        document.body.removeChild(link);
+    }, 500);
+
+    console.log("TXT file should have downloaded: Processed_Files.txt");
+}
+
+
+// Function to export p-value comparison with filenames at the bottom of the CSV
+function exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPValues, precomputedPValues, filenames) {
+    if (!filenames || !Array.isArray(filenames)) {
+        console.error("Filenames array is undefined or not valid.");
+        return;
+    }
+
+    let cumulativeObservedPValues = calculateCumulativeProbabilities(observedPValues);
+    let cumulativePrecomputedPValues = calculateCumulativeProbabilities(precomputedPValues);
+
+    let csvContent = "Number,Observed,Expected,Obs P-Val,100m P-Value,Cu Obs P-Val,Cu 100m P-Val\n";
+
+    for (let i = 0; i < 38; i++) {
+        csvContent += `${i},${observedCounts[i]},${expectedCounts[i].toFixed(2)},${observedPValues[i]},${precomputedPValues[i]},${cumulativeObservedPValues[i]},${cumulativePrecomputedPValues[i]}\n`;
+    }
+
+    // Append filenames at the bottom of CSV
+    csvContent += `\nProcessed Files:\n`;
+    filenames.forEach(filename => {
+        csvContent += `${filename}\n`;
+    });
+
+    // Create and trigger CSV file download
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "PValue_Comparison.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
+
+function handleFileExport(observedCounts, expectedCounts, observedPValues, precomputedPValues, filenames) {
+    console.log("📁 Starting file export process...");
+
+    if (!filenames || filenames.length === 0) {
+        console.warn("⚠️ No filenames found for export.");
+        return;
+    }
+
+    console.log("📂 Filenames to be exported:", filenames);
+
+    // ✅ Export TXT file
+    exportFilenamesToTxt(filenames);
+
+    // ✅ Delay CSV export slightly for smoother downloads
+    setTimeout(() => {
+        console.log("📊 Attempting CSV export...");
+        exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPValues, precomputedPValues);
+    }, 1000);
+}
+
+
 
 // Handle multiple file input
 document.getElementById('fileInput').addEventListener('change', function(event) {

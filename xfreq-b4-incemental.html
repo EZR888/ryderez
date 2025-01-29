@@ -211,6 +211,8 @@
 
 <script>
 
+let totalRuns = 0;
+
 class MinHeap {
     constructor() {
         this.heap = [];
@@ -312,58 +314,73 @@ class MaxHeap extends MinHeap {
     }
 }
 
-const TopIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
-const BottomIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
-
-const leftTop = [5, 22, 34, 15, 3, 24, 36, 13, 1];
-const leftBottom = [17, 32, 20, 7, 11, 30, 26, 9, 28];
-const rightTop = [27, 10, 25, 29, 12, 8, 19, 31, 18];
-const rightBottom = [2, 14, 35, 23, 4, 16, 33, 21, 6];
-const cTop = [24, 36, 13, 1, 0, 27, 10, 25, 29];
-const cBottom = [30, 26, 9, 28, 0, 2, 14, 35, 23];
-const zzCluster = [13, 1, 0, 27, 10];
-const zCluster = [9, 28, 0, 2, 14];
-
-function calculateAllSums(counts) {
-    return {
-        topBottomDiff: sumColumns(counts, TopIndices) - sumColumns(counts, BottomIndices),
-        leftRightDiff1: (sumColumns(counts, leftTop) + sumColumns(counts, leftBottom)) - (sumColumns(counts, rightTop) + sumColumns(counts, rightBottom)),
-        leftRightDiff2: (sumColumns(counts, leftTop) + sumColumns(counts, rightBottom)) - (sumColumns(counts, rightTop) + sumColumns(counts, leftBottom)),
-        cDiff: sumColumns(counts, cTop) - sumColumns(counts, cBottom),
-        zzDiff: sumColumns(counts, zzCluster) - sumColumns(counts, zCluster)
-    };
-}
+const groupIndices = {
+    topIndices: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18],
+    bottomIndices: [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6],
+    leftTop: [5, 22, 34, 15, 3],
+    leftBottom: [17, 32, 20, 7, 11],
+    rightTop: [12, 8, 19, 31, 18],
+    rightBottom: [4, 16, 33, 21, 6],
+    cTop: [24, 36, 13, 1, 37, 27, 10, 25, 29],
+    cBottom: [30, 26, 9, 28, 0, 2, 14, 35, 23],
+    zzCluster: [13, 1, 37, 27, 10],
+    zCluster: [9, 28, 0, 2, 14],
+    left: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28],
+    right: [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6]
+};
 
 function sumColumns(counts, indices) {
     return indices.reduce((sum, idx) => sum + counts[idx], 0);
 }
 
+function calculateAllSums(counts) {
+    let leftSum = sumColumns(counts, groupIndices.left) - (counts[37] / 2) + (counts[0] / 2);
+    let rightSum = sumColumns(counts, groupIndices.right) - (counts[0] / 2) + (counts[37] / 2);
+
+    return {
+        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
+        leftRightDiff: leftSum - rightSum,
+        cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
+        zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster)
+    };
+}
 
 function processData(rows) {
     let statsCollection = {};
     const differences = {
-        topBottom: [],
-        leftRight1: [],
-        leftRight2: [],
-        cGroup: [],
-        zzGroup: []
+        topBottomDiff: [],
+        leftRightDiff: [],
+        cDiff: [],
+        zzDiff: []
     };
+    const groupSums = {};
+
+    for (const key in groupIndices) {
+        groupSums[key] = [];
+    }
 
     rows.forEach(counts => {
-        const { topBottomDiff, leftRightDiff1, leftRightDiff2, cDiff, zzDiff } = calculateAllSums(counts);
-        differences.topBottom.push(topBottomDiff);
-        differences.leftRight1.push(leftRightDiff1);
-        differences.leftRight2.push(leftRightDiff2);
-        differences.cGroup.push(cDiff);
-        differences.zzGroup.push(zzDiff);
+        for (const key in groupIndices) {
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+        }
+
+        const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
+        differences.topBottomDiff.push(topBottomDiff);
+        differences.leftRightDiff.push(leftRightDiff);
+        differences.cDiff.push(cDiff);
+        differences.zzDiff.push(zzDiff);
     });
 
     Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+        statsCollection[category] = calculateDescriptiveStatistics(differences[category] || []);
     });
 
-    exportToCSV(differences, statsCollection, `FreqDist_Analysis.csv`);
-    displayResults(differences, statsCollection);
+    Object.keys(groupSums).forEach(group => {
+        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group] || []);
+    });
+
+    exportToCSV(differences, groupSums, statsCollection, `FreqDist_Analysis.csv`);
+    displayResults(differences, groupSums, statsCollection);
 }
 
        	// Event listener for the Simulator button
@@ -437,18 +454,6 @@ document.getElementById('fileInput').addEventListener('change', function (event)
     }
 });
 
-function loadDefaultCSV(userCSVData) {
-    const defaultCSV = `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1`;
-    isLoadingDefaultCSV = true; // Set the flag to indicate the default file is being processed
-
-    // Combine user-selected data with default data
-    const combinedCSVData = userCSVData ? `${userCSVData.trim()}\n${defaultCSV.trim()}` : defaultCSV;
-    processConcatenatedCSVData(combinedCSVData);
-
-    isLoadingDefaultCSV = false; // Reset the flag after processing
-}
-
 function processConcatenatedCSVData(csvData) {
     const rows = csvData.trim().split("\n");
 
@@ -484,12 +489,8 @@ function processConcatenatedCSVData(csvData) {
         }
     });
 
-    // If only one data row exists, add a default row of ones
-    if (dataRows.length === 1) {
-        console.warn("Detected a one-run CSV file. Adding a default row of ones.");
-        const onesRow = new Array(38).fill(1);
-        dataRows.push(onesRow);
-    }
+    totalRuns = rows.length - 1;  // Counting the number of data rows (excluding header)
+    console.log("Total Runs from file:", totalRuns);
 
     console.log("Data Rows Before Processing:", dataRows);
 
@@ -576,7 +577,11 @@ function calculateAndExportStatistics(dataRows, headerRow) {
     }
 }
 
-    document.getElementById("runButton").addEventListener("click", generateRandomRuns);
+document.getElementById("runButton").addEventListener("click", () => {
+    totalRuns = parseInt(document.getElementById("numRuns").value, 10) || 0;
+    console.log("Total Runs from input:", totalRuns);
+    generateRandomRuns();
+});
 
     const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
     const setBIndices = [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6];
@@ -683,56 +688,59 @@ function processCSVData(csvText) {
 function generateRandomRuns() {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
 
-    // Clear the Frequency Distribution display
-    const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = "";
-
-    // Enforce input limit
     if (numRuns > 50000000 || numRuns < 1) {
         alert("Please enter a valid number between 1 and 50,000,000.");
         return;
     }
 
     const differences = {
-        topBottom: [],
-        leftRight1: [],
-        leftRight2: [],
-        cGroup: [],
-        zzGroup: []
+        topBottomDiff: [],
+        leftRightDiff: [],
+        cDiff: [],
+        zzDiff: []
     };
 
-    const heaps = {
-        topBottom: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        leftRight1: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        leftRight2: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        cGroup: { maxHeap: new MaxHeap(), minHeap: new MinHeap() },
-        zzGroup: { maxHeap: new MaxHeap(), minHeap: new MinHeap() }
-    };
-
-    for (let i = 0; i < numRuns; i++) {
-    const counts = getRandomCounts(38); // Simulate 38 picks for this run
-        const { topBottomDiff, leftRightDiff1, leftRightDiff2, cDiff, zzDiff } = calculateAllSums(counts);
-
-        differences.topBottom.push(topBottomDiff);
-        differences.leftRight1.push(leftRightDiff1);
-        differences.leftRight2.push(leftRightDiff2);
-        differences.cGroup.push(cDiff);
-        differences.zzGroup.push(zzDiff);
-
-        updateHeaps(heaps.topBottom, topBottomDiff);
-        updateHeaps(heaps.leftRight1, leftRightDiff1);
-        updateHeaps(heaps.leftRight2, leftRightDiff2);
-        updateHeaps(heaps.cGroup, cDiff);
-        updateHeaps(heaps.zzGroup, zzDiff);
+    const groupSums = {};
+    for (const key in groupIndices) {
+        groupSums[key] = [];
     }
 
-    const statsCollection = {};
-    Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-    });
+    function processChunk(startIndex, chunkSize) {
+        for (let i = startIndex; i < Math.min(numRuns, startIndex + chunkSize); i++) {
+            const counts = getRandomCounts(38);
+            const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
 
-    exportToCSV(differences, statsCollection, `FreqDist_${numRuns}.csv`);
-    displayResults(differences, statsCollection);
+            differences.topBottomDiff.push(topBottomDiff);
+            differences.leftRightDiff.push(leftRightDiff);
+            differences.cDiff.push(cDiff);
+            differences.zzDiff.push(zzDiff);
+
+            for (const key in groupIndices) {
+                if (!groupSums[key]) {
+                    groupSums[key] = []; // Ensure it's initialized
+                }
+                groupSums[key].push(sumColumns(counts, groupIndices[key]));
+            }
+        }
+
+        if (startIndex + chunkSize < numRuns) {
+            setTimeout(() => processChunk(startIndex + chunkSize, chunkSize), 0);
+        } else {
+            const statsCollection = {};
+            Object.keys(differences).forEach(category => {
+                statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+            });
+
+            Object.keys(groupSums).forEach(group => {
+                statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+            });
+
+            exportToCSV(differences, groupSums, statsCollection, `FreqDist_${numRuns}.csv`);
+            displayResults(differences, groupSums, statsCollection);
+        }
+    }
+
+    processChunk(0, 100000); // Process in chunks to prevent freezing
 }
 
 function updateHeaps(heap, value) {
@@ -769,13 +777,19 @@ function calculateGroupSums(counts, setAIndices, setBIndices) {
     return { sumA, sumB };
 }
 
-function calculateFrequencyDistribution(differences) {
+function calculateFrequencyDistribution(data) {
+    if (!data || !Array.isArray(data)) {
+        console.error("Invalid data provided to calculateFrequencyDistribution");
+        return {};
+    }
+
     const frequency = {};
-    differences.forEach(diff => {
+    data.forEach(diff => {
         frequency[diff] = (frequency[diff] || 0) + 1;
     });
     return frequency;
 }
+
     
 function calculateDescriptiveStatistics(differences) {
     if (!Array.isArray(differences) || differences.length === 0) {
@@ -827,45 +841,6 @@ function calculateMedian(arr) {
     return sorted.length % 2 !== 0 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4);
 }
 
-
-
-function displayFrequencyDistribution(frequencyDistribution, observedDifference) {
-    const sortedKeys = Object.keys(frequencyDistribution).sort((a, b) => Number(a) - Number(b));
-
-    // Create a table with headers
-    let tableHTML = `
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 2px solid lightgreen;">
-                    <th style="padding: 8px; color: salmon;">Difference</th>
-                    <th style="padding: 8px; color: salmon;">Frequency</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    // Populate table rows
-    sortedKeys.forEach(key => {
-        const isObserved = Number(key) === observedDifference;
-        tableHTML += `
-            <tr style="${isObserved ? 'background-color: rgba(0, 255, 0, 0.2);' : ''}">
-                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${key}</td>
-                <td style="padding: 8px; border-bottom: 1px solid #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${frequencyDistribution[key]}</td>
-            </tr>
-        `;
-    });
-
-    tableHTML += `
-            </tbody>
-        </table>
-    `;
-
-    // Insert the table into the explanation section
-    const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = tableHTML;
-}
-
-
 function displayDescriptiveStatistics(stats) {
     if (!stats || typeof stats !== "object") {
         console.error("Invalid statistics data provided for display.");
@@ -889,29 +864,67 @@ function displayDescriptiveStatistics(stats) {
 }
 
 const categoryLabels = {
-    topBottom: "Top - Bottom",
-    leftRight1: "Left - Right",
-    leftRight2: "X Quadrant",
-    cGroup: "Center 9",
-    zzGroup: "00 - 0"
+    topBottomDiff: "Top - Bottom: ",
+    leftRightDiff: "Left - Right: ",
+    cDiff: "Center 9, Top - Bottom: ",
+    zzDiff: "00 - 0: ",
+    topIndices: "Top: ",
+    bottomIndices: "Bottom: ",
+    leftTop: "Left Top: ",
+    leftBottom: "Left Bottom: ",
+    rightTop: "Right Top: ",
+    rightBottom: "Right Bottom: ",
+    cTop: "Center Top: ",
+    cBottom: "Center Bottom: ",
+    zzCluster: "00 Cluster: ",
+    zCluster: "0 Cluster: ",
+    left: "Left: ",
+    right: "Right: "
 };
 
-function displayResults(differences, stats) {
+const totalCategories = [
+    "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
+    "cTop", "cBottom", "zzCluster", "zCluster", "left", "right"
+];
+
+function displayResults(differences, groupSums, stats) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
 
-    Object.keys(differences).forEach(category => {
+    const allCategories = { ...differences, ...groupSums };
+    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
+
+    Object.keys(allCategories).forEach(category => {
+        if (!stats[category]) {
+            console.warn(`Missing statistics for category: ${category}`);
+            return;
+        }
+
         let categoryLabel = categoryLabels[category] || category;
-        let tableHTML = `<h3><center>${categoryLabel} Statistics and Frequency Distribution</h3>`;
+        
+        // Determine the correct column header based on the category
+        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
+
+        // Add an image above the section title
+        let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
+
+        let tableHTML = `
+            <h3><center><span style="color: orange;">${categoryLabel}</span>
+            <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
+            ${imageHTML}
+            <br>
+        `;
+        
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Difference</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+                        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
                       </tr>`;
 
-        const frequencyCount = calculateFrequencyDistribution(differences[category]);
+        const frequencyCount = calculateFrequencyDistribution(allCategories[category] || []);
         const metricKeys = Object.keys(stats[category]);
         const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
 
@@ -919,16 +932,18 @@ function displayResults(differences, stats) {
 
         for (let i = 0; i < maxLength; i++) {
             const metric = metricKeys[i] || "";
-            const formattedMetric = metric.charAt(0).toUpperCase() + metric.slice(1);
+            const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
             const value = metric ? stats[category][metric] : "";
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyCount[difference] : "";
+            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
             tableHTML += `<tr>
                 <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
                 <td style="padding: 8px; text-align: center;">${value}</td>
                 <td style="padding: 8px; text-align: center;">${difference}</td>
                 <td style="padding: 8px; text-align: center;">${frequency}</td>
+                <td style="padding: 8px; text-align: center;">${pValue}</td>
             </tr>`;
         }
 
@@ -937,21 +952,24 @@ function displayResults(differences, stats) {
     });
 }
 
-
-function exportToCSV(differences, stats, fileName) {
+// Update exportToCSV function to include image references in the CSV header section
+function exportToCSV(differences, groupSums, stats, fileName) {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Category,Metric,Value,Difference,Frequency\n";
+    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
 
     Object.entries(stats).forEach(([category, values]) => {
-        const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(differences[category]);
+        let categoryLabel = categoryLabels[category] || category;
+        
+        // Determine the correct column header based on the category
+        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
 
-        // Sort frequency distribution by difference (numeric sorting)
+        csvContent += `Category,Metric,Value,${columnHeader},Frequency,P-Value\n`;
+
+        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
 
         const metrics = [
             { name: "Mean", value: values.mean },
-            { name: "Variance", value: values.variance },
             { name: "StdDev", value: values.stdDev },
             { name: "Median", value: values.median },
             { name: "Min", value: values.min },
@@ -964,11 +982,12 @@ function exportToCSV(differences, stats, fileName) {
             const metric = metrics[i] || { name: "", value: "" };
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
-            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency}\n`;
+            csvContent += `${i === 0 ? categoryLabel : ''},${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
         }
 
-        csvContent += "\n"; // Blank row between categories
+        csvContent += "\n";
     });
 
     const encodedUri = encodeURI(csvContent);
@@ -980,7 +999,6 @@ function exportToCSV(differences, stats, fileName) {
     document.body.removeChild(link);
 }
 
-    
 </script>
 </body>
 </html>

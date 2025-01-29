@@ -315,7 +315,6 @@ class MaxHeap extends MinHeap {
 }
 
 const groupIndices = {
-    fullRow: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18, 17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6],
     topIndices: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18],
     bottomIndices: [17, 32, 20, 7, 11, 30, 26, 9, 28, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6],
     leftTop: [5, 22, 34, 15, 3],
@@ -326,8 +325,8 @@ const groupIndices = {
     cBottom: [30, 26, 9, 28, 0, 2, 14, 35, 23],
     zzCluster: [13, 1, 37, 27, 10],
     zCluster: [9, 28, 0, 2, 14],
-    Left: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28],
-    Right: [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6]
+    left: [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 17, 32, 20, 7, 11, 30, 26, 9, 28],
+    right: [27, 10, 25, 29, 12, 8, 19, 31, 18, 0, 2, 14, 35, 23, 4, 16, 33, 21, 6]
 };
 
 function sumColumns(counts, indices) {
@@ -335,8 +334,8 @@ function sumColumns(counts, indices) {
 }
 
 function calculateAllSums(counts) {
-    let leftSum = sumColumns(counts, groupIndices.Left) - (counts[37] / 2) + (counts[0] / 2);
-    let rightSum = sumColumns(counts, groupIndices.Right) - (counts[0] / 2) + (counts[37] / 2);
+    let leftSum = sumColumns(counts, groupIndices.left) - (counts[37] / 2) + (counts[0] / 2);
+    let rightSum = sumColumns(counts, groupIndices.right) - (counts[0] / 2) + (counts[37] / 2);
 
     return {
         topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
@@ -579,9 +578,69 @@ function calculateAndExportStatistics(dataRows, headerRow) {
 }
 
 document.getElementById("runButton").addEventListener("click", () => {
-    totalRuns = parseInt(document.getElementById("numRuns").value, 10) || 0;
-    console.log("Total Runs from input:", totalRuns);
-    generateRandomRuns();
+    const numRuns = parseInt(document.getElementById("numRuns").value, 10);
+
+    if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
+        alert("Please enter a valid number of runs (1–10,000,000).");
+        return;
+    }
+
+    const observedCounts = Array(38).fill(0);
+
+    // Simulate X runs, each consisting of 38 random picks
+    for (let run = 0; run < numRuns; run++) {
+        for (let i = 0; i < 38; i++) {
+            const randomNumber = Math.floor(Math.random() * 38); // Random number between 0 and 37
+            observedCounts[randomNumber]++;
+        }
+    }
+
+    // Calculate expected frequency
+    const totalPicks = numRuns * 38;
+    const expectedFrequency = totalPicks / 38;
+    const expectedCounts = Array(38).fill(expectedFrequency);
+
+    // Calculate chi-square contributions and p-values
+    const pValues = [];
+    for (let i = 0; i < 38; i++) {
+        const observed = observedCounts[i];
+        const expected = expectedCounts[i];
+        const chiSquareContribution = Math.pow(observed - expected, 2) / expected;
+
+        // Degrees of freedom for each test = 1
+        const pValue = 1 - jStat.chisquare.cdf(chiSquareContribution, 1);
+        pValues.push(pValue.toFixed(6)); // Keep 6 decimal places for p-values
+    }
+
+    // Display results
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = `
+        <h3>P-Values for Frequency Distribution</h3>
+        <p>Number of Runs: ${numRuns}</p>
+        <p>Total Picks: ${totalPicks}</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; color: lightgreen;">
+            <tr>
+                <th>Number</th>
+                <th>Observed Count</th>
+                <th>Expected Count</th>
+                <th>P-Value</th>
+            </tr>
+            ${pValues
+                .map(
+                    (pValue, index) =>
+                        `<tr>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td style="text-align: center;">${observedCounts[index]}</td>
+                            <td style="text-align: center;">${expectedCounts[index].toFixed(2)}</td>
+                            <td style="text-align: center;">${pValue}</td>
+                        </tr>`
+                )
+                .join("")}
+        </table>
+        <p>The p-values correspond to the statistical test of uniformity for numbers 1 through 38.</p>
+    `;
+
+    console.log("P-Values:", pValues);
 });
 
     const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
@@ -865,7 +924,6 @@ function displayDescriptiveStatistics(stats) {
 }
 
 const categoryLabels = {
-    fullRow: "Full Row: ",
     topBottomDiff: "Top - Bottom: ",
     leftRightDiff: "Left - Right: ",
     cDiff: "Center 9, Top - Bottom: ",
@@ -880,70 +938,89 @@ const categoryLabels = {
     cBottom: "Center Bottom: ",
     zzCluster: "00 Cluster: ",
     zCluster: "0 Cluster: ",
-    Left: "Left: ",
-    Right: "Right: "
+    left: "Left: ",
+    right: "Right: "
 };
 
 const totalCategories = [
     "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
-    "cTop", "cBottom", "zzCluster", "zCluster", "Left", "Right"
+    "cTop", "cBottom", "zzCluster", "zCluster", "left", "right"
 ];
+
+function calculateCumulativeProbabilities(frequencyDistribution, totalRuns) {
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+    let cumulativeFrequency = 0;
+    const cumulativeProbabilities = {};
+
+    sortedKeys.forEach(key => {
+        cumulativeFrequency += frequencyDistribution[key];
+        const cumulativeP = cumulativeFrequency / totalRuns;
+        cumulativeProbabilities[key] = { cumulativeFrequency, cumulativeP };
+    });
+
+    return cumulativeProbabilities;
+}
 
 function displayResults(differences, groupSums, stats) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
 
-    const allCategories = { fullRow: groupSums.fullRow, ...differences, ...groupSums };
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
+    const allCategories = { ...differences, ...groupSums };
 
     Object.keys(allCategories).forEach(category => {
-        if (!stats[category]) {
-            console.warn(`Missing statistics for category: ${category}`);
-            return;
-        }
+        if (!stats[category]) return;
 
-        let categoryLabel = categoryLabels[category] || category;
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-
-        let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
 
         let tableHTML = `
             <h3><center><span style="color: orange;">${categoryLabel}</span>
             <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
-            ${imageHTML}
             <br>
+            <table border='1' style="border-collapse: collapse; width: 100%;">
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Difference</th>
+                    <th>Frequency</th>
+                    <th>P-Value</th>
+                    <th>Cumulative Frequency</th>
+                    <th>Cumulative P-Value</th>
+                </tr>
         `;
 
-        tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
-        tableHTML += `<tr>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
-                      </tr>`;
-
-        const frequencyCount = calculateFrequencyDistribution(allCategories[category] || []);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(stats[category]);
-        const sortedFrequencyKeys = Object.keys(frequencyCount).map(Number).sort((a, b) => a - b);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
 
-        const maxLength = Math.max(metricKeys.length, sortedFrequencyKeys.length);
-
-        for (let i = 0; i < maxLength; i++) {
+        for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
             const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
             const value = metric ? stats[category][metric] : "";
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyCount[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
 
-            tableHTML += `<tr>
-                <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
-                <td style="padding: 8px; text-align: center;">${value}</td>
-                <td style="padding: 8px; text-align: center;">${difference}</td>
-                <td style="padding: 8px; text-align: center;">${frequency}</td>
-                <td style="padding: 8px; text-align: center;">${pValue}</td>
-            </tr>`;
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+
+            // Ensure cumulative data is aligned correctly
+            let cumulativeFrequency = "";
+            let cumulativePValue = "";
+            if (difference !== "" && cumulativeData[difference]) {
+                cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+                cumulativePValue = cumulativeData[difference].cumulativeP.toFixed(6);
+            }
+
+            tableHTML += `
+                <tr>
+                    <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
+                    <td style="padding: 8px; text-align: center;">${value}</td>
+                    <td style="padding: 8px; text-align: center;">${difference}</td>
+                    <td style="padding: 8px; text-align: center;">${frequency}</td>
+                    <td style="padding: 8px; text-align: center;">${pValue}</td>
+                    <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
+                    <td style="padding: 8px; text-align: center;">${cumulativePValue}</td>
+                </tr>`;
         }
 
         tableHTML += `</table><br/>`;
@@ -951,47 +1028,40 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-// Export results to CSV
 function exportToCSV(differences, groupSums, stats, fileName) {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
-
-    // Add fullRow first
-    csvContent += `Category,Metric,Value,Total,Frequency,P-Value\n`;
-    csvContent += `Full Row\n`;
+    let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
 
     Object.entries(stats).forEach(([category, values]) => {
-        let categoryLabel = categoryLabels[category] || category;
-        let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
-
-        csvContent += `${categoryLabel},Metric,Value,${columnHeader},Frequency,P-Value\n`;
-
+        const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
 
-        const metrics = [
-            { name: "Mean", value: values.mean },
-            { name: "StdDev", value: values.stdDev },
-            { name: "Median", value: values.median },
-            { name: "Min", value: values.min },
-            { name: "Max", value: values.max },
-            { name: "Skewness", value: values.skewness },
-            { name: "Kurtosis", value: values.kurtosis }
-        ];
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            const value = metric ? values[metric] : "";
 
-        for (let i = 0; i < Math.max(metrics.length, sortedFrequencyKeys.length); i++) {
-            const metric = metrics[i] || { name: "", value: "" };
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "N/A";
+            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
 
-            csvContent += `${metric.name},${metric.value},${difference},${frequency},${pValue}\n`;
+            let cumulativeFrequency = "";
+            let cumulativePValue = "";
+            if (difference !== "" && cumulativeData[difference]) {
+                cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+                cumulativePValue = cumulativeData[difference].cumulativeP.toFixed(6);
+            }
+
+            csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
         }
 
         csvContent += "\n";
     });
 
-    const encodedUri = encodeURI(csvContent);
+    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", fileName);
@@ -999,6 +1069,7 @@ function exportToCSV(differences, groupSums, stats, fileName) {
     link.click();
     document.body.removeChild(link);
 }
+
 
 </script>
 </body>

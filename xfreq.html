@@ -949,14 +949,35 @@ const totalCategories = [
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalRuns) {
     const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-    let cumulativeFrequency = 0;
-    const cumulativeProbabilities = {};
+    let cumulativeFrequencyBelow = 0;
+    let cumulativeFrequencyAbove = 0;
+    let cumulativeProbabilities = {};
 
-    sortedKeys.forEach(key => {
-        cumulativeFrequency += frequencyDistribution[key];
-        const cumulativeP = cumulativeFrequency / totalRuns;
-        cumulativeProbabilities[key] = { cumulativeFrequency, cumulativeP };
+    // Process negative differences first (descending order)
+    sortedKeys.filter(k => k < 0).reverse().forEach(key => {
+        cumulativeFrequencyBelow += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeFrequencyBelow,
+            cumulativeP: (cumulativeFrequencyBelow / totalRuns).toFixed(6)
+        };
     });
+
+    // Process positive differences (ascending order)
+    sortedKeys.filter(k => k > 0).forEach(key => {
+        cumulativeFrequencyAbove += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeFrequencyAbove,
+            cumulativeP: (cumulativeFrequencyAbove / totalRuns).toFixed(6)
+        };
+    });
+
+    // Ensure the mean (0) has no cumulative probability
+    if (sortedKeys.includes(0)) {
+        cumulativeProbabilities[0] = {
+            cumulativeFrequency: "",
+            cumulativeP: ""
+        };
+    }
 
     return cumulativeProbabilities;
 }
@@ -1014,10 +1035,19 @@ function displayResults(differences, groupSums, stats) {
             // Ensure cumulative data is aligned correctly
             let cumulativeFrequency = "";
             let cumulativePValue = "";
-            if (difference !== "" && cumulativeData[difference]) {
-                cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
-                cumulativePValue = cumulativeData[difference].cumulativeP.toFixed(6);
-            }
+let differenceKey = difference.toString();  // Convert difference to string
+
+if (difference !== "" && cumulativeData[differenceKey]) {
+    cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
+    let rawCumulativeP = cumulativeData[differenceKey].cumulativeP;
+
+    if (!isNaN(rawCumulativeP)) {
+        cumulativePValue = Number(rawCumulativeP).toFixed(6);
+    } else {
+        console.warn("Non-numeric cumulativeP detected:", rawCumulativeP);
+        cumulativePValue = "";
+    }
+}
 
             tableHTML += `
                 <tr>
@@ -1056,14 +1086,18 @@ function exportToCSV(differences, groupSums, stats, fileName) {
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
             const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
 
-            let cumulativeFrequency = "";
-            let cumulativePValue = "";
-            if (difference !== "" && cumulativeData[difference]) {
-                cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
-                cumulativePValue = cumulativeData[difference].cumulativeP.toFixed(6);
-            }
+			let cumulativeFrequency = "";
+			let cumulativePValue = "";
 
-            csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+			if (difference !== "" && cumulativeData[difference]) {
+    			cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+    			cumulativePValue = cumulativeData[difference]?.cumulativeP 
+        			? Number(cumulativeData[difference].cumulativeP).toFixed(6) 
+        			: "";
+			}
+
+csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+
         }
 
         csvContent += "\n";

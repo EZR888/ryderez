@@ -371,9 +371,12 @@ function processMultipleCSVFiles(files) {
 
                 // Compute observed p-values
                 const observedPValues = totalCounts.map((observed, i) => {
-                    const chiSquareContribution = Math.pow(observed - expectedCounts[i], 2) / expectedCounts[i];
-                    return (1 - jStat.chisquare.cdf(chiSquareContribution, 1)).toFixed(6);
-                });
+    return (2 * Math.min(
+        jStat.binomial.cdf(observed, totalSpins, 1 / 38), 
+        1 - jStat.binomial.cdf(observed - 1, totalSpins, 1 / 38)
+    )).toFixed(6);
+});
+
 
                 // Perform Chi-Square Analysis & Update UI
                 performChiSquareAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins, filenames);
@@ -417,21 +420,16 @@ function processCSVData(csvData) {
 function calculateCumulativeProbabilities(pValues) {
     const sortedPValues = [...pValues].map(parseFloat).sort((a, b) => a - b);
     let cumulativeSum = 0;
-    const cumulativePValues = sortedPValues.map(p => {
+    return sortedPValues.map(p => {
         cumulativeSum += p;
         return cumulativeSum.toFixed(6);
     });
-    return cumulativePValues;
 }
 
-function displayResultsTable(observedCounts, expectedCounts, observedPValues, precomputedPValues, cumulativeObservedPValues, cumulativePrecomputedPValues, filenames) {
-    if (!filenames || !Array.isArray(filenames)) {
-        console.error("Filenames array is undefined or not valid.");
-        filenames = [];
-    }
 
+function displayResultsTable(observedCounts, expectedCounts, observedPValues, precomputedPValues, cumulativeObservedPValues, cumulativePrecomputedPValues, filenames) {
     let tableHTML = `
-        <h3><span style="color: lightgreen;">Detailed P-Value Analysis:</span></h3>
+        <h3><span style="color: lightgreen;">Detailed P-Value Analysis (Binomial Test):</span></h3>
         <table border="1" style="width: 100%; color: white; text-align: center; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #444;color: salmon;">
@@ -449,7 +447,7 @@ function displayResultsTable(observedCounts, expectedCounts, observedPValues, pr
     for (let i = 0; i < 38; i++) {
         tableHTML += `
             <tr>
-                <td style="color: yellow;">${i + 1}</td>
+                <td style="color: yellow;">${i}</td>
                 <td>${observedCounts[i]}</td>
                 <td>${expectedCounts[i].toFixed(2)}</td>
                 <td>${observedPValues[i]}</td>
@@ -459,14 +457,11 @@ function displayResultsTable(observedCounts, expectedCounts, observedPValues, pr
             </tr>`;
     }
 
-    tableHTML += `
-            </tbody>
-        </table>`;
+    tableHTML += `</tbody></table>`;
 
     if (filenames.length > 0) {
-        tableHTML += `
-        <h3><span style="color: lightgreen;">Processed Files:</span></h3>
-        <p style="color: white;">${filenames.join("<br>")}</p>`;
+        tableHTML += `<h3><span style="color: lightgreen;">Processed Files:</span></h3>
+                      <p style="color: white;">${filenames.join("<br>")}</p>`;
     } else {
         tableHTML += `<p style="color: red;">No files processed.</p>`;
     }

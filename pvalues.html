@@ -417,13 +417,18 @@ function processCSVData(csvData) {
     return { counts, spins: totalSpins };
 }
 
-function calculateCumulativeProbabilities(pValues) {
-    const sortedPValues = [...pValues].map(parseFloat).sort((a, b) => a - b);
+function calculateCumulativeProbabilities(observedCounts, observedPValues) {
     let cumulativeSum = 0;
-    return sortedPValues.map(p => {
-        cumulativeSum += p;
-        return cumulativeSum.toFixed(6);
-    });
+    let cumulativePValues = Array(38).fill(0);
+
+    for (let i = 0; i < observedCounts.length; i++) {
+        if (observedCounts[i] > 0) {
+            cumulativeSum += parseFloat(observedPValues[i]); 
+        }
+        cumulativePValues[i] = Math.min(cumulativeSum, 1).toFixed(6); // Ensure max value is 1
+    }
+
+    return cumulativePValues;
 }
 
 
@@ -490,8 +495,11 @@ function performChiSquareAnalysis(observed, expected, observedPValues, totalSpin
         ? "There is evidence of non-randomness."
         : "No evidence of non-randomness.";
 
-    const cumulativeObservedPValues = calculateCumulativeProbabilities(observedPValues);
-    const cumulativePrecomputedPValues = calculateCumulativeProbabilities(precomputedPValues);
+    //FIX: Use the correct function for cumulative probabilities
+const cumulativeObservedPValues = calculateCumulativeProbabilities(observed, observedPValues);
+const cumulativePrecomputedPValues = calculateCumulativeProbabilities(observed, precomputedPValues);
+
+
 
     document.getElementById("totalSpins").textContent = totalSpins;
     document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
@@ -511,7 +519,7 @@ function performChiSquareAnalysis(observed, expected, observedPValues, totalSpin
 
     generateChart(observed, expected);
 
-    // Display table below top contributors
+    // : Pass the corrected cumulative p-values
     displayResultsTable(observed, expected, observedPValues, precomputedPValues, cumulativeObservedPValues, cumulativePrecomputedPValues, filenames);
 }
 
@@ -553,8 +561,10 @@ function exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPVa
         return;
     }
 
-    let cumulativeObservedPValues = calculateCumulativeProbabilities(observedPValues);
-    let cumulativePrecomputedPValues = calculateCumulativeProbabilities(precomputedPValues);
+let cumulativeObservedPValues = calculateCumulativeProbabilities(observedCounts, observedPValues);
+let cumulativePrecomputedPValues = calculateCumulativeProbabilities(observedCounts, precomputedPValues);
+
+
 
     let csvContent = "Number,Observed,Expected,Obs P-Val,100m P-Value,Cu Obs P-Val,Cu 100m P-Val\n";
 

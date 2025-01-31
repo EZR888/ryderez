@@ -226,26 +226,21 @@
         </div>
     </div>
 
-<div class="container">
-    <div class="header-container">
-        <h1 class="header-text">Data Analysis</h1>
+    <div class="container">
+        <div class="header-container">
+            <h1 class="header-text">Data Analysis</h1>
+        </div>
+        <div class="results-container">
+            <input type="file" id="fileInput" accept=".csv" multiple>
+            <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies, Based on 100 million Runs:</span></h3>
+            <canvas id="chiSquareChart"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
+            <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
+            <br>
+            <div id="resultsTableContainer" style="margin-top: 20px;"></div>
+        </div>
     </div>
-    <div class="results-container">
-        <input type="file" id="fileInput" accept=".csv" multiple>
-    <!-- <button id="runButton">Run Analysis</button> -->
-        <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies, Based on 100 million Runs:</span></h3>
-        <canvas id="chiSquareChart"></canvas>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
-        <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
-        <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
-        <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
-        <h3><span style="color: lightgreen;">Top Contributors to Chi-Square:</span></h3>
-        <div id="topContributors"></div>
-        <br>
-        <div id="resultsTableContainer" style="margin-top: 20px;"></div>
-    </div>
-</div>
 
 <script>
 //document.getElementById('runButton').addEventListener('click', function() {
@@ -369,24 +364,46 @@ function processMultipleCSVFiles(files) {
                 const expectedFrequency = totalSpins / 38;
                 const expectedCounts = Array(38).fill(expectedFrequency);
 
-                // Compute observed p-values
+                // Compute observed p-values (Binomial test)
                 const observedPValues = totalCounts.map((observed, i) => {
-    return (2 * Math.min(
-        jStat.binomial.cdf(observed, totalSpins, 1 / 38), 
-        1 - jStat.binomial.cdf(observed - 1, totalSpins, 1 / 38)
-    )).toFixed(6);
-});
+                    return (2 * Math.min(
+                        jStat.binomial.cdf(observed, totalSpins, 1 / 38), 
+                        1 - jStat.binomial.cdf(observed - 1, totalSpins, 1 / 38)
+                    )).toFixed(6);
+                });
 
-
-                // Perform Chi-Square Analysis & Update UI
-                performChiSquareAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins, filenames);
-
-                // Export CSV file
-                exportPValueComparisonToCSV(totalCounts, expectedCounts, observedPValues, precomputedPValues, filenames);
+                // Perform analysis and update UI
+                performAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins, filenames);
             }
         };
         reader.readAsText(file);
     });
+}
+
+// Function to analyze and display results
+function performAnalysis(observed, expected, observedPValues, totalSpins, filenames = []) {
+    let results = observed.map((obs, i) => ({
+        number: i,
+        observed: obs,
+        expected: expected[i],
+        pValue: parseFloat(observedPValues[i])
+    }));
+
+    // Sort by lowest p-values first
+    results.sort((a, b) => a.pValue - b.pValue);
+
+    // Filter for significant p-values (p < 0.05)
+    const significantResults = results.filter(r => r.pValue < 0.05);
+
+    const totalRows = totalSpins / 38;
+    document.getElementById("totalSpins").textContent = totalRows;
+    document.getElementById("conclusion").textContent = 
+        significantResults.length > 0 ? "There is evidence of non-randomness." : "No significant deviations detected.";
+    document.getElementById("conclusion").style.color = significantResults.length > 0 ? "yellow" : "white";
+
+    // Display sorted results table
+    displayResultsTable(results, filenames);
+    generateChart(observed, expected);
 }
 
 // Function to process CSV and extract counts
@@ -432,9 +449,10 @@ function calculateCumulativeProbabilities(observedCounts, observedPValues) {
 }
 
 
-function displayResultsTable(observedCounts, expectedCounts, observedPValues, precomputedPValues, cumulativeObservedPValues, cumulativePrecomputedPValues, filenames) {
+// Function to display sorted results
+function displayResultsTable(results, filenames) {
     let tableHTML = `
-        <h3><span style="color: lightgreen;">Detailed P-Value Analysis (Binomial Test):</span></h3>
+        <h3><span style="color: lightgreen;">Sorted P-Value Analysis (Binomial Test):</span></h3>
         <table border="1" style="width: 100%; color: white; text-align: center; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #444;color: salmon;">
@@ -442,25 +460,19 @@ function displayResultsTable(observedCounts, expectedCounts, observedPValues, pr
                     <th>Observed</th>
                     <th>Expected</th>
                     <th>Obs P-Val</th>
-                    <th>100m P-Value</th>
-                    <th>Cu Obs P-Val</th>
-                    <th>Cu 100m P-Val</th>
                 </tr>
             </thead>
             <tbody>`;
 
-    for (let i = 0; i < 38; i++) {
+    results.forEach(r => {
         tableHTML += `
             <tr>
-                <td style="color: yellow;">${i}</td>
-                <td>${observedCounts[i]}</td>
-                <td>${expectedCounts[i].toFixed(2)}</td>
-                <td>${observedPValues[i]}</td>
-                <td>${precomputedPValues[i]}</td>
-                <td>${cumulativeObservedPValues[i]}</td>
-                <td>${cumulativePrecomputedPValues[i]}</td>
+                <td style="color: yellow;">${r.number}</td>
+                <td>${r.observed}</td>
+                <td>${r.expected.toFixed(2)}</td>
+                <td style="color: ${r.pValue < 0.05 ? 'red' : 'white'};">${r.pValue.toFixed(6)}</td>
             </tr>`;
-    }
+    });
 
     tableHTML += `</tbody></table>`;
 
@@ -499,23 +511,10 @@ function performChiSquareAnalysis(observed, expected, observedPValues, totalSpin
 const cumulativeObservedPValues = calculateCumulativeProbabilities(observed, observedPValues);
 const cumulativePrecomputedPValues = calculateCumulativeProbabilities(observed, precomputedPValues);
 
-
-
     document.getElementById("totalSpins").textContent = totalSpins;
-    document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
     document.getElementById("pValue").textContent = pValue.toFixed(6);
     document.getElementById("conclusion").textContent = conclusion;
     document.getElementById("conclusion").style.color = pValue < 0.05 ? "yellow" : "white";
-
-    const topContributorsText = contributions.slice(0, 5).map(c =>
-        `<span style="color: DarkKhaki;">Number ${c.number}:</span> 
-         <span style="color: lightgreen;">Observed = ${c.observed}</span>, 
-         <span style="color: cyan;">Expected = ${c.expected.toFixed(2)}</span>, 
-         <span style="color: orange;">Contribution = ${c.contribution.toFixed(2)}</span>, 
-         <span style="color: violet;">Cumulative P-Value = ${cumulativeObservedPValues[c.number]}</span>`
-    ).join("<br>");
-
-    document.getElementById("topContributors").innerHTML = topContributorsText || "No significant contributors.";
 
     generateChart(observed, expected);
 
@@ -549,7 +548,7 @@ function generateChart(observed, expected) {
             responsive: true,
             plugins: {
                 legend: { position: 'top' },
-                title: { display: true, text: 'Observed vs Expected Frequencies (Static Dataset)' }
+                title: { display: true, text: 'Observed vs Expected Frequencies' }
             }
         }
     });
@@ -586,6 +585,7 @@ let cumulativePrecomputedPValues = calculateCumulativeProbabilities(observedCoun
     document.body.removeChild(link);
 }
 
+// Event listener for file upload
 document.getElementById('fileInput').addEventListener('change', function(event) {
     const files = event.target.files;
     if (files.length === 0) {
@@ -594,6 +594,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     }
     processMultipleCSVFiles(files);
 });
+
 
 </script>
 

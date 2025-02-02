@@ -1081,14 +1081,12 @@ function exportToCSV(differences, groupSums, stats, fileName) {
         return;
     }
 
-    let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
-
-    const allData = { ...differences, ...groupSums }; // Include all categories in calculations
+    let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
-        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns); // ✅ Now applied to all categories
+        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
 
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
@@ -1104,25 +1102,18 @@ function exportToCSV(differences, groupSums, stats, fileName) {
 
             let cumulativeFrequency = "";
             let cumulativePValue = "";
-            let highlight = "No"; // Default: No highlight
 
             if (difference !== "" && cumulativeData[difference]) {
                 cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
                 cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP) 
                     ? Number(cumulativeData[difference].cumulativeP).toFixed(6) 
                     : "0.000000";
-
-                // Apply highlighting if cumulative P-Value < 0.05
-                if (parseFloat(cumulativePValue) < 0.05) {
-                    highlight = "Yes";
-                }
             }
 
-            csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
+            csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
         }
     });
 
-    // Generate and trigger CSV file download
     const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);

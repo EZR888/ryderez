@@ -1083,12 +1083,10 @@ function exportToCSV(differences, groupSums, stats, fileName) {
 
     let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
 
-    const allData = { ...differences, ...groupSums }; // Include all categories in calculations
-
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
-        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns); // ✅ Now applied to all categories
+        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
 
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);

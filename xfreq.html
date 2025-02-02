@@ -206,89 +206,11 @@
 
   <script>
     // =======================================================
-    // Global Variable for total runs (for frequency distributions)
+    // Helper Functions and Global Variables
     // =======================================================
     let totalRuns = 0;
-
-    // =======================================================
-    // HEAP CLASSES (MinHeap & MaxHeap)
-    // =======================================================
-    class MinHeap {
-      constructor() { this.heap = []; }
-      insert(val) { this.heap.push(val); this.bubbleUp(); }
-      extract() {
-        if (this.size() === 1) return this.heap.pop();
-        const root = this.heap[0];
-        this.heap[0] = this.heap.pop();
-        this.bubbleDown();
-        return root;
-      }
-      peek() { return this.heap[0]; }
-      size() { return this.heap.length; }
-      bubbleUp() {
-        let index = this.heap.length - 1;
-        while (index > 0) {
-          const parentIndex = Math.floor((index - 1) / 2);
-          if (this.heap[index] >= this.heap[parentIndex]) break;
-          [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
-          index = parentIndex;
-        }
-      }
-      bubbleDown() {
-        let index = 0;
-        const length = this.heap.length;
-        const element = this.heap[0];
-        while (true) {
-          let leftChildIndex = 2 * index + 1;
-          let rightChildIndex = 2 * index + 2;
-          let swap = null;
-          if (leftChildIndex < length && this.heap[leftChildIndex] < element) {
-            swap = leftChildIndex;
-          }
-          if (rightChildIndex < length && this.heap[rightChildIndex] < (swap === null ? element : this.heap[leftChildIndex])) {
-            swap = rightChildIndex;
-          }
-          if (swap === null) break;
-          [this.heap[index], this.heap[swap]] = [this.heap[swap], this.heap[index]];
-          index = swap;
-        }
-      }
-    }
-
-    class MaxHeap extends MinHeap {
-      bubbleUp() {
-        let index = this.heap.length - 1;
-        while (index > 0) {
-          const parentIndex = Math.floor((index - 1) / 2);
-          if (this.heap[index] <= this.heap[parentIndex]) break;
-          [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
-          index = parentIndex;
-        }
-      }
-      bubbleDown() {
-        let index = 0;
-        const length = this.heap.length;
-        const element = this.heap[0];
-        while (true) {
-          let leftChildIndex = 2 * index + 1;
-          let rightChildIndex = 2 * index + 2;
-          let swap = null;
-          if (leftChildIndex < length && this.heap[leftChildIndex] > element) {
-            swap = leftChildIndex;
-          }
-          if (rightChildIndex < length && this.heap[rightChildIndex] > (swap === null ? element : this.heap[leftChildIndex])) {
-            swap = rightChildIndex;
-          }
-          if (swap === null) break;
-          [this.heap[index], this.heap[swap]] = [this.heap[swap], this.heap[index]];
-          index = swap;
-        }
-      }
-    }
-
-    // =======================================================
-    // GROUP INDICES & HELPER FUNCTIONS
-    // =======================================================
+    
+    // Group indices for various distributions
     const groupIndices = {
       topIndices: [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
       bottomIndices: [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6],
@@ -320,7 +242,7 @@
     }
 
     // =======================================================
-    // DESCRIPTIVE STATISTICS & FREQUENCY FUNCTIONS
+    // Descriptive Statistics & Frequency Functions
     // =======================================================
     function calculateDescriptiveStatistics(differences) {
       if (!Array.isArray(differences) || differences.length === 0) {
@@ -410,7 +332,7 @@
     }
 
     // =======================================================
-    // DISPLAY FUNCTIONS (Existing)
+    // Display Functions (Existing)
     // =======================================================
     const categoryLabels = {
       topBottomDiff: "Top - Bottom: ",
@@ -778,7 +700,6 @@
       let csvContent = "";
       csvContent += getFreqDistCSV(differences, groupSums, stats);
       csvContent += "\n\n";
-      // Compute Max Counts stats
       let maxHitsStats = calculateDescriptiveStatistics(maxHits);
       let maxHitsFreq = calculateFrequencyDistribution(maxHits);
       let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
@@ -880,8 +801,171 @@
     }
 
     // =======================================================
-    // EVENT HANDLERS FOR FILE INPUT
+    // CSV EXPORT FUNCTIONS for Combined CSV
     // =======================================================
+    function getFreqDistCSV(differences, groupSums, stats) {
+      if (!totalRuns || totalRuns <= 0) {
+        console.error("Invalid totalRuns for CSV export:", totalRuns);
+        return "";
+      }
+      let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
+      const allData = { ...differences, ...groupSums };
+      Object.entries(stats).forEach(([category, values]) => {
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+        for (let i = 0; i < maxRows; i++) {
+          const metric = metricKeys[i] || "";
+          const value = metric ? values[metric] : "";
+          const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+          const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+          const pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
+          let cumulativeFrequency = "";
+          let cumulativePValue = "";
+          let highlight = "No";
+          if (difference !== "" && cumulativeData[difference]) {
+            cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+            cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
+              ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
+              : "0.000000";
+            if (parseFloat(cumulativePValue) < 0.05) { highlight = "Yes"; }
+          }
+          csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
+        }
+      });
+      return csvContent;
+    }
+
+    function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+      let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
+      csvContent += "Metric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
+      let total = 38;
+      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+      let metricKeys = Object.keys(maxHitsStats);
+      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+      for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / total).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
+        csvContent += `${formattedMetric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+      }
+      return csvContent;
+    }
+
+    function getMaxHitsCSV(maxHits) {
+      let csvContent = "Max Hits per Number (Binomial p-values)\n";
+      csvContent += "Number,Max Hits Observed,P-Value\n";
+      for (let num = 0; num < 38; num++) {
+        let k = maxHits[num];
+        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
+        csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
+      }
+      return csvContent;
+    }
+
+    function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
+      let csvContent = "";
+      csvContent += getFreqDistCSV(differences, groupSums, stats);
+      csvContent += "\n\n";
+      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
+      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
+      csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
+      csvContent += "\n\n";
+      csvContent += getMaxHitsCSV(maxHits);
+      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // =======================================================
+    // PROCESSING FUNCTIONS
+    // =======================================================
+    // processData: Called after file input processing.
+    function processData(rows) {
+      let statsCollection = {};
+      const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+      const groupSums = {};
+      for (const key in groupIndices) {
+        groupSums[key] = [];
+      }
+      // Initialize maxHits for each number (0–37)
+      let maxHits = Array(38).fill(0);
+      rows.forEach(counts => {
+        for (const key in groupIndices) {
+          groupSums[key].push(sumColumns(counts, groupIndices[key]));
+        }
+        const sums = calculateAllSums(counts);
+        differences.topBottomDiff.push(sums.topBottomDiff);
+        differences.leftRightDiff.push(sums.leftRightDiff);
+        differences.cDiff.push(sums.cDiff);
+        differences.zzDiff.push(sums.zzDiff);
+        for (let i = 0; i < 38; i++) {
+          if (counts[i] > maxHits[i]) { maxHits[i] = counts[i]; }
+        }
+      });
+      Object.keys(differences).forEach(category => {
+        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+      });
+      Object.keys(groupSums).forEach(group => {
+        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+      });
+      // Display the standard frequency distribution tables.
+      displayResults(differences, groupSums, statsCollection);
+      // Compute maxHits stats and display additional tables.
+      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
+      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
+      displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
+      displayMaxHitsTable(maxHits);
+      // Export the combined CSV (Frequency Dist + Max Counts + Max Hits).
+      exportCombinedCSV(differences, groupSums, statsCollection, maxHits, "CombinedAnalysis.csv");
+    }
+
+    // =======================================================
+    // FILE INPUT HANDLING
+    // =======================================================
+    function processConcatenatedCSVData(csvData) {
+      const rows = csvData.trim().split("\n");
+      if (rows.length <= 1) {
+        alert("The combined CSV data does not contain enough data.");
+        return;
+      }
+      const dataRows = [];
+      rows.forEach(row => {
+        const values = row.split(",").map(value => value.trim());
+        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+        if (isHeader) {
+          console.log("Header row detected and skipped:", row);
+          return;
+        }
+        const numericValues = values.map(val => {
+          if (val === "" || isNaN(val)) { return 0; }
+          return Number(val);
+        });
+        if (numericValues.length === 38) { dataRows.push(numericValues); }
+      });
+      totalRuns = rows.length - 1;
+      console.log("Total Runs from file:", totalRuns);
+      processData(dataRows);
+    }
+
     document.getElementById("fileInput").addEventListener("change", function(event) {
       const files = event.target.files;
       let allCSVData = "";
@@ -912,40 +996,13 @@
         reader.readAsText(file);
       }
     });
-    
-    function processConcatenatedCSVData(csvData) {
-      const rows = csvData.trim().split("\n");
-      if (rows.length <= 1) {
-        alert("The combined CSV data does not contain enough data.");
-        return;
-      }
-      const dataRows = [];
-      rows.forEach(row => {
-        const values = row.split(",").map(value => value.trim());
-        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
-        if (isHeader) {
-          console.log("Header row detected and skipped:", row);
-          return;
-        }
-        const numericValues = values.map(val => {
-          if (val === "" || isNaN(val)) { return 0; }
-          return Number(val);
-        });
-        if (numericValues.length === 38) {
-          dataRows.push(numericValues);
-        }
-      });
-      totalRuns = rows.length - 1;
-      console.log("Total Runs from file:", totalRuns);
-      processData(dataRows);
-    }
-    
+
     // =======================================================
     // SIMULATION (Run Button) HANDLER
     // =======================================================
     const setAIndices = [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18];
     const setBIndices = [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6];
-    
+
     document.getElementById("runButton").addEventListener("click", () => {
       const numRuns = parseInt(document.getElementById("numRuns").value, 10);
       if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
@@ -964,11 +1021,11 @@
       function processChunk(startIndex, chunkSize) {
         for (let i = startIndex; i < Math.min(numRuns, startIndex + chunkSize); i++) {
           const counts = getRandomCounts(38);
-          const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
-          differences.topBottomDiff.push(topBottomDiff);
-          differences.leftRightDiff.push(leftRightDiff);
-          differences.cDiff.push(cDiff);
-          differences.zzDiff.push(zzDiff);
+          const sums = calculateAllSums(counts);
+          differences.topBottomDiff.push(sums.topBottomDiff);
+          differences.leftRightDiff.push(sums.leftRightDiff);
+          differences.cDiff.push(sums.cDiff);
+          differences.zzDiff.push(sums.zzDiff);
           for (const key in groupIndices) {
             groupSums[key].push(sumColumns(counts, groupIndices[key]));
           }
@@ -987,21 +1044,17 @@
             statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
           });
           displayResults(differences, groupSums, statsCollection);
-          // Compute maxHits statistics for the additional tables and CSV export:
           let maxHitsStats = calculateDescriptiveStatistics(maxHits);
           let maxHitsFreq = calculateFrequencyDistribution(maxHits);
           let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-          // Display the additional tables:
           displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
           displayMaxHitsTable(maxHits);
-          // Export one combined CSV file that includes:
-          // Frequency Distribution, Max Counts, and Max Hits sections.
           exportCombinedCSV(differences, groupSums, statsCollection, maxHits, `CombinedAnalysis_${numRuns}.csv`);
         }
       }
       processChunk(0, 100000);
     });
-    
+
     function getRandomCounts(numPicks) {
       const counts = Array(38).fill(0);
       for (let i = 0; i < numPicks; i++) {
@@ -1010,7 +1063,7 @@
       }
       return counts;
     }
-    
+
     // =======================================================
     // ADDITIONAL EVENT LISTENERS
     // =======================================================

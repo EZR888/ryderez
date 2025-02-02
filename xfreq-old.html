@@ -585,57 +585,62 @@ document.getElementById("runButton").addEventListener("click", () => {
         return;
     }
 
-    totalRuns = numRuns; // ✅ Ensure totalRuns is correctly assigned
-    console.log("Total Runs Set:", totalRuns);
+    const observedCounts = Array(38).fill(0);
 
-    const differences = {
-        topBottomDiff: [],
-        leftRightDiff: [],
-        cDiff: [],
-        zzDiff: []
-    };
-
-    const groupSums = {};
-    for (const key in groupIndices) {
-        groupSums[key] = [];
-    }
-
-    function processChunk(startIndex, chunkSize) {
-        for (let i = startIndex; i < Math.min(numRuns, startIndex + chunkSize); i++) {
-            const counts = getRandomCounts(38);
-            const { topBottomDiff, leftRightDiff, cDiff, zzDiff } = calculateAllSums(counts);
-
-            differences.topBottomDiff.push(topBottomDiff);
-            differences.leftRightDiff.push(leftRightDiff);
-            differences.cDiff.push(cDiff);
-            differences.zzDiff.push(zzDiff);
-
-            for (const key in groupIndices) {
-                if (!groupSums[key]) {
-                    groupSums[key] = []; 
-                }
-                groupSums[key].push(sumColumns(counts, groupIndices[key]));
-            }
-        }
-
-        if (startIndex + chunkSize < numRuns) {
-            setTimeout(() => processChunk(startIndex + chunkSize, chunkSize), 0);
-        } else {
-            const statsCollection = {};
-            Object.keys(differences).forEach(category => {
-                statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-            });
-
-            Object.keys(groupSums).forEach(group => {
-                statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-            });
-
-            exportToCSV(differences, groupSums, statsCollection, `FreqDist_${numRuns}.csv`);
-            displayResults(differences, groupSums, statsCollection);
+    // Simulate X runs, each consisting of 38 random picks
+    for (let run = 0; run < numRuns; run++) {
+        for (let i = 0; i < 38; i++) {
+            const randomNumber = Math.floor(Math.random() * 38); // Random number between 0 and 37
+            observedCounts[randomNumber]++;
         }
     }
 
-    processChunk(0, 100000);
+    // Calculate expected frequency
+    const totalPicks = numRuns * 38;
+    const expectedFrequency = totalPicks / 38;
+    const expectedCounts = Array(38).fill(expectedFrequency);
+
+    // Calculate chi-square contributions and p-values
+    const pValues = [];
+    for (let i = 0; i < 38; i++) {
+        const observed = observedCounts[i];
+        const expected = expectedCounts[i];
+        const chiSquareContribution = Math.pow(observed - expected, 2) / expected;
+
+        // Degrees of freedom for each test = 1
+        const pValue = 1 - jStat.chisquare.cdf(chiSquareContribution, 1);
+        pValues.push(pValue.toFixed(6)); // Keep 6 decimal places for p-values
+    }
+
+    // Display results
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = `
+        <h3>P-Values for Frequency Distribution</h3>
+        <p>Number of Runs: ${numRuns}</p>
+        <p>Total Picks: ${totalPicks}</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; color: lightgreen;">
+            <tr>
+                <th>Number</th>
+                <th>Observed Count</th>
+                <th>Expected Count</th>
+                <th>P-Value</th>
+            </tr>
+            ${pValues
+                .map(
+                    (pValue, index) =>
+                        `<tr>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td style="text-align: center;">${observedCounts[index]}</td>
+                            <td style="text-align: center;">${expectedCounts[index].toFixed(2)}</td>
+                            <td style="text-align: center;">${pValue}</td>
+                        </tr>`
+                )
+                .join("")}
+        </table>
+        <p>The p-values correspond to the statistical test of uniformity for numbers 1 through 38.</p>
+    `;
+
+    console.log("P-Values:", pValues);
 });
 
     const setAIndices = [5, 22, 34, 15, 3, 24, 36, 13, 1, 37, 27, 10, 25, 29, 12, 8, 19, 31, 18];
@@ -740,11 +745,11 @@ function processCSVData(csvText) {
     }
 }
 
-function generateRandomRuns() {
+document.getElementById("runButton").addEventListener("click", () => {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
 
-    if (numRuns > 50000000 || numRuns < 1) {
-        alert("Please enter a valid number between 1 and 50,000,000.");
+    if (isNaN(numRuns) || numRuns < 1 || numRuns > 50000000) {
+        alert("Please enter a valid number of runs (1–50,000,000).");
         return;
     }
 
@@ -772,7 +777,7 @@ function generateRandomRuns() {
 
             for (const key in groupIndices) {
                 if (!groupSums[key]) {
-                    groupSums[key] = []; // Ensure it's initialized
+                    groupSums[key] = [];
                 }
                 groupSums[key].push(sumColumns(counts, groupIndices[key]));
             }
@@ -790,13 +795,14 @@ function generateRandomRuns() {
                 statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
             });
 
-            exportToCSV(differences, groupSums, statsCollection, `FreqDist_${numRuns}.csv`);
-            displayResults(differences, groupSums, statsCollection);
+            // **🚀 Only Export CSV, No Display**
+            const fileName = `FreqDist_${numRuns}.csv`;
+            exportToCSV(differences, groupSums, statsCollection, fileName, numRuns);
         }
     }
 
-    processChunk(0, 100000); // Process in chunks to prevent freezing
-}
+    processChunk(0, 100000);
+});
 
 function updateHeaps(heap, value) {
     if (heap.maxHeap.size() === 0 || value <= heap.maxHeap.peek()) {
@@ -943,53 +949,79 @@ const totalCategories = [
 ];
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalRuns) {
-    if (!totalRuns || totalRuns <= 0) {
-        console.error("Invalid totalRuns for cumulative probability calculation:", totalRuns);
-        return {};  // Prevent division by zero
-    }
-
     const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-    
+    let cumulativeFrequencyBelow = 0;
+    let cumulativeFrequencyAbove = 0;
     let cumulativeProbabilities = {};
-    let cumulativeBelow = 0;  // Accumulator for negative values moving toward 0
-    let cumulativeAbove = 0;  // Accumulator for positive values moving toward 0
 
-    // **Process negative differences first (from most negative to -1)**
-    for (let i = 0; i < sortedKeys.length; i++) {
-        let key = sortedKeys[i];
+    // Process negative differences first (descending order)
+    sortedKeys.filter(k => k < 0).reverse().forEach(key => {
+        cumulativeFrequencyBelow += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeFrequencyBelow,
+            cumulativeP: (cumulativeFrequencyBelow / totalRuns).toFixed(6)
+        };
+    });
 
-        if (key < 0) {
-            cumulativeBelow += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeBelow,
-                cumulativeP: (cumulativeBelow / totalRuns).toFixed(6)
-            };
-        }
-    }
+    // Process positive differences (ascending order)
+    sortedKeys.filter(k => k > 0).forEach(key => {
+        cumulativeFrequencyAbove += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeFrequencyAbove,
+            cumulativeP: (cumulativeFrequencyAbove / totalRuns).toFixed(6)
+        };
+    });
 
-    // **Process positive differences last (from largest to 1)**
-    for (let i = sortedKeys.length - 1; i >= 0; i--) {
-        let key = sortedKeys[i];
-
-        if (key > 0) {
-            cumulativeAbove += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeAbove,
-                cumulativeP: (cumulativeAbove / totalRuns).toFixed(6)
-            };
-        }
-    }
-
-    // **Ensure 0 is correctly represented**
+    // Ensure the mean (0) has no cumulative probability
     if (sortedKeys.includes(0)) {
         cumulativeProbabilities[0] = {
-            cumulativeFrequency: totalRuns, // Highest frequency at 0
-            cumulativeP: "1.000000" // P-value should be 1 at 0
+            cumulativeFrequency: "",
+            cumulativeP: ""
         };
     }
 
     return cumulativeProbabilities;
 }
+
+function displayRunResults(numRuns, totalPicks, observedCounts, expectedCounts, pValues, cumulativeData) {
+    const explanationElement = document.getElementById("explanation");
+
+    let tableHTML = `
+        <h3>P-Values for Frequency Distribution</h3>
+        <p>Number of Runs: ${numRuns}</p>
+        <p>Total Picks: ${totalPicks}</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; color: lightgreen;">
+            <tr>
+                <th>Number</th>
+                <th>Observed Count</th>
+                <th>Expected Count</th>
+                <th>P-Value</th>
+                <th>Cumulative Frequency</th>
+                <th>Cumulative P-Value</th>
+            </tr>
+    `;
+
+    Object.keys(cumulativeData).forEach(index => {
+        const cumulativeFreq = cumulativeData[index].cumulativeFrequency;
+        const cumulativeP = cumulativeData[index].cumulativeP;
+        
+        tableHTML += `
+            <tr>
+                <td style="text-align: center;">${index}</td>
+                <td style="text-align: center;">${observedCounts[index]}</td>
+                <td style="text-align: center;">${expectedCounts[index].toFixed(2)}</td>
+                <td style="text-align: center;">${pValues[index]}</td>
+                <td style="text-align: center;">${cumulativeFreq}</td>
+                <td style="text-align: center;">${cumulativeP}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `</table>`;
+
+    explanationElement.innerHTML = tableHTML;
+}
+
 
 function displayResults(differences, groupSums, stats) {
     const explanationElement = document.getElementById("explanation");
@@ -1004,8 +1036,10 @@ function displayResults(differences, groupSums, stats) {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        
+        // Determine the correct column header based on the category
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
+        
+        // Add an image above the section title
         let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
         
         let tableHTML = `
@@ -1013,8 +1047,8 @@ function displayResults(differences, groupSums, stats) {
             <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
             ${imageHTML}
             <br>
-        `;
-
+         `;
+         
         tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
                         <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
@@ -1022,9 +1056,10 @@ function displayResults(differences, groupSums, stats) {
                         <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                         <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-                        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
-                     </tr>`;
+                    	<th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+                    	<th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+                </tr>
+        `;
 
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(stats[category]);
@@ -1038,34 +1073,32 @@ function displayResults(differences, groupSums, stats) {
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
             const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
 
+            // Ensure cumulative data is aligned correctly
             let cumulativeFrequency = "";
             let cumulativePValue = "";
-            let differenceKey = difference.toString();
+let differenceKey = difference.toString();  // Convert difference to string
 
-            if (difference !== "" && cumulativeData[differenceKey]) {
-                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
-                let rawCumulativeP = cumulativeData[differenceKey].cumulativeP;
-                cumulativePValue = (!isNaN(rawCumulativeP)) ? Number(rawCumulativeP).toFixed(6) : "";
-            }
+if (difference !== "" && cumulativeData[differenceKey]) {
+    cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
+    let rawCumulativeP = cumulativeData[differenceKey].cumulativeP;
 
-            // **Define Column-Specific Styles**
-            let metricStyle = "color: orange; font-weight: bold;";
-            let valueStyle = "color: lightblue; font-weight: bold;";
-            let dataStyle = "color: lightgray;"; // Default color for data columns
-            let highlightStyle = "color: yellow; font-weight: bold;"; // Highlighted data columns
-
-            // **Check if the row should be highlighted**
-            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+    if (!isNaN(rawCumulativeP)) {
+        cumulativePValue = Number(rawCumulativeP).toFixed(6);
+    } else {
+        console.warn("Non-numeric cumulativeP detected:", rawCumulativeP);
+        cumulativePValue = "";
+    }
+}
 
             tableHTML += `
                 <tr>
-                    <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
-                    <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
-                    <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
-                    <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
-                    <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
-                    <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
-                    <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+                <td style="padding: 8px; text-align: center; color: Khaki; font-weight: bold;">${formattedMetric}</td>
+                <td style="padding: 8px; text-align: center;">${value}</td>
+                <td style="padding: 8px; text-align: center;">${difference}</td>
+                <td style="padding: 8px; text-align: center;">${frequency}</td>
+                <td style="padding: 8px; text-align: center;">${pValue}</td>
+                <th style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
+                <th style="padding: 8px;  text-align: center;">${cumulativePValue}</td>
                 </tr>`;
         }
 
@@ -1074,13 +1107,7 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-
-function exportToCSV(differences, groupSums, stats, fileName) {
-    if (!totalRuns || totalRuns <= 0) {
-        console.error("Invalid totalRuns for CSV export:", totalRuns);
-        return;
-    }
-
+function exportToCSV(differences, groupSums, stats, fileName, totalRuns) {
     let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
 
     Object.entries(stats).forEach(([category, values]) => {
@@ -1098,34 +1125,34 @@ function exportToCSV(differences, groupSums, stats, fileName) {
 
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
+            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
 
             let cumulativeFrequency = "";
             let cumulativePValue = "";
 
             if (difference !== "" && cumulativeData[difference]) {
                 cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
-                cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP) 
+                cumulativePValue = cumulativeData[difference]?.cumulativeP 
                     ? Number(cumulativeData[difference].cumulativeP).toFixed(6) 
-                    : "0.000000";
+                    : "";
             }
 
             csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
         }
+
+        csvContent += "\n"; // Extra newline for readability
     });
 
-    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+    // **🚀 Automatically Trigger File Download**
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName);
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-
 </script>
 </body>
 </html>
-
-

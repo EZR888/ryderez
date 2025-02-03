@@ -471,7 +471,7 @@ function displayResults(differences, groupSums, stats) {
           ${imageHTML}
           <br>
         `;
-        tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
+        tableHTML += `<table border="1" style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
           <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
           <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
@@ -481,22 +481,33 @@ function displayResults(differences, groupSums, stats) {
           <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
           <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
         </tr>`;
-        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution)
+                                        .map(Number)
+                                        .sort((a, b) => a - b);
         const metricKeys = Object.keys(stats[category]);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
             const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
             const value = metric ? stats[category][metric] : "";
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+            const diffValue = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = diffValue !== "" ? frequencyDistribution[diffValue] : "";
+            // Two-sided p-value calculation:
+            const pValue = frequency 
+              ? Math.min(
+                  2 * Math.min(
+                    jStat.binomial.cdf(frequency, totalRuns, 1/38),
+                    1 - jStat.binomial.cdf(frequency - 1, totalRuns, 1/38)
+                  ),
+                  1
+                ).toFixed(6)
+              : "";
             let cumulativeFrequency = "";
             let cumulativePValue = "";
-            let differenceKey = difference.toString();
-            if (difference !== "" && cumulativeData[differenceKey]) {
-                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
-                let rawCumulativeP = cumulativeData[differenceKey].cumulativeP;
+            const diffKey = diffValue.toString();
+            if (diffValue !== "" && cumulativeData[diffKey]) {
+                cumulativeFrequency = cumulativeData[diffKey].cumulativeFrequency;
+                let rawCumulativeP = cumulativeData[diffKey].cumulativeP;
                 cumulativePValue = (!isNaN(rawCumulativeP)) ? Number(rawCumulativeP).toFixed(6) : "";
             }
             let metricStyle = "color: orange; font-weight: bold;";
@@ -508,7 +519,7 @@ function displayResults(differences, groupSums, stats) {
               <tr>
                 <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
                 <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${diffValue}</td>
                 <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
                 <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
                 <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
@@ -518,8 +529,9 @@ function displayResults(differences, groupSums, stats) {
         tableHTML += `</table><br/>`;
         explanationElement.innerHTML += tableHTML;
     });
-    // Removed the file names output from here so they can be added later.
+    // Processed file names will be appended later by a separate function.
 }
+
 
     // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
@@ -674,35 +686,43 @@ function displayResults(differences, groupSums, stats) {
       document.getElementById("explanation").innerHTML += tableHTML;
     }
 
-    function displayMaxHitsTable(maxHits) {
-      let tableHTML = `
-        <h3><center><span style="color: orange;">Max Hits per Number</span>
-        <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
-        <br>
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
-          </tr>
-      `;
-      for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
-        let dataStyle = "color: lightgray;";
-        let highlightStyle = "color: yellow; font-weight: bold;";
-        let applyHighlight = (pValue < 0.05);
-        tableHTML += `
-          <tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
-          </tr>
-        `;
-      }
-      tableHTML += `</table><br/>`;
-      document.getElementById("explanation").innerHTML += tableHTML;
-    }
+function displayMaxHitsTable(maxHits) {
+  let tableHTML = `
+    <h3><center><span style="color: orange;">Max Hits per Number</span>
+    <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
+    <br>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
+      </tr>
+  `;
+  for (let num = 0; num < 38; num++) {
+    let k = maxHits[num];
+    // Two-sided p-value calculation:
+    let pValue = (k > 0) ? Math.min(
+                      2 * Math.min(
+                        jStat.binomial.cdf(k, 38, 1/38),
+                        1 - jStat.binomial.cdf(k - 1, 38, 1/38)
+                      ),
+                      1
+                    ) : 1;
+    let dataStyle = "color: lightgray;";
+    let highlightStyle = "color: yellow; font-weight: bold;";
+    let applyHighlight = (pValue < 0.05);
+    tableHTML += `
+      <tr>
+        <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
+        <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
+      </tr>
+    `;
+  }
+  tableHTML += `</table><br/>`;
+  document.getElementById("explanation").innerHTML += tableHTML;
+}
+
 
 function displayProcessedFiles() {
   const explanationElement = document.getElementById("explanation");
@@ -867,36 +887,6 @@ function displayProcessedFiles() {
       document.getElementById("explanation").innerHTML += tableHTML;
     }
 
-    function displayMaxHitsTable(maxHits) {
-      let tableHTML = `
-        <h3><center><span style="color: orange;">Max Hits per Number</span>
-        <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
-        <br>
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
-          </tr>
-      `;
-      for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
-        let dataStyle = "color: lightgray;";
-        let highlightStyle = "color: yellow; font-weight: bold;";
-        let applyHighlight = (pValue < 0.05);
-        tableHTML += `
-          <tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
-          </tr>
-        `;
-      }
-      tableHTML += `</table><br/>`;
-      document.getElementById("explanation").innerHTML += tableHTML;
-    }
-
     // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
     // =======================================================
@@ -998,87 +988,66 @@ function displayProcessedFiles() {
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
     // =======================================================
-    function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-      let total = 38;
-      let tableHTML = `
-        <h3><center><span style="color: orange;">Max Counts</span>
-        <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
-        <br>
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Count</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
-          </tr>`;
-      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
-      let metricKeys = Object.keys(maxHitsStats);
-      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
-      for (let i = 0; i < maxRows; i++) {
-        const metric = metricKeys[i] || "";
-        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
-        const value = metric ? maxHitsStats[metric] : "";
-        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
-        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
-        const pValue = frequency ? (frequency / total).toFixed(6) : "";
-        let cumulativeFrequency = "";
-        let cumulativePValue = "";
-        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
-          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
-          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
-        }
-        let metricStyle = "color: orange; font-weight: bold;";
-        let valueStyle = "color: lightblue; font-weight: bold;";
-        let dataStyle = "color: lightgray;";
-        let highlightStyle = "color: yellow; font-weight: bold;";
-        let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
-        tableHTML += `
-          <tr>
-            <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
-            <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${countValue}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
-          </tr>`;
-      }
-      tableHTML += `</table><br/>`;
-      document.getElementById("explanation").innerHTML += tableHTML;
+function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+  let total = 38;
+  let tableHTML = `
+    <h3><center><span style="color: orange;">Max Counts</span>
+    <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
+    <br>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Count</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+      </tr>`;
+  let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+  let metricKeys = Object.keys(maxHitsStats);
+  let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+  for (let i = 0; i < maxRows; i++) {
+    const metric = metricKeys[i] || "";
+    const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+    const value = metric ? maxHitsStats[metric] : "";
+    const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+    const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+    // Two-sided p-value calculation for Max Counts:
+    const pValue = frequency 
+      ? Math.min(
+          2 * Math.min(
+            jStat.binomial.cdf(frequency, total, 1/38),
+            1 - jStat.binomial.cdf(frequency - 1, total, 1/38)
+          ),
+          1
+        ).toFixed(6)
+      : "";
+    let cumulativeFrequency = "";
+    let cumulativePValue = "";
+    if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+      cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+      cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
     }
-
-    function displayMaxHitsTable(maxHits) {
-      let tableHTML = `
-        <h3><center><span style="color: orange;">Max Hits per Number</span>
-        <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
-        <br>
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
-          </tr>
-      `;
-      for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
-        let dataStyle = "color: lightgray;";
-        let highlightStyle = "color: yellow; font-weight: bold;";
-        let applyHighlight = (pValue < 0.05);
-        tableHTML += `
-          <tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
-          </tr>
-        `;
-      }
-      tableHTML += `</table><br/>`;
-      document.getElementById("explanation").innerHTML += tableHTML;
-    }
+    let metricStyle = "color: orange; font-weight: bold;";
+    let valueStyle = "color: lightblue; font-weight: bold;";
+    let dataStyle = "color: lightgray;";
+    let highlightStyle = "color: yellow; font-weight: bold;";
+    let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+    tableHTML += `
+      <tr>
+        <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+        <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${countValue}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+      </tr>`;
+  }
+  tableHTML += `</table><br/>`;
+  document.getElementById("explanation").innerHTML += tableHTML;
+}
 
     // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
@@ -1119,30 +1088,39 @@ function displayProcessedFiles() {
       return csvContent;
     }
 
-    function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-      let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
-      csvContent += "Metric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
-      let total = 38;
-      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
-      let metricKeys = Object.keys(maxHitsStats);
-      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
-      for (let i = 0; i < maxRows; i++) {
-        const metric = metricKeys[i] || "";
-        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
-        const value = metric ? maxHitsStats[metric] : "";
-        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
-        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
-        const pValue = frequency ? (frequency / total).toFixed(6) : "";
-        let cumulativeFrequency = "";
-        let cumulativePValue = "";
-        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
-          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
-          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
-        }
-        csvContent += `${formattedMetric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
-      }
-      return csvContent;
+function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+  let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
+  csvContent += "Metric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
+  let total = 38;
+  let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+  let metricKeys = Object.keys(maxHitsStats);
+  let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+  for (let i = 0; i < maxRows; i++) {
+    const metric = metricKeys[i] || "";
+    const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+    const value = metric ? maxHitsStats[metric] : "";
+    const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+    const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+    // Two-sided p-value calculation for CSV export (Max Counts):
+    const pValue = frequency 
+      ? Math.min(
+          2 * Math.min(
+            jStat.binomial.cdf(frequency, total, 1/38),
+            1 - jStat.binomial.cdf(frequency - 1, total, 1/38)
+          ),
+          1
+        ).toFixed(6)
+      : "";
+    let cumulativeFrequency = "";
+    let cumulativePValue = "";
+    if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+      cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+      cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
     }
+    csvContent += `${formattedMetric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+  }
+  return csvContent;
+}
 
     function getMaxHitsCSV(maxHits) {
       let csvContent = "Max Hits per Number (Binomial p-values)\n";
@@ -1233,35 +1211,42 @@ function displayProcessedFiles() {
       document.getElementById("explanation").innerHTML += tableHTML;
     }
 
-    function displayMaxHitsTable(maxHits) {
-      let tableHTML = `
-        <h3><center><span style="color: orange;">Max Hits per Number</span>
-        <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
-        <br>
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-          <tr>
-            <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
-          </tr>
-      `;
-      for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
-        let dataStyle = "color: lightgray;";
-        let highlightStyle = "color: yellow; font-weight: bold;";
-        let applyHighlight = (pValue < 0.05);
-        tableHTML += `
-          <tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
-          </tr>
-        `;
-      }
-      tableHTML += `</table><br/>`;
-      document.getElementById("explanation").innerHTML += tableHTML;
-    }
+ function displayMaxHitsTable(maxHits) {
+  let tableHTML = `
+    <h3><center><span style="color: orange;">Max Hits per Number</span>
+    <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
+    <br>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
+      </tr>
+  `;
+  for (let num = 0; num < 38; num++) {
+    let k = maxHits[num];
+    // Two-sided p-value calculation:
+    let pValue = (k > 0) ? Math.min(
+                      2 * Math.min(
+                        jStat.binomial.cdf(k, 38, 1/38),
+                        1 - jStat.binomial.cdf(k - 1, 38, 1/38)
+                      ),
+                      1
+                    ) : 1;
+    let dataStyle = "color: lightgray;";
+    let highlightStyle = "color: yellow; font-weight: bold;";
+    let applyHighlight = (pValue < 0.05);
+    tableHTML += `
+      <tr>
+        <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
+        <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
+      </tr>
+    `;
+  }
+  tableHTML += `</table><br/>`;
+  document.getElementById("explanation").innerHTML += tableHTML;
+}
 
     // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
@@ -1327,16 +1312,24 @@ function displayProcessedFiles() {
       return csvContent;
     }
 
-    function getMaxHitsCSV(maxHits) {
-      let csvContent = "Max Hits per Number (Binomial p-values)\n";
-      csvContent += "Number,Max Hits Observed,P-Value\n";
-      for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
-        csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
-      }
-      return csvContent;
-    }
+function getMaxHitsCSV(maxHits) {
+  let csvContent = "Max Hits per Number (Binomial p-values)\n";
+  csvContent += "Number,Max Hits Observed,P-Value\n";
+  for (let num = 0; num < 38; num++) {
+    let k = maxHits[num];
+    let pValue = (k > 0) ?
+      Math.min(
+        2 * Math.min(
+          jStat.binomial.cdf(k, 38, 1/38),
+          1 - jStat.binomial.cdf(k - 1, 38, 1/38)
+        ),
+        1
+      ) : 1;
+    csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
+  }
+  return csvContent;
+}
+
 
     function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
       let csvContent = "";

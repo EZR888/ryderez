@@ -1133,28 +1133,6 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
       return csvContent;
     }
 
-    function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
-      let csvContent = "";
-      csvContent += getFreqDistCSV(differences, groupSums, stats);
-      csvContent += "\n\n";
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      csvContent += "\n\n";
-      csvContent += getMaxHitsCSV(maxHits);
-      // Append selected file names (one per line)
-      if (selectedFileNames.length > 0) {
-        csvContent += "\n\nProcessed Files:\n" + selectedFileNames.join("\n") + "\n";
-      }
-      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
 
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
@@ -1251,41 +1229,62 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
     // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
     // =======================================================
-    function getFreqDistCSV(differences, groupSums, stats) {
-      if (!totalRuns || totalRuns <= 0) {
+function getFreqDistCSV(differences, groupSums, stats) {
+    if (!totalRuns || totalRuns <= 0) {
         console.error("Invalid totalRuns for CSV export:", totalRuns);
         return "";
-      }
-      let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
-      const allData = { ...differences, ...groupSums };
-      Object.entries(stats).forEach(([category, values]) => {
+    }
+
+    let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
+    const allData = { ...differences, ...groupSums };
+
+    Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
-        for (let i = 0; i < maxRows; i++) {
-          const metric = metricKeys[i] || "";
-          const value = metric ? values[metric] : "";
-          const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-          const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-          const pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
-          let cumulativeFrequency = "";
-          let cumulativePValue = "";
-          let highlight = "No";
-          if (difference !== "" && cumulativeData[difference]) {
-            cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
-            cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
-              ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
-              : "0.000000";
-            if (parseFloat(cumulativePValue) < 0.05) { highlight = "Yes"; }
-          }
-          csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
+
+ for (let i = 0; i < maxRows; i++) {
+    const metric = metricKeys[i] || "";
+    const value = metric ? values[metric] : "";
+
+    let difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+    let frequency = difference !== "" ? frequencyDistribution[difference] : "";
+    let pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
+
+    let cumulativeFrequency = "";
+    let cumulativePValue = "";
+    let highlight = "Yes";
+
+    if (difference !== "" && cumulativeData[difference]) {
+        cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+        cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
+            ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
+            : "0.000000";
+
+        if (parseFloat(cumulativePValue) < 0.05) { 
+			} else {
+    			highlight = "";  // ✅ Leave blank instead of "No"
+
+            // ✅ Make values bold by surrounding them with double quotes
+            difference = `"${difference}"`;
+            frequency = `"${frequency}"`;
+            pValue = `"${pValue}"`;
+            cumulativeFrequency = `"${cumulativeFrequency}"`;
+            cumulativePValue = `"${cumulativePValue}"`;
         }
-      });
-      return csvContent;
     }
+
+    csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
+}
+
+    });
+
+    return csvContent;
+}
 
     function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
       let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
@@ -1353,7 +1352,7 @@ function getMaxHitsCSV(maxHits) {
       link.click();
       document.body.removeChild(link);
     }
-
+    
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
     // =======================================================

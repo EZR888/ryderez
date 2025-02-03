@@ -230,30 +230,6 @@ function generateTable() {
     tableContainer.innerHTML = tableHtml;
 }
 
-function calculateRowStatistics(rowData) {
-    return rowData.map(row => {
-        let values = row.data.slice(2, 7); // Get only columns 3-7
-        let validValues = values.filter(num => !isNaN(num)); // Remove NaNs
-        let n = validValues.length;
-
-        if (n === 0) return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
-
-        let mean = validValues.reduce((a, b) => a + b, 0) / n;
-        let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-        let stdDev = Math.sqrt(variance);
-        let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
-        let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
-
-        return {
-            mean: mean.toFixed(4),
-            variance: variance.toFixed(4),
-            stdDev: stdDev.toFixed(4),
-            skewness: M3.toFixed(4),
-            kurtosis: (M4 - 3).toFixed(4)
-        };
-    });
-}
-
 
 function generateFrequencyTable() {
     let frequencyContainer = document.getElementById('frequencyContainer');
@@ -270,26 +246,17 @@ function generateFrequencyTable() {
     let sumCounts = {};
     let allSums = [];
 
-    // ✅ Sum the FIRST 5 columns of the sorted data (INDEX 0-4)
-    rowData.forEach((row, index) => {
-        let selectedValues = row.data.slice(0, 5); // Correct range: Columns 0-4
-        let sum = selectedValues.reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
-
-        console.log(`Row ${index + 1}: Values = ${selectedValues.join(", ")} | Sum = ${sum}`);
-
-        sumCounts[sum] = (sumCounts[sum] || 0) + 1;  // Count occurrences of each sum
-        allSums.push(sum);  // Store sum for descriptive statistics
+    rowData.forEach(row => {
+        let sum = row.data.slice(2, 7).reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
+        sumCounts[sum] = (sumCounts[sum] || 0) + 1;
+        allSums.push(sum);
     });
 
-    // ✅ Get ALL unique sums and sort them from HIGH to LOW
-    let sortedSums = Object.keys(sumCounts)
-        .map(Number) // Convert keys to numbers
-        .sort((a, b) => b - a); // Sort descending (high to low)
-
+    let sortedSums = Object.keys(sumCounts).map(Number).sort((a, b) => a - b);
     let totalRows = rowData.length;
+
     let cumulativeCounts = 0;
     let cumulativeProbabilities = {};
-
     sortedSums.forEach(sum => {
         cumulativeCounts += sumCounts[sum];
         cumulativeProbabilities[sum] = (cumulativeCounts / totalRows).toFixed(6);
@@ -298,8 +265,8 @@ function generateFrequencyTable() {
     let freqTableHtml = `
     <table id="frequencyTable" border='1' style="border-collapse: collapse; width: 60%; margin-top: 10px;">
     <thead>
-        <tr>    
-            <th style="padding: 8px; color: salmon; background-color: black;">Sum (Cols 0-4)</th>
+        <tr>	
+            <th style="padding: 8px; color: salmon; background-color: black;">Sum</th>
             <th style="padding: 8px; color: salmon; background-color: black;">Frequency</th>
             <th style="padding: 8px; color: salmon; background-color: black;">P-Value</th>
             <th style="padding: 8px; color: salmon; background-color: black;">Cumulative P-Value</th>
@@ -324,11 +291,11 @@ function generateFrequencyTable() {
 
     freqTableHtml += `</tbody></table>`;
 
-    // ✅ Compute Descriptive Statistics for the sorted sums
+    // Compute Descriptive Statistics
     let stats = calculateDescriptiveStatistics(allSums);
 
     freqTableHtml += `
-        <h3 style="color: lightgreen;">Descriptive Statistics for Sorted Table (Cols 0-4)</h3>
+        <h3 style="color: lightgreen;">Descriptive Statistics</h3>
         <ul>
             <li><strong><span style="color: orange;">Mean:</span></strong> ${stats.mean}</li>
             <li><strong><span style="color: orange;">Variance:</span></strong> ${stats.variance}</li>
@@ -340,19 +307,22 @@ function generateFrequencyTable() {
     frequencyContainer.innerHTML = freqTableHtml;
 }
 
-function calculateDescriptiveStatistics(values) {
-    let validValues = values.filter(num => !isNaN(num)); // Remove NaN values
-    let n = validValues.length;
+function calculateDescriptiveStatistics(data) {
+    let n = data.length;
+    if (n === 0) return {
+        mean: "N/A",
+        variance: "N/A",
+        stdDev: "N/A",
+        skewness: "N/A",
+        kurtosis: "N/A"
+    };
 
-    if (n === 0) {
-        return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
-    }
-
-    let mean = validValues.reduce((a, b) => a + b, 0) / n;
-    let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+    let mean = data.reduce((a, b) => a + b, 0) / n;
+    let variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
     let stdDev = Math.sqrt(variance);
-    let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
-    let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
+
+    let M3 = data.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
+    let M4 = data.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
 
     return {
         mean: mean.toFixed(4),

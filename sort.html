@@ -318,6 +318,12 @@
     margin-top: 10px; /* Adds space below the heading */
 }
 
+/* Add this CSS to the <style> section */
+.highlight-row {
+    color: yellow !important;
+    font-weight: bold !important;
+}
+
 
 
     </style>
@@ -497,21 +503,17 @@ function generateFrequencyTable() {
     let sumCounts = {};
     let allSums = [];
 
-    // ✅ Sum the FIRST 5 columns of the sorted data (INDEX 0-4)
     rowData.forEach((row, index) => {
-        let selectedValues = row.data.slice(0, 5); // Correct range: Columns 0-4
+        let selectedValues = row.data.slice(0, 5);
         let sum = selectedValues.reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
 
-        console.log(`Row ${index + 1}: Values = ${selectedValues.join(", ")} | Sum = ${sum}`);
-
-        sumCounts[sum] = (sumCounts[sum] || 0) + 1;  // Count occurrences of each sum
-        allSums.push(sum);  // Store sum for descriptive statistics
+        sumCounts[sum] = (sumCounts[sum] || 0) + 1;
+        allSums.push(sum);
     });
 
-    // ✅ Get ALL unique sums and sort them from HIGH to LOW
     let sortedSums = Object.keys(sumCounts)
-        .map(Number) // Convert keys to numbers
-        .sort((a, b) => b - a); // Sort descending (high to low)
+        .map(Number)
+        .sort((a, b) => b - a);
 
     let totalRows = rowData.length;
     let cumulativeCounts = 0;
@@ -538,31 +540,21 @@ function generateFrequencyTable() {
         let pValue = (sumCounts[sum] / totalRows).toFixed(6);
         let cumulativePValue = cumulativeProbabilities[sum];
 
-        let highlightStyle = (parseFloat(cumulativePValue) < 0.05) ? "background-color: yellow; font-weight: bold;" : "";
+        // ✅ If cumulative p-value < 0.05, apply yellow text and bold **to all columns in the row**
+        let cellStyle = (parseFloat(cumulativePValue) < 0.05) 
+            ? "color: yellow; font-weight: bold;" 
+            : "color: lightgray;";
 
         freqTableHtml += `
             <tr>
-                <td style="padding: 6px; text-align: center; background-color: black; color: lightgray;">${sum}</td>
-                <td style="padding: 6px; text-align: center; background-color: black; color: lightgray;">${sumCounts[sum]}</td>
-                <td style="padding: 6px; text-align: center; background-color: black; color: lightgray;">${pValue}</td>
-                <td style="padding: 6px; text-align: center; ${highlightStyle} background-color: black; color: lightgray;">${cumulativePValue}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${sum}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${sumCounts[sum]}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${pValue}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${cumulativePValue}</td>
             </tr>`;
     });
 
     freqTableHtml += `</tbody></table>`;
-
-    // ✅ Compute Descriptive Statistics for the sorted sums
-    let stats = calculateDescriptiveStatistics(allSums);
-
-    freqTableHtml += `
-        <h3 style="color: lightgreen;">Descriptive Statistics for Sorted Table (Cols 1-5)</h3>
-        <ul>
-            <li><strong><span style="color: orange;">Mean:</span></strong> ${stats.mean}</li>
-            <li><strong><span style="color: orange;">Variance:</span></strong> ${stats.variance}</li>
-            <li><strong><span style="color: orange;">Standard Deviation:</span></strong> ${stats.stdDev}</li>
-            <li><strong><span style="color: orange;">Skewness:</span></strong> ${stats.skewness}</li>
-            <li><strong><span style="color: orange;">Kurtosis:</span></strong> ${stats.kurtosis}</li>
-        </ul>`;
 
     frequencyContainer.innerHTML = freqTableHtml;
 }

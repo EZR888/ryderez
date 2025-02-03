@@ -218,22 +218,7 @@ th:nth-child(20), td:nth-child(20) {
             border: none;
             color: white;
         }
-        #saveButton {
-            background-color: blue;
-        }
-        #savePdfButton {
-            background-color: purple;
-        }
-        #sortByHighestValue {
-            background-color: red;
-        }
-        #sortByLowestValue {
-            background-color: lightcoral;
-        }   
-        #sortCols {
-            background-color: lightgreen;
-            color: black;
-        }     
+
         .file-input-container {
             display: flex;
             align-items: center;
@@ -320,7 +305,26 @@ th:nth-child(20), td:nth-child(20) {
         background-color: orange;
         color: black;
     }
-
+    .button-red {
+        background-color: red;
+        color: white;
+    }
+    .button-lightcoral {
+        background-color: lightcoral;
+        color: white;
+    }
+    .button-blue {
+        background-color: blue;
+        color: white;
+    }
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    .button-lightgreen {
+        background-color: lightgreen;
+        color: black;
+    }
     .button-purple {
         background-color: purple;
         color: white;
@@ -472,13 +476,12 @@ th:nth-child(20), td:nth-child(20) {
             <div class="info-item2" data-type="17">17</div>
         </div>
         <div class="file-input-container">
-            <h2>Select CSV File</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="sortByHighestValue">Sort by Highest Value</button>
-            <button id="sortByLowestValue">Reverse Sort</button>
-            <button id="sortCols">Sort Columns</button>
-            <button id="saveButton">Save to CSV</button>
-            <button id="savePdfButton">Save to PDF</button>
+            <button id="sortByHighestValue" class="button button-red">Sort by Highest Value</button>
+            <button id="sortByLowestValue" class="button button-lightcoral">Reverse Sort</button>
+            <button id="sortCols" class="button button-lightgreen">Sort Columns</button>
+            <button id="saveButton" class="button button-blue">Save to CSV</button>
+            <button id="savePdfButton" class="button button-purple">Save to PDF</button>
             <div id="rowCount" class="row-count">Runs: 0</div>
         </div> 
     </div>

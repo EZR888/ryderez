@@ -335,6 +335,51 @@
     <script>
     
     document.addEventListener('DOMContentLoaded', function() {
+    // Check if elements exist before adding event listeners
+    let simButton = document.getElementById('simButton');
+    if (simButton) {
+        simButton.addEventListener('click', () => {
+            window.open('roulette.html', '_blank');
+        });
+    }
+
+    let viewDataButton = document.getElementById('viewDataButton');
+    if (viewDataButton) {
+        viewDataButton.addEventListener('click', () => {
+            window.open('view-data.html', '_blank');
+        });
+    }
+
+    let viewPValueButton = document.getElementById('viewPValueButton');
+    if (viewPValueButton) {
+        viewPValueButton.addEventListener('click', () => {
+            window.open('pvalues.html', '_blank');
+        });
+    }
+
+    let viewFreqDistButton = document.getElementById('viewFreqDistButton');
+    if (viewFreqDistButton) {
+        viewFreqDistButton.addEventListener('click', () => {
+            window.open('xfreq.html', '_blank');
+        });
+    }
+
+    let viewStatsButton = document.getElementById('viewStatsButton');
+    if (viewStatsButton) {
+        viewStatsButton.addEventListener('click', () => {
+            window.open('view-stats.html', '_blank');
+        });
+    }
+
+    let singleSpinButton = document.getElementById('singleSpinButton');
+    if (singleSpinButton) {
+        singleSpinButton.addEventListener('click', () => {
+            window.open('new-wheel.html', '_blank');
+        });
+    }
+});
+      
+    document.addEventListener('DOMContentLoaded', function() {
 
         let rowData = [];
 
@@ -780,26 +825,18 @@ function calculateDescriptiveStatistics(values) {
     <input type="file" id="fileInput" accept=".csv">
     <button id="reverseSortButton">Reverse Sort</button>
     <button id="savePdfButton">Save to PDF</button>
-</div>
-
-	
-
-        
+</div>  
         <div class="results-container">
     		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
     		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
+    		</div>
 		</div>
-
 		<div class="results-container">
     		<h3>Sorted Table</h3>
     		<div id="tableContainer"></div>  <!-- This ensures the script finds it -->
-		</div>
-
-
-
-
-    </div>
+    		</div>
+    	</div>  
+    
+    
 </body>
-
-
 </html>

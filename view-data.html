@@ -222,7 +222,12 @@ th:nth-child(20), td:nth-child(20) {
         .file-input-container {
             display: flex;
             align-items: center;
-            margin: 5px 0;
+                border: 2px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 75%; /* Ensure full width */
+    background-color: #333;
+    overflow: auto; /* Prevent overflow clipping */
         }
         .file-input-container > * {
             margin-right: 5px;
@@ -231,7 +236,7 @@ th:nth-child(20), td:nth-child(20) {
             margin-left: 5px;
         }
         .row-count {
-            color: yellow;
+            color: DarkKhaki;
             font-size: 24px;
             margin: 0;
         }
@@ -415,6 +420,35 @@ th:nth-child(20), td:nth-child(20) {
   #singleRowBtn:hover {
     background-color: #218838;
   }
+  
+          .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+        
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    } 
+    
+    .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+}
+
 
     </style>
     <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
@@ -482,10 +516,10 @@ th:nth-child(20), td:nth-child(20) {
             <button id="sortCols" class="button button-lightgreen">Sort Columns</button>
             <button id="saveButton" class="button button-blue">Save to CSV</button>
             <button id="savePdfButton" class="button button-purple">Save to PDF</button>
-            <div id="rowCount" class="row-count">Runs: 0</div>
         </div> 
     </div>
-    
+                <div id="rowCount" class="row-count" align="center""></div>
+                
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
@@ -714,8 +748,10 @@ function displayCSVData(csvText, isFirstFile) {
     }
 
     // Update row count after processing all rows
-    document.getElementById('rowCount').textContent = `Runs: ${document.querySelectorAll('#csvTable tbody tr').length}`;
+	let rowCount = document.querySelectorAll('#csvTable tbody tr').length;
+    document.getElementById('rowCount').innerHTML = `Runs: <span class="zero-highlight">${rowCount}</span>`;
 }
+
 
 
 function applyGroupColoring(cells, sum) {

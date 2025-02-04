@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorted Table Visualization</title>
     <style>
-    
+ 
     .framed-buttons {
       border: 2px solid lightblue;
       padding: 15px;
@@ -323,18 +323,57 @@
     color: yellow !important;
     font-weight: bold !important;
 }
-
-
-
     </style>
-
-    <!-- Include jsPDF and jsPDF AutoTable from CDN -->
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <br />
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+  
+		<div class="header-wrapper">
+    		<h1 class="header-text">Column Sorting</h1>
+		</div>
+		<div class="header-container">
+    		<input type="file" id="fileInput" accept=".csv" multiple>
+    		<button id="reverseSortButton">Reverse Sort</button>
+    		<button id="savePdfButton">Save to PDF</button>
+		</div>  
+        <div class="results-container">
+    		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
+    		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
+    		</div>
+		</div>
+		<div class="results-container">
+    		<h3>Sorted Table</h3>
+    		<div id="tableContainer"></div>  <!-- This ensures the script finds it -->
+    		</div>
+		</div>  
+    	
+    	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 
     <script>
     
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
     // Check if elements exist before adding event listeners
     let simButton = document.getElementById('simButton');
     if (simButton) {
@@ -379,114 +418,102 @@
     }
 });
       
-    document.addEventListener('DOMContentLoaded', function() {
-
+      
         let rowData = [];
 
-        function loadCSV(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
+        document.addEventListener('DOMContentLoaded', function () {
 
-            reader.onload = function(e) {
-                const csvData = e.target.result;
-                parseCSVAndGenerateTable(csvData);
-            };
+            document.getElementById('fileInput').addEventListener('change', function (event) {
+                let files = event.target.files;
+                let allData = [];
+                let fileCount = files.length;
+                let filesProcessed = 0;
 
-            reader.readAsText(file);
-        }
-
-        document.getElementById('fileInput').addEventListener('change', loadCSV);
-
-        function parseCSVAndGenerateTable(csvData) {
-            const rows = csvData.trim().split("\n").map((row, index) => {
-                return { originalIndex: index + 1, data: row.split(",").map(value => Number(value) || value) };
-            });
-
-            let headers = rows.shift().data;
-            let hasRowHeaders = false;
-            if (headers[0] === "#") {
-                hasRowHeaders = true;
-            }
-
-            if (hasRowHeaders) {
-                rowData = rows.map(row => ({ originalIndex: row.originalIndex, data: row.data.slice(1) }));
-            } else {
-                rowData = rows;
-            }
-
-            // Sort each row’s data in descending order
-            rowData.forEach(row => row.data.sort((a, b) => b - a));
-
-            // Sort rows lexicographically (compare row data element by element)
-            rowData.sort((rowA, rowB) => {
-                for (let i = 0; i < rowA.data.length; i++) {
-                    if (rowA.data[i] !== rowB.data[i]) {
-                        return rowB.data[i] - rowA.data[i];
+                function readFile(index) {
+                    if (index >= fileCount) {
+                        if (allData.length) {
+                            parseCSVAndGenerateTable(allData);
+                        }
+                        return;
                     }
+
+                    let file = files[index];
+                    let reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        let csvData = e.target.result;
+                        let rows = csvData.trim().split("\n").map(row => row.split(",").map(value => Number(value) || value));
+                        rows.shift(); // Remove header row from each file
+                        allData = allData.concat(rows);
+                        filesProcessed++;
+                        readFile(index + 1);
+                    };
+
+                    reader.readAsText(file);
                 }
-                return 0;
+
+                readFile(0);
             });
 
-            generateTable();
-            generateFrequencyTable();  // ✅ Generate frequency table after sorting
-        }
+            function parseCSVAndGenerateTable(data) {
+                if (!data.length) return;
 
-function generateTable() {
+                rowData = data.map((row, index) => ({ originalIndex: index + 1, data: row }));
+
+                rowData.forEach(row => row.data.sort((a, b) => b - a));
+
+                rowData.sort((rowA, rowB) => {
+                    for (let i = 0; i < rowA.data.length; i++) {
+                        if (rowA.data[i] !== rowB.data[i]) {
+                            return rowB.data[i] - rowA.data[i];
+                        }
+                    }
+                    return 0;
+                });
+
+                generateTable();
+                generateFrequencyTable();
+            }
+
+            function generateTable() {
     let tableContainer = document.getElementById('tableContainer');
     if (!tableContainer) {
         console.error("Error: #tableContainer not found.");
         return;
     }
 
-    let tableHtml = '<table id="csvTable"><thead><tr>';
-    tableHtml += `<th class="original-number">Orig #</th><th class="sorted-number">Sort #</th>`;
-
-    for (let i = 0; i < rowData[0].data.length; i++) {
-        tableHtml += `<th class="other-number">${i + 1}</th>`;
+    if (!rowData.length) {
+        tableContainer.innerHTML = "<p style='color: lightgray;'>No valid data found.</p>";
+        return;
     }
 
-    tableHtml += '</tr></thead><tbody>';
+    let tableHtml = `<table id="csvTable" border="1" style="border-collapse: collapse; width: 100%; margin-top: 10px;">
+    <thead>
+        <tr>
+            <th class="original-number" style="background-color: slategray; color: white; padding: 8px;">Orig #</th>
+            <th class="sorted-number" style="background-color: red; color: white; padding: 8px;">Sort #</th>`;
+
+    for (let i = 0; i < rowData[0].data.length; i++) {
+        tableHtml += `<th class="other-number" style="background-color: green; color: white; padding: 8px;">${i + 1}</th>`;
+    }
+
+    tableHtml += `</tr></thead><tbody>`;
 
     rowData.forEach((row, rowIndex) => {
-        tableHtml += '<tr>';
-        tableHtml += `<td class="original-number"><strong>${row.originalIndex}</strong></td>`;
-        tableHtml += `<td class="sorted-number"><strong>${rowIndex + 1}</strong></td>`;
+        tableHtml += `<tr>`;
+        tableHtml += `<td class="original-number" style="background-color: slategray; color: white; padding: 6px; text-align: center;"><strong>${row.originalIndex}</strong></td>`;
+        tableHtml += `<td class="sorted-number" style="background-color: red; color: white; padding: 6px; text-align: center;"><strong>${rowIndex + 1}</strong></td>`;
 
         row.data.forEach(cell => {
-            tableHtml += `<td class="other-number">${cell === "0" ? '' : cell}</td>`;
+            tableHtml += `<td class="other-number" style="background-color: lightgray; color: black; padding: 6px; text-align: center;">${cell === "0" ? '' : cell}</td>`;
         });
 
-        tableHtml += '</tr>';
+        tableHtml += `</tr>`;
     });
 
-    tableHtml += '</tbody></table>';
+    tableHtml += `</tbody></table>`;
     tableContainer.innerHTML = tableHtml;
 }
-
-function calculateRowStatistics(rowData) {
-    return rowData.map(row => {
-        let values = row.data.slice(2, 7); // Get only columns 3-7
-        let validValues = values.filter(num => !isNaN(num)); // Remove NaNs
-        let n = validValues.length;
-
-        if (n === 0) return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
-
-        let mean = validValues.reduce((a, b) => a + b, 0) / n;
-        let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-        let stdDev = Math.sqrt(variance);
-        let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
-        let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
-
-        return {
-            mean: mean.toFixed(4),
-            variance: variance.toFixed(4),
-            stdDev: stdDev.toFixed(4),
-            skewness: M3.toFixed(4),
-            kurtosis: (M4 - 3).toFixed(4)
-        };
-    });
-}
-
 
 function generateFrequencyTable() {
     let frequencyContainer = document.getElementById('frequencyContainer');
@@ -497,32 +524,24 @@ function generateFrequencyTable() {
 
     if (!rowData.length) {
         console.warn("No data available for frequency table.");
+        frequencyContainer.innerHTML = "<p style='color: lightgray;'>No data available.</p>";
         return;
     }
 
     let sumCounts = {};
-    let allSums = [];
+    let totalRows = rowData.length;
+    let cumulativeCounts = 0;
+    let cumulativeProbabilities = {};
 
-    rowData.forEach((row, index) => {
+    rowData.forEach(row => {
         let selectedValues = row.data.slice(0, 5);
         let sum = selectedValues.reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
-
         sumCounts[sum] = (sumCounts[sum] || 0) + 1;
-        allSums.push(sum);
     });
 
     let sortedSums = Object.keys(sumCounts)
         .map(Number)
         .sort((a, b) => b - a);
-
-    let totalRows = rowData.length;
-    let cumulativeCounts = 0;
-    let cumulativeProbabilities = {};
-
-    sortedSums.forEach(sum => {
-        cumulativeCounts += sumCounts[sum];
-        cumulativeProbabilities[sum] = (cumulativeCounts / totalRows).toFixed(6);
-    });
 
     let freqTableHtml = `
     <table id="frequencyTable" border='1' style="border-collapse: collapse; width: 60%; margin-top: 10px;">
@@ -537,292 +556,33 @@ function generateFrequencyTable() {
     <tbody>`;
 
     sortedSums.forEach(sum => {
-        let pValue = (sumCounts[sum] / totalRows).toFixed(6);
-        let cumulativePValue = cumulativeProbabilities[sum];
-
-        // ✅ If cumulative p-value < 0.05, apply yellow text and bold **to all columns in the row**
-        let cellStyle = (parseFloat(cumulativePValue) < 0.05) 
+        cumulativeCounts += sumCounts[sum];
+        cumulativeProbabilities[sum] = (cumulativeCounts / totalRows).toFixed(6);
+        let cellStyle = (parseFloat(cumulativeProbabilities[sum]) < 0.05)
             ? "color: yellow; font-weight: bold;" 
             : "color: lightgray;";
 
         freqTableHtml += `
-            <tr>
-                <td style="padding: 6px; text-align: center; ${cellStyle}">${sum}</td>
-                <td style="padding: 6px; text-align: center; ${cellStyle}">${sumCounts[sum]}</td>
-                <td style="padding: 6px; text-align: center; ${cellStyle}">${pValue}</td>
-                <td style="padding: 6px; text-align: center; ${cellStyle}">${cumulativePValue}</td>
-            </tr>`;
+        <tr>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${sum}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${sumCounts[sum]}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${(sumCounts[sum] / totalRows).toFixed(6)}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${cumulativeProbabilities[sum]}</td>
+        </tr>`;
     });
 
     freqTableHtml += `</tbody></table>`;
-
     frequencyContainer.innerHTML = freqTableHtml;
 }
 
-function calculateDescriptiveStatistics(values) {
-    let validValues = values.filter(num => !isNaN(num)); // Remove NaN values
-    let n = validValues.length;
 
-    if (n === 0) {
-        return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
-    }
-
-    let mean = validValues.reduce((a, b) => a + b, 0) / n;
-    let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-    let stdDev = Math.sqrt(variance);
-    let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
-    let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
-
-    return {
-        mean: mean.toFixed(4),
-        variance: variance.toFixed(4),
-        stdDev: stdDev.toFixed(4),
-        skewness: M3.toFixed(4),
-        kurtosis: (M4 - 3).toFixed(4) // Adjusting for excess kurtosis
-    };
-}
-
-
-        document.getElementById('reverseSortButton').addEventListener('click', function() {
-            rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
-            generateTable();
-            generateFrequencyTable();
-        });
-
-        document.getElementById('savePdfButton').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'landscape' });
-
-            const table = document.querySelector('#csvTable');
-            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
-            const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
-                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
-            );
-
-            const timestamp = getFormattedTimestamp();
-            const rowCount = data.length;
-            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
-
-            doc.autoTable({
-                head: [headers],
-                body: data,
-                startY: 15,
-                theme: 'grid',
-                margin: { top: 15, left: 6, right: 6, bottom: 10 },
-                styles: { fontSize: 8, cellPadding: 2, fontStyle: 'bold', halign: 'center' },
-                headStyles: { fontSize: 7, textColor: [255, 255, 255], fillColor: [0, 128, 0], halign: 'center' }
-            });
-
-            doc.save(filename);
-        });
-
-        function getFormattedTimestamp() {
-            const now = new Date();
-            return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-        }
-    });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-            let rowData = [];
-
-            function loadCSV(event) {
-                const file = event.target.files[0];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const csvData = e.target.result;
-                    parseCSVAndGenerateTable(csvData);
-                };
-
-                reader.readAsText(file);
-            }
-
-            document.getElementById('fileInput').addEventListener('change', loadCSV);
-
-            function parseCSVAndGenerateTable(csvData) {
-                const rows = csvData.trim().split("\n").map((row, index) => {
-                    return { originalIndex: index + 1, data: row.split(",").map(value => Number(value) || value) }; // Convert to numbers
-                });
-
-                let headers = rows.shift().data;
-                let hasRowHeaders = false;
-                if (headers[0] === "#") {
-                    hasRowHeaders = true;
-                }
-
-                if (hasRowHeaders) {
-                    rowData = rows.map(row => ({ originalIndex: row.originalIndex, data: row.data.slice(1) }));
-                } else {
-                    rowData = rows;
-                }
-
-                // Sort each row’s data in descending order
-                rowData.forEach(row => row.data.sort((a, b) => b - a));
-
-                // Sort rows lexicographically (compare row data element by element)
-                rowData.sort((rowA, rowB) => {
-                    for (let i = 0; i < rowA.data.length; i++) {
-                        if (rowA.data[i] !== rowB.data[i]) {
-                            return rowB.data[i] - rowA.data[i];
-                        }
-                    }
-                    return 0;
-                });
-
-                generateTable();
-            }
-
-            function generateTable() {
-                let tableHtml = '<table id="csvTable"><thead><tr>';
-                tableHtml += `<th class="original-number">Orig #</th><th class="sorted-number">Sort #</th>`;
-
-                for (let i = 0; i < rowData[0].data.length; i++) {
-                    tableHtml += `<th class="other-number">${i + 1}</th>`;
-                }
-
-                tableHtml += '</tr></thead><tbody>';
-
-                rowData.forEach((row, rowIndex) => {
-                    tableHtml += '<tr>';
-                    // Add the original line number
-                    tableHtml += `<td class="original-number"><strong>${row.originalIndex}</strong></td>`;
-                    // Add the sorted line number with red background
-                    tableHtml += `<td class="sorted-number"><strong>${rowIndex + 1}</strong></td>`;
-
-                    row.data.forEach(cell => {
-                        tableHtml += `<td class="other-number">${cell === "0" ? '' : cell}</td>`;
-                    });
-
-                    tableHtml += '</tr>';
-                });
-
-                tableHtml += '</tbody></table>';
-                document.getElementById('tableContainer').innerHTML = tableHtml;
-            }
-
-            document.getElementById('reverseSortButton').addEventListener('click', function() {
+            document.getElementById('reverseSortButton').addEventListener('click', function () {
                 rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
                 generateTable();
+                generateFrequencyTable();
             });
-
-            // Save to PDF logic
-        document.getElementById('savePdfButton').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'landscape' });
-
-            const table = document.querySelector('#csvTable');
-            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
-            const data = Array.from(table.querySelectorAll('tbody tr')).map((tr) =>
-                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
-            );
-
-            const timestamp = getFormattedTimestamp();
-            const rowCount = data.length;
-            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
-
-            const baseFontSize = 8;
-            const headerFontSize = baseFontSize * 0.9;
-            const cellFontSize = baseFontSize * 1.1;
-
-            const columnCount = headers.length;
-            const pageWidth = doc.internal.pageSize.width - 20;
-            const otherColumnWidth = 7; // Width for other columns (enough for 2 digits + padding)
-            const fixedColumnWidth = 11; // 60% of the current width for fixed columns
-
-            doc.autoTable({
-                head: [headers],
-                body: data,
-                startY: 15,
-                theme: 'grid',
-                margin: { top: 15, left: 6, right: 6, bottom: 10 },
-                styles: {
-                    fontSize: cellFontSize,
-                    cellPadding: 2,
-                    fontStyle: 'bold',
-                    halign: 'center',
-                },
-                headStyles: {
-                    fontSize: headerFontSize,
-                    textColor: [255, 255, 255],
-                    fillColor: [0, 128, 0],
-                    halign: 'center',
-                },
-                columnStyles: {
-                    0: { cellWidth: fixedColumnWidth, fillColor: [112, 128, 144], textColor: [255, 255, 255] }, // Fixed width for Original # (slategray)
-                    1: { cellWidth: fixedColumnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Fixed width for Sorted #
-                    ...Array.from({ length: columnCount - 2 }, (_, i) => i + 2).reduce((acc, i) => {
-                        acc[i] = { cellWidth: otherColumnWidth }; // Width for other columns
-                        return acc;
-                    }, {})
-                },
-                didDrawPage: function (data) {
-                    doc.setFontSize(12);
-                    const titleX = 14;
-                    const titleY = 10;
-                    doc.text(filename.replace('.pdf', ''), titleX, titleY);
-                }
-            });
-
-            doc.save(filename);
-        });
-
-            function getFormattedTimestamp() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                return `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            }
         });
     </script>
-</head>
-<body>
-  <div class="container">
-    <div>
-      <div class="framed-section2">
-        <button class="button button-purple" id="howToUseButton">How To Use</button>
-        <button class="button button-sim" id="simButton">Simulator</button>
-        <button id="viewDataButton" class="button">View Data</button>
-        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
-        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
-        <button class="button button-single" id="singleSpinButton">Wheel</button>
-      </div>
-    </div>
-    <br />
-    <div id="instructionsModal" class="modal">
-      <div class="modal-content">
-        <button class="close-button" id="closeModalButton">&times;</button>
-        <h3>How To Read This Screen</h3>
-        <p>...</p>
-      </div>
-    </div>
-  </div>
-  
-<div class="header-wrapper">
-    <h1 class="header-text">Column Sorting</h1>
-</div>
-<div class="header-container">
-    <input type="file" id="fileInput" accept=".csv">
-    <button id="reverseSortButton">Reverse Sort</button>
-    <button id="savePdfButton">Save to PDF</button>
-</div>  
-        <div class="results-container">
-    		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
-    		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
-    		</div>
-		</div>
-		<div class="results-container">
-    		<h3>Sorted Table</h3>
-    		<div id="tableContainer"></div>  <!-- This ensures the script finds it -->
-    		</div>
-    	</div>  
-    
-    
+
 </body>
 </html>

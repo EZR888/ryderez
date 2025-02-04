@@ -300,6 +300,12 @@
         background-color: orange;
         color: black;
     }
+    
+    .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+	}
+
   </style>
 </head>
 <body>
@@ -336,8 +342,8 @@
             </div>
         </div>
         <center>
-            <span id="runNumDisplay" style="color: yellow; font-size: 24px;">Run Num: 0</span>
-            <span id="spinNumDisplay" style="color: yellow; font-size: 24px; margin-left: 2ch;">Spin Num: 0</span><br><br>
+            <span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
+            <span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br><br>
         </center>
         <!-- Instructions Modal -->
         <div id="instructionsModal" class="modal">
@@ -485,8 +491,8 @@ function multiSpin() {
                 setTimeout(function () {
                     let c1 = getRandomInt(38);
                     Totals[c1] += 1;
-                    document.getElementById('spinNumDisplay').textContent = "Spin Num: " + (spinCount + 1);
-                    document.getElementById('runNumDisplay').textContent = "Run Num: " + (runIndex + 1);
+					document.getElementById('spinNumDisplay').innerHTML = `Spin Num: <span class="zero-highlight">${spinCount + 1}</span>`;
+					document.getElementById('runNumDisplay').innerHTML = `Run Num:  <span class="zero-highlight">${runIndex + 1}</span>`;
                     populateTotalsTable(c1, spinCount === numSpins - 1);
                     spinCount++;
                     setTimeout(spin, spinDelay);

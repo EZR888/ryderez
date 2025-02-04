@@ -121,7 +121,7 @@
             font-size: 48px;
         }
         .runs-text {
-            color: yellow;
+            color: DarkKhaki;
             font-size: 24px;
         }
         table {
@@ -206,6 +206,13 @@
             background-color: black;
             margin: 10px 0;
     }
+    
+        .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+}
+
+
     </style>
 </head>
 <body>
@@ -235,7 +242,6 @@
         </div>
 </div>        
 
-    <br>
     <div class="header-container">
         <h1 class="header-text">Aggregate Totals</h1>
         <div class="runs-text" id="runsCount"></div>
@@ -356,7 +362,7 @@
         const tbody = table.querySelector('tbody');
 
         // Update Runs count
-        document.getElementById('runsCount').textContent = `Runs: ${csvData.length}`;
+		document.getElementById('runsCount').innerHTML = `Runs: <span class="zero-highlight">${csvData.length}</span>`;
 
         // Create the table header
         const header = ["Totals", "Cluster 0", "Cluster 00", "Times Hit"];

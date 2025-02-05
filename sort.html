@@ -351,12 +351,13 @@
 		<div class="header-wrapper">
     		<h1 class="header-text">Column Sorting</h1>
 		</div>
-		<div class="header-container">
-    		<input type="file" id="fileInput" accept=".csv" multiple>
-    		<button id="reverseSortButton">Reverse Sort</button>
-    		<button id="savePdfButton">Save to PDF</button>
-		</div>  
+
         <div class="results-container">
+        		<div class="header-container">
+    				<input type="file" id="fileInput" accept=".csv" multiple>
+    				<button id="reverseSortButton" class="button button-blue">Reverse Sort</button>
+    				<button id="savePdfButton" class="button button-purple">Save to PDF</button>
+				</div>  
     		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
     		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
     		</div>

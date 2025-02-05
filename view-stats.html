@@ -124,7 +124,7 @@
             font-size: 24px;
         }
         table {
-            width: 50%;
+            width: 70%;
             border-collapse: collapse;
             margin: 20px auto;
             border: 1px solid red;
@@ -154,8 +154,8 @@
             background-color: red;
         }
         td:first-child {
-            background-color: blue;
-            color: white;
+            background-color: lightyellow;
+            color: black;
         }
         th:first-child {
             background-color: gray;
@@ -163,17 +163,26 @@
         .light-yellow {
             background-color: lightyellow;
         }
+.quadrant-table {
+    width: 760px; /* Set an explicit pixel width to reduce size */
+    max-width: 760px; /* Ensure it doesn’t expand */
+    margin: 0 auto; /* Center the table */
+    table-layout: fixed; /* Ensure columns respect the width */
+}
+
+.quadrant-table td {
+    padding: 5px; /* Reduce padding if necessary */
+}
+
+.quadrant-img {
+    max-width: 100%; /* Shrink images inside the table */
+    height: auto;
+}
+
         .quadrant-table th {
             background-color: green; /* Green background for column headers */
         }
-        .quadrant-table td {
-            background-color: lightyellow; /* Light yellow background for data cells */
-            color: black; /* Black text color for better visibility */
-        }
-        .quadrant-img {
-            max-width: 100%; /* Adjusts image to fit cell width */
-            height: auto; /* Keeps aspect ratio */
-        }
+        
     .button-DarkKhaki {
       background-color: DarkKhaki;
       color: black !important;
@@ -240,6 +249,11 @@
       color: white;
       margin: 5px 0;
     }
+    #statsTable tbody td:first-child {
+    background-color: blue;
+    color: white; /* Adjust text color for better visibility */
+}
+
 
     </style>
 </head>
@@ -277,12 +291,56 @@
     <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
     <input type="number" id="numRuns" min="1" max="50000000" value="100" />
     <button id="runButton">Run</button>
-
+    <div class="header-container">
+    <h2 class="header-text">Cluster Stats</h2>
+    </div>
     <table id="statsTable">
         <thead></thead>
         <tbody></tbody>
     </table>
-</div>
+
+<table id="clusterStatsTable">
+    <thead>
+        <tr>
+            <th style="background-color: green; color: white;" colspan="6">Cluster 00</th>
+            <th></th>
+            <th style="background-color: green; color: white;" colspan="6">Cluster 0</th>
+        </tr>
+        <tr>
+            <th style="background-color: black; color: white;">13</th>
+            <th style="background-color: red; color: white;">1</th>
+            <th style="background-color: green; color: white;">37</th>
+            <th style="background-color: red; color: white;">27</th>
+            <th style="background-color: black; color: white;">10</th>
+            <th style="background-color: blue; color: white;">Total</th>
+            <th style="background-color: lightyellow; color: white;"></th>
+            <th style="background-color: red; color: white;">9</th>
+            <th style="background-color: black; color: white;">28</th>
+            <th style="background-color: green; color: white;">0</th>
+            <th style="background-color: black; color: white;">2</th>
+            <th style="background-color: red; color: white;">14</th>
+            <th style="background-color: blue; color: white;">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="cluster00-13">-</td>
+            <td id="cluster00-1">-</td>
+            <td id="cluster00-37">-</td>
+            <td id="cluster00-27">-</td>
+            <td id="cluster00-10">-</td>
+            <td id="cluster00-total">-</td>
+            <td></td>
+            <td id="cluster0-9">-</td>
+            <td id="cluster0-28">-</td>
+            <td id="cluster0-0">-</td>
+            <td id="cluster0-2">-</td>
+            <td id="cluster0-14">-</td>
+            <td id="cluster0-total">-</td>
+        </tr>
+    </tbody>
+</table>
+
 
     <div class="header-container">
         <h2 class="header-text">Quadrant Hits</h2>
@@ -295,44 +353,20 @@
                 <td><img src="upright.png" alt="Upper Right Image"></td>
             </tr>
             <tr>
-                <td id="UpperLeftHits">0</td>
-                <td id="UpperRightHits">0</td>
+                <td id="UpperLeftHits">-</td>
+                <td id="UpperRightHits">-</td>
             </tr>
             <tr>
                 <td><img src="lowleft.png" alt="Lower Left Image"></td>
                 <td><img src="lowright.png" alt="Lower Right Image"></td>
             </tr>
             <tr>
-                <td id="LowerLeftHits">0</td>
-                <td id="LowerRightHits">0</td>
+                <td id="LowerLeftHits">-</td>
+                <td id="LowerRightHits">-</td>
             </tr>
         </tbody>
     </table>
-
-    <div class="header-container">
-    <h2 class="header-text">Cluster Stats</h2>
-    </div>
-<table id="clusterStatsTable">
-    <thead>
-        <tr>
-            <th colspan="6">Cluster 00</th>
-            <th></th>
-            <th colspan="6">Cluster 0</th>
-        </tr>
-        <tr>
-            <th>13</th><th>1</th><th>37</th><th>27</th><th>10</th><th>Total</th>
-            <th></th>
-            <th>9</th><th>28</th><th>0</th><th>2</th><th>14</th><th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td id="cluster00-13">0</td><td id="cluster00-1">0</td><td id="cluster00-37">0</td><td id="cluster00-27">0</td><td id="cluster00-10">0</td><td id="cluster00-total">0</td>
-            <td></td>
-            <td id="cluster0-9">0</td><td id="cluster0-28">0</td><td id="cluster0-0">0</td><td id="cluster0-2">0</td><td id="cluster0-14">0</td><td id="cluster0-total">0</td>
-        </tr>
-    </tbody>
-</table>
+</div>
 
     <script>
     
@@ -361,15 +395,18 @@ function updateClusterStats(csvData) {
 
     // Update the table with computed values
     cluster00Cols.forEach(colIndex => {
-        document.getElementById(`cluster00-${colIndex}`).textContent = cluster00Sums[colIndex];
+document.getElementById(`cluster00-${colIndex}`).textContent = 
+    cluster00Sums[colIndex] > 0 ? cluster00Sums[colIndex] : "-";
     });
-    document.getElementById("cluster00-total").textContent = cluster00Sums.total;
-
+document.getElementById("cluster00-total").textContent = 
+    cluster00Sums.total > 0 ? cluster00Sums.total : "-";
+    
     cluster0Cols.forEach(colIndex => {
-        document.getElementById(`cluster0-${colIndex}`).textContent = cluster0Sums[colIndex];
+document.getElementById(`cluster0-${colIndex}`).textContent = 
+    cluster0Sums[colIndex] > 0 ? cluster0Sums[colIndex] : "-";
     });
-    document.getElementById("cluster0-total").textContent = cluster0Sums.total;
-}
+document.getElementById("cluster0-total").textContent = 
+    cluster0Sums.total > 0 ? cluster0Sums.total : "-";}
 
 // Call this function after processing the CSV data
 document.addEventListener("DOMContentLoaded", () => {
@@ -472,7 +509,7 @@ function displayResults(csvData) {
                         statsData.quadrantHits.LowerRight += num;
                     }
 
-                    // ✅ New: Increment the counter for Times Hit
+                    // New: Increment the counter for Times Hit
                     if (num >= 0 && num <= 17) {
                         statsData.highHits[num]++;
                     }

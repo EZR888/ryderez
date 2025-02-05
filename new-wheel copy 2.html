@@ -5,47 +5,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
-     .framed-buttons {
-      border: 2px solid lightblue;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      display: inline-flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      max-width: 500px;
-      text-align: center;
-      color: black;
-    }
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 20px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
     body {
+      margin: 0;
       overflow: hidden;
-      background-color: black;
+      background-color: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -53,27 +16,18 @@
       height: 100vh;
       font-family: Arial, sans-serif;
       padding: 0px;
-      margin: 0;
       box-sizing: border-box;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+    
      /* Flexbox wrapper to prevent content cutoff */
     .flex-frame {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       height: 100vh; /* Full height of the viewport */
       width: 100vw;  /* Full width of the viewport */
       overflow: auto; /* Allows scrolling when zoomed in */
-      padding-top: 80px; /* Ensures space below buttons */
     }
 
     .wheel-container {
@@ -85,7 +39,7 @@
       align-items: center;
       width: 635px;  /* Fixed width */
       height: 635px; /* Fixed height */
-      max-width: 90%; /* Ensure it doesn't exceed the viewport width */
+      max-width: 100%; /* Ensure it doesn't exceed the viewport width */
       max-height: 100vh; /* Ensure it doesn't exceed viewport height */
       box-sizing: border-box;
     }
@@ -100,30 +54,15 @@
       margin-bottom: 20px;
     }
 
-     .button {
-      font-size: 110%;
-      padding: 6px 12px;
-      margin: 5px;
+    .button {
+      padding: 10px 16px; /* Increased padding */
+      background: #fff;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      margin: 5px;
+      font-size: 18px; /* Increased font size */
     }
-    .button:hover {
-      opacity: 0.8;
-    }
-    .button-single {
-      background-color: salmon;
-      color: black;
-    }
-    .button-purple {
-      background-color: purple;
-      color: white;
-    }
-    #viewDataButton {
-      background-color: lightgray;
-      color: black !important;
-    }
+
     #startButton {
       background-color: #4CAF50; /* Green */
       color: white;
@@ -133,32 +72,11 @@
       background-color: #f44336; /* Red */
       color: white;
     }
-    .button-DarkKhaki {
-      background-color: DarkKhaki;
-      color: black !important;
-    }
-    .button-DarkSeaGreen {
-      background-color: DarkSeaGreen;
-      color: black !important;
-    }
-    .button-salmon {
-      background-color: salmon;
-      color: black !important;
-    }
-    .button-single {
-      background-color: violet;
-      color: black;
-    }
-    .button-sim {
-      background-color: orange;
-      color: black;
-    }
-	.button-LightSteelBlue {
-	  background-color: LightSteelBlue;
-	  color: black !important;
-	}
-	
 
+    #accessSimulatorButton {
+      background-color: #008CBA; /* Blue */
+      color: white;
+    }
     .highlight-yellow {
   		background-color: lightyellow !important;
 	}
@@ -380,27 +298,20 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <div>
-      <div class="framed-section2">
-        <button class="button button-purple" id="howToUseButton">How To Use</button>
-        <button class="button button-sim" id="simButton">Simulator</button>
-        <button id="viewDataButton" class="button">View Data</button>
-        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
-        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
-        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
-        <button class="button button-single" id="singleSpinButton">Wheel</button>
-      </div>
-    </div>
-    <div id="instructionsModal" class="modal">
-      <div class="modal-content">
-        <button class="close-button" id="closeModalButton">&times;</button>
-        <h3>How To Read This Screen</h3>
-        <p>...</p>
-      </div>
-    </div>
-  </div>
+  <br><br>
+  
+          <div>
+            <div class="framed-section2">
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+    			<button id="densityButton" class="button button-LightSteelBlue">Density</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
+            </div>
+        </div>
         
   <div class="flex-frame">  <!-- Flexbox frame added here -->
     <h1 class="lgreen-text">Roulette Wheel</h1>

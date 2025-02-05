@@ -309,73 +309,7 @@
         </tbody>
     </table>
 
-    <div class="header-container">
-    <h2 class="header-text">Cluster Stats</h2>
-    </div>
-<table id="clusterStatsTable">
-    <thead>
-        <tr>
-            <th colspan="6">Cluster 00</th>
-            <th></th>
-            <th colspan="6">Cluster 0</th>
-        </tr>
-        <tr>
-            <th>13</th><th>1</th><th>37</th><th>27</th><th>10</th><th>Total</th>
-            <th></th>
-            <th>9</th><th>28</th><th>0</th><th>2</th><th>14</th><th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td id="cluster00-13">0</td><td id="cluster00-1">0</td><td id="cluster00-37">0</td><td id="cluster00-27">0</td><td id="cluster00-10">0</td><td id="cluster00-total">0</td>
-            <td></td>
-            <td id="cluster0-9">0</td><td id="cluster0-28">0</td><td id="cluster0-0">0</td><td id="cluster0-2">0</td><td id="cluster0-14">0</td><td id="cluster0-total">0</td>
-        </tr>
-    </tbody>
-</table>
-
     <script>
-    
-function updateClusterStats(csvData) {
-    const cluster00Cols = [13, 1, 37, 27, 10]; // Column indexes for Cluster 00
-    const cluster0Cols = [9, 28, 0, 2, 14];   // Column indexes for Cluster 0
-
-    let cluster00Sums = { 13: 0, 1: 0, 37: 0, 27: 0, 10: 0, total: 0 };
-    let cluster0Sums = { 9: 0, 28: 0, 0: 0, 2: 0, 14: 0, total: 0 };
-
-    csvData.forEach((row, rowIndex) => {
-        cluster00Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10); // Ensure numeric
-            cluster00Sums[colIndex] += value;
-            cluster00Sums.total += value;
-        });
-
-        cluster0Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10); // Ensure numeric
-            cluster0Sums[colIndex] += value;
-            cluster0Sums.total += value;
-        });
-
-        console.log(`Row ${rowIndex + 1}: Cluster 00 Sum = ${cluster00Sums.total}, Cluster 0 Sum = ${cluster0Sums.total}`);
-    });
-
-    // Update the table with computed values
-    cluster00Cols.forEach(colIndex => {
-        document.getElementById(`cluster00-${colIndex}`).textContent = cluster00Sums[colIndex];
-    });
-    document.getElementById("cluster00-total").textContent = cluster00Sums.total;
-
-    cluster0Cols.forEach(colIndex => {
-        document.getElementById(`cluster0-${colIndex}`).textContent = cluster0Sums[colIndex];
-    });
-    document.getElementById("cluster0-total").textContent = cluster0Sums.total;
-}
-
-// Call this function after processing the CSV data
-document.addEventListener("DOMContentLoaded", () => {
-    const csvData = JSON.parse(localStorage.getItem('csvData')) || [];
-    updateClusterStats(csvData);
-});
 
     document.getElementById("fileInput").addEventListener("change", function(event) {
         const files = event.target.files;
@@ -414,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
         displayResults(csvData);
     }
 
-function displayResults(csvData) {
+    function displayResults(csvData) {
         const table = document.getElementById("statsTable");
         const thead = table.querySelector("thead");
         const tbody = table.querySelector("tbody");
@@ -443,7 +377,7 @@ function displayResults(csvData) {
         };
 
         const cluster0Numbers = [0, 9, 14, 28, 2];
-        const cluster00Numbers = [1, 13, 27, 10, 37];
+        const cluster00Numbers = [1, 13, 27, 10, "00"];
 
         const UpperLeft = new Set([5, 22, 34, 15, 3, 24, 36, 13, 1]);
         const UpperRight = new Set([27, 10, 25, 29, 12, 8, 19, 31, 18]);
@@ -519,9 +453,6 @@ function displayResults(csvData) {
         document.getElementById('UpperRightHits').textContent = statsData.quadrantHits.UpperRight;
         document.getElementById('LowerLeftHits').textContent = statsData.quadrantHits.LowerLeft;
         document.getElementById('LowerRightHits').textContent = statsData.quadrantHits.LowerRight;
-
-    // Update Cluster Stats After Processing CSV Data
-    updateClusterStats(csvData);
     }
 
     // =======================================================
@@ -535,5 +466,8 @@ function displayResults(csvData) {
     document.getElementById("singleSpinButton").addEventListener("click", () => { window.open("new-wheel.html", "_blank"); });
     
     </script>
+
+    <iframe src="view-stats-2.html?timestamp=<?=time()?>" width="100%" height="500px" style="border: none;"></iframe>
+
 </body>
 </html>

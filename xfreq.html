@@ -403,9 +403,10 @@
           };
         }
       }
-      if (sortedKeys.includes(0)) {
-        cumulativeProbabilities[0] = { cumulativeFrequency: totalValue, cumulativeP: "1.000000" };
-      }
+		if (sortedKeys.includes(0)) {
+    	  cumulativeProbabilities[0] = { cumulativeFrequency: "", cumulativeP: "" }; // Leave blank instead of assigning totalValue
+	  }
+
       return cumulativeProbabilities;
     }
 
@@ -501,14 +502,13 @@ function displayResults(differences, groupSums, stats) {
                   1
                 ).toFixed(6)
               : "";
-            let cumulativeFrequency = "";
-            let cumulativePValue = "";
-            const diffKey = diffValue.toString();
-            if (diffValue !== "" && cumulativeData[diffKey]) {
-                cumulativeFrequency = cumulativeData[diffKey].cumulativeFrequency;
-                let rawCumulativeP = cumulativeData[diffKey].cumulativeP;
-                cumulativePValue = (!isNaN(rawCumulativeP)) ? Number(rawCumulativeP).toFixed(6) : "";
-            }
+              
+              let diffKey = diffValue.toString();
+let cumulativeFrequency = (diffValue !== "" && cumulativeData[diffKey]) ? cumulativeData[diffKey].cumulativeFrequency : "";
+let cumulativePValue = (diffValue !== "" && cumulativeData[diffKey] && !isNaN(cumulativeData[diffKey].cumulativeP)) 
+    ? Number(cumulativeData[diffKey].cumulativeP).toFixed(6) 
+    : "";
+
             let metricStyle = "color: orange; font-weight: bold;";
             let valueStyle = "color: lightblue; font-weight: bold;";
             let dataStyle = "color: lightgray;";

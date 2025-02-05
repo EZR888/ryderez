@@ -146,6 +146,10 @@
       background-color: orange;
       color: black;
     }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
     .framed-section2 {
       display: flex;
       align-items: center;
@@ -163,7 +167,7 @@
             color: lightgreen;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0px;
             font-size: 16px;
         }
 
@@ -306,7 +310,7 @@
     border: 1px solid lightgray; 
     padding: 6px;
     text-align: center;
-    font-weight: normal; /* ✅ Ensures data cells are NOT bold */
+    font-weight: normal; /* Ensures data cells are NOT bold */
     background-color: black;
     color: lightgray;
 }
@@ -335,6 +339,7 @@
         <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
         <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
         <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+    	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
         <button class="button button-single" id="singleSpinButton">Wheel</button>
       </div>
     </div>
@@ -417,6 +422,14 @@
             window.open('new-wheel.html', '_blank');
         });
     }
+    
+    let densityButton = document.getElementById('densityButton');
+    if (densityButton) {
+        densityButton.addEventListener('click', () => {
+            window.open('sort.html', '_blank');
+        });
+    }
+    
 });
       
       

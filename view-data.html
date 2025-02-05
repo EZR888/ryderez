@@ -6,7 +6,6 @@
     <title>CSV Reader</title>
     <style>
     
-    
     .modal {
       display: none;
       position: fixed;
@@ -310,6 +309,10 @@ th:nth-child(20), td:nth-child(20) {
         background-color: orange;
         color: black;
     }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
     .button-red {
         background-color: red;
         color: white;
@@ -477,6 +480,7 @@ th:nth-child(20), td:nth-child(20) {
                 <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
                 <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
                 <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+            	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
                 <button class="button button-single" id="singleSpinButton">Wheel</button>
             </div>
         </div>
@@ -556,7 +560,11 @@ th:nth-child(20), td:nth-child(20) {
     	document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.open('new-wheel.html', '_blank');
       });
-      
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+          
+
     
            // Function to generate a formatted timestamp // 
         function getFormattedTimestamp() {

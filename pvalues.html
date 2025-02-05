@@ -137,7 +137,7 @@
             color: black;
             cursor: pointer;
         }
-            .button-DarkKhaki {
+    .button-DarkKhaki {
       background-color: DarkKhaki;
       color: black !important;
     }
@@ -158,6 +158,10 @@
         background-color: orange;
         color: black;
     }
+    .button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
     .framed-section2 {
             display: flex;
             align-items: center;
@@ -214,6 +218,7 @@
                 <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
                 <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
                 <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+            	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
                 <button class="button button-single" id="singleSpinButton">Wheel</button>
             </div>
         </div>
@@ -274,7 +279,10 @@
         window.open('new-wheel.html', '_blank');
       });
       
-
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+    
 // Function to process multiple uploaded CSVs and compare p-values
 function processMultipleCSVFiles(files) {
     let totalCounts = Array(38).fill(0);

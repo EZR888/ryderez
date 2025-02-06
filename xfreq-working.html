@@ -751,10 +751,12 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits) {
     let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
     const allData = { ...differences, ...groupSums };
 
+    // ✅ Append main statistics
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -782,7 +784,47 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits) {
         }
     });
 
-    return csvContent;  // ✅ Returns CSV as a string (No File Needed)
+    // ✅ Append Max Counts Table
+    csvContent += "\nMax Counts Table\nMetric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
+    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
+    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
+    let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+    let metricKeys = Object.keys(maxHitsStats);
+    let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+
+    for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / 38).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+            cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+            cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
+
+        csvContent += `${metric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+    }
+
+    // ✅ Append Max Hits Table
+    csvContent += "\nMax Hits Table\nNumber,Max Hits Observed,P-Value\n";
+    for (let num = 0; num < 38; num++) {
+        let k = maxHits[num];
+        let pValue = (k > 0) ?
+            Math.min(
+                2 * Math.min(
+                    jStat.binomial.cdf(k, 38, 1 / 38),
+                    1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
+                ),
+                1
+            ) : 1;
+        csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
+    }
+
+    return csvContent;  // ✅ Returns full CSV with all tables included
 }
 
     
@@ -985,10 +1027,8 @@ function convertCSVToPDF(csvData) {
         return;
     }
 
-    // ✅ Parse CSV string into an array
-    const rows = csvData.trim().split("\n").map(row => row.split(","));
-
-    // ✅ Create PDF using jsPDF
+    // ✅ Split CSV into sections
+    const sections = csvData.split("\n\n"); // Detect separate tables
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
         orientation: "landscape",
@@ -996,31 +1036,49 @@ function convertCSVToPDF(csvData) {
         format: "a4"
     });
 
-    doc.text("Roulette Data Report", 14, 10);
+    let yOffset = 10;
+    doc.text("Roulette Data Report", 14, yOffset);
+    yOffset += 10;
 
-    doc.autoTable({
-        head: [rows[0]],  // First row as header
-        body: rows.slice(1), // Remaining rows as data
-        startY: 20,
-        styles: { fontSize: 8, cellPadding: 3 },
-        headStyles: {
-            fillColor: [0, 0, 255], // Orange header background
-            textColor: 255, // White text
-            fontStyle: "bold"
-        },
-        bodyStyles: {
-            fillColor: [255, 255, 255], // White background
-            textColor: [0, 0, 0] // Black text
-        },
-        alternateRowStyles: {
-            fillColor: [240, 240, 240] // Light gray for alternate rows
-        }
+    sections.forEach((section, index) => {
+        const rows = section.trim().split("\n").map(row => row.split(","));
+        if (rows.length < 2) return; // Skip empty sections
+
+        let title = rows[0].join(" ");
+        let tableData = rows.slice(1);
+
+        // ✅ Add Table Title
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 255);
+        doc.text(title, 14, yOffset);
+        yOffset += 6;
+
+        // ✅ Add Table
+        doc.autoTable({
+            head: [tableData[0]],  // First row as header
+            body: tableData.slice(1), // Remaining rows as data
+            startY: yOffset,
+            styles: { fontSize: 8, cellPadding: 3 },
+            headStyles: {
+                fillColor: [0, 0, 255], // Blue header background
+                textColor: 255, // White text
+                fontStyle: "bold"
+            },
+            bodyStyles: {
+                fillColor: [255, 255, 255], // White background
+                textColor: [0, 0, 0] // Black text
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240] // Light gray for alternate rows
+            }
+        });
+
+        yOffset = doc.autoTable.previous.finalY + 10; // Move down for next table
     });
 
     // ✅ Save PDF
     doc.save("Roulette_Report.pdf");
 }
-
 
 
     // =======================================================

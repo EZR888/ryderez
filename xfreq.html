@@ -219,6 +219,12 @@
     // =======================================================
     let totalRuns = 0;
     let selectedFileNames = []; // Array to store file names
+    // Global variables to store results
+	let differences = {};
+	let groupSums = {};
+	let statsCollection = {};
+	let maxHits = [];
+
 
     // =======================================================
     // HEAP CLASSES
@@ -809,109 +815,140 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits) {
     // =======================================================
     // PROCESSING FUNCTIONS
     // =======================================================
-    function processData(rows) {
-      let statsCollection = {};
-      const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
-      const groupSums = {};
-      for (const key in groupIndices) {
+function processData(rows) {
+    differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    groupSums = {};
+    statsCollection = {};
+    
+    for (const key in groupIndices) {
         groupSums[key] = [];
-      }
-      // Initialize maxHits for each number (0–37)
-      let maxHits = Array(38).fill(0);
-      rows.forEach(counts => {
+    }
+
+    maxHits = Array(38).fill(0);
+
+    rows.forEach(counts => {
         for (const key in groupIndices) {
-          groupSums[key].push(sumColumns(counts, groupIndices[key]));
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
         }
         const sums = calculateAllSums(counts);
         differences.topBottomDiff.push(sums.topBottomDiff);
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
+
         for (let i = 0; i < 38; i++) {
-          if (counts[i] > maxHits[i]) { maxHits[i] = counts[i]; }
+            if (counts[i] > maxHits[i]) {
+                maxHits[i] = counts[i];
+            }
         }
-      });
-      Object.keys(differences).forEach(category => {
+    });
+
+    Object.keys(differences).forEach(category => {
         statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-      });
-      Object.keys(groupSums).forEach(group => {
+    });
+
+    Object.keys(groupSums).forEach(group => {
         statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-      });
-      // Display frequency distribution tables.
-      displayResults(differences, groupSums, statsCollection);
-      // Compute maxHits statistics and display additional tables.
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      displayMaxHitsTable(maxHits);
-      displayProcessedFiles();
-      // Export combined CSV.
-      exportCombinedCSV(differences, groupSums, statsCollection, maxHits, "CombinedAnalysis.csv");
-    }
+    });
+
+    // Display results
+    displayResults(differences, groupSums, statsCollection);
+
+    // Compute and display maxHits statistics
+    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
+    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
+
+    displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
+    displayMaxHitsTable(maxHits);
+    displayProcessedFiles();
+}
+
 
     // =======================================================
     // FILE INPUT HANDLING
     // =======================================================
-    function processConcatenatedCSVData(csvData) {
-      const rows = csvData.trim().split("\n");
-      if (rows.length <= 1) {
+function processConcatenatedCSVData(csvData) {
+    const rows = csvData.trim().split("\n");
+    if (rows.length <= 1) {
         alert("The combined CSV data does not contain enough data.");
         return;
-      }
-      const dataRows = [];
-      rows.forEach(row => {
-        const values = row.split(",").map(value => value.trim());
-        // Detect header rows (a row with numbers 0,1,2,...,37)
-        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
-        if (isHeader) {
-          console.log("Header row detected and skipped:", row);
-          return;
-        }
-        const numericValues = values.map(val => {
-          if (val === "" || isNaN(val)) { return 0; }
-          return Number(val);
-        });
-        if (numericValues.length === 38) { dataRows.push(numericValues); }
-      });
-      totalRuns = rows.length - 1;
-      console.log("Total Runs from file:", totalRuns);
-      processData(dataRows);
     }
 
-    document.getElementById("fileInput").addEventListener("change", function(event) {
-      const files = event.target.files;
-      let allCSVData = "";
-      selectedFileNames = []; // Reset file names array
-      if (files.length === 0) {
+    const dataRows = [];
+    rows.forEach(row => {
+        const values = row.split(",").map(value => value.trim());
+        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+        if (isHeader) {
+            console.log("Header row detected and skipped:", row);
+            return;
+        }
+        const numericValues = values.map(val => (val === "" || isNaN(val)) ? 0 : Number(val));
+        if (numericValues.length === 38) {
+            dataRows.push(numericValues);
+        }
+    });
+
+    totalRuns = dataRows.length;
+    console.log("Total Runs from file:", totalRuns);
+
+    // ✅ Process the data and store results globally
+    processData(dataRows);
+
+    // ✅ Generate CSV from processed data
+    const csvDataOutput = exportCombinedCSV(differences, groupSums, statsCollection, maxHits);
+
+    // ✅ Convert CSV to PDF automatically
+    convertCSVToPDF(csvDataOutput);
+}
+
+
+document.getElementById("fileInput").addEventListener("change", function(event) {
+    const files = event.target.files;
+    let allCSVData = "";
+    selectedFileNames = []; // Reset file names array
+
+    if (files.length === 0) {
         alert("No files selected.");
         return;
-      }
-      let filesRead = 0;
-      for (let i = 0; i < files.length; i++) {
+    }
+
+    let filesRead = 0;
+    for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
         // Save each file name
         selectedFileNames.push(file.name);
+
         if (!file || !file.name.endsWith(".csv")) {
-          alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
-          continue;
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            filesRead++;
+            if (filesRead === files.length) { 
+                processConcatenatedCSVData(allCSVData); 
+            }
+            continue;
         }
+
         const reader = new FileReader();
         reader.onload = function(e) {
-          allCSVData += e.target.result + "\n";
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
+            allCSVData += e.target.result + "\n";
+            filesRead++;
+            if (filesRead === files.length) { 
+                processConcatenatedCSVData(allCSVData); 
+            }
         };
+
         reader.onerror = function() {
-          alert(`Error reading file: ${file.name}`);
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
+            alert(`Error reading file: ${file.name}`);
+            filesRead++;
+            if (filesRead === files.length) { 
+                processConcatenatedCSVData(allCSVData); 
+            }
         };
+
         reader.readAsText(file);
-      }
-    });
+    }
+});
 
     // =======================================================
     // SIMULATION (Run Button) HANDLER

@@ -223,8 +223,6 @@
 	let differences = {};
 	let groupSums = {};
 	let statsCollection = {};
-	let maxHits = [];
-
 
     // =======================================================
     // HEAP CLASSES
@@ -541,102 +539,6 @@ function displayProcessedFiles() {
 }
 
     // =======================================================
-    // DISPLAY FUNCTIONS for Max Counts and Max Hits
-    // =======================================================
-function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-    const explanationElement = document.getElementById("explanation");
-
-    let metricsHTML = `
-      <h3><center><span style="color: orange;">Max Counts</span></center></h3>
-      <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
-        <tr><th style="padding: 8px; color: salmon;">Metric</th><th style="padding: 8px; color: white;">Value</th></tr>`;
-
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        metricsHTML += `<tr><td style="padding: 8px; color: orange; font-weight: bold;">${metric}</td>
-                        <td style="padding: 8px; color: lightblue; font-weight: bold;">${value}</td></tr>`;
-    });
-
-    metricsHTML += `</table><br/>`;
-
-    let tableHTML = `
-      <table border="1" style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="padding: 8px; color: salmon;">Count</th>
-          <th style="padding: 8px; color: salmon;">Frequency</th>
-          <th style="padding: 8px; color: salmon;">P-Value</th>
-          <th style="padding: 8px; color: salmon;">Cumulative Frequency</th>
-          <th style="padding: 8px; color: salmon;">Cumulative P-Value</th>
-        </tr>`;
-
-    Object.keys(maxHitsFreq)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .forEach(countValue => {
-            let frequency = maxHitsFreq[countValue] || "";
-            let cumulativeFrequency = maxHitsCumulative[countValue]?.cumulativeFrequency || "";
-            let cumulativePValue = maxHitsCumulative[countValue]?.cumulativeP || "";
-            let highlight = parseFloat(cumulativePValue) < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
-
-            tableHTML += `<tr>
-                <td style="padding: 8px; text-align: center;">${countValue}</td>
-                <td style="padding: 8px; text-align: center;">${frequency}</td>
-                <td style="padding: 8px; text-align: center;">${(frequency / 38).toFixed(6)}</td>
-                <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
-                <td style="padding: 8px; text-align: center; ${highlight}">${cumulativePValue}</td>
-              </tr>`;
-    });
-
-    tableHTML += `</table><br/>`;
-    explanationElement.innerHTML += metricsHTML + tableHTML;
-}
-
-function displayMaxHitsTable(maxHits) {
-    const explanationElement = document.getElementById("explanation");
-
-    let metricsHTML = `
-      <h3><center><span style="color: orange;">Max Hits per Number</span></center></h3>
-      <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
-        <tr><th style="padding: 8px; color: salmon;">Metric</th><th style="padding: 8px; color: white;">Value</th></tr>`;
-
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        metricsHTML += `<tr><td style="padding: 8px; color: orange; font-weight: bold;">${metric}</td>
-                        <td style="padding: 8px; color: lightblue; font-weight: bold;">${value}</td></tr>`;
-    });
-
-    metricsHTML += `</table><br/>`;
-
-    let tableHTML = `
-      <table border="1" style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="padding: 8px; color: salmon;">Number</th>
-          <th style="padding: 8px; color: salmon;">Max Hits Observed</th>
-          <th style="padding: 8px; color: salmon;">P-Value (P(X ≥ k))</th>
-        </tr>`;
-
-    for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = k > 0 ? Math.min(
-            2 * Math.min(
-                jStat.binomial.cdf(k, 38, 1 / 38),
-                1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
-            ),
-            1
-        ) : 1;
-
-        let highlight = pValue < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
-        tableHTML += `<tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${highlight}">${pValue.toFixed(6)}</td>
-          </tr>`;
-    }
-
-    tableHTML += `</table><br/>`;
-    explanationElement.innerHTML += metricsHTML + tableHTML;
-}
-
-    // =======================================================
     // CSV EXPORT FUNCTIONS for Combined CSV
     // =======================================================
 function getFreqDistCSV(differences, groupSums, stats) {
@@ -696,51 +598,7 @@ function getFreqDistCSV(differences, groupSums, stats) {
     return csvContent;
 }
 
-    function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-      let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
-      csvContent += "Metric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
-      let total = 38;
-      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
-      let metricKeys = Object.keys(maxHitsStats);
-      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
-      for (let i = 0; i < maxRows; i++) {
-        const metric = metricKeys[i] || "";
-        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
-        const value = metric ? maxHitsStats[metric] : "";
-        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
-        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
-        const pValue = frequency ? (frequency / total).toFixed(6) : "";
-        let cumulativeFrequency = "";
-        let cumulativePValue = "";
-        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
-          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
-          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
-        }
-        csvContent += `${formattedMetric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
-      }
-      return csvContent;
-    }
-
-function getMaxHitsCSV(maxHits) {
-  let csvContent = "Max Hits per Number (Binomial p-values)\n";
-  csvContent += "Number,Max Hits Observed,P-Value\n";
-  for (let num = 0; num < 38; num++) {
-    let k = maxHits[num];
-    let pValue = (k > 0) ?
-      Math.min(
-        2 * Math.min(
-          jStat.binomial.cdf(k, 38, 1/38),
-          1 - jStat.binomial.cdf(k - 1, 38, 1/38)
-        ),
-        1
-      ) : 1;
-    csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
-  }
-  return csvContent;
-}
-
-
-function exportCombinedCSV(differences, groupSums, stats, maxHits) {
+function exportCombinedCSV(differences, groupSums, stats) {
     let csvContent = "";
 
     // ✅ Append all main categories
@@ -767,50 +625,9 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits) {
         });
     });
 
-    // ✅ Append Max Counts Metrics
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    csvContent += `\nMax Counts Metrics\nMetric,Value\n`;
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        csvContent += `${metric},${value}\n`;
-    });
-
-    // ✅ Append Max Counts Table
-    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-    csvContent += `\nMax Counts Frequency Distribution\nCount,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n`;
-
-    Object.keys(maxHitsFreq).sort((a, b) => a - b).forEach(countValue => {
-        let frequency = maxHitsFreq[countValue] || "";
-        let cumulativeFrequency = maxHitsCumulative[countValue]?.cumulativeFrequency || "";
-        let cumulativePValue = maxHitsCumulative[countValue]?.cumulativeP || "";
-        let pValue = frequency ? (frequency / 38).toFixed(6) : "";
-
-        csvContent += `${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
-    });
-
-    // ✅ Append Max Hits Table
-    csvContent += `\nMax Hits Frequency Distribution\nNumber,Max Hits Observed,P-Value\n`;
-    for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = k > 0 ? Math.min(
-            2 * Math.min(
-                jStat.binomial.cdf(k, 38, 1 / 38),
-                1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
-            ),
-            1
-        ) : 1;
-
-        csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
-    }
-
     return csvContent;  // ✅ Returns complete CSV
 }
 
-    
-    // =======================================================
-    // DISPLAY FUNCTIONS for Max Counts and Max Hits
-    // =======================================================
-    // (Already defined above.)
 
     // =======================================================
     // PROCESSING FUNCTIONS
@@ -824,8 +641,6 @@ function processData(rows) {
         groupSums[key] = [];
     }
 
-    maxHits = Array(38).fill(0);
-
     rows.forEach(counts => {
         for (const key in groupIndices) {
             groupSums[key].push(sumColumns(counts, groupIndices[key]));
@@ -835,12 +650,6 @@ function processData(rows) {
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
-
-        for (let i = 0; i < 38; i++) {
-            if (counts[i] > maxHits[i]) {
-                maxHits[i] = counts[i];
-            }
-        }
     });
 
     Object.keys(differences).forEach(category => {
@@ -853,14 +662,6 @@ function processData(rows) {
 
     // Display results
     displayResults(differences, groupSums, statsCollection);
-
-    // Compute and display maxHits statistics
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-
-    displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-    displayMaxHitsTable(maxHits);
     displayProcessedFiles();
 }
 
@@ -896,7 +697,7 @@ function processConcatenatedCSVData(csvData) {
     processData(dataRows);
 
     // ✅ Generate CSV from processed data
-    const csvDataOutput = exportCombinedCSV(differences, groupSums, statsCollection, maxHits);
+    const csvDataOutput = exportCombinedCSV(differences, groupSums, statsCollection);
 
     // ✅ Convert CSV to PDF automatically
     convertCSVToPDF(csvDataOutput);
@@ -972,8 +773,7 @@ document.getElementById("runButton").addEventListener("click", () => {
     for (const key in groupIndices) {
         groupSums[key] = [];
     }
-    let maxHits = Array(38).fill(0);
-
+    
     function processChunk(startIndex, chunkSize) {
         for (let i = startIndex; i < Math.min(numRuns, startIndex + chunkSize); i++) {
             const counts = getRandomCounts(38);
@@ -984,9 +784,6 @@ document.getElementById("runButton").addEventListener("click", () => {
             differences.zzDiff.push(sums.zzDiff);
             for (const key in groupIndices) {
                 groupSums[key].push(sumColumns(counts, groupIndices[key]));
-            }
-            for (let j = 0; j < 38; j++) {
-                if (counts[j] > maxHits[j]) { maxHits[j] = counts[j]; }
             }
         }
 
@@ -1002,14 +799,9 @@ document.getElementById("runButton").addEventListener("click", () => {
             });
 
             displayResults(differences, groupSums, statsCollection);
-            let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-            let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-            let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-            displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-            displayMaxHitsTable(maxHits);
 
             // ✅ Get CSV Data as String
-            const csvData = exportCombinedCSV(differences, groupSums, statsCollection, maxHits);
+            const csvData = exportCombinedCSV(differences, groupSums, statsCollection);
 
             // ✅ Convert CSV Data to PDF Directly
             convertCSVToPDF(csvData);

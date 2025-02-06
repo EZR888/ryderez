@@ -468,7 +468,6 @@ function displayResults(differences, groupSums, stats) {
     explanationElement.innerHTML = "";
     const allCategories = { ...differences, ...groupSums };
     const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
-
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) return;
         const categoryLabel = categoryLabels[category] || category;
@@ -476,52 +475,70 @@ function displayResults(differences, groupSums, stats) {
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         let columnHeader = differenceCategories.includes(category) ? "Difference" : "Total";
         let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
-
-        // ✅ Display Metrics Above the Table
-        let metricsHTML = `
-          <h3><center><span style="color: orange;">${categoryLabel}</span></center></h3>
+        let tableHTML = `
+          <h3><center><span style="color: orange;">${categoryLabel}</span>
+          <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
           ${imageHTML}
-          <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
-            <tr><th style="padding: 8px; color: salmon;">Metric</th><th style="padding: 8px; color: white;">Value</th></tr>`;
-
-        Object.entries(stats[category]).forEach(([metric, value]) => {
-            metricsHTML += `<tr><td style="padding: 8px; color: orange; font-weight: bold;">${metric}</td>
-                            <td style="padding: 8px; color: lightblue; font-weight: bold;">${value}</td></tr>`;
-        });
-
-        metricsHTML += `</table><br/>`;
-
-        // ✅ Table for Frequency Distribution
-        let tableHTML = `<table border="1" style="border-collapse: collapse; width: 100%;">`;
+          <br>
+        `;
+        tableHTML += `<table border="1" style="border-collapse: collapse; width: 100%;">`;
         tableHTML += `<tr>
-          <th style="padding: 8px; color: salmon;">${columnHeader}</th>
-          <th style="padding: 8px; color: salmon;">Frequency</th>
-          <th style="padding: 8px; color: salmon;">P-Value</th>
-          <th style="padding: 8px; color: salmon;">Cumulative Frequency</th>
-          <th style="padding: 8px; color: salmon;">Cumulative P-Value</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">${columnHeader}</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
         </tr>`;
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution)
+                                        .map(Number)
+                                        .sort((a, b) => a - b);
+        const metricKeys = Object.keys(stats[category]);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+            const value = metric ? stats[category][metric] : "";
+            const diffValue = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = diffValue !== "" ? frequencyDistribution[diffValue] : "";
+            // Two-sided p-value calculation:
+            const pValue = frequency 
+              ? Math.min(
+                  2 * Math.min(
+                    jStat.binomial.cdf(frequency, totalRuns, 1/38),
+                    1 - jStat.binomial.cdf(frequency - 1, totalRuns, 1/38)
+                  ),
+                  1
+                ).toFixed(6)
+              : "";
+              
+              let diffKey = diffValue.toString();
+let cumulativeFrequency = (diffValue !== "" && cumulativeData[diffKey]) ? cumulativeData[diffKey].cumulativeFrequency : "";
+let cumulativePValue = (diffValue !== "" && cumulativeData[diffKey] && !isNaN(cumulativeData[diffKey].cumulativeP)) 
+    ? Number(cumulativeData[diffKey].cumulativeP).toFixed(6) 
+    : "";
 
-        Object.keys(frequencyDistribution)
-            .map(Number)
-            .sort((a, b) => a - b)
-            .forEach(diffValue => {
-                let frequency = frequencyDistribution[diffValue] || "";
-                let cumulativeFrequency = cumulativeData[diffValue]?.cumulativeFrequency || "";
-                let cumulativePValue = cumulativeData[diffValue]?.cumulativeP || "";
-                let highlight = parseFloat(cumulativePValue) < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
-
-                tableHTML += `<tr>
-                    <td style="padding: 8px; text-align: center;">${diffValue}</td>
-                    <td style="padding: 8px; text-align: center;">${frequency}</td>
-                    <td style="padding: 8px; text-align: center;">${(frequency / totalRuns).toFixed(6)}</td>
-                    <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
-                    <td style="padding: 8px; text-align: center; ${highlight}">${cumulativePValue}</td>
-                  </tr>`;
-        });
-
+            let metricStyle = "color: orange; font-weight: bold;";
+            let valueStyle = "color: lightblue; font-weight: bold;";
+            let dataStyle = "color: lightgray;";
+            let highlightStyle = "color: yellow; font-weight: bold;";
+            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+            tableHTML += `
+              <tr>
+                <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+                <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${diffValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+              </tr>`;
+        }
         tableHTML += `</table><br/>`;
-        explanationElement.innerHTML += metricsHTML + tableHTML;
+        explanationElement.innerHTML += tableHTML;
     });
+    // Processed file names will be appended later by a separate function.
 }
 
 function displayProcessedFiles() {
@@ -537,97 +554,93 @@ function displayProcessedFiles() {
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
     // =======================================================
-function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-    const explanationElement = document.getElementById("explanation");
-
-    let metricsHTML = `
-      <h3><center><span style="color: orange;">Max Counts</span></center></h3>
-      <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
-        <tr><th style="padding: 8px; color: salmon;">Metric</th><th style="padding: 8px; color: white;">Value</th></tr>`;
-
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        metricsHTML += `<tr><td style="padding: 8px; color: orange; font-weight: bold;">${metric}</td>
-                        <td style="padding: 8px; color: lightblue; font-weight: bold;">${value}</td></tr>`;
-    });
-
-    metricsHTML += `</table><br/>`;
-
-    let tableHTML = `
-      <table border="1" style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="padding: 8px; color: salmon;">Count</th>
-          <th style="padding: 8px; color: salmon;">Frequency</th>
-          <th style="padding: 8px; color: salmon;">P-Value</th>
-          <th style="padding: 8px; color: salmon;">Cumulative Frequency</th>
-          <th style="padding: 8px; color: salmon;">Cumulative P-Value</th>
-        </tr>`;
-
-    Object.keys(maxHitsFreq)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .forEach(countValue => {
-            let frequency = maxHitsFreq[countValue] || "";
-            let cumulativeFrequency = maxHitsCumulative[countValue]?.cumulativeFrequency || "";
-            let cumulativePValue = maxHitsCumulative[countValue]?.cumulativeP || "";
-            let highlight = parseFloat(cumulativePValue) < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
-
-            tableHTML += `<tr>
-                <td style="padding: 8px; text-align: center;">${countValue}</td>
-                <td style="padding: 8px; text-align: center;">${frequency}</td>
-                <td style="padding: 8px; text-align: center;">${(frequency / 38).toFixed(6)}</td>
-                <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
-                <td style="padding: 8px; text-align: center; ${highlight}">${cumulativePValue}</td>
-              </tr>`;
-    });
-
-    tableHTML += `</table><br/>`;
-    explanationElement.innerHTML += metricsHTML + tableHTML;
-}
-
-function displayMaxHitsTable(maxHits) {
-    const explanationElement = document.getElementById("explanation");
-
-    let metricsHTML = `
-      <h3><center><span style="color: orange;">Max Hits per Number</span></center></h3>
-      <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
-        <tr><th style="padding: 8px; color: salmon;">Metric</th><th style="padding: 8px; color: white;">Value</th></tr>`;
-
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        metricsHTML += `<tr><td style="padding: 8px; color: orange; font-weight: bold;">${metric}</td>
-                        <td style="padding: 8px; color: lightblue; font-weight: bold;">${value}</td></tr>`;
-    });
-
-    metricsHTML += `</table><br/>`;
-
-    let tableHTML = `
-      <table border="1" style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="padding: 8px; color: salmon;">Number</th>
-          <th style="padding: 8px; color: salmon;">Max Hits Observed</th>
-          <th style="padding: 8px; color: salmon;">P-Value (P(X ≥ k))</th>
-        </tr>`;
-
-    for (let num = 0; num < 38; num++) {
-        let k = maxHits[num];
-        let pValue = k > 0 ? Math.min(
-            2 * Math.min(
-                jStat.binomial.cdf(k, 38, 1 / 38),
-                1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
-            ),
-            1
-        ) : 1;
-
-        let highlight = pValue < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
-        tableHTML += `<tr>
-            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
-            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
-            <td style="padding: 8px; text-align: center; ${highlight}">${pValue.toFixed(6)}</td>
+    function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+      let total = 38;
+      let tableHTML = `
+        <h3><center><span style="color: orange;">Max Counts</span>
+        <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
+        <br>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Count</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
           </tr>`;
+      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+      let metricKeys = Object.keys(maxHitsStats);
+      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+      for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / total).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
+        let metricStyle = "color: orange; font-weight: bold;";
+        let valueStyle = "color: lightblue; font-weight: bold;";
+        let dataStyle = "color: lightgray;";
+        let highlightStyle = "color: yellow; font-weight: bold;";
+        let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+        tableHTML += `
+          <tr>
+            <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+            <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${countValue}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+          </tr>`;
+      }
+      tableHTML += `</table><br/>`;
+      document.getElementById("explanation").innerHTML += tableHTML;
     }
 
-    tableHTML += `</table><br/>`;
-    explanationElement.innerHTML += metricsHTML + tableHTML;
+ function displayMaxHitsTable(maxHits) {
+  let tableHTML = `
+    <h3><center><span style="color: orange;">Max Hits per Number</span>
+    <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
+    <br>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
+        <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
+      </tr>
+  `;
+  for (let num = 0; num < 38; num++) {
+    let k = maxHits[num];
+    // Two-sided p-value calculation:
+    let pValue = (k > 0) ? Math.min(
+                      2 * Math.min(
+                        jStat.binomial.cdf(k, 38, 1/38),
+                        1 - jStat.binomial.cdf(k - 1, 38, 1/38)
+                      ),
+                      1
+                    ) : 1;
+    let dataStyle = "color: lightgray;";
+    let highlightStyle = "color: yellow; font-weight: bold;";
+    let applyHighlight = (pValue < 0.05);
+    tableHTML += `
+      <tr>
+        <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
+        <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
+        <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
+      </tr>
+    `;
+  }
+  tableHTML += `</table><br/>`;
+  document.getElementById("explanation").innerHTML += tableHTML;
 }
 
     // =======================================================
@@ -735,69 +748,83 @@ function getMaxHitsCSV(maxHits) {
 
 
 function exportCombinedCSV(differences, groupSums, stats, maxHits) {
-    let csvContent = "";
+    let csvContent = "Category,Metric,Value,Difference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
+    const allData = { ...differences, ...groupSums };
 
-    // ✅ Append all main categories
+    // ✅ Append main statistics
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        csvContent += `\n${categoryLabel} Metrics\nMetric,Value\n`;
-
-        Object.entries(values).forEach(([metric, value]) => {
-            csvContent += `${metric},${value}\n`;
-        });
-
-        // ✅ Add Frequency Distribution Table
-        const frequencyDistribution = calculateFrequencyDistribution(differences[category] || groupSums[category] || []);
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        csvContent += `\n${categoryLabel} Frequency Distribution\nDifference,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n`;
 
-        Object.keys(frequencyDistribution).sort((a, b) => a - b).forEach(difference => {
-            let frequency = frequencyDistribution[difference] || "";
-            let cumulativeFrequency = cumulativeData[difference]?.cumulativeFrequency || "";
-            let cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
-            let pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
 
-            csvContent += `${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
-        });
-    });
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            const value = metric ? values[metric] : "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+            const pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
+            let cumulativeFrequency = "";
+            let cumulativePValue = "";
+            let highlight = "No";
 
-    // ✅ Append Max Counts Metrics
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    csvContent += `\nMax Counts Metrics\nMetric,Value\n`;
-    Object.entries(maxHitsStats).forEach(([metric, value]) => {
-        csvContent += `${metric},${value}\n`;
+            if (difference !== "" && cumulativeData[difference]) {
+                cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+                cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
+                    ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
+                    : "0.000000";
+
+                if (parseFloat(cumulativePValue) < 0.05) { highlight = "Yes"; }
+            }
+
+            csvContent += `${categoryLabel},${metric},${value},${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
+        }
     });
 
     // ✅ Append Max Counts Table
+    csvContent += "\nMax Counts Table\nMetric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
+    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
     let maxHitsFreq = calculateFrequencyDistribution(maxHits);
     let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-    csvContent += `\nMax Counts Frequency Distribution\nCount,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n`;
+    let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+    let metricKeys = Object.keys(maxHitsStats);
+    let maxRows = Math.max(metricKeys.length, sortedKeys.length);
 
-    Object.keys(maxHitsFreq).sort((a, b) => a - b).forEach(countValue => {
-        let frequency = maxHitsFreq[countValue] || "";
-        let cumulativeFrequency = maxHitsCumulative[countValue]?.cumulativeFrequency || "";
-        let cumulativePValue = maxHitsCumulative[countValue]?.cumulativeP || "";
-        let pValue = frequency ? (frequency / 38).toFixed(6) : "";
+    for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / 38).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+            cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+            cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
 
-        csvContent += `${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
-    });
+        csvContent += `${metric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+    }
 
     // ✅ Append Max Hits Table
-    csvContent += `\nMax Hits Frequency Distribution\nNumber,Max Hits Observed,P-Value\n`;
+    csvContent += "\nMax Hits Table\nNumber,Max Hits Observed,P-Value\n";
     for (let num = 0; num < 38; num++) {
         let k = maxHits[num];
-        let pValue = k > 0 ? Math.min(
-            2 * Math.min(
-                jStat.binomial.cdf(k, 38, 1 / 38),
-                1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
-            ),
-            1
-        ) : 1;
-
+        let pValue = (k > 0) ?
+            Math.min(
+                2 * Math.min(
+                    jStat.binomial.cdf(k, 38, 1 / 38),
+                    1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)
+                ),
+                1
+            ) : 1;
         csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
     }
 
-    return csvContent;  // ✅ Returns complete CSV
+    return csvContent;  // ✅ Returns full CSV with all tables included
 }
 
     
@@ -1000,6 +1027,8 @@ function convertCSVToPDF(csvData) {
         return;
     }
 
+    // ✅ Split CSV into sections
+    const sections = csvData.split("\n\n"); // Detect separate tables
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
         orientation: "landscape",
@@ -1011,55 +1040,40 @@ function convertCSVToPDF(csvData) {
     doc.text("Roulette Data Report", 14, yOffset);
     yOffset += 10;
 
-    const sections = csvData.split("\n\n");
-    sections.forEach(section => {
+    sections.forEach((section, index) => {
         const rows = section.trim().split("\n").map(row => row.split(","));
         if (rows.length < 2) return; // Skip empty sections
 
         let title = rows[0].join(" ");
-        let isMetricSection = title.includes("Metrics");
+        let tableData = rows.slice(1);
 
-        if (isMetricSection) {
-            // ✅ Handle Metrics Sections
-            doc.setFontSize(12);
-            doc.setTextColor(255, 0, 0);
-            doc.text(title, 14, yOffset);
-            yOffset += 6;
+        // ✅ Add Table Title
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 255);
+        doc.text(title, 14, yOffset);
+        yOffset += 6;
 
-            rows.slice(1).forEach(row => {
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 255);
-                doc.text(`${row[0]}: ${row[1]}`, 14, yOffset);
-                yOffset += 5;
-            });
-        } else {
-            // ✅ Handle Frequency Distribution Tables
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 255);
-            doc.text(title, 14, yOffset);
-            yOffset += 6;
+        // ✅ Add Table
+        doc.autoTable({
+            head: [tableData[0]],  // First row as header
+            body: tableData.slice(1), // Remaining rows as data
+            startY: yOffset,
+            styles: { fontSize: 8, cellPadding: 3 },
+            headStyles: {
+                fillColor: [0, 0, 255], // Blue header background
+                textColor: 255, // White text
+                fontStyle: "bold"
+            },
+            bodyStyles: {
+                fillColor: [255, 255, 255], // White background
+                textColor: [0, 0, 0] // Black text
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240] // Light gray for alternate rows
+            }
+        });
 
-            doc.autoTable({
-                head: [rows[1]],
-                body: rows.slice(2),
-                startY: yOffset,
-                styles: { fontSize: 8, cellPadding: 3 },
-                headStyles: {
-                    fillColor: [0, 0, 255], // Blue header background
-                    textColor: 255, // White text
-                    fontStyle: "bold"
-                },
-                bodyStyles: {
-                    fillColor: [255, 255, 255], // White background
-                    textColor: [0, 0, 0]
-                },
-                alternateRowStyles: {
-                    fillColor: [240, 240, 240]
-                }
-            });
-
-            yOffset = doc.autoTable.previous.finalY + 10;
-        }
+        yOffset = doc.autoTable.previous.finalY + 10; // Move down for next table
     });
 
     // ✅ Save PDF

@@ -277,14 +277,12 @@
     }
 
     function calculateAllSums(counts) {
-      let leftSum = sumColumns(counts, groupIndices.left) - (counts[37] / 2) + (counts[0] / 2);
-      let rightSum = sumColumns(counts, groupIndices.right) - (counts[0] / 2) + (counts[37] / 2);
       return {
         topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
-        leftRightDiff: leftSum - rightSum,
+        leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
         cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
         zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster)
-      };
+      };	
     }
 
     // =======================================================

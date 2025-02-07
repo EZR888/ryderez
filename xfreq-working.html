@@ -166,6 +166,35 @@
       background-color: black;
       margin: 10px 0;
     }
+
+  .file-list-container {
+    margin: 20px auto; /* Centers the container */
+    padding: 15px;
+    border: 2px solid lightgreen;
+    border-radius: 10px;
+    width: 80%; /* Matches the results container */
+    max-width: 800px;
+    background-color: #222;
+    color: white;
+    text-align: center; /* Centers the text */
+  }
+  .file-list-container h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: center;
+  }
+  #fileList {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+  }
+  #fileList li {
+    padding: 5px;
+    border-bottom: 1px solid lightgray;
+    display: block; /* Ensures filenames appear on new lines */
+    width: auto; /* Makes it look more balanced */
+  }
+  
   </style>
   <!-- jStat is used for statistical functions -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
@@ -193,7 +222,7 @@
     </div>
   </div>
   <div class="header-container">
-    <h1 class="header-text">Frequency Distribution</h1>
+    <h1 class="header-text">Stats and Frequency Distribution</h1>
   </div>
   <div class="results-container">
     <input type="file" id="fileInput" accept=".csv" multiple />
@@ -203,12 +232,20 @@
     <div id="statistics"></div>
     <div id="explanation"></div>
   </div>
+  
+  <!-- Add this just before the closing </body> tag -->
+<div class="file-list-container">
+  <h3>Selected Files:</h3>
+  <ul id="fileList"></ul>
+</div>
 
   <script>
     // =======================================================
     // Helper Functions and Global Variables
     // =======================================================
     let totalRuns = 0;
+    let selectedFileNames = []; // Store selected filenames globally
+
     
     // Group indices for various distributions
     const groupIndices = {
@@ -335,22 +372,22 @@
     // Display Functions (Existing)
     // =======================================================
     const categoryLabels = {
-      topBottomDiff: "Top - Bottom: ",
-      leftRightDiff: "Left - Right: ",
-      cDiff: "Center 9 Top - Bottom: ",
-      zzDiff: "00 - 0: ",
-      topIndices: "Top: ",
-      bottomIndices: "Bottom: ",
-      leftTop: "Left Top: ",
-      leftBottom: "Left Bottom: ",
-      rightTop: "Right Top: ",
-      rightBottom: "Right Bottom: ",
-      cTop: "Center Top: ",
-      cBottom: "Center Bottom: ",
-      zzCluster: "00 Cluster: ",
-      zCluster: "0 Cluster: ",
-      left: "Left: ",
-      right: "Right: "
+      topBottomDiff: "Top - Bottom",
+      leftRightDiff: "Left - Right",
+      cDiff: "Center 9 Top - Bottom",
+      zzDiff: "00 - 0",
+      topIndices: "Top",
+      bottomIndices: "Bottom",
+      leftTop: "Left Top",
+      leftBottom: "Left Bottom",
+      rightTop: "Right Top",
+      rightBottom: "Right Bottom",
+      cTop: "Center Top",
+      cBottom: "Center Bottom",
+      zzCluster: "00 Cluster",
+      zCluster: "0 Cluster",
+      left: "Left",
+      right: "Right"
     };
 
     function displayDescriptiveStatistics(stats) {
@@ -387,7 +424,6 @@
         let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
         let tableHTML = `
           <h3><center><span style="color: orange;">${categoryLabel}</span>
-          <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
           ${imageHTML}
           <br>
         `;
@@ -517,25 +553,38 @@
       return csvContent;
     }
 
-    function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
-      let csvContent = "";
-      csvContent += getFreqDistCSV(differences, groupSums, stats);
-      csvContent += "\n\n";
-      // Compute max counts stats:
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      csvContent += "\n\n";
-      csvContent += getMaxHitsCSV(maxHits);
-      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
+    let csvContent = "";
+
+    // Add statistical data
+    csvContent += getFreqDistCSV(differences, groupSums, stats);
+    csvContent += "\n\n";
+
+    // Compute max counts stats:
+    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
+    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
+    csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
+    csvContent += "\n\n";
+    csvContent += getMaxHitsCSV(maxHits);
+
+    // 🟢 Append selected filenames at the bottom
+    if (selectedFileNames.length > 0) {
+        csvContent += "\n\nSelected Files:\n";
+        selectedFileNames.forEach(fileName => {
+            csvContent += `${fileName}\n`;  // Adds each file name on a new line
+        });
     }
+
+    // Export the CSV file
+    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
@@ -544,7 +593,6 @@
       let total = 38;
       let tableHTML = `
         <h3><center><span style="color: orange;">Max Counts</span>
-        <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
         <br>
         <table border="1" style="border-collapse: collapse; width: 100%;">
           <tr>
@@ -697,25 +745,6 @@
       return csvContent;
     }
 
-    function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
-      let csvContent = "";
-      csvContent += getFreqDistCSV(differences, groupSums, stats);
-      csvContent += "\n\n";
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      csvContent += "\n\n";
-      csvContent += getMaxHitsCSV(maxHits);
-      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
     // =======================================================
@@ -723,7 +752,6 @@
       let total = 38;
       let tableHTML = `
         <h3><center><span style="color: orange;">Max Counts</span>
-        <span style="color: lightgreen;"> Statistics and Frequency Distribution</span></center></h3>
         <br>
         <table border="1" style="border-collapse: collapse; width: 100%;">
           <tr>
@@ -876,24 +904,9 @@
       return csvContent;
     }
 
-    function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
-      let csvContent = "";
-      csvContent += getFreqDistCSV(differences, groupSums, stats);
-      csvContent += "\n\n";
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      csvContent += "\n\n";
-      csvContent += getMaxHitsCSV(maxHits);
-      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+
+
+
 
     // =======================================================
     // PROCESSING FUNCTIONS
@@ -942,61 +955,102 @@
     // =======================================================
     // FILE INPUT HANDLING
     // =======================================================
-    function processConcatenatedCSVData(csvData) {
-      const rows = csvData.trim().split("\n");
-      if (rows.length <= 1) {
-        alert("The combined CSV data does not contain enough data.");
-        return;
-      }
-      const dataRows = [];
-      rows.forEach(row => {
-        const values = row.split(",").map(value => value.trim());
-        const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
-        if (isHeader) {
-          console.log("Header row detected and skipped:", row);
-          return;
-        }
-        const numericValues = values.map(val => {
-          if (val === "" || isNaN(val)) { return 0; }
-          return Number(val);
-        });
-        if (numericValues.length === 38) { dataRows.push(numericValues); }
-      });
-      totalRuns = rows.length - 1;
-      console.log("Total Runs from file:", totalRuns);
-      processData(dataRows);
+let csvProcessingStarted = false; // Prevent duplicate processing
+
+function processConcatenatedCSVData(csvData) {
+  if (csvProcessingStarted) return; // If already running, exit function
+  csvProcessingStarted = true; // Set flag to true to prevent multiple runs
+
+  const rows = csvData.trim().split("\n");
+  if (rows.length <= 1) {
+    alert("The combined CSV data does not contain enough data.");
+    csvProcessingStarted = false; // Reset flag
+    return;
+  }
+
+  const dataRows = [];
+  rows.forEach(row => {
+    const values = row.split(",").map(value => value.trim());
+    const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+    if (isHeader) {
+      console.log("Header row detected and skipped:", row);
+      return;
     }
 
-    document.getElementById("fileInput").addEventListener("change", function(event) {
-      const files = event.target.files;
-      let allCSVData = "";
-      let filesRead = 0;
-      if (files.length === 0) {
+    const numericValues = values.map(val => {
+      if (val === "" || isNaN(val)) {
+        return 0;
+      }
+      return Number(val);
+    });
+
+    if (numericValues.length === 38) {
+      dataRows.push(numericValues);
+    }
+  });
+
+  totalRuns = rows.length - 1;
+  console.log("Total Runs from file:", totalRuns);
+  processData(dataRows); // Only call this once
+}
+
+document.getElementById("fileInput").addEventListener("change", function(event) {
+    const files = event.target.files;
+    let allCSVData = "";
+    let filesRead = 0;
+
+    // 🟢 Reset the global array before storing new filenames
+    selectedFileNames = [];
+
+    // Get the file list container
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = ""; // Clear the previous list
+
+    if (files.length === 0) {
         alert("No files selected.");
         return;
-      }
-      for (let i = 0; i < files.length; i++) {
+    }
+
+    for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
+        // 🟢 Store filenames globally for CSV export
+        selectedFileNames.push(file.name);
+
+        // Display file name in the list
+        const listItem = document.createElement("li");
+        listItem.textContent = file.name;
+        fileList.appendChild(listItem);
+
         if (!file || !file.name.endsWith(".csv")) {
-          alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
-          continue;
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+            continue;
         }
+
         const reader = new FileReader();
         reader.onload = function(e) {
-          allCSVData += e.target.result + "\n";
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
+            allCSVData += e.target.result + "\n";
+            filesRead++;
+
+            if (filesRead === files.length) {
+                console.log("🟢 Selected Files for CSV Export:", selectedFileNames);
+                processConcatenatedCSVData(allCSVData);
+            }
         };
         reader.onerror = function() {
-          alert(`Error reading file: ${file.name}`);
-          filesRead++;
-          if (filesRead === files.length) { processConcatenatedCSVData(allCSVData); }
+            alert(`Error reading file: ${file.name}`);
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
         };
         reader.readAsText(file);
-      }
-    });
+    }
+});
 
     // =======================================================
     // SIMULATION (Run Button) HANDLER
@@ -1074,6 +1128,7 @@
     document.getElementById("viewFreqDistButton").addEventListener("click", () => { window.open("xfreq.html", "_blank"); });
     document.getElementById("viewStatsButton").addEventListener("click", () => { window.open("view-stats.html", "_blank"); });
     document.getElementById("singleSpinButton").addEventListener("click", () => { window.open("new-wheel.html", "_blank"); });
-  </script>
+
+</script>
 </body>
 </html>

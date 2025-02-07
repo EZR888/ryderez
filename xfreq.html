@@ -379,52 +379,56 @@
       return sorted.length % 2 !== 0 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4);
     }
 
-    function calculateFrequencyDistribution(data) {
-      if (!data || !Array.isArray(data)) {
+function calculateFrequencyDistribution(data) {
+    if (!data || !Array.isArray(data)) {
         console.error("Invalid data provided to calculateFrequencyDistribution");
         return {};
-      }
-      const frequency = {};
-      data.forEach(val => {
-        frequency[val] = (frequency[val] || 0) + 1;
-      });
-      return frequency;
     }
 
-    function calculateCumulativeProbabilities(frequencyDistribution, totalValue) {
-      if (!totalValue || totalValue <= 0) {
+    const frequency = {};
+    data.forEach(val => {
+        let key = Number(val); // Ensure numeric key
+        frequency[key] = (frequency[key] || 0) + 1;
+    });
+
+    console.log("Computed Frequency Distribution:", frequency); // Debugging output
+    return frequency;
+}
+
+
+function calculateCumulativeProbabilities(frequencyDistribution, totalValue) {
+    if (!totalValue || totalValue <= 0) {
         console.error("Invalid total for cumulative probability calculation:", totalValue);
         return {};
-      }
-      const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-      let cumulativeProbabilities = {};
-      let cumulativeBelow = 0, cumulativeAbove = 0;
-      for (let i = 0; i < sortedKeys.length; i++) {
-        let key = sortedKeys[i];
-        if (key < 0) {
-          cumulativeBelow += frequencyDistribution[key];
-          cumulativeProbabilities[key] = {
-            cumulativeFrequency: cumulativeBelow,
-            cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
-          };
-        }
-      }
-      for (let i = sortedKeys.length - 1; i >= 0; i--) {
-        let key = sortedKeys[i];
-        if (key > 0) {
-          cumulativeAbove += frequencyDistribution[key];
-          cumulativeProbabilities[key] = {
-            cumulativeFrequency: cumulativeAbove,
-            cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
-          };
-        }
-      }
-		if (sortedKeys.includes(0)) {
-    	  cumulativeProbabilities[0] = { cumulativeFrequency: "", cumulativeP: "" }; // Leave blank instead of assigning totalValue
-	  }
-
-      return cumulativeProbabilities;
     }
+
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+    let cumulativeProbabilities = {};
+    let cumulativeBelow = 0, cumulativeAbove = 0;
+
+    sortedKeys.forEach(key => {
+        if (key < 0) {
+            cumulativeBelow += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeBelow,
+                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            };
+        } else {
+            cumulativeAbove += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeAbove,
+                cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+            };
+        }
+    });
+
+    if (sortedKeys.includes(0)) {
+        cumulativeProbabilities[0] = { cumulativeFrequency: "", cumulativeP: "" };
+    }
+
+    console.log("Cumulative Data Computed:", cumulativeProbabilities); // Debugging output
+    return cumulativeProbabilities;
+}
 
     // =======================================================
     // DISPLAY FUNCTIONS
@@ -507,23 +511,26 @@ function displayResults(differences, groupSums, stats) {
           <th style="padding: 8px; color: salmon;">Cumulative P-Value</th>
         </tr>`;
 
-        Object.keys(frequencyDistribution)
-            .map(Number)
-            .sort((a, b) => a - b)
-            .forEach(diffValue => {
-                let frequency = frequencyDistribution[diffValue] || "";
-                let cumulativeFrequency = cumulativeData[diffValue]?.cumulativeFrequency || "";
-                let cumulativePValue = cumulativeData[diffValue]?.cumulativeP || "";
-                let highlight = parseFloat(cumulativePValue) < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
+Object.keys(frequencyDistribution)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach(diffValue => {
+        let frequency = frequencyDistribution[diffValue] || 0;
+        let cumulativeFrequency = cumulativeData[diffValue]?.cumulativeFrequency || 0;
+        let cumulativePValue = cumulativeData[diffValue]?.cumulativeP || "0.000000";
+        let pValue = totalRuns > 0 ? (frequency / totalRuns).toFixed(6) : "0.000000";
 
-                tableHTML += `<tr>
-                    <td style="padding: 8px; text-align: center;">${diffValue}</td>
-                    <td style="padding: 8px; text-align: center;">${frequency}</td>
-                    <td style="padding: 8px; text-align: center;">${(frequency / totalRuns).toFixed(6)}</td>
-                    <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
-                    <td style="padding: 8px; text-align: center; ${highlight}">${cumulativePValue}</td>
-                  </tr>`;
-        });
+        let highlight = parseFloat(cumulativePValue) < 0.05 ? "color: yellow; font-weight: bold;" : "color: lightgray;";
+
+        tableHTML += `<tr>
+            <td style="padding: 8px; text-align: center;">${diffValue}</td>
+            <td style="padding: 8px; text-align: center;">${frequency}</td>
+            <td style="padding: 8px; text-align: center;">${pValue}</td>
+            <td style="padding: 8px; text-align: center;">${cumulativeFrequency}</td>
+            <td style="padding: 8px; text-align: center; ${highlight}">${cumulativePValue}</td>
+        </tr>`;
+});
+
 
         tableHTML += `</table><br/>`;
         explanationElement.innerHTML += metricsHTML + tableHTML;

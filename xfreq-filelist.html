@@ -194,15 +194,6 @@
     display: block; /* Ensures filenames appear on new lines */
     width: auto; /* Makes it look more balanced */
   }
-  .category-label {
-  color: lightgreen !important;
-  font-size: 24px !important;
-  font-weight: bold !important;
-  text-align: center;
-  margin-top: 20px;
-  display: block;
-}
-
   
   </style>
   <!-- jStat is used for statistical functions -->
@@ -420,80 +411,72 @@
       `;
     }
 
-function displayResults(differences, groupSums, stats) {
-    const explanationElement = document.getElementById("explanation");
-    explanationElement.innerHTML = "";
-    const allCategories = { ...differences, ...groupSums };
-    
-    Object.keys(allCategories).forEach(category => {
+    function displayResults(differences, groupSums, stats) {
+      const explanationElement = document.getElementById("explanation");
+      explanationElement.innerHTML = "";
+      const allCategories = { ...differences, ...groupSums };
+      const differenceCategories = ["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff"];
+      Object.keys(allCategories).forEach(category => {
         if (!stats[category]) return;
         const categoryLabel = categoryLabels[category] || category;
-
-        // 🟢 Updated: Category label styling
-		let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
-
-
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
-        
-let tableHTML = `
-    <table border='1' style="border-collapse: collapse; width: 100%;">
-    <tr>
-        <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
-        <th style="padding: 8px; color: salmon; text-align: center;"></th> <!-- Empty header -->
-        <th></th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Value</th> <!-- Renamed from "Difference" -->
-        <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
-    </tr>`;
-
-
+        let tableHTML = `
+          <h3><center><span style="color: orange;">${categoryLabel}</span>
+          ${imageHTML}
+          <br>
+        `;
+        tableHTML += `<table border='1' style="border-collapse: collapse; width: 100%;">`;
+        tableHTML += `<tr>
+          <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+          <th style="padding: 8px; color: salmon; text-align: center;"></th>
+          <th></th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+          <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+        </tr>`;
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(stats[category]);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
-
         for (let i = 0; i < maxRows; i++) {
-            const metric = metricKeys[i] || "";
-            const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
-            const value = metric ? stats[category][metric] : "";
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
-            
-            let cumulativeFrequency = "";
-            let cumulativePValue = "";
-            let differenceKey = difference.toString();
-            if (difference !== "" && cumulativeData[differenceKey]) {
-                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
-                cumulativePValue = Number(cumulativeData[differenceKey].cumulativeP).toFixed(6);
-            }
-
-            let metricStyle = "color: orange; font-weight: bold;";
-            let valueStyle = "color: lightblue; font-weight: bold;";
-            let dataStyle = "color: lightgray;";
-            let highlightStyle = "color: yellow; font-weight: bold;";
-            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
-
-            tableHTML += `
+          const metric = metricKeys[i] || "";
+          const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+          const value = metric ? stats[category][metric] : "";
+          const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+          const frequency = difference !== "" ? frequencyDistribution[difference] : "";
+          const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+          let cumulativeFrequency = "";
+          let cumulativePValue = "";
+          let differenceKey = difference.toString();
+          if (difference !== "" && cumulativeData[differenceKey]) {
+            cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
+            let rawCumulativeP = cumulativeData[differenceKey].cumulativeP;
+            cumulativePValue = (!isNaN(rawCumulativeP)) ? Number(rawCumulativeP).toFixed(6) : "";
+          }
+          let metricStyle = "color: orange; font-weight: bold;";
+          let valueStyle = "color: lightblue; font-weight: bold;";
+          let dataStyle = "color: lightgray;";
+          let highlightStyle = "color: yellow; font-weight: bold;";
+          let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+          tableHTML += `
             <tr>
-                <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
-                <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
-                <td style="padding: 8px;"></td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+              <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+              <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+              <td style="padding: 8px;"></td> <!-- EMPTY COLUMN ADDED HERE -->
+              <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
+              <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+              <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+              <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
+              <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
             </tr>`;
         }
-
         tableHTML += `</table><br/>`;
         explanationElement.innerHTML += tableHTML;
-    });
-}
+      });
+    }
 
     // =======================================================
     // CSV EXPORT FUNCTIONS

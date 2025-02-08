@@ -412,6 +412,56 @@ document.getElementById(`cluster0-${colIndex}`).textContent =
 document.getElementById("cluster0-total").textContent = 
     cluster0Sums.total > 0 ? cluster0Sums.total : "-";}
 
+
+// 🟢 Clear all tables and localStorage on page load
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Clearing tables and localStorage on page load...");
+
+    // 🟢 Reset localStorage
+    localStorage.removeItem("csvData");
+
+    // 🟢 Clear table contents
+    document.getElementById("statsTable").querySelector("thead").innerHTML = "";
+    document.getElementById("statsTable").querySelector("tbody").innerHTML = "";
+    
+    document.getElementById("clusterStatsTable").querySelector("tbody").innerHTML = "";
+    
+    document.getElementById("quadrantTable").querySelector("tbody").innerHTML = `
+        <tr>
+            <td><img src="upleft.png" alt="Upper Left Image"></td>
+            <td><img src="upright.png" alt="Upper Right Image"></td>
+        </tr>
+        <tr>
+            <td id="UpperLeftHits">-</td>
+            <td id="UpperRightHits">-</td>
+        </tr>
+        <tr>
+            <td><img src="lowleft.png" alt="Lower Left Image"></td>
+            <td><img src="lowright.png" alt="Lower Right Image"></td>
+        </tr>
+        <tr>
+            <td id="LowerLeftHits">-</td>
+            <td id="LowerRightHits">-</td>
+        </tr>`;
+
+    // 🟢 Reset text content where needed
+    document.getElementById("runsCount").innerHTML = "";
+    document.getElementById("cluster00-total").textContent = "-";
+    document.getElementById("cluster0-total").textContent = "-";
+
+    // 🟢 Reset Cluster Cells
+    const clusterCells = ["13", "1", "37", "27", "10", "9", "28", "0", "2", "14"];
+    clusterCells.forEach(id => {
+        let cluster00Cell = document.getElementById(`cluster00-${id}`);
+        let cluster0Cell = document.getElementById(`cluster0-${id}`);
+        if (cluster00Cell) cluster00Cell.textContent = "-";
+        if (cluster0Cell) cluster0Cell.textContent = "-";
+    });
+
+    console.log("Tables and storage cleared successfully!");
+});
+
+
 // Call this function after processing the CSV data
 document.addEventListener("DOMContentLoaded", () => {
     const csvData = JSON.parse(localStorage.getItem('csvData')) || [];

@@ -427,30 +427,40 @@ function displayResults(differences, groupSums, stats) {
         if (!stats[category]) return;
         const categoryLabel = categoryLabels[category] || category;
 
-        // 🟢 Updated: Category label styling
-		let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
-
+        let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
 
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        let imageHTML = `<center><img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: block; margin: 10px auto;"></center>`;
-        
-let tableHTML = `
-    ${categoryHTML}
-    ${imageHTML}
-    <table border='1' style="border-collapse: collapse; width: 100%;">
-    <tr>
-        <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
-        <th style="padding: 8px; color: salmon; text-align: center;"></th> <!-- Empty header -->
-        <th></th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Value</th> <!-- Renamed from "Difference" -->
-        <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-        <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
-    </tr>`;
+        const totalSpins = totalRuns * 38; // Calculate total spins dynamically
 
+        // 🟢 Add Runs & Spins **on the same line as the image**
+        let imageLineHTML = `
+            <center>
+                <span style="color: lightgreen; font-size: 20px; font-weight: bold;">${totalRuns}</span>
+                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Runs</span>
+                &nbsp;&nbsp;
+                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 10px auto;">
+                &nbsp;&nbsp;
+                <span style="color: lightgreen; font-size: 20px; font-weight: bold;">${totalSpins}</span>
+                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Spins</span>
+            </center>`;
 
+        let tableHTML = `
+            ${categoryHTML}
+            ${imageLineHTML}  <!-- 🟢 Insert Runs, Spins, and Image Here -->
+            <table border='1' style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+                <th style="padding: 8px; color: salmon; text-align: center;"></th> <!-- Empty header -->
+                <th></th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Value</th> <!-- Renamed from "Difference" -->
+                <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+            </tr>`;
+
+        // 🟢 **Everything below remains unchanged!**
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(stats[category]);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -462,7 +472,7 @@ let tableHTML = `
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
             const pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
-            
+
             let cumulativeFrequency = "";
             let cumulativePValue = "";
             let differenceKey = difference.toString();

@@ -1,0 +1,2593 @@
+awk 'NR==4 {$0="      <th>HITS</th>"} 1' hits.html > foo.html
+awk 'NR==5 {$0="      <th></th>"} 1' foo.html > hits.html
+awk 'NR==49 {$0="      <th>1</th>"} 1' hits.html > foo.html
+awk 'NR==92 {$0="      <th>2</th>"} 1' foo.html > hits.html
+awk 'NR==135 {$0="      <th>3</th>"} 1' hits.html > foo.html
+awk 'NR==178 {$0="      <th>4</th>"} 1' foo.html > hits.html
+awk 'NR==221 {$0="      <th>5</th>"} 1' hits.html > foo.html
+awk 'NR==264 {$0="      <th>6</th>"} 1' foo.html > hits.html
+awk 'NR==307 {$0="      <th>7</th>"} 1' hits.html > foo.html
+awk 'NR==350 {$0="      <th>8</th>"} 1' foo.html > hits.html
+awk 'NR==393 {$0="      <th>9</th>"} 1' hits.html > foo.html
+awk 'NR==436 {$0="      <th>10</th>"} 1' foo.html > hits.html
+awk 'NR==479 {$0="      <th>11</th>"} 1' hits.html > foo.html
+awk 'NR==522 {$0="      <th>12</th>"} 1' foo.html > hits.html
+awk 'NR==565 {$0="      <th>13</th>"} 1' hits.html > foo.html
+awk 'NR==608 {$0="      <th>14</th>"} 1' foo.html > hits.html
+awk 'NR==651 {$0="      <th>15</th>"} 1' hits.html > foo.html
+awk 'NR==694 {$0="      <th>16</th>"} 1' foo.html > hits.html
+awk 'NR==737 {$0="      <th>17</th>"} 1' hits.html > foo.html
+awk 'NR==780 {$0="      <th>18</th>"} 1' foo.html > hits.html
+awk 'NR==823 {$0="      <th>19</th>"} 1' hits.html > foo.html
+awk 'NR==866 {$0="      <th>20</th>"} 1' foo.html > hits.html
+awk 'NR==909 {$0="      <th>21</th>"} 1' hits.html > foo.html
+awk 'NR==952 {$0="      <th>22</th>"} 1' foo.html > hits.html
+awk 'NR==995 {$0="      <th>23</th>"} 1' hits.html > foo.html
+awk 'NR==1038 {$0="      <th>24</th>"} 1' foo.html > hits.html
+awk 'NR==1081 {$0="      <th>25</th>"} 1' hits.html > foo.html
+awk 'NR==1167 {$0="      <th>27</th>"} 1' foo.html > hits.html
+awk 'NR==1210 {$0="      <th>28</th>"} 1' hits.html > foo.html
+awk 'NR==1253 {$0="      <th>29</th>"} 1' foo.html > hits.html
+awk 'NR==1296 {$0="      <th>30</th>"} 1' hits.html > foo.html
+awk 'NR==1339 {$0="      <th>31</th>"} 1' foo.html > hits.html
+awk 'NR==1382 {$0="      <th>32</th>"} 1' hits.html > foo.html
+awk 'NR==1425 {$0="      <th>33</th>"} 1' foo.html > hits.html
+awk 'NR==1468 {$0="      <th>34</th>"} 1' hits.html > foo.html
+awk 'NR==1511 {$0="      <th>35</th>"} 1' foo.html > hits.html
+awk 'NR==1554 {$0="      <th>36</th>"} 1' hits.html > foo.html
+awk 'NR==1597 {$0="      <th>37</th>"} 1' foo.html > hits.html
+awk 'NR==1640 {$0="      <th>38</th>"} 1' hits.html > foo.html
+cp foo.html hits.html
+
+
+perl -pi -e 's/\]\,\ \[/\n/g' skips-full.txt
+perl -pi -e 's/\{\"Skips\"\:\ \[\[//g' skips-full.txt
+perl -pi -e 's/\]\]\}//g' skips-full.txt
+perl -pi -e 's/0.0/\-/g' skips-full.txt
+perl -i -pe 's/(\d*\.\d*)/int($1+0.5)/g' skips-full.txt
+awk '{print ","$0}' skips-full.txt > skips.csv
+# perl -pi -e 's/\,/-/g' skips-full.txt
+# awk '{print NR  " " $0}' skips-full.txt >skips.txt
+# cat skips-t.csv | awk  '{print $0}' | tail -n +1 >skips-tt.csv
+# awk '{print NR  " " $0}' skips-tt.csv > skips.csv
+#cat head-skips.txt skips-full.txt >skips.txt
+# rm skips.txt
+
+perl -pi -e 's/\]\,\ \[/\n/g' hits-full.txt
+perl -pi -e 's/\{\"Hits\"\:\ \[\[//g' hits-full.txt
+perl -pi -e 's/\]\]\}/\n/g' hits-full.txt
+perl -pi -e 's/0.0/\-/g' hits-full.txt
+perl -pi -e 's/1.0/X/g' hits-full.txt
+awk '{print ","$0}' hits-full.txt > hits.csv
+# perl -pi -e 's/\,/-/g' hits-full.txt
+# awk '{print NR  " " $0}' hits-t.csv > hits.csv
+# cat head-hits.txt hits-full.txt >hits.txt
+# awk 'NR==4 {$0="      <th>HITS</th>"} 1' hits.html > foo.html
+# awk 'NR==5 {$0="      <th></th>"} 1' foo.html > hits.html
+# rm hits.txt
+
+sed "s/Unnamed\:\ //g" hitsTable.htm > htemp.html
+sed "s/NaN//g" htemp.html > hits.html
+rm htemp.html
+
+perl -pi -e 's/<th>.+<\/th>/<th>100<\/th>/g'
+
+
+
+awk 'NR==4 {$0="      <th>HITS</th>"} 1' hits.html > foo.html
+awk 'NR==5 {$0="      <th></th>"} 1' foo.html > hits.html
+awk 'NR==49 {$0="      <th>1</th>"} 1' hits.html > foo.html
+awk 'NR==92 {$0="      <th>2</th>"} 1' foo.html > hits.html
+awk 'NR==135 {$0="      <th>3</th>"} 1' hits.html > foo.html
+awk 'NR==178 {$0="      <th>4</th>"} 1' foo.html > hits.html
+awk 'NR==221 {$0="      <th>5</th>"} 1' hits.html > foo.html
+awk 'NR==264 {$0="      <th>6</th>"} 1' foo.html > hits.html
+awk 'NR==307 {$0="      <th>7</th>"} 1' hits.html > foo.html
+awk 'NR==350 {$0="      <th>8</th>"} 1' foo.html > hits.html
+awk 'NR==393 {$0="      <th>9</th>"} 1' hits.html > foo.html
+awk 'NR==436 {$0="      <th>10</th>"} 1' foo.html > hits.html
+awk 'NR==479 {$0="      <th>11</th>"} 1' hits.html > foo.html
+awk 'NR==522 {$0="      <th>12</th>"} 1' foo.html > hits.html
+awk 'NR==565 {$0="      <th>13</th>"} 1' hits.html > foo.html
+awk 'NR==608 {$0="      <th>14</th>"} 1' foo.html > hits.html
+awk 'NR==651 {$0="      <th>15</th>"} 1' hits.html > foo.html
+awk 'NR==694 {$0="      <th>16</th>"} 1' foo.html > hits.html
+awk 'NR==737 {$0="      <th>17</th>"} 1' hits.html > foo.html
+awk 'NR==780 {$0="      <th>18</th>"} 1' foo.html > hits.html
+awk 'NR==823 {$0="      <th>19</th>"} 1' hits.html > foo.html
+awk 'NR==866 {$0="      <th>20</th>"} 1' foo.html > hits.html
+awk 'NR==909 {$0="      <th>21</th>"} 1' hits.html > foo.html
+awk 'NR==952 {$0="      <th>22</th>"} 1' foo.html > hits.html
+awk 'NR==995 {$0="      <th>23</th>"} 1' hits.html > foo.html
+awk 'NR==1038 {$0="      <th>24</th>"} 1' foo.html > hits.html
+awk 'NR==1081 {$0="      <th>25</th>"} 1' hits.html > foo.html
+awk 'NR==1167 {$0="      <th>27</th>"} 1' foo.html > hits.html
+awk 'NR==1210 {$0="      <th>28</th>"} 1' hits.html > foo.html
+awk 'NR==1253 {$0="      <th>29</th>"} 1' foo.html > hits.html
+awk 'NR==1296 {$0="      <th>30</th>"} 1' hits.html > foo.html
+awk 'NR==1339 {$0="      <th>31</th>"} 1' foo.html > hits.html
+awk 'NR==1382 {$0="      <th>32</th>"} 1' hits.html > foo.html
+awk 'NR==1425 {$0="      <th>33</th>"} 1' foo.html > hits.html
+awk 'NR==1468 {$0="      <th>34</th>"} 1' hits.html > foo.html
+awk 'NR==1511 {$0="      <th>35</th>"} 1' foo.html > hits.html
+awk 'NR==1554 {$0="      <th>36</th>"} 1' hits.html > foo.html
+awk 'NR==1597 {$0="      <th>37</th>"} 1' foo.html > hits.html
+awk 'NR==1640 {$0="      <th>38</th>"} 1' hits.html > foo.html
+cp foo.html hits.html
+wkhtmltopdf hits.html hits.pdf
+
+
+num = 49
+while num < 1641:
+    if num == 49:
+        print("Current num: " + $num)
+        num = $num + 43
+        continue
+
+
+awk 'NR==1683 {$0=" <th>1683</th>"} 1' hits.html > foo.html
+
+x=1
+val="awk 'NR=="$i" {\$0=\"      ""<th>""$i""</th>\"""} 1' hits.html > foo.html"
+for ((i=49; i <= 1640; i+=43))
+do
+  echo "Hello: " + $i
+  awk $val hits.html
+  x=$x+1
+done
+
+
+# textutil -font 'Menlo Regular' -fontsize 11 -convert html hits.csv
+# cupsfilter hits.csv > hits.pdf
+
+
+
+
+mogrify -format jpg -sharpen 0x1.5 -modulate 100,130,100 *.*
+
+total=`cat tree.json | awk -F"total\":" '{print $2}' | awk -F"," '{print $2}'``
+
+grep thumbs ./album/album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+
+
+#!/bin/sh
+# usage: ./addSnap "Album Title" "Album Description" one-word-folder-name
+# Script for modifying JAlbum-created albums.
+albdir=`pwd`
+echo "Album dir: " $albdir
+title=$1
+description=$2
+fold=$3
+echo "Title: " $title
+echo "Desc: " $description
+#
+# Extract the filenames from the JAlbum-generated file, album.rss
+#
+grep thumbs ./album/album.rss | awk -F"/" '{print $2}' | awk -F"\"" '{print $1}' >filenames
+#
+# extract the captions from the JAlbum-generated file, album.rss
+#
+grep "<description>" ./album/album.rss | awk -F"<description>" '{print $2}' | awk -F"</description>" '{print $1}' >./comments
+#
+# Remove the first line of the captions file output, as it's not an actual photo filename
+#
+tail -n +2 comments > desc2
+#
+# Combine the two output files to create one file with a filename and caption on the same line for each photo
+#
+paste filenames desc2 >titledesc
+
+# Generate html code for adding photos to index.html file.
+#
+while IFS=$'\t' read -r fn desc rest; do
+
+  echo "<div class=\"card preload image hascaption square\"><a class=\"thumb\" href=\"slides/"$fn"\"><img src=\"thumbs/"$fn"\" width=\"212\" height=\"170\"></a><div class=\"caption\"><div class=\"comment\">$desc  </div></div></div>" >>./htmlgen
+done <./titledesc
+
+# Update title and description fields in index.html file.
+#
+cp /Users/ezryder/My\ Albums/index-snap-template.html /Users/ezryder/My\ Albums/$3.html
+sed '/^\# Start/ r htmlgen' ../$3.html | sed '/nonsensed/d' >temp-index.html
+sed -e "s/ChangeTitle/$title/g; s/ChangeDesc/$description/g" temp-index.html >index.html
+
+# Copy updated files to GitHub directory for uploading to wensite.
+#
+# mkdir /Users/ezryder/Documents/GitHub/ryderez/$3
+homedir="/Users/ezryder/Documents/GitHub/ryderez/$3"
+echo "Home dir: " $homedir
+cp -r album/* $homedir
+cp -p jalbum-settings.jap $homedir
+cp -p index.html $homedir
+
+# Grab number of photos from tree.json
+#
+total=`cat album/tree.json | awk -F"total\":" '{print $2}' | awk -F"," '{print $1}'`; echo "Total photos in album: " $total
+
+# Add album section to main Snapsshots page.
+#
+echo >snap-add; echo "<div class=\""card folder preload has-count\""><a href=\""$3/index.html\"" class=\""thumb\""><img src=\""$3/folderthumb.jpg\"" width=\""620\"" height=\""465\""></a><div class=\""caption\""><h3><a href=\""$3/index.html\"">$1</a></h3><p class=\""counts\""><span class=\""images\"">$total &nbsp;images</span></p></div></div>" >>snap-add; echo >>snap-add
+
+sed '/"cont caption-below thumbs-fill"/ r snap-add' /Users/ezryder/Documents/GitHub/ryderez/personal.html >personal.html
+
+cp personal.html /Users/ezryder/Documents/GitHub/ryderez
+
+# cleanup
+#
+rm filenames comments desc2
+rm ../$3.html
+rm temp*
+rm snap-add
+rm htmlgen
+rm titledesc
+
+
+
+				<div class="cont">
+				<div class="previous-link has-bg"><a rel="prev" href="../Miscellaneous/index.html" style="background-image:url(../Miscellaneous/thumbs/carmel-1.jpg)"><span class="caption"><span class="icon-caret-left"></span> Miscellaneous</span></a>
+				</div>
+				<div class="next-link has-bg"><a rel="next" href="../Real%20Art/index.html" style="background-image:url(../Real%20Art/thumbs/ship-1.jpg)"><span class="caption">Real Art <span class="icon-caret-right"></span></span></a>
+				</div>
+				
+
+number = [ 0, 1]	
+
+for 1 to 100,000			
+
+hh = 0 # (0,0)
+ht = 0 # (0,1)
+th = 0 # (1,0)
+tt = 0 # (1,1)
+
+w1 = random function for number 
+w2 = random function for number
+
+If w1 = 0 and w2 = 0 then
+  hh = $hh + 1
+fi
+If w1 = 0 and w2 = 1 then
+  ht = $ht + 1
+fi
+If w1 = 1 and w2 = 0 then
+  th = $th + 1
+fi
+If w1 = 1 and w2 = 1 then
+  tt = $tt + 1
+fi
+
+done
+
+echo "Heads / Heads: " $hh
+     "Heads / Tails: " $ht
+     "Tails / Heads: " $th
+     "Tails / Tails: " $tt
+     
+     
+
+https://pastebin.com/SL0L3b7i?fbclid=IwZXh0bgNhZW0CMTAAAR3EeKM82ScM3HtCzG6OAdyS4_jQy-43iidvxnHHrrhppmX4i_Ed24hQpHw_aem_AY_JBhG-akKAwO3tGAZvcOmCyIPz3YgAysJdO7D6kuarVIcJkY3PwLWjsOVHGkzB3hq1e6HlXMXBNCchNJ91aX52
+
+PASTEBIN
+API
+TOOLS
+FAQ
+paste
+Search...
+
+LOGIN SIGN UP
+Advertisement
+
+SHARE
+TWEET
+Guest User
+Ghost Radar Dictionary List
+A GUEST
+JAN 27TH, 2013
+1,473
+0
+NEVER
+ADD COMMENT
+Not a member of Pastebin yet? Sign Up, it unlocks many cool features!
+ 77.30 KB | None |  
+     
+<string name="letterbasket">-ACoEFGHYIJKzLMNOPTVWXZbcdfghijklmnpqrstuvwxQRBSDyUae.</string>
+[snip]
+<string name="initial_word">____</string>
+<string name="w0">ability</string>
+<string name="w1">able</string>
+<string name="w2">aboard</string>
+<string name="w3">about</string>
+<string name="w4">above</string>
+<string name="w5">accept</string>
+<string name="w6">accident</string>
+<string name="w7">according</string>
+<string name="w8">account</string>
+<string name="w9">accurate</string>
+<string name="w10">acres</string>
+<string name="w11">across</string>
+<string name="w12">act</string>
+<string name="w13">action</string>
+<string name="w14">active</string>
+<string name="w15">activity</string>
+<string name="w16">actual</string>
+<string name="w17">actually</string>
+<string name="w18">add</string>
+<string name="w19">addition</string>
+<string name="w20">additional</string>
+<string name="w21">adjective</string>
+<string name="w22">adult</string>
+<string name="w23">adventure</string>
+<string name="w24">advice</string>
+<string name="w25">affect</string>
+<string name="w26">afraid</string>
+<string name="w27">Africa</string>
+<string name="w28">after</string>
+<string name="w29">afternoon</string>
+<string name="w30">again</string>
+<string name="w31">against</string>
+<string name="w32">age</string>
+<string name="w33">ago</string>
+<string name="w34">agree</string>
+<string name="w35">ahead</string>
+<string name="w36">aid</string>
+<string name="w37">air</string>
+<string name="w38">airplane</string>
+<string name="w39">Alaska</string>
+<string name="w40">Alice</string>
+<string name="w41">alike</string>
+<string name="w42">alive</string>
+<string name="w43">all</string>
+<string name="w44">allow</string>
+<string name="w45">almost</string>
+<string name="w46">alone</string>
+<string name="w47">along</string>
+<string name="w48">aloud</string>
+<string name="w49">alphabet</string>
+<string name="w50">already</string>
+<string name="w51">also</string>
+<string name="w52">although</string>
+<string name="w53">am</string>
+<string name="w54">America</string>
+<string name="w55">among</string>
+<string name="w56">amount</string>
+<string name="w57">an</string>
+<string name="w58">ancient</string>
+<string name="w59">and</string>
+<string name="w60">Andy</string>
+<string name="w61">angle</string>
+<string name="w62">angry</string>
+<string name="w63">animal</string>
+<string name="w64">Ann</string>
+<string name="w65">announced</string>
+<string name="w66">another</string>
+<string name="w67">answer</string>
+<string name="w68">ants</string>
+<string name="w69">any</string>
+<string name="w70">anybody</string>
+<string name="w71">anyone</string>
+<string name="w72">anything</string>
+<string name="w73">anyway</string>
+<string name="w74">anywhere</string>
+<string name="w75">apart</string>
+<string name="w76">apartment</string>
+<string name="w77">appearance</string>
+<string name="w78">apple</string>
+<string name="w79">applied</string>
+<string name="w80">appropriate</string>
+<string name="w81">April</string>
+<string name="w82">are</string>
+<string name="w83">area</string>
+<string name="w84">"aren't"</string>
+<string name="w85">arm</string>
+<string name="w86">army</string>
+<string name="w87">around</string>
+<string name="w88">arrange</string>
+<string name="w89">arrangement</string>
+<string name="w90">arrive</string>
+<string name="w91">arrow</string>
+<string name="w92">art</string>
+<string name="w93">article</string>
+<string name="w94">as</string>
+<string name="w95">Asia</string>
+<string name="w96">aside</string>
+<string name="w97">ask</string>
+<string name="w98">asleep</string>
+<string name="w99">at</string>
+<string name="w100">ate</string>
+<string name="w101">Atlantic</string>
+<string name="w102">atmosphere</string>
+<string name="w103">atom</string>
+<string name="w104">atomic</string>
+<string name="w105">attached</string>
+<string name="w106">attack</string>
+<string name="w107">attempt</string>
+<string name="w108">attention</string>
+<string name="w109">audience</string>
+<string name="w110">August</string>
+<string name="w111">Aunt</string>
+<string name="w112">Australia</string>
+<string name="w113">author</string>
+<string name="w114">automobile</string>
+<string name="w115">Autumn</string>
+<string name="w116">available</string>
+<string name="w117">average</string>
+<string name="w118">avoid</string>
+<string name="w119">aware</string>
+<string name="w120">away</string>
+<string name="w121">baby</string>
+<string name="w122">back</string>
+<string name="w123">bad</string>
+<string name="w124">badly</string>
+<string name="w125">bag</string>
+<string name="w126">balance</string>
+<string name="w127">ball</string>
+<string name="w128">balloon</string>
+<string name="w129">band</string>
+<string name="w130">bank</string>
+<string name="w131">bar</string>
+<string name="w132">bare</string>
+<string name="w133">bark</string>
+<string name="w134">barn</string>
+<string name="w135">base</string>
+<string name="w136">baseball</string>
+<string name="w137">basic</string>
+<string name="w138">basis</string>
+<string name="w139">basket</string>
+<string name="w140">bat</string>
+<string name="w141">battle</string>
+<string name="w142">Bay</string>
+<string name="w143">be</string>
+<string name="w144">bean</string>
+<string name="w145">bear</string>
+<string name="w146">beat</string>
+<string name="w147">beautiful</string>
+<string name="w148">beauty</string>
+<string name="w149">became</string>
+<string name="w150">because</string>
+<string name="w151">become</string>
+<string name="w152">becoming</string>
+<string name="w153">bee</string>
+<string name="w154">been</string>
+<string name="w155">before</string>
+<string name="w156">began</string>
+<string name="w157">beginning</string>
+<string name="w158">begun</string>
+<string name="w159">behavior</string>
+<string name="w160">behind</string>
+<string name="w161">being</string>
+<string name="w162">believed</string>
+<string name="w163">bell</string>
+<string name="w164">belong</string>
+<string name="w165">below</string>
+<string name="w166">belt</string>
+<string name="w167">Ben</string>
+<string name="w168">bend</string>
+<string name="w169">beneath</string>
+<string name="w170">bent</string>
+<string name="w171">beside</string>
+<string name="w172">best</string>
+<string name="w173">bet</string>
+<string name="w174">Betsy</string>
+<string name="w175">better</string>
+<string name="w176">between</string>
+<string name="w177">beyond</string>
+<string name="w178">bicycle</string>
+<string name="w179">bigger</string>
+<string name="w180">biggest</string>
+<string name="w181">bill</string>
+<string name="w182">Bill</string>
+<string name="w183">Billy</string>
+<string name="w184">birds</string>
+<string name="w185">birth</string>
+<string name="w186">birthday</string>
+<string name="w187">bit</string>
+<string name="w188">bite</string>
+<string name="w189">black</string>
+<string name="w190">blank</string>
+<string name="w191">blanket</string>
+<string name="w192">blew</string>
+<string name="w193">blind</string>
+<string name="w194">block</string>
+<string name="w195">blood</string>
+<string name="w196">blow</string>
+<string name="w197">blue</string>
+<string name="w198">board</string>
+<string name="w199">boat</string>
+<string name="w200">Bob</string>
+<string name="w201">body</string>
+<string name="w202">bone</string>
+<string name="w203">book</string>
+<string name="w204">border</string>
+<string name="w205">born</string>
+<string name="w206">both</string>
+<string name="w207">Both</string>
+<string name="w208">bottle</string>
+<string name="w209">bottom</string>
+<string name="w210">bound</string>
+<string name="w211">bow</string>
+<string name="w212">bowl</string>
+<string name="w213">box</string>
+<string name="w214">boy</string>
+<string name="w215">brain</string>
+<string name="w216">branch</string>
+<string name="w217">brass</string>
+<string name="w218">brave</string>
+<string name="w219">bread</string>
+<string name="w220">break</string>
+<string name="w221">breakfast</string>
+<string name="w222">breath</string>
+<string name="w223">breathe</string>
+<string name="w224">breathing</string>
+<string name="w225">breeze</string>
+<string name="w226">brick</string>
+<string name="w227">bridge</string>
+<string name="w228">brief</string>
+<string name="w229">bright</string>
+<string name="w230">bring</string>
+<string name="w231">British</string>
+<string name="w232">broad</string>
+<string name="w233">broke</string>
+<string name="w234">broken</string>
+<string name="w235">Bronwen</string>
+<string name="w236">brother</string>
+<string name="w237">brought</string>
+<string name="w238">brown</string>
+<string name="w239">brush</string>
+<string name="w240">buffalo</string>
+<string name="w241">build</string>
+<string name="w242">building</string>
+<string name="w243">built</string>
+<string name="w244">buried</string>
+<string name="w245">burn</string>
+<string name="w246">burst</string>
+<string name="w247">bus</string>
+<string name="w248">bush</string>
+<string name="w249">business</string>
+<string name="w250">busy</string>
+<string name="w251">but</string>
+<string name="w252">butter</string>
+<string name="w253">buy</string>
+<string name="w254">by</string>
+<string name="w255">cabin</string>
+<string name="w256">Cade</string>
+<string name="w257">cage</string>
+<string name="w258">cake</string>
+<string name="w259">California</string>
+<string name="w260">call</string>
+<string name="w261">calm</string>
+<string name="w262">came</string>
+<string name="w263">camera</string>
+<string name="w264">camp</string>
+<string name="w265">can</string>
+<string name="w266">"can't"</string>
+<string name="w267">Canada</string>
+<string name="w268">canal</string>
+<string name="w269">cannot</string>
+<string name="w270">cap</string>
+<string name="w271">capital</string>
+<string name="w272">captain</string>
+<string name="w273">captured</string>
+<string name="w274">car</string>
+<string name="w275">carbon</string>
+<string name="w276">card</string>
+<string name="w277">care</string>
+<string name="w278">careful</string>
+<string name="w279">carefully</string>
+<string name="w280">Carlos</string>
+<string name="w281">carried</string>
+<string name="w282">carry</string>
+<string name="w283">case</string>
+<string name="w284">Casey</string>
+<string name="w285">cast</string>
+<string name="w286">castle</string>
+<string name="w287">cat</string>
+<string name="w288">catch</string>
+<string name="w289">cattle</string>
+<string name="w290">caught</string>
+<string name="w291">cause</string>
+<string name="w292">cave</string>
+<string name="w293">cell</string>
+<string name="w294">cent</string>
+<string name="w295">center</string>
+<string name="w296">central</string>
+<string name="w297">century</string>
+<string name="w298">certain</string>
+<string name="w299">certainly</string>
+<string name="w300">chain</string>
+<string name="w301">chair</string>
+<string name="w302">chamber</string>
+<string name="w303">chance</string>
+<string name="w304">change</string>
+<string name="w305">changing</string>
+<string name="w306">chapter</string>
+<string name="w307">character</string>
+<string name="w308">characteristic</string>
+<string name="w309">charge</string>
+<string name="w310">Charles</string>
+<string name="w311">chart</string>
+<string name="w312">check</string>
+<string name="w313">cheese</string>
+<string name="w314">chemical</string>
+<string name="w315">chest</string>
+<string name="w316">Chicago</string>
+<string name="w317">chicken</string>
+<string name="w318">chief</string>
+<string name="w319">child</string>
+<string name="w320">children</string>
+<string name="w321">China</string>
+<string name="w322">Chinese</string>
+<string name="w323">choice</string>
+<string name="w324">choose</string>
+<string name="w325">chose</string>
+<string name="w326">chosen</string>
+<string name="w327">Christmas</string>
+<string name="w328">church</string>
+<string name="w329">circle</string>
+<string name="w330">circus</string>
+<string name="w331">citizen</string>
+<string name="w332">city</string>
+<string name="w333">class</string>
+<string name="w334">classroom</string>
+<string name="w335">claws</string>
+<string name="w336">clay</string>
+<string name="w337">clean</string>
+<string name="w338">clear</string>
+<string name="w339">clearly</string>
+<string name="w340">climate</string>
+<string name="w341">climb</string>
+<string name="w342">clock</string>
+<string name="w343">close</string>
+<string name="w344">closely</string>
+<string name="w345">closer</string>
+<string name="w346">cloth</string>
+<string name="w347">clothes</string>
+<string name="w348">clothing</string>
+<string name="w349">cloud</string>
+<string name="w350">club</string>
+<string name="w351">coach</string>
+<string name="w352">coal</string>
+<string name="w353">coast</string>
+<string name="w354">coat</string>
+<string name="w355">coffee</string>
+<string name="w356">cold</string>
+<string name="w357">collect</string>
+<string name="w358">college</string>
+<string name="w359">colony</string>
+<string name="w360">color</string>
+<string name="w361">Columbus</string>
+<string name="w362">column</string>
+<string name="w363">combination</string>
+<string name="w364">combine</string>
+<string name="w365">come</string>
+<string name="w366">comfortable</string>
+<string name="w367">coming</string>
+<string name="w368">command</string>
+<string name="w369">common</string>
+<string name="w370">community</string>
+<string name="w371">company</string>
+<string name="w372">compare</string>
+<string name="w373">compass</string>
+<string name="w374">complete</string>
+<string name="w375">completely</string>
+<string name="w376">complex</string>
+<string name="w377">composed</string>
+<string name="w378">composition</string>
+<string name="w379">compound</string>
+<string name="w380">concerned</string>
+<string name="w381">condition</string>
+<string name="w382">congress</string>
+<string name="w383">connected</string>
+<string name="w384">consider</string>
+<string name="w385">consist</string>
+<string name="w386">consonant</string>
+<string name="w387">constantly</string>
+<string name="w388">construction</string>
+<string name="w389">contain</string>
+<string name="w390">continent</string>
+<string name="w391">continued</string>
+<string name="w392">contrast</string>
+<string name="w393">control</string>
+<string name="w394">conversation</string>
+<string name="w395">cook</string>
+<string name="w396">cookies</string>
+<string name="w397">cool</string>
+<string name="w398">copper</string>
+<string name="w399">copy</string>
+<string name="w400">corn</string>
+<string name="w401">corner</string>
+<string name="w402">correct</string>
+<string name="w403">correctly</string>
+<string name="w404">cost</string>
+<string name="w405">cotton</string>
+<string name="w406">could</string>
+<string name="w407">"couldn't"</string>
+<string name="w408">count</string>
+<string name="w409">country</string>
+<string name="w410">couple</string>
+<string name="w411">courage</string>
+<string name="w412">course</string>
+<string name="w413">court</string>
+<string name="w414">cover</string>
+<string name="w415">cow</string>
+<string name="w416">cowboy</string>
+<string name="w417">crack</string>
+<string name="w418">cream</string>
+<string name="w419">create</string>
+<string name="w420">creature</string>
+<string name="w421">crew</string>
+<string name="w422">crop</string>
+<string name="w423">cross</string>
+<string name="w424">crowd</string>
+<string name="w425">cry</string>
+<string name="w426">cup</string>
+<string name="w427">curious</string>
+<string name="w428">current</string>
+<string name="w429">curve</string>
+<string name="w430">customs</string>
+<string name="w431">cut</string>
+<string name="w432">cutting</string>
+<string name="w433">Dad</string>
+<string name="w434">daily</string>
+<string name="w435">damage</string>
+<string name="w436">Dan</string>
+<string name="w437">dance</string>
+<string name="w438">danger</string>
+<string name="w439">dangerous</string>
+<string name="w440">Daniel</string>
+<string name="w441">Danny</string>
+<string name="w442">dark</string>
+<string name="w443">darkness</string>
+<string name="w444">date</string>
+<string name="w445">daughter</string>
+<string name="w446">David</string>
+<string name="w447">dawn</string>
+<string name="w448">day</string>
+<string name="w449">dead</string>
+<string name="w450">deal</string>
+<string name="w451">dear</string>
+<string name="w452">death</string>
+<string name="w453">decide</string>
+<string name="w454">declared</string>
+<string name="w455">deep</string>
+<string name="w456">deeply</string>
+<string name="w457">deer</string>
+<string name="w458">definition</string>
+<string name="w459">degree</string>
+<string name="w460">depend</string>
+<string name="w461">depth</string>
+<string name="w462">describe</string>
+<string name="w463">desert</string>
+<string name="w464">design</string>
+<string name="w465">desk</string>
+<string name="w466">detail</string>
+<string name="w467">determine</string>
+<string name="w468">develop</string>
+<string name="w469">development</string>
+<string name="w470">diagram</string>
+<string name="w471">diameter</string>
+<string name="w472">Dick</string>
+<string name="w473">did</string>
+<string name="w474">"didn't"</string>
+<string name="w475">differ</string>
+<string name="w476">difference</string>
+<string name="w477">different</string>
+<string name="w478">difficult</string>
+<string name="w479">difficulty</string>
+<string name="w480">dig</string>
+<string name="w481">dinner</string>
+<string name="w482">direct</string>
+<string name="w483">direction</string>
+<string name="w484">directly</string>
+<string name="w485">dirt</string>
+<string name="w486">dirty</string>
+<string name="w487">disappear</string>
+<string name="w488">discover</string>
+<string name="w489">discovery</string>
+<string name="w490">discuss</string>
+<string name="w491">discussion</string>
+<string name="w492">disease</string>
+<string name="w493">dish</string>
+<string name="w494">distance</string>
+<string name="w495">distant</string>
+<string name="w496">divide</string>
+<string name="w497">division</string>
+<string name="w498">do</string>
+<string name="w499">doctor</string>
+<string name="w500">does</string>
+<string name="w501">"doesn't"</string>
+<string name="w502">dog</string>
+<string name="w503">doing</string>
+<string name="w504">doll</string>
+<string name="w505">dollar</string>
+<string name="w506">Don</string>
+<string name="w507">"don't"</string>
+<string name="w508">done</string>
+<string name="w509">donkey</string>
+<string name="w510">door</string>
+<string name="w511">dot</string>
+<string name="w512">double</string>
+<string name="w513">doubt</string>
+<string name="w514">down</string>
+<string name="w515">dozen</string>
+<string name="w516">Dr.</string>
+<string name="w517">draw</string>
+<string name="w518">drawn</string>
+<string name="w519">dream</string>
+<string name="w520">dress</string>
+<string name="w521">drew</string>
+<string name="w522">dried</string>
+<string name="w523">drink</string>
+<string name="w524">drive</string>
+<string name="w525">driven</string>
+<string name="w526">driver</string>
+<string name="w527">driving</string>
+<string name="w528">drop</string>
+<string name="w529">dropped</string>
+<string name="w530">drove</string>
+<string name="w531">dry</string>
+<string name="w532">duck</string>
+<string name="w533">due</string>
+<string name="w534">dug</string>
+<string name="w535">dull</string>
+<string name="w536">during</string>
+<string name="w537">dust</string>
+<string name="w538">Dutch</string>
+<string name="w539">duty</string>
+<string name="w540">each</string>
+<string name="w541">eager</string>
+<string name="w542">ear</string>
+<string name="w543">earlier</string>
+<string name="w544">early</string>
+<string name="w545">earn</string>
+<string name="w546">earth</string>
+<string name="w547">easier</string>
+<string name="w548">easily</string>
+<string name="w549">east</string>
+<string name="w550">easy</string>
+<string name="w551">eat</string>
+<string name="w552">eaten</string>
+<string name="w553">Eddy</string>
+<string name="w554">edge</string>
+<string name="w555">education</string>
+<string name="w556">Edward</string>
+<string name="w557">effect</string>
+<string name="w558">effort</string>
+<string name="w559">egg</string>
+<string name="w560">Egypt</string>
+<string name="w561">eight</string>
+<string name="w562">either</string>
+<string name="w563">electric</string>
+<string name="w564">electricity</string>
+<string name="w565">element</string>
+<string name="w566">elephant</string>
+<string name="w567">eleven</string>
+<string name="w568">Ellen</string>
+<string name="w569">else</string>
+<string name="w570">empty</string>
+<string name="w571">end</string>
+<string name="w572">enemy</string>
+<string name="w573">energy</string>
+<string name="w574">engine</string>
+<string name="w575">engineer</string>
+<string name="w576">England</string>
+<string name="w577">enjoy</string>
+<string name="w578">enough</string>
+<string name="w579">enter</string>
+<string name="w580">entire</string>
+<string name="w581">entirely</string>
+<string name="w582">environment</string>
+<string name="w583">equal</string>
+<string name="w584">equally</string>
+<string name="w585">equator</string>
+<string name="w586">equipment</string>
+<string name="w587">escape</string>
+<string name="w588">especially</string>
+<string name="w589">essential</string>
+<string name="w590">establish</string>
+<string name="w591">Europe</string>
+<string name="w592">European</string>
+<string name="w593">even</string>
+<string name="w594">evening</string>
+<string name="w595">event</string>
+<string name="w596">eventually</string>
+<string name="w597">ever</string>
+<string name="w598">every</string>
+<string name="w599">everybody</string>
+<string name="w600">everyone</string>
+<string name="w601">everything</string>
+<string name="w602">everywhere</string>
+<string name="w603">evidence</string>
+<string name="w604">exact</string>
+<string name="w605">exactly</string>
+<string name="w606">examine</string>
+<string name="w607">example</string>
+<string name="w608">excellent</string>
+<string name="w609">except</string>
+<string name="w610">exchange</string>
+<string name="w611">excited</string>
+<string name="w612">excitement</string>
+<string name="w613">exciting</string>
+<string name="w614">exclaimed</string>
+<string name="w615">exercise</string>
+<string name="w616">exist</string>
+<string name="w617">expect</string>
+<string name="w618">experience</string>
+<string name="w619">experiment</string>
+<string name="w620">explain</string>
+<string name="w621">explanation</string>
+<string name="w622">explore</string>
+<string name="w623">express</string>
+<string name="w624">expression</string>
+<string name="w625">extra</string>
+<string name="w626">eye</string>
+<string name="w627">face</string>
+<string name="w628">facing</string>
+<string name="w629">fact</string>
+<string name="w630">factor</string>
+<string name="w631">factory</string>
+<string name="w632">failed</string>
+<string name="w633">fair</string>
+<string name="w634">fairly</string>
+<string name="w635">fall</string>
+<string name="w636">fallen</string>
+<string name="w637">familiar</string>
+<string name="w638">family</string>
+<string name="w639">famous</string>
+<string name="w640">far</string>
+<string name="w641">farm</string>
+<string name="w642">farmer</string>
+<string name="w643">farther</string>
+<string name="w644">fast</string>
+<string name="w645">fastened</string>
+<string name="w646">faster</string>
+<string name="w647">fat</string>
+<string name="w648">father</string>
+<string name="w649">favorite</string>
+<string name="w650">fear</string>
+<string name="w651">feathers</string>
+<string name="w652">feature</string>
+<string name="w653">fed</string>
+<string name="w654">feed</string>
+<string name="w655">feel</string>
+<string name="w656">feet</string>
+<string name="w657">fell</string>
+<string name="w658">fellow</string>
+<string name="w659">felt</string>
+<string name="w660">fence</string>
+<string name="w661">few</string>
+<string name="w662">fewer</string>
+<string name="w663">field</string>
+<string name="w664">fierce</string>
+<string name="w665">fifteen</string>
+<string name="w666">fifth</string>
+<string name="w667">fifty</string>
+<string name="w668">fight</string>
+<string name="w669">fighting</string>
+<string name="w670">figure</string>
+<string name="w671">fill</string>
+<string name="w672">film</string>
+<string name="w673">final</string>
+<string name="w674">finally</string>
+<string name="w675">find</string>
+<string name="w676">fine</string>
+<string name="w677">finest</string>
+<string name="w678">finger</string>
+<string name="w679">finish</string>
+<string name="w680">fire</string>
+<string name="w681">fireplace</string>
+<string name="w682">firm</string>
+<string name="w683">first</string>
+<string name="w684">fish</string>
+<string name="w685">five</string>
+<string name="w686">fix</string>
+<string name="w687">flag</string>
+<string name="w688">flame</string>
+<string name="w689">flat</string>
+<string name="w690">flew</string>
+<string name="w691">flies</string>
+<string name="w692">flight</string>
+<string name="w693">floating</string>
+<string name="w694">floor</string>
+<string name="w695">Florida</string>
+<string name="w696">flow</string>
+<string name="w697">flower</string>
+<string name="w698">fly</string>
+<string name="w699">fog</string>
+<string name="w700">folks</string>
+<string name="w701">follow</string>
+<string name="w702">food</string>
+<string name="w703">foot</string>
+<string name="w704">football</string>
+<string name="w705">for</string>
+<string name="w706">force</string>
+<string name="w707">foreign</string>
+<string name="w708">forest</string>
+<string name="w709">forget</string>
+<string name="w710">forgot</string>
+<string name="w711">forgotten</string>
+<string name="w712">form</string>
+<string name="w713">former</string>
+<string name="w714">fort</string>
+<string name="w715">forth</string>
+<string name="w716">forty</string>
+<string name="w717">forward</string>
+<string name="w718">fought</string>
+<string name="w719">found</string>
+<string name="w720">four</string>
+<string name="w721">fourth</string>
+<string name="w722">fox</string>
+<string name="w723">frame</string>
+<string name="w724">France</string>
+<string name="w725">Frank</string>
+<string name="w726">Fred</string>
+<string name="w727">free</string>
+<string name="w728">freedom</string>
+<string name="w729">French</string>
+<string name="w730">frequently</string>
+<string name="w731">fresh</string>
+<string name="w732">friend</string>
+<string name="w733">friendly</string>
+<string name="w734">frighten</string>
+<string name="w735">frog</string>
+<string name="w736">from</string>
+<string name="w737">front</string>
+<string name="w738">frozen</string>
+<string name="w739">fruit</string>
+<string name="w740">fuel</string>
+<string name="w741">full</string>
+<string name="w742">fully</string>
+<string name="w743">fun</string>
+<string name="w744">function</string>
+<string name="w745">funny</string>
+<string name="w746">fur</string>
+<string name="w747">furniture</string>
+<string name="w748">further</string>
+<string name="w749">future</string>
+<string name="w750">gain</string>
+<string name="w751">game</string>
+<string name="w752">garage</string>
+<string name="w753">garden</string>
+<string name="w754">gas</string>
+<string name="w755">gasoline</string>
+<string name="w756">gate</string>
+<string name="w757">gather</string>
+<string name="w758">gave</string>
+<string name="w759">general</string>
+<string name="w760">generally</string>
+<string name="w761">gentle</string>
+<string name="w762">gently</string>
+<string name="w763">George</string>
+<string name="w764">German</string>
+<string name="w765">Germany</string>
+<string name="w766">get</string>
+<string name="w767">getting</string>
+<string name="w768">giant</string>
+<string name="w769">gift</string>
+<string name="w770">girl</string>
+<string name="w771">give</string>
+<string name="w772">given</string>
+<string name="w773">giving</string>
+<string name="w774">glad</string>
+<string name="w775">glass</string>
+<string name="w776">globe</string>
+<string name="w777">go</string>
+<string name="w778">goes</string>
+<string name="w779">gold</string>
+<string name="w780">golden</string>
+<string name="w781">gone</string>
+<string name="w782">good</string>
+<string name="w783">goose</string>
+<string name="w784">got</string>
+<string name="w785">government</string>
+<string name="w786">grabbed</string>
+<string name="w787">grade</string>
+<string name="w788">gradually</string>
+<string name="w789">grain</string>
+<string name="w790">grandfather</string>
+<string name="w791">grandmother</string>
+<string name="w792">graph</string>
+<string name="w793">grass</string>
+<string name="w794">gravity</string>
+<string name="w795">gray</string>
+<string name="w796">great</string>
+<string name="w797">greater</string>
+<string name="w798">greatest</string>
+<string name="w799">greatly</string>
+<string name="w800">Greece</string>
+<string name="w801">Greek</string>
+<string name="w802">green</string>
+<string name="w803">grew</string>
+<string name="w804">ground</string>
+<string name="w805">group</string>
+<string name="w806">grow</string>
+<string name="w807">grown</string>
+<string name="w808">growth</string>
+<string name="w809">guard</string>
+<string name="w810">guess</string>
+<string name="w811">guide</string>
+<string name="w812">gulf</string>
+<string name="w813">gun</string>
+<string name="w814">habit</string>
+<string name="w815">had</string>
+<string name="w816">"hadn't"</string>
+<string name="w817">hair</string>
+<string name="w818">half</string>
+<string name="w819">halfway</string>
+<string name="w820">hall</string>
+<string name="w821">hand</string>
+<string name="w822">handle</string>
+<string name="w823">handsome</string>
+<string name="w824">hang</string>
+<string name="w825">happen</string>
+<string name="w826">happened</string>
+<string name="w827">happily</string>
+<string name="w828">happy</string>
+<string name="w829">harbor</string>
+<string name="w830">hard</string>
+<string name="w831">harder</string>
+<string name="w832">hardly</string>
+<string name="w833">Harry</string>
+<string name="w834">has</string>
+<string name="w835">hat</string>
+<string name="w836">have</string>
+<string name="w837">"haven't"</string>
+<string name="w838">having</string>
+<string name="w839">hay</string>
+<string name="w840">he</string>
+<string name="w841">"he'd"</string>
+<string name="w842">"he'll"</string>
+<string name="w843">"he's"</string>
+<string name="w844">headed</string>
+<string name="w845">heading</string>
+<string name="w846">health</string>
+<string name="w847">heard</string>
+<string name="w848">hearing</string>
+<string name="w849">heart</string>
+<string name="w850">heat</string>
+<string name="w851">heavy</string>
+<string name="w852">height</string>
+<string name="w853">held</string>
+<string name="w854">hello</string>
+<string name="w855">help</string>
+<string name="w856">helpful</string>
+<string name="w857">Henry</string>
+<string name="w858">her</string>
+<string name="w859">herd</string>
+<string name="w860">here</string>
+<string name="w861">herself</string>
+<string name="w862">hidden</string>
+<string name="w863">hide</string>
+<string name="w864">high</string>
+<string name="w865">higher</string>
+<string name="w866">highest</string>
+<string name="w867">highway</string>
+<string name="w868">hill</string>
+<string name="w869">him</string>
+<string name="w870">himself</string>
+<string name="w871">his</string>
+<string name="w872">history</string>
+<string name="w873">hit</string>
+<string name="w874">hold</string>
+<string name="w875">hole</string>
+<string name="w876">hollow</string>
+<string name="w877">home</string>
+<string name="w878">honor</string>
+<string name="w879">hope</string>
+<string name="w880">horn</string>
+<string name="w881">horse</string>
+<string name="w882">hospital</string>
+<string name="w883">hot</string>
+<string name="w884">hour</string>
+<string name="w885">house</string>
+<string name="w886">how</string>
+<string name="w887">however</string>
+<string name="w888">huge</string>
+<string name="w889">human</string>
+<string name="w890">hundred</string>
+<string name="w891">hung</string>
+<string name="w892">hungry</string>
+<string name="w893">hunt</string>
+<string name="w894">hunter</string>
+<string name="w895">hurried</string>
+<string name="w896">hurry</string>
+<string name="w897">hurt</string>
+<string name="w898">husband</string>
+<string name="w899">I</string>
+<string name="w900">"I'd"</string>
+<string name="w901">"I'll"</string>
+<string name="w902">"I'm"</string>
+<string name="w903">"I've"</string>
+<string name="w904">ice</string>
+<string name="w905">idea</string>
+<string name="w906">identity</string>
+<string name="w907">if</string>
+<string name="w908">ill</string>
+<string name="w909">Illinois</string>
+<string name="w910">image</string>
+<string name="w911">imagine</string>
+<string name="w912">immediately</string>
+<string name="w913">importance</string>
+<string name="w914">important</string>
+<string name="w915">impossible</string>
+<string name="w916">improve</string>
+<string name="w917">in</string>
+<string name="w918">inch</string>
+<string name="w919">include</string>
+<string name="w920">including</string>
+<string name="w921">income</string>
+<string name="w922">increase</string>
+<string name="w923">indeed</string>
+<string name="w924">independent</string>
+<string name="w925">India</string>
+<string name="w926">Indian</string>
+<string name="w927">indicate</string>
+<string name="w928">individual</string>
+<string name="w929">industrial</string>
+<string name="w930">industry</string>
+<string name="w931">influence</string>
+<string name="w932">information</string>
+<string name="w933">inside</string>
+<string name="w934">instance</string>
+<string name="w935">instant</string>
+<string name="w936">instead</string>
+<string name="w937">instrument</string>
+<string name="w938">interest</string>
+<string name="w939">interior</string>
+<string name="w940">into</string>
+<string name="w941">introduced</string>
+<string name="w942">invented</string>
+<string name="w943">involved</string>
+<string name="w944">iron</string>
+<string name="w945">is</string>
+<string name="w946">island</string>
+<string name="w947">"isn't"</string>
+<string name="w948">it</string>
+<string name="w949">Italian</string>
+<string name="w950">Italy</string>
+<string name="w951">its</string>
+<string name="w952">itself</string>
+<string name="w953">jack</string>
+<string name="w954">James</string>
+<string name="w955">Jane</string>
+<string name="w956">January</string>
+<string name="w957">Japan</string>
+<string name="w958">Japanese</string>
+<string name="w959">jar</string>
+<string name="w960">Jeff</string>
+<string name="w961">jet</string>
+<string name="w962">Jim</string>
+<string name="w963">Jimmy</string>
+<string name="w964">job</string>
+<string name="w965">Joe</string>
+<string name="w966">John</string>
+<string name="w967">Johnny</string>
+<string name="w968">Johnson</string>
+<string name="w969">join</string>
+<string name="w970">joined</string>
+<string name="w971">Jonathon</string>
+<string name="w972">Jones</string>
+<string name="w973">journey</string>
+<string name="w974">joy</string>
+<string name="w975">judge</string>
+<string name="w976">July</string>
+<string name="w977">jump</string>
+<string name="w978">June</string>
+<string name="w979">jungle</string>
+<string name="w980">just</string>
+<string name="w981">keep</string>
+<string name="w982">Kepler</string>
+<string name="w983">kept</string>
+<string name="w984">key</string>
+<string name="w985">kids</string>
+<string name="w986">killed</string>
+<string name="w987">kind</string>
+<string name="w988">King</string>
+<string name="w989">kitchen</string>
+<string name="w990">knew</string>
+<string name="w991">knife</string>
+<string name="w992">know</string>
+<string name="w993">knowledge</string>
+<string name="w994">known</string>
+<string name="w995">Kristin</string>
+<string name="w996">label</string>
+<string name="w997">labor</string>
+<string name="w998">lack</string>
+<string name="w999">lady</string>
+<string name="w1000">laid</string>
+<string name="w1001">lake</string>
+<string name="w1002">lamp</string>
+<string name="w1003">land</string>
+<string name="w1004">language</string>
+<string name="w1005">large</string>
+<string name="w1006">larger</string>
+<string name="w1007">largest</string>
+<string name="w1008">last</string>
+<string name="w1009">late</string>
+<string name="w1010">later</string>
+<string name="w1011">Latin</string>
+<string name="w1012">laugh</string>
+<string name="w1013">law</string>
+<string name="w1014">lay</string>
+<string name="w1015">layers</string>
+<string name="w1016">lead</string>
+<string name="w1017">leader</string>
+<string name="w1018">leaf</string>
+<string name="w1019">learn</string>
+<string name="w1020">least</string>
+<string name="w1021">leather</string>
+<string name="w1022">leave</string>
+<string name="w1023">leaving</string>
+<string name="w1024">led</string>
+<string name="w1025">Lee</string>
+<string name="w1026">left</string>
+<string name="w1027">leg</string>
+<string name="w1028">length</string>
+<string name="w1029">lesson</string>
+<string name="w1030">let</string>
+<string name="w1031">"let's"</string>
+<string name="w1032">letter</string>
+<string name="w1033">level</string>
+<string name="w1034">library</string>
+<string name="w1035">lie</string>
+<string name="w1036">life</string>
+<string name="w1037">lift</string>
+<string name="w1038">light</string>
+<string name="w1039">like</string>
+<string name="w1040">likely</string>
+<string name="w1041">limited</string>
+<string name="w1042">Lincoln</string>
+<string name="w1043">line</string>
+<string name="w1044">lion</string>
+<string name="w1045">lips</string>
+<string name="w1046">liquid</string>
+<string name="w1047">list</string>
+<string name="w1048">listen</string>
+<string name="w1049">little</string>
+<string name="w1050">live</string>
+<string name="w1051">living</string>
+<string name="w1052">load</string>
+<string name="w1053">local</string>
+<string name="w1054">locate</string>
+<string name="w1055">location</string>
+<string name="w1056">log</string>
+<string name="w1057">London</string>
+<string name="w1058">lonely</string>
+<string name="w1059">long</string>
+<string name="w1060">longer</string>
+<string name="w1061">look</string>
+<string name="w1062">loose</string>
+<string name="w1063">lose</string>
+<string name="w1064">loss</string>
+<string name="w1065">lost</string>
+<string name="w1066">lot</string>
+<string name="w1067">loud</string>
+<string name="w1068">Louis</string>
+<string name="w1069">love</string>
+<string name="w1070">lovely</string>
+<string name="w1071">low</string>
+<string name="w1072">lower</string>
+<string name="w1073">luck</string>
+<string name="w1074">lucky</string>
+<string name="w1075">lunch</string>
+<string name="w1076">lungs</string>
+<string name="w1077">lying</string>
+<string name="w1078">machine</string>
+<string name="w1079">machinery</string>
+<string name="w1080">mad</string>
+<string name="w1081">made</string>
+<string name="w1082">magic</string>
+<string name="w1083">magnet</string>
+<string name="w1084">mail</string>
+<string name="w1085">main</string>
+<string name="w1086">mainly</string>
+<string name="w1087">major</string>
+<string name="w1088">make</string>
+<string name="w1089">making</string>
+<string name="w1090">Mama</string>
+<string name="w1091">man</string>
+<string name="w1092">managed</string>
+<string name="w1093">manner</string>
+<string name="w1094">manufacturing</string>
+<string name="w1095">many</string>
+<string name="w1096">map</string>
+<string name="w1097">March</string>
+<string name="w1098">Maria</string>
+<string name="w1099">mark</string>
+<string name="w1100">Mark</string>
+<string name="w1101">market</string>
+<string name="w1102">married</string>
+<string name="w1103">Mars</string>
+<string name="w1104">Martin</string>
+<string name="w1105">Mary</string>
+<string name="w1106">mass</string>
+<string name="w1107">massage</string>
+<string name="w1108">master</string>
+<string name="w1109">material</string>
+<string name="w1110">mathematics</string>
+<string name="w1111">matter</string>
+<string name="w1112">May</string>
+<string name="w1113">may</string>
+<string name="w1114">maybe</string>
+<string name="w1115">me</string>
+<string name="w1116">meal</string>
+<string name="w1117">mean</string>
+<string name="w1118">means</string>
+<string name="w1119">meant</string>
+<string name="w1120">measure</string>
+<string name="w1121">meat</string>
+<string name="w1122">medicine</string>
+<string name="w1123">meet</string>
+<string name="w1124">melted</string>
+<string name="w1125">member</string>
+<string name="w1126">memory</string>
+<string name="w1127">men</string>
+<string name="w1128">mental</string>
+<string name="w1129">merely</string>
+<string name="w1130">met</string>
+<string name="w1131">metal</string>
+<string name="w1132">method</string>
+<string name="w1133">Mexico</string>
+<string name="w1134">mice</string>
+<string name="w1135">middle</string>
+<string name="w1136">might</string>
+<string name="w1137">mighty</string>
+<string name="w1138">Mike</string>
+<string name="w1139">mile</string>
+<string name="w1140">military</string>
+<string name="w1141">milk</string>
+<string name="w1142">mill</string>
+<string name="w1143">mind</string>
+<string name="w1144">mine</string>
+<string name="w1145">minerals</string>
+<string name="w1146">minute</string>
+<string name="w1147">mirror</string>
+<string name="w1148">Miss</string>
+<string name="w1149">missing</string>
+<string name="w1150">mission</string>
+<string name="w1151">Mississippi</string>
+<string name="w1152">mistake</string>
+<string name="w1153">mix</string>
+<string name="w1154">mixture</string>
+<string name="w1155">model</string>
+<string name="w1156">modern</string>
+<string name="w1157">molecular</string>
+<string name="w1158">moment</string>
+<string name="w1159">money</string>
+<string name="w1160">monkey</string>
+<string name="w1161">month</string>
+<string name="w1162">mood</string>
+<string name="w1163">moon</string>
+<string name="w1164">more</string>
+<string name="w1165">morning</string>
+<string name="w1166">most</string>
+<string name="w1167">mostly</string>
+<string name="w1168">mother</string>
+<string name="w1169">motion</string>
+<string name="w1170">motor</string>
+<string name="w1171">Mount</string>
+<string name="w1172">mountain</string>
+<string name="w1173">mouse</string>
+<string name="w1174">mouth</string>
+<string name="w1175">move</string>
+<string name="w1176">movement</string>
+<string name="w1177">movie</string>
+<string name="w1178">moving</string>
+<string name="w1179">Mr.</string>
+<string name="w1180">Mrs.</string>
+<string name="w1181">mud</string>
+<string name="w1182">muscle</string>
+<string name="w1183">music</string>
+<string name="w1184">musical</string>
+<string name="w1185">must</string>
+<string name="w1186">my</string>
+<string name="w1187">myself</string>
+<string name="w1188">mysterious</string>
+<string name="w1189">nails</string>
+<string name="w1190">name</string>
+<string name="w1191">nation</string>
+<string name="w1192">national</string>
+<string name="w1193">native</string>
+<string name="w1194">natural</string>
+<string name="w1195">naturally</string>
+<string name="w1196">nature</string>
+<string name="w1197">near</string>
+<string name="w1198">nearby</string>
+<string name="w1199">nearer</string>
+<string name="w1200">nearest</string>
+<string name="w1201">nearly</string>
+<string name="w1202">necessary</string>
+<string name="w1203">neck</string>
+<string name="w1204">needed</string>
+<string name="w1205">needle</string>
+<string name="w1206">needs</string>
+<string name="w1207">negative</string>
+<string name="w1208">neighbor</string>
+<string name="w1209">neighborhood</string>
+<string name="w1210">nervous</string>
+<string name="w1211">nest</string>
+<string name="w1212">never</string>
+<string name="w1213">new</string>
+<string name="w1214">New York</string>
+<string name="w1215">news</string>
+<string name="w1216">newspaper</string>
+<string name="w1217">next</string>
+<string name="w1218">nice</string>
+<string name="w1219">night</string>
+<string name="w1220">nine</string>
+<string name="w1221">no</string>
+<string name="w1222">nobody</string>
+<string name="w1223">nodded</string>
+<string name="w1224">noise</string>
+<string name="w1225">none</string>
+<string name="w1226">None</string>
+<string name="w1227">noon</string>
+<string name="w1228">nor</string>
+<string name="w1229">north</string>
+<string name="w1230">Norway</string>
+<string name="w1231">nose</string>
+<string name="w1232">not</string>
+<string name="w1233">note</string>
+<string name="w1234">noted</string>
+<string name="w1235">nothing</string>
+<string name="w1236">notice</string>
+<string name="w1237">noun</string>
+<string name="w1238">now</string>
+<string name="w1239">number</string>
+<string name="w1240">numeral</string>
+<string name="w1241">nuts</string>
+<string name="w1242">object</string>
+<string name="w1243">observe</string>
+<string name="w1244">obtain</string>
+<string name="w1245">occasionally</string>
+<string name="w1246">occur</string>
+<string name="w1247">ocean</string>
+<string name="w1248">October</string>
+<string name="w1249">of</string>
+<string name="w1250">off</string>
+<string name="w1251">offer</string>
+<string name="w1252">office</string>
+<string name="w1253">officer</string>
+<string name="w1254">official</string>
+<string name="w1255">Ohio</string>
+<string name="w1256">oil</string>
+<string name="w1257">old</string>
+<string name="w1258">older</string>
+<string name="w1259">oldest</string>
+<string name="w1260">on</string>
+<string name="w1261">once</string>
+<string name="w1262">one</string>
+<string name="w1263">only</string>
+<string name="w1264">onto</string>
+<string name="w1265">open</string>
+<string name="w1266">operation</string>
+<string name="w1267">opinion</string>
+<string name="w1268">opportunity</string>
+<string name="w1269">opposite</string>
+<string name="w1270">or</string>
+<string name="w1271">orange</string>
+<string name="w1272">orbit</string>
+<string name="w1273">order</string>
+<string name="w1274">ordinary</string>
+<string name="w1275">organization</string>
+<string name="w1276">organized</string>
+<string name="w1277">origin</string>
+<string name="w1278">original</string>
+<string name="w1279">other</string>
+<string name="w1280">ought</string>
+<string name="w1281">our</string>
+<string name="w1282">ourselves</string>
+<string name="w1283">out</string>
+<string name="w1284">outer</string>
+<string name="w1285">outline</string>
+<string name="w1286">outside</string>
+<string name="w1287">over</string>
+<string name="w1288">own</string>
+<string name="w1289">owner</string>
+<string name="w1290">oxygen</string>
+<string name="w1291">Pacific</string>
+<string name="w1292">pack</string>
+<string name="w1293">package</string>
+<string name="w1294">page</string>
+<string name="w1295">paid</string>
+<string name="w1296">pain</string>
+<string name="w1297">paint</string>
+<string name="w1298">pair</string>
+<string name="w1299">palace</string>
+<string name="w1300">pale</string>
+<string name="w1301">pan</string>
+<string name="w1302">Papa</string>
+<string name="w1303">paper</string>
+<string name="w1304">paragraph</string>
+<string name="w1305">parallel</string>
+<string name="w1306">parent</string>
+<string name="w1307">Paris</string>
+<string name="w1308">park</string>
+<string name="w1309">part</string>
+<string name="w1310">particles</string>
+<string name="w1311">particular</string>
+<string name="w1312">particularly</string>
+<string name="w1313">partly</string>
+<string name="w1314">parts</string>
+<string name="w1315">party</string>
+<string name="w1316">pass</string>
+<string name="w1317">passage</string>
+<string name="w1318">past</string>
+<string name="w1319">path</string>
+<string name="w1320">pattern</string>
+<string name="w1321">Paul</string>
+<string name="w1322">pay</string>
+<string name="w1323">peace</string>
+<string name="w1324">pen</string>
+<string name="w1325">pencil</string>
+<string name="w1326">Pennsylvania</string>
+<string name="w1327">people</string>
+<string name="w1328">per</string>
+<string name="w1329">percent</string>
+<string name="w1330">perfect</string>
+<string name="w1331">perfectly</string>
+<string name="w1332">perhaps</string>
+<string name="w1333">period</string>
+<string name="w1334">person</string>
+<string name="w1335">personal</string>
+<string name="w1336">pet</string>
+<string name="w1337">Peter</string>
+<string name="w1338">Philadelphia</string>
+<string name="w1339">phrase</string>
+<string name="w1340">physical</string>
+<string name="w1341">piano</string>
+<string name="w1342">pick</string>
+<string name="w1343">picture</string>
+<string name="w1344">pictured</string>
+<string name="w1345">pie</string>
+<string name="w1346">piece</string>
+<string name="w1347">pig</string>
+<string name="w1348">pile</string>
+<string name="w1349">pilot</string>
+<string name="w1350">pine</string>
+<string name="w1351">pink</string>
+<string name="w1352">pipe</string>
+<string name="w1353">pitch</string>
+<string name="w1354">place</string>
+<string name="w1355">plain</string>
+<string name="w1356">plan</string>
+<string name="w1357">plane</string>
+<string name="w1358">planet</string>
+<string name="w1359">planned</string>
+<string name="w1360">planning</string>
+<string name="w1361">plant</string>
+<string name="w1362">plastic</string>
+<string name="w1363">plate</string>
+<string name="w1364">plates</string>
+<string name="w1365">play</string>
+<string name="w1366">pleasant</string>
+<string name="w1367">please</string>
+<string name="w1368">pleasure</string>
+<string name="w1369">plenty</string>
+<string name="w1370">plural</string>
+<string name="w1371">plus</string>
+<string name="w1372">pocket</string>
+<string name="w1373">poem</string>
+<string name="w1374">poet</string>
+<string name="w1375">poetry</string>
+<string name="w1376">point</string>
+<string name="w1377">pole</string>
+<string name="w1378">Pole</string>
+<string name="w1379">police</string>
+<string name="w1380">policeman</string>
+<string name="w1381">political</string>
+<string name="w1382">pond</string>
+<string name="w1383">pony</string>
+<string name="w1384">pool</string>
+<string name="w1385">poor</string>
+<string name="w1386">popular</string>
+<string name="w1387">population</string>
+<string name="w1388">porch</string>
+<string name="w1389">port</string>
+<string name="w1390">position</string>
+<string name="w1391">positive</string>
+<string name="w1392">possible</string>
+<string name="w1393">possibly</string>
+<string name="w1394">post</string>
+<string name="w1395">pot</string>
+<string name="w1396">potatoes</string>
+<string name="w1397">pound</string>
+<string name="w1398">pour</string>
+<string name="w1399">powder</string>
+<string name="w1400">power</string>
+<string name="w1401">powerful</string>
+<string name="w1402">practical</string>
+<string name="w1403">practice</string>
+<string name="w1404">prepare</string>
+<string name="w1405">present</string>
+<string name="w1406">president</string>
+<string name="w1407">press</string>
+<string name="w1408">pressure</string>
+<string name="w1409">pretty</string>
+<string name="w1410">prevent</string>
+<string name="w1411">previous</string>
+<string name="w1412">price</string>
+<string name="w1413">pride</string>
+<string name="w1414">primitive</string>
+<string name="w1415">principal</string>
+<string name="w1416">principle</string>
+<string name="w1417">printed</string>
+<string name="w1418">private</string>
+<string name="w1419">prize</string>
+<string name="w1420">probably</string>
+<string name="w1421">problem</string>
+<string name="w1422">process</string>
+<string name="w1423">produce</string>
+<string name="w1424">product</string>
+<string name="w1425">production</string>
+<string name="w1426">program</string>
+<string name="w1427">progress</string>
+<string name="w1428">promised</string>
+<string name="w1429">proper</string>
+<string name="w1430">properly</string>
+<string name="w1431">property</string>
+<string name="w1432">protection</string>
+<string name="w1433">proud</string>
+<string name="w1434">prove</string>
+<string name="w1435">provide</string>
+<string name="w1436">public</string>
+<string name="w1437">pull</string>
+<string name="w1438">pupil</string>
+<string name="w1439">pure</string>
+<string name="w1440">purple</string>
+<string name="w1441">purpose</string>
+<string name="w1442">push</string>
+<string name="w1443">put</string>
+<string name="w1444">putting</string>
+<string name="w1445">quarter</string>
+<string name="w1446">queen</string>
+<string name="w1447">question</string>
+<string name="w1448">quick</string>
+<string name="w1449">quickly</string>
+<string name="w1450">quiet</string>
+<string name="w1451">quietly</string>
+<string name="w1452">quite</string>
+<string name="w1453">rabbit</string>
+<string name="w1454">race</string>
+<string name="w1455">radio</string>
+<string name="w1456">railroad</string>
+<string name="w1457">rain</string>
+<string name="w1458">raise</string>
+<string name="w1459">ran</string>
+<string name="w1460">ranch</string>
+<string name="w1461">range</string>
+<string name="w1462">rapidly</string>
+<string name="w1463">rate</string>
+<string name="w1464">rather</string>
+<string name="w1465">raw</string>
+<string name="w1466">rays</string>
+<string name="w1467">reach</string>
+<string name="w1468">read</string>
+<string name="w1469">reader</string>
+<string name="w1470">ready</string>
+<string name="w1471">real</string>
+<string name="w1472">realize</string>
+<string name="w1473">rear</string>
+<string name="w1474">reason</string>
+<string name="w1475">recall</string>
+<string name="w1476">receive</string>
+<string name="w1477">recent</string>
+<string name="w1478">recently</string>
+<string name="w1479">recognize</string>
+<string name="w1480">record</string>
+<string name="w1481">red</string>
+<string name="w1482">refer</string>
+<string name="w1483">refused</string>
+<string name="w1484">region</string>
+<string name="w1485">regular</string>
+<string name="w1486">related</string>
+<string name="w1487">relationship</string>
+<string name="w1488">religious</string>
+<string name="w1489">remain</string>
+<string name="w1490">remarkable</string>
+<string name="w1491">remember</string>
+<string name="w1492">remove</string>
+<string name="w1493">repeat</string>
+<string name="w1494">replace</string>
+<string name="w1495">replied</string>
+<string name="w1496">report</string>
+<string name="w1497">represent</string>
+<string name="w1498">require</string>
+<string name="w1499">research</string>
+<string name="w1500">respect</string>
+<string name="w1501">rest</string>
+<string name="w1502">result</string>
+<string name="w1503">return</string>
+<string name="w1504">review</string>
+<string name="w1505">rhyme</string>
+<string name="w1506">rhythm</string>
+<string name="w1507">rice</string>
+<string name="w1508">rich</string>
+<string name="w1509">Richard</string>
+<string name="w1510">ride</string>
+<string name="w1511">riding</string>
+<string name="w1512">right</string>
+<string name="w1513">ring</string>
+<string name="w1514">rise</string>
+<string name="w1515">rising</string>
+<string name="w1516">river</string>
+<string name="w1517">road</string>
+<string name="w1518">Roan</string>
+<string name="w1519">roar</string>
+<string name="w1520">Robert</string>
+<string name="w1521">rock</string>
+<string name="w1522">rocket</string>
+<string name="w1523">rocky</string>
+<string name="w1524">rod</string>
+<string name="w1525">roll</string>
+<string name="w1526">Roman</string>
+<string name="w1527">Rome</string>
+<string name="w1528">roof</string>
+<string name="w1529">room</string>
+<string name="w1530">root</string>
+<string name="w1531">rope</string>
+<string name="w1532">rose</string>
+<string name="w1533">rough</string>
+<string name="w1534">round</string>
+<string name="w1535">route</string>
+<string name="w1536">row</string>
+<string name="w1537">rubbed</string>
+<string name="w1538">rubber</string>
+<string name="w1539">rule</string>
+<string name="w1540">ruler</string>
+<string name="w1541">run</string>
+<string name="w1542">running</string>
+<string name="w1543">rush</string>
+<string name="w1544">Russia</string>
+<string name="w1545">Russian</string>
+<string name="w1546">sad</string>
+<string name="w1547">saddle</string>
+<string name="w1548">safe</string>
+<string name="w1549">safety</string>
+<string name="w1550">said</string>
+<string name="w1551">sail</string>
+<string name="w1552">sale</string>
+<string name="w1553">Sally</string>
+<string name="w1554">salmon</string>
+<string name="w1555">salt</string>
+<string name="w1556">Sam</string>
+<string name="w1557">same</string>
+<string name="w1558">sand</string>
+<string name="w1559">sang</string>
+<string name="w1560">sat</string>
+<string name="w1561">satellites</string>
+<string name="w1562">satisfied</string>
+<string name="w1563">Saturday</string>
+<string name="w1564">save</string>
+<string name="w1565">saved</string>
+<string name="w1566">saw</string>
+<string name="w1567">say</string>
+<string name="w1568">scale</string>
+<string name="w1569">scared</string>
+<string name="w1570">scene</string>
+<string name="w1571">school</string>
+<string name="w1572">science</string>
+<string name="w1573">scientific</string>
+<string name="w1574">scientist</string>
+<string name="w1575">score</string>
+<string name="w1576">screen</string>
+<string name="w1577">sea</string>
+<string name="w1578">search</string>
+<string name="w1579">season</string>
+<string name="w1580">seat</string>
+<string name="w1581">second</string>
+<string name="w1582">secret</string>
+<string name="w1583">section</string>
+<string name="w1584">see</string>
+<string name="w1585">seed</string>
+<string name="w1586">seeing</string>
+<string name="w1587">seems</string>
+<string name="w1588">seen</string>
+<string name="w1589">seldom</string>
+<string name="w1590">select</string>
+<string name="w1591">selection</string>
+<string name="w1592">sell</string>
+<string name="w1593">send</string>
+<string name="w1594">sense</string>
+<string name="w1595">sent</string>
+<string name="w1596">sentence</string>
+<string name="w1597">separate</string>
+<string name="w1598">series</string>
+<string name="w1599">serious</string>
+<string name="w1600">serve</string>
+<string name="w1601">service</string>
+<string name="w1602">sets</string>
+<string name="w1603">setting</string>
+<string name="w1604">settle</string>
+<string name="w1605">settlers</string>
+<string name="w1606">seven</string>
+<string name="w1607">several</string>
+<string name="w1608">shade</string>
+<string name="w1609">shadow</string>
+<string name="w1610">shake</string>
+<string name="w1611">shaking</string>
+<string name="w1612">shall</string>
+<string name="w1613">shallow</string>
+<string name="w1614">shape</string>
+<string name="w1615">share</string>
+<string name="w1616">sharp</string>
+<string name="w1617">she</string>
+<string name="w1618">sheep</string>
+<string name="w1619">sheet</string>
+<string name="w1620">shelf</string>
+<string name="w1621">shells</string>
+<string name="w1622">shelter</string>
+<string name="w1623">shine</string>
+<string name="w1624">shinning</string>
+<string name="w1625">ship</string>
+<string name="w1626">shirt</string>
+<string name="w1627">shoe</string>
+<string name="w1628">shoot</string>
+<string name="w1629">shop</string>
+<string name="w1630">shore</string>
+<string name="w1631">short</string>
+<string name="w1632">shorter</string>
+<string name="w1633">shot</string>
+<string name="w1634">should</string>
+<string name="w1635">shoulder</string>
+<string name="w1636">shout</string>
+<string name="w1637">show</string>
+<string name="w1638">shown</string>
+<string name="w1639">shut</string>
+<string name="w1640">sick</string>
+<string name="w1641">sides</string>
+<string name="w1642">sight</string>
+<string name="w1643">sign</string>
+<string name="w1644">signal</string>
+<string name="w1645">silence</string>
+<string name="w1646">silent</string>
+<string name="w1647">silk</string>
+<string name="w1648">silly</string>
+<string name="w1649">silver</string>
+<string name="w1650">similar</string>
+<string name="w1651">simple</string>
+<string name="w1652">simplest</string>
+<string name="w1653">simply</string>
+<string name="w1654">since</string>
+<string name="w1655">sing</string>
+<string name="w1656">single</string>
+<string name="w1657">sink</string>
+<string name="w1658">Sir</string>
+<string name="w1659">sister</string>
+<string name="w1660">sit</string>
+<string name="w1661">sitting</string>
+<string name="w1662">situation</string>
+<string name="w1663">six</string>
+<string name="w1664">size</string>
+<string name="w1665">skill</string>
+<string name="w1666">skin</string>
+<string name="w1667">sky</string>
+<string name="w1668">slabs</string>
+<string name="w1669">slave</string>
+<string name="w1670">sleep</string>
+<string name="w1671">slept</string>
+<string name="w1672">slide</string>
+<string name="w1673">slight</string>
+<string name="w1674">slightly</string>
+<string name="w1675">slip</string>
+<string name="w1676">slipped</string>
+<string name="w1677">slope</string>
+<string name="w1678">slow</string>
+<string name="w1679">slowly</string>
+<string name="w1680">small</string>
+<string name="w1681">smaller</string>
+<string name="w1682">smallest</string>
+<string name="w1683">smell</string>
+<string name="w1684">smile</string>
+<string name="w1685">Smith</string>
+<string name="w1686">smoke</string>
+<string name="w1687">smooth</string>
+<string name="w1688">snake</string>
+<string name="w1689">snow</string>
+<string name="w1690">so</string>
+<string name="w1691">soap</string>
+<string name="w1692">social</string>
+<string name="w1693">society</string>
+<string name="w1694">soft</string>
+<string name="w1695">softly</string>
+<string name="w1696">soil</string>
+<string name="w1697">solar</string>
+<string name="w1698">sold</string>
+<string name="w1699">soldier</string>
+<string name="w1700">solid</string>
+<string name="w1701">solution</string>
+<string name="w1702">solve</string>
+<string name="w1703">some</string>
+<string name="w1704">somebody</string>
+<string name="w1705">somehow</string>
+<string name="w1706">someone</string>
+<string name="w1707">something</string>
+<string name="w1708">sometime</string>
+<string name="w1709">somewhere</string>
+<string name="w1710">son</string>
+<string name="w1711">song</string>
+<string name="w1712">soon</string>
+<string name="w1713">sort</string>
+<string name="w1714">sound</string>
+<string name="w1715">source</string>
+<string name="w1716">south</string>
+<string name="w1717">southern</string>
+<string name="w1718">space</string>
+<string name="w1719">Spain</string>
+<string name="w1720">speak</string>
+<string name="w1721">special</string>
+<string name="w1722">species</string>
+<string name="w1723">specific</string>
+<string name="w1724">speech</string>
+<string name="w1725">speed</string>
+<string name="w1726">spell</string>
+<string name="w1727">spend</string>
+<string name="w1728">spent</string>
+<string name="w1729">spider</string>
+<string name="w1730">spin</string>
+<string name="w1731">spirit</string>
+<string name="w1732">spite</string>
+<string name="w1733">split</string>
+<string name="w1734">spoken</string>
+<string name="w1735">sport</string>
+<string name="w1736">spread</string>
+<string name="w1737">spring</string>
+<string name="w1738">square</string>
+<string name="w1739">St.</string>
+<string name="w1740">stage</string>
+<string name="w1741">stairs</string>
+<string name="w1742">stand</string>
+<string name="w1743">standard</string>
+<string name="w1744">star</string>
+<string name="w1745">stared</string>
+<string name="w1746">start</string>
+<string name="w1747">state</string>
+<string name="w1748">statement</string>
+<string name="w1749">States</string>
+<string name="w1750">station</string>
+<string name="w1751">stay</string>
+<string name="w1752">steady</string>
+<string name="w1753">steam</string>
+<string name="w1754">steel</string>
+<string name="w1755">steep</string>
+<string name="w1756">stems</string>
+<string name="w1757">step</string>
+<string name="w1758">stepped</string>
+<string name="w1759">stick</string>
+<string name="w1760">stiff</string>
+<string name="w1761">still</string>
+<string name="w1762">stock</string>
+<string name="w1763">stomach</string>
+<string name="w1764">stone</string>
+<string name="w1765">stood</string>
+<string name="w1766">stop</string>
+<string name="w1767">stopped</string>
+<string name="w1768">store</string>
+<string name="w1769">storm</string>
+<string name="w1770">story</string>
+<string name="w1771">stove</string>
+<string name="w1772">straight</string>
+<string name="w1773">strange</string>
+<string name="w1774">stranger</string>
+<string name="w1775">straw</string>
+<string name="w1776">stream</string>
+<string name="w1777">street</string>
+<string name="w1778">strength</string>
+<string name="w1779">stretch</string>
+<string name="w1780">strike</string>
+<string name="w1781">string</string>
+<string name="w1782">strip</string>
+<string name="w1783">strong</string>
+<string name="w1784">stronger</string>
+<string name="w1785">struck</string>
+<string name="w1786">structure</string>
+<string name="w1787">struggle</string>
+<string name="w1788">stuck</string>
+<string name="w1789">student</string>
+<string name="w1790">studied</string>
+<string name="w1791">studying</string>
+<string name="w1792">subject</string>
+<string name="w1793">substance</string>
+<string name="w1794">success</string>
+<string name="w1795">successful</string>
+<string name="w1796">such</string>
+<string name="w1797">sudden</string>
+<string name="w1798">suddenly</string>
+<string name="w1799">sugar</string>
+<string name="w1800">suggest</string>
+<string name="w1801">suit</string>
+<string name="w1802">sum</string>
+<string name="w1803">summer</string>
+<string name="w1804">sun</string>
+<string name="w1805">Sunday</string>
+<string name="w1806">sunlight</string>
+<string name="w1807">supper</string>
+<string name="w1808">supply</string>
+<string name="w1809">support</string>
+<string name="w1810">suppose</string>
+<string name="w1811">sure</string>
+<string name="w1812">surface</string>
+<string name="w1813">surprise</string>
+<string name="w1814">surrounded</string>
+<string name="w1815">swam</string>
+<string name="w1816">sweet</string>
+<string name="w1817">swept</string>
+<string name="w1818">swim</string>
+<string name="w1819">swimming</string>
+<string name="w1820">swing</string>
+<string name="w1821">swung</string>
+<string name="w1822">syllable</string>
+<string name="w1823">symbol</string>
+<string name="w1824">system</string>
+<string name="w1825">table</string>
+<string name="w1826">tail</string>
+<string name="w1827">take</string>
+<string name="w1828">taken</string>
+<string name="w1829">tales</string>
+<string name="w1830">talk</string>
+<string name="w1831">tall</string>
+<string name="w1832">Talmage</string>
+<string name="w1833">tank</string>
+<string name="w1834">tape</string>
+<string name="w1835">task</string>
+<string name="w1836">taste</string>
+<string name="w1837">taught</string>
+<string name="w1838">tax</string>
+<string name="w1839">tea</string>
+<string name="w1840">teach</string>
+<string name="w1841">teacher</string>
+<string name="w1842">team</string>
+<string name="w1843">tears</string>
+<string name="w1844">teeth</string>
+<string name="w1845">telephone</string>
+<string name="w1846">television</string>
+<string name="w1847">tell</string>
+<string name="w1848">temperature</string>
+<string name="w1849">ten</string>
+<string name="w1850">tent</string>
+<string name="w1851">term</string>
+<string name="w1852">terrible</string>
+<string name="w1853">test</string>
+<string name="w1854">Texas</string>
+<string name="w1855">than</string>
+<string name="w1856">thank</string>
+<string name="w1857">that</string>
+<string name="w1858">"that's"</string>
+<string name="w1859">the</string>
+<string name="w1860">thee</string>
+<string name="w1861">them</string>
+<string name="w1862">themselves</string>
+<string name="w1863">then</string>
+<string name="w1864">theory</string>
+<string name="w1865">there</string>
+<string name="w1866">"there's"</string>
+<string name="w1867">therefore</string>
+<string name="w1868">these</string>
+<string name="w1869">they</string>
+<string name="w1870">"they're"</string>
+<string name="w1871">thick</string>
+<string name="w1872">thin</string>
+<string name="w1873">thing</string>
+<string name="w1874">think</string>
+<string name="w1875">third</string>
+<string name="w1876">thirty</string>
+<string name="w1877">this</string>
+<string name="w1878">Thomas</string>
+<string name="w1879">those</string>
+<string name="w1880">thou</string>
+<string name="w1881">though</string>
+<string name="w1882">thought</string>
+<string name="w1883">thousand</string>
+<string name="w1884">thread</string>
+<string name="w1885">three</string>
+<string name="w1886">threw</string>
+<string name="w1887">throat</string>
+<string name="w1888">through</string>
+<string name="w1889">throughout</string>
+<string name="w1890">throw</string>
+<string name="w1891">thrown</string>
+<string name="w1892">thumb</string>
+<string name="w1893">thus</string>
+<string name="w1894">thy</string>
+<string name="w1895">tide</string>
+<string name="w1896">tie</string>
+<string name="w1897">tight</string>
+<string name="w1898">tightly</string>
+<string name="w1899">till</string>
+<string name="w1900">Tim</string>
+<string name="w1901">time</string>
+<string name="w1902">tin</string>
+<string name="w1903">tiny</string>
+<string name="w1904">tip</string>
+<string name="w1905">tired</string>
+<string name="w1906">title</string>
+<string name="w1907">to</string>
+<string name="w1908">tobacco</string>
+<string name="w1909">today</string>
+<string name="w1910">together</string>
+<string name="w1911">told</string>
+<string name="w1912">Tom</string>
+<string name="w1913">tomorrow</string>
+<string name="w1914">tone</string>
+<string name="w1915">tongue</string>
+<string name="w1916">tonight</string>
+<string name="w1917">too</string>
+<string name="w1918">took</string>
+<string name="w1919">tool</string>
+<string name="w1920">top</string>
+<string name="w1921">topic</string>
+<string name="w1922">torn</string>
+<string name="w1923">total</string>
+<string name="w1924">touch</string>
+<string name="w1925">toward</string>
+<string name="w1926">tower</string>
+<string name="w1927">town</string>
+<string name="w1928">toy</string>
+<string name="w1929">trace</string>
+<string name="w1930">track</string>
+<string name="w1931">trade</string>
+<string name="w1932">traffic</string>
+<string name="w1933">trail</string>
+<string name="w1934">train</string>
+<string name="w1935">transportation</string>
+<string name="w1936">trap</string>
+<string name="w1937">travel</string>
+<string name="w1938">treated</string>
+<string name="w1939">tree</string>
+<string name="w1940">triangle</string>
+<string name="w1941">tribe</string>
+<string name="w1942">trick</string>
+<string name="w1943">tried</string>
+<string name="w1944">trip</string>
+<string name="w1945">troops</string>
+<string name="w1946">tropical</string>
+<string name="w1947">trouble</string>
+<string name="w1948">truck</string>
+<string name="w1949">trunk</string>
+<string name="w1950">truth</string>
+<string name="w1951">try</string>
+<string name="w1952">tube</string>
+<string name="w1953">tune</string>
+<string name="w1954">turn</string>
+<string name="w1955">TV</string>
+<string name="w1956">twelve</string>
+<string name="w1957">twenty</string>
+<string name="w1958">twice</string>
+<string name="w1959">two</string>
+<string name="w1960">type</string>
+<string name="w1961">typical</string>
+<string name="w1962">uncle</string>
+<string name="w1963">under</string>
+<string name="w1964">underline</string>
+<string name="w1965">understanding</string>
+<string name="w1966">unhappy</string>
+<string name="w1967">union</string>
+<string name="w1968">unit</string>
+<string name="w1969">United</string>
+<string name="w1970">universe</string>
+<string name="w1971">University</string>
+<string name="w1972">unknown</string>
+<string name="w1973">unless</string>
+<string name="w1974">until</string>
+<string name="w1975">unusual</string>
+<string name="w1976">up</string>
+<string name="w1977">upon</string>
+<string name="w1978">upper</string>
+<string name="w1979">upward</string>
+<string name="w1980">us</string>
+<string name="w1981">use</string>
+<string name="w1982">useful</string>
+<string name="w1983">using</string>
+<string name="w1984">usual</string>
+<string name="w1985">usually</string>
+<string name="w1986">valley</string>
+<string name="w1987">valuable</string>
+<string name="w1988">value</string>
+<string name="w1989">vapor</string>
+<string name="w1990">variety</string>
+<string name="w1991">various</string>
+<string name="w1992">vast</string>
+<string name="w1993">vegetable</string>
+<string name="w1994">verb</string>
+<string name="w1995">vertical</string>
+<string name="w1996">very</string>
+<string name="w1997">vessels</string>
+<string name="w1998">victory</string>
+<string name="w1999">view</string>
+<string name="w2000">village</string>
+<string name="w2001">Virginia</string>
+<string name="w2002">visit</string>
+<string name="w2003">visitor</string>
+<string name="w2004">voice</string>
+<string name="w2005">volume</string>
+<string name="w2006">vote</string>
+<string name="w2007">vowel</string>
+<string name="w2008">voyage</string>
+<string name="w2009">wagon</string>
+<string name="w2010">wait</string>
+<string name="w2011">walk</string>
+<string name="w2012">wall</string>
+<string name="w2013">want</string>
+<string name="w2014">war</string>
+<string name="w2015">warm</string>
+<string name="w2016">warn</string>
+<string name="w2017">was</string>
+<string name="w2018">wash</string>
+<string name="w2019">Washington</string>
+<string name="w2020">"wasn't"</string>
+<string name="w2021">waste</string>
+<string name="w2022">watch</string>
+<string name="w2023">water</string>
+<string name="w2024">wave</string>
+<string name="w2025">way</string>
+<string name="w2026">we</string>
+<string name="w2027">"we'll"</string>
+<string name="w2028">"we're"</string>
+<string name="w2029">"we've"</string>
+<string name="w2030">weak</string>
+<string name="w2031">wealth</string>
+<string name="w2032">wear</string>
+<string name="w2033">weather</string>
+<string name="w2034">week</string>
+<string name="w2035">weigh</string>
+<string name="w2036">weight</string>
+<string name="w2037">welcome</string>
+<string name="w2038">well</string>
+<string name="w2039">went</string>
+<string name="w2040">were</string>
+<string name="w2041">"weren't"</string>
+<string name="w2042">west</string>
+<string name="w2043">western</string>
+<string name="w2044">wet</string>
+<string name="w2045">whale</string>
+<string name="w2046">what</string>
+<string name="w2047">"what's"</string>
+<string name="w2048">whatever</string>
+<string name="w2049">wheat</string>
+<string name="w2050">wheel</string>
+<string name="w2051">when</string>
+<string name="w2052">whenever</string>
+<string name="w2053">where</string>
+<string name="w2054">wherever</string>
+<string name="w2055">whether</string>
+<string name="w2056">which</string>
+<string name="w2057">while</string>
+<string name="w2058">whispered</string>
+<string name="w2059">whistle</string>
+<string name="w2060">white</string>
+<string name="w2061">who</string>
+<string name="w2062">whole</string>
+<string name="w2063">whom</string>
+<string name="w2064">whose</string>
+<string name="w2065">why</string>
+<string name="w2066">wide</string>
+<string name="w2067">widely</string>
+<string name="w2068">wife</string>
+<string name="w2069">wild</string>
+<string name="w2070">will</string>
+<string name="w2071">William</string>
+<string name="w2072">willing</string>
+<string name="w2073">Wilson</string>
+<string name="w2074">win</string>
+<string name="w2075">wind</string>
+<string name="w2076">window</string>
+<string name="w2077">wing</string>
+<string name="w2078">winter</string>
+<string name="w2079">wire</string>
+<string name="w2080">wise</string>
+<string name="w2081">wish</string>
+<string name="w2082">with</string>
+<string name="w2083">within</string>
+<string name="w2084">without</string>
+<string name="w2085">wolf</string>
+<string name="w2086">women</string>
+<string name="w2087">won</string>
+<string name="w2088">"won't"</string>
+<string name="w2089">wonder</string>
+<string name="w2090">wonderful</string>
+<string name="w2091">wood</string>
+<string name="w2092">wooden</string>
+<string name="w2093">wool</string>
+<string name="w2094">word</string>
+<string name="w2095">wore</string>
+<string name="w2096">work</string>
+<string name="w2097">worker</string>
+<string name="w2098">world</string>
+<string name="w2099">worried</string>
+<string name="w2100">worry</string>
+<string name="w2101">worse</string>
+<string name="w2102">worth</string>
+<string name="w2103">would</string>
+<string name="w2104">"wouldn't"</string>
+<string name="w2105">wrapped</string>
+<string name="w2106">write</string>
+<string name="w2107">writer</string>
+<string name="w2108">writing</string>
+<string name="w2109">written</string>
+<string name="w2110">wrong</string>
+<string name="w2111">wrote</string>
+<string name="w2112">yard</string>
+<string name="w2113">year</string>
+<string name="w2114">yellow</string>
+<string name="w2115">yes</string>
+<string name="w2116">yesterday</string>
+<string name="w2117">yet</string>
+<string name="w2118">you</string>
+<string name="w2119">"you'd"</string>
+<string name="w2120">"you'll"</string>
+<string name="w2121">"you're"</string>
+<string name="w2122">"you've"</string>
+<string name="w2123">young</string>
+<string name="w2124">younger</string>
+<string name="w2125">your</string>
+<string name="w2126">yourself</string>
+<string name="w2127">youth</string>
+<string name="w2128">zero</string>
+<string name="w2129">zoo</string>
+
+
+GHOST RADAR fake!?! You bet it is!
+Many ghost hunting enthusiasts or those looking for an experience may find themselves being sold on one of many apps that claim to be able to  detect the presences of ghosts and/or communicate with them. One such program that has gain relatively popular traction is called Ghost Radar. What follows is a break down of why apps like this and specifically THIS app is 100% fake.
+The permissions of the app itself should be an immediate red flag to anyone who looks at this critically and while there really isn't anything special to note it's just the basic things most apps request and advertising permissions still it access elements that it really ought not need to use.
+The fact that this application works on tablets that lack the technology or sensors like that of smartphones is also odd and yet also another reason to support why this application is fake.
+Guess it's not really analyzing too many magnetic fields or passive audio, eh? It also needs access to your "device status and identity." Keep that in mind if you think the spirits just happen to know who you are.
+So lets break the internal workings of this app down shall we?
+The apk (Android Package), the res/values/strings.xml file contains a wordlist that the program uses to randomly select its words. There are about 2130 words that you can read here this app uses: http://pastebin.com/SL0L3b7i.
+The app also includes the following software packages:
+-amazon (ads)
+-google (ads and text2speech)
+-pocketchange (shopping and rewards)
+-revmob (ads)
+-spudpickles (this is the ghost radar app itself)
+So, let's take a look at spudpickles.
+The main activity is RadarActivity, which starts ads, and kicks out random "coordinates" on the GUI (graphical user interface) - that radar image on the screen, it also makes the radar animation, and gets a GRCApp class. The GRCApp handles most of the functions.
+In GRCApp, populateWords() - picks the words the "spirit" says to you by using:
+Random random = new Random();
+int l = random.nextInt(2130);
+activeWordsIndices[l];
+This essentially tells it to pick a random number that also ironically matches the amount of words it has in its dictionary. Hmm... so much for a ghost using its own words.
+------------------------------------------
+The amount of ghosts that you happen to be tracking is decided by your sensitivity settings as seen below:
+maxGhosts = (int)appDelegate.sensitivitySettings.getUseValueFor(4);
+ghostList = new ArrayList();
+int i = 0;
+while(i < maxGhosts) {
+   Ghost ghost = new Ghost(appDelegate);
+   ghostList.add(ghost);
+   i++;
+}
+That's literally all this does.
+------------------------------------------
+Afterwards, it repeatedly steps through these "ghosts" to see if it should show them or hide them:
+while(true) {
+   if(!iterator.hasNext()) {...}
+   ((Ghost)iterator.next()).checkForActivity();
+--------------------------------------------------------------
+checkForActivity() 
+This checks the current time minus last time moved, and shows the ghost if it's greater than the sensitivity settings:
+public void checkForActivity(){
+   long l = (long)(1000F * SensitivitySettings.getSingletonObject().getUseValueFor(3));
+   if(System.currentTimeMillis() - dateLastMoved > l)
+       hidden = true;
+---------------------------------------------------------------
+How does the ghost move around? The piece below determines that.
+numberStream = new Random();
+public void run(){
+   move(numberStream.nextFloat(), numberStream.nextFloat(), numberStream.nextFloat());
+At scheduled intervals, random numbers are picked, then passed to a move method, which just takes the numbers and puts a blip somewhere in the radar circle. 
+That's the gist of it. Of course there's a bit more random bits of programed math that is done to make those polar coordinates, and calculate blip and word frequencies change.
+So in layman's terms...
+At scheduled intervals, random numbers are generated to determine a ghost's coordinates and whether or not they appear as well as the words that are displayed. The amount of ghost objects created is determined by the settings you set for sensitivity. Absolutely no sensor input is read to determine any of this at all.
+So while this may make for some good friendly fun to prank friends and family with, any group using this as some kind of legitimate paranormal tool does themselves no favors. Quite honestly they do more harm to the legitimate groups out there who take the time to research and truly understand their equipment. As it is... absolutely nothing out there is proven to be 100% accurate at detecting anything paranormal. It's all theories being put to practice in hope that something legitimate can be proven beyond a reasonable doubt.
+Eric Ryder
+Ummm... Wrong!! I've had many incredible experiences with the Ghost Radar app, which I've been using for over 10 years. I recently asked the developer how to explain why is works to all the skeptics out there, and he says he has no idea. What your article reveals is news to me - I honestly thought it was using anomalies in the frequencies around us, but that apparently is BS. But, like the dev told me, "You can put the phone into Airplane Mode and it still works". He as baffled as anyone else.
+So, the developer created something that works, ACCIDENTALLY. I think the coolest thing to do would be to remove the randomness BS and put in a huge dictionary and see what happens.
+I can tell you so many stories that are outright mind-blowing. Impossible to be just coincidence. The most incredible ones being around the death of a friend.
+Ironically, what your story does is make the Ghost Radar even MORE incredible, niot less because the author chose to create an "entertainment" app and BS'd about using the sensors - a bit of showmanship there.
+2y
+Reply
+
+Author
+Seekers of the Paranormal
+Sorry to say it but, anything that's built and given a set form of commands and functions specific to randomization isn't and shouldn't be considered for any serious investigator, let alone be considered as any form of legitimate supporting evidence. Besides.... a cell phone contaminates so many other forms of technology one uses in the field. I hope you don't expect to consider any EMF detections as legitimate if using this. having one active in your investigation area further contaminates the legitimacy of your evidence. Anyone who has even remotely tested that out knows you'll see text messages coming in to Cell phones before the phone itself alerts you to one.
+Considering the fields many of our team members are professionals in, there is no feasible way such an application is credible for any kind of scientific use. it is literally programed to act in a manner that has nothing to do with any kind of outside involvement. it Literally randomly pulls from a set dictionary that can be modified simply by changing variables and by setting the phone into Airplane mode causes some of those said pre-programmed features from working.
+So! While there are those that want to call themselves a paranormal investigator... until you understand the full inner workings of all of the equipment you're using, it's limitations, what it's legitimately used for and what it can fabricate when used in tandem with other gear. I'll pass.
+And again... you can follow up with the app creator all you want. They literally made the app they aren't bound to admit it's not real. They want to get $$$ from those actually willing to pay or upgrade to the non-advertisement versions of things like this. They aren't going to shoot themselves in the foot by saying it's not real.
+And speaking from a professional background myself... most of those ghost apps are packed with adware. if you're not careful you're probably opening yourself to a whole other world of hurt, the least of which likely involves some form of identity theft or fraud.
+2y
+Reply
+Edited
+Eric Ryder
+Seekers of the Paranormal Wow. I never saw this response!! So... without unpacking all of this, I'll just say that I totally understand what you're saying. The app is just using random number generators to pop out words from a 2100 word array/dictionary. The rest is BS.
+BUT... it still doesn't explain some extremely contextually compelling evidence I've gotten over the years. Impossible to be coicidence. Beyond impossible. I added names of my friends - dead or alive - to the app. One of my deceased friends, in particular, who I told about the app right before he died from cancer, (I was with him when he died). The words that came up at his deathbed, minutes after he died: "UNIVERSE BEAUTIFUL SAIL FRANK" and several other words - 11 in total before it stopped.
+Frank was his 92 year old father's name, who was too ill to be there when my friend died. Sailing was a HUGE theme in my friends life, and really big right before he died. All of the words together formed a picture of movement through the Universe - like looking down at the Earth. AUSTRALIA was another word. And ATLANTIC. I forget the rest.
+I don;t have time to write down all of my events here, but trust me... something's going on. Either I'm some sort of low-level medium, or ... I don't know what.
+I turned on the GR while typing this and just three words came out during it: COLLECT EXAMPLE HARD.
+Bob's your Uncle.
+14m
+Reply
+
+
+
+
+Authentication failed. Some common reasons include:
+
+- You are not logged in to your account: see GitHub Desktop > Settings.
+- You may need to log out and log back in to refresh your token.
+- You do not have permission to access this repository.
+- The repository is archived on GitHub. Check the repository settings to confirm you are still permitted to push commits.
+- If you use SSH authentication, check that your key is added to the ssh-agent and associated with your account.
+- If you use SSH authentication, ensure the host key verification passes for your repository hosting service.
+- If you used username / password authentication, you might need to use a Personal Access Token instead of your account password. Check the documentation of your repository hosting service.
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+rm *.jp*
+cd album
+mv * ..
+cd ..
+rm -r album
+
+
+	
+	
+4 treat, 4 weeks apart
+spf30
+every 2 hours
+30 min okus numbing
+ 24-48 increassed redness
+ 
+ V Beam
+ metrogel
+ 
+	
+sed -e "s/IMG*/" "/g" comm >test
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				
+
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+						
+				

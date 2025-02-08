@@ -830,6 +830,12 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
             if (filesRead === files.length) {
                 console.log("🟢 Selected Files for CSV Export:", selectedFileNames);
                 processConcatenatedCSVData(allCSVData);
+
+                // 🟢 FIX: Reset the file input so it triggers again when re-selected
+                document.getElementById("fileInput").value = "";
+                
+                // 🟢 FIX: Allow new file selections by resetting flag
+                csvProcessingStarted = false;
             }
         };
         reader.onerror = function() {
@@ -837,11 +843,16 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
             filesRead++;
             if (filesRead === files.length) {
                 processConcatenatedCSVData(allCSVData);
+
+                // 🟢 Reset file input after error
+                document.getElementById("fileInput").value = "";
+                csvProcessingStarted = false;
             }
         };
         reader.readAsText(file);
     }
 });
+
 
     // =======================================================
     // SIMULATION (Run Button) HANDLER

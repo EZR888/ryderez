@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<script>
+var floatingButtonContainer = document.querySelector('.floating-button-div');
+var scrollY = window.scrollY;
+
+window.addEventListener('scroll', function() {
+  scrollY = window.scrollY;
+  floatingButtonContainer.style.top = scrollY + window.innerHeight - 150 + 'px';
+});
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senior Tech Help</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color:lightgray;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: rgb(7,7,137);
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+        .column {
+            flex: 1;
+            min-width: 400px;
+            max-width: 48%;
+            margin: 10px 1%;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        section h2 {
+    		margin-bottom: 0px; /* Adjust to desired spacing */
+		}
+        h1 {
+            color: white;
+        }
+        h2 {
+            color: #0073e6;
+        }
+        ul, ol {
+            padding: 0;
+            list-style: none;
+        }
+        ul li, ol li {
+            margin: 10px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            background: #f1f1f1;
+            color: #777;
+        }
+        a {
+            color: #0073e6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .fb {
+  			background-color: red;
+  			color: white;
+ 			 border: none;
+ 			 border-radius: 50%;
+ 			 padding: 20px;
+ 			 font-size: 16px;
+ 			 cursor: pointer;
+ 			 box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+		}
+
+    </style>
+</head>
+<body>
+
+<header style="text-align: center;">
+    <img src="portal_files/HTH-LOGO.png" alt="Hi-Tech Handyman Logo" style="max-width: 100%; height: auto;" height="200" width="200">
+    <br>Your Trusted Companion for Technology Support<br>
+</header>
+
+<div class="content">
+    <!-- Column 1 -->
+    <div class="column">
+        <section>
+            <h2>Welcome to the Hi-Tech Handyman!</h2>
+            <p>If you're having issues with your everyday home technology, I'm the guy who can help you out.  I am retired, but was in the Hi-Tech business my whole career.  I'm a tech-enthusiast, and am the go-to guy when people need help with their computers, WiFi, cellphones, and all manner of gadgets and home electronics.  My goal is to help make technology simple and stress-free for anyone who needs help with their personal/home technology - especially, but not limited to, Seniors. Whether it’s setting up a smartphone, troubleshooting your computer, hooking up your wireless printer, or learning to use apps, I can help guide you every step of the way.  I can also do an "audit" of your current setup and give you advice on making it all work better and smoother - and probably cheaper.</p>
+        </section>
+
+        <section>
+            <h2>What I Do</h2>
+            <ul>
+                <li><strong>Consulting Services:</strong> I can help you decide what the best hi-tech hardware and software is for your specific needs. Not too much; not too little; not too expensive.</li>
+                <li><strong>Device Setup:</strong> Smartphones, tablets, computers, and smart home devices.</li>
+                <li><strong>Troubleshooting:</strong> Resolve issues with your computer, Wi-Fi, email, or devices.</li>
+                <li><strong>Training Sessions:</strong> Learn to use apps, video call family, and more.</li>
+                <li><strong>Security Assistance:</strong> Stay safe online and avoid scams.</li>
+                <li><strong>Maintenance:</strong> Keep your devices running smoothly.</li>
+                <li><strong>Build Websites:</strong> I can build you a personal website to showcase memories, through photos and videos you might want to share with your family - like a family photo album, only online.</li>
+                <li><strong>Create a Personal Portal Page:</strong> This is a webpage I can build for you, that has links to all the places you typically like to go online, all in one easy-to-access place, and hosted for free.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>What I Don't Do</h2>
+            <ul>
+                <li><strong>Hardware:</strong> Genrally speaking, I don't fix broken hardware - but I WILL let you know if it's broken, and, most likely, if it's fixable. Sometimes things appear broken, but it's just a bad cable, or a bad battery. I can help with that.  I can do some things like installing a harddrive and the like.</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Column 2 -->
+    <div class="column">
+        <section>
+            <h2>What I Do Best</h2>
+            <ul>
+            	<li><strong>Security:</strong> Protecting your home network.</li>
+            	<li><strong>Performance</strong> Revitalizing your slow computer.</li>
+                <li><strong>Apple Products:</strong> Laptops, iPad, iPhone, Apple TV, etcetera.</li>
+                <li><strong>Operating Systems:</strong> MacOS, Windows, ChromeOS, Linux</li>
+                <li><strong>Misc:</strong> Wireless and wired printers, Comcast and other Internet TV device setup, WiFi setup, and all peripherals, such as hard drives, Sonos Speaker systems, etc.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Why Choose Me?</h2>
+            <ul>
+                <li><strong>Patience & Understanding:</strong> I take the time to explain everything in simple terms, both in person, and through detailed documentation I will provide you.</li>
+                <li><strong>Experienced Professional:</strong> I have many years of experience helping Seniors, and everyone else, with technology. I also worked in software Tech Support for over 10 years.</li>
+                <li><strong>Convenient Support Options:</strong> Get help at home, over the phone, or online.</li>
+                <li><strong>Affordable Pricing:</strong> Clear, reasonable rates for all services.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+            <ol>
+                <li><strong>Reach Out:</strong> Call or email me to describe your issue.</li>
+                <li><strong>Schedule a Visit:</strong> Choose a convenient time for your appointment.</li>
+                <li><strong>Get Support:</strong> I will provide personalized help and leave you with clear documentation to refer back to about our visit.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Customer Testimonials</h2>
+            <blockquote>
+                <p>"I’ve never felt more comfortable using my smartphone. Thank you for your patience!" – Mary, 72</p>
+            </blockquote>
+            <blockquote>
+                <p>"Senior Tech Help made it so easy to stay in touch with my family online." – Bob, 68</p>
+            </blockquote>
+        </section>
+    
+    </div>
+
+         <!-- Column 2 -->
+    <div class="column">       
+		<section id="contact-us">
+    		<h2>Contact Me</h2>
+    			<br>📞 <strong>Phone:</strong> (831) 383-8887
+    			<br>✉️ <strong>Email:</strong> <a href="mailto:ezr2drv@gmail.com">ezr2drv@gmail.com</a>
+    			<br>🌐 <strong>Website:</strong> <a href="#">http://www.ryderez.com/hitechhandyman</a>
+		</section>
+	</div>
+
+
+
+</div>
+
+</div> <!-- End of .content -->
+
+<div class="floating-button-div" style="position: fixed; bottom: 150px; right: 20px;">
+    <button class="fb" onclick="scrollToContact()">
+        <b>CONTACT</b>
+    </button>
+</div>
+
+<footer>
+    <p>© 2024 Hi-Tech Handyman. All Rights Reserved.</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var floatingButtonContainer = document.querySelector('.floating-button-div');
+    window.addEventListener('scroll', function() {
+        floatingButtonContainer.style.top = window.scrollY + window.innerHeight - 150 + 'px';
+    });
+});
+
+function scrollToContact() {
+    const contactSection = document.getElementById('contact-us');
+    contactSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+</script>
+</body>
+</html>

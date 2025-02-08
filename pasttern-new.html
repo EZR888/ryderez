@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Matching with Additional Conditions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: lightgreen;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: salmon;
+            border: none;
+            color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .match {
+            color: lightyellow;
+            font-weight: bold;
+        }
+        .no-match {
+            color: salmon;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pattern Matching - Expanded Criteria</h1>
+    <button onclick="autoRunUntilMatch()">Generate and Check</button>
+    <div id="result"></div>
+
+    <script>
+        let attempts = 0;
+
+        function generateRandomNumbers() {
+            return Array.from({ length: 38 }, () => Math.floor(Math.random() * 5));
+        }
+
+        function extractPattern(arr, start, length) {
+            return arr.slice(start, start + length);
+        }
+
+        function calculateOdds() {
+            const numValues = 5; 
+            const patternLength = 5;
+            const singlePatternOdds = Math.pow(numValues, patternLength);
+            const combinedOdds = singlePatternOdds * singlePatternOdds;
+            return `1 in ${combinedOdds.toLocaleString()}`;
+        }
+
+        function checkPatterns() {
+            const numbers = generateRandomNumbers(38);
+            attempts++;
+
+            const firstHalf = numbers.slice(0, 19);
+            const secondHalf = numbers.slice(19, 38);
+            
+            const patterns = {
+                "First 5": { first: extractPattern(firstHalf, 0, 5), second: extractPattern(secondHalf, 0, 5) },
+                "Centered 5": { first: extractPattern(firstHalf, 7, 5), second: extractPattern(secondHalf, 7, 5) },
+                "Last 5": { first: extractPattern(firstHalf, 14, 5), second: extractPattern(secondHalf, 14, 5) }
+            };
+
+            let resultText = `<strong>Attempt ${attempts}:</strong> ${numbers.join(', ')}\n\n`;
+            let matchFound = false;
+
+            for (const [position, { first, second }] of Object.entries(patterns)) {
+                const reversedSecond = [...second].reverse();
+                const isExactMatch = first.toString() === second.toString();
+                const isReversedMatch = first.toString() === reversedSecond.toString();
+
+                resultText += `<strong>${position}:</strong>\n`;
+                resultText += `  First Half:  ${first.join(', ')}\n`;
+                resultText += `  Second Half: ${second.join(', ')}\n`;
+                resultText += `  Reversed:    ${reversedSecond.join(', ')}\n`;
+
+                if (isExactMatch || isReversedMatch) {
+                    resultText += `  <span class="match">${isExactMatch ? "Exact Match" : "Reversed Match"} Found!</span>\n\n`;
+                    matchFound = true;
+                } else {
+                    resultText += `  <span class="no-match">No Match</span>\n\n`;
+                }
+            }
+
+            // Additional match conditions
+            const conditionMet = checkCustomConditions(firstHalf, secondHalf);
+            if (conditionMet) {
+                resultText += `<span class="match">Custom Condition Match Found: ${conditionMet}</span>\n\n`;
+                matchFound = true;
+            }
+
+            if (matchFound) {
+                document.getElementById('result').innerHTML = resultText + `<strong><span class="match">Match found after ${attempts} attempts!</span></strong>\nOdds of Occurrence: ${calculateOdds()}`;
+                attempts = 0;
+                return true;
+            }
+
+            document.getElementById('result').innerHTML = resultText;
+            return false;
+        }
+
+        function checkCustomConditions(firstHalf, secondHalf) {
+            const totalGreaterThanZero = firstHalf.concat(secondHalf).filter(n => n > 0).length;
+            const firstHalfGreaterThanZero = firstHalf.filter(n => n > 0).length;
+            const secondHalfGreaterThanZero = secondHalf.filter(n => n > 0).length;
+            const center5FirstHalf = firstHalf.slice(7, 12);
+            const center5SecondHalf = secondHalf.slice(7, 12);
+
+            // Condition 1: More than 90% of non-zero numbers in the first half
+            if (firstHalfGreaterThanZero / totalGreaterThanZero > 0.8) {
+                return "More than 80% of numbers are on the top";
+            }
+
+            // Condition 2: More than 90% of non-zero numbers in the second half
+            if (secondHalfGreaterThanZero / totalGreaterThanZero > 0.8) {
+                return "More than 80% of numbers are on the bottom";
+            }
+
+            // Condition 3: No numbers greater than zero in the center 5 of the first half
+            if (center5FirstHalf.every(n => n === 0)) {
+                return "Empty 00 Cluster";
+            }
+
+            // Condition 4: No numbers greater than zero in the center 5 of the second half
+            if (center5SecondHalf.every(n => n === 0)) {
+                return "Empty 0 Cluster";
+            }
+
+            // Condition 5: More than 90% of greater than zero numbers in the first 7 numbers of each half
+            const first7Sum = firstHalf.slice(0, 7).concat(secondHalf.slice(0, 7)).filter(n => n > 0).length;
+            const last7Sum = firstHalf.slice(12, 19).concat(secondHalf.slice(12, 19)).filter(n => n > 0).length;
+            if (first7Sum / totalGreaterThanZero > 0.9) {
+                return "More than 90% of hits are on the left side of the wheel, not including 00 and 0";
+            }
+
+            // Condition 6: More than 90% of greater than zero numbers in the last 7 numbers of each half
+            if (last7Sum / totalGreaterThanZero > 0.8) {
+                return "More than 80% of hits are on the right side of the wheel, not including 00 and 0";
+            }
+
+            return null;
+        }
+
+        function autoRunUntilMatch() {
+            let matchFound = false;
+            function runCheck() {
+                matchFound = checkPatterns();
+                if (!matchFound) {
+                    setTimeout(runCheck, 10);
+                }
+            }
+            runCheck();
+        }
+    </script>
+
+</body>
+</html>

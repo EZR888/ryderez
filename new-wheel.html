@@ -5,18 +5,75 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
+     .framed-buttons {
+      border: 2px solid lightblue;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
     body {
-      margin: 0;
       overflow: hidden;
-      background-color: #000;
+      background-color: black;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       font-family: Arial, sans-serif;
-      padding: 10px;
+      padding: 0px;
+      margin: 0;
       box-sizing: border-box;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+     /* Flexbox wrapper to prevent content cutoff */
+    .flex-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh; /* Full height of the viewport */
+      width: 100vw;  /* Full width of the viewport */
+      overflow: auto; /* Allows scrolling when zoomed in */
+      padding-top: 80px; /* Ensures space below buttons */
     }
 
     .wheel-container {
@@ -28,7 +85,7 @@
       align-items: center;
       width: 635px;  /* Fixed width */
       height: 635px; /* Fixed height */
-      max-width: 100%; /* Ensure it doesn't exceed the viewport width */
+      max-width: 90%; /* Ensure it doesn't exceed the viewport width */
       max-height: 100vh; /* Ensure it doesn't exceed viewport height */
       box-sizing: border-box;
     }
@@ -43,15 +100,30 @@
       margin-bottom: 20px;
     }
 
-    .button {
-      padding: 10px 16px; /* Increased padding */
-      background: #fff;
-      border: none;
-      cursor: pointer;
+     .button {
+      font-size: 110%;
+      padding: 6px 12px;
       margin: 5px;
-      font-size: 18px; /* Increased font size */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-
+    .button:hover {
+      opacity: 0.8;
+    }
+    .button-single {
+      background-color: salmon;
+      color: black;
+    }
+    .button-purple {
+      background-color: purple;
+      color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray;
+      color: black !important;
+    }
     #startButton {
       background-color: #4CAF50; /* Green */
       color: white;
@@ -61,11 +133,32 @@
       background-color: #f44336; /* Red */
       color: white;
     }
-
-    #accessSimulatorButton {
-      background-color: #008CBA; /* Blue */
-      color: white;
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
     }
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+      background-color: violet;
+      color: black;
+    }
+    .button-sim {
+      background-color: orange;
+      color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+	
+
     .highlight-yellow {
   		background-color: lightyellow !important;
 	}
@@ -131,8 +224,8 @@
     }
     
     #viewDataButton {
-      background-color: SlateGray; /* Orange */
-      color: white;
+      background-color: lightgray; /* Orange */
+      color: black;
     }
 
     #TotalsTableContainer {
@@ -244,32 +337,124 @@
         font-size: 12px;
       }
     }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    } 
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    
   </style>
 </head>
 <body>
-  <div>
+  <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+        
+  <div class="flex-frame">  <!-- Flexbox frame added here -->
     <h1 class="lgreen-text">Roulette Wheel</h1>
-  </div>
-  <div class="wheel-container">
-    <div id="output"></div>
-  </div>
-  <br>
-  
-  <div class="button-container">
-    <button id="startButton" class="button"><b>Spin</b></button>
-    <button id="saveDataButton" class="button"><b>Save Data</b></button>
-    <button id="accessSimulatorButton" class="button"><b>Simulator</b></button>
-    <button id="resetButton" class="button"><b>Reset Count</b></button>
-    <button id="viewDataButton" class="button"><b>View Data</b></button>
-  </div>
-
-  <div class="table-container">
-    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
-    <div id="TotalsTableContainer"></div>
-  </div>
+    <div class="wheel-container">
+      <div id="output"></div>
+    </div>
+    <br><br>
+    <div class="button-container">
+      <button id="startButton" class="button"><b>Spin</b></button>
+      <button id="saveDataButton" class="button"><b>Save Data</b></button>
+      <button id="resetButton" class="button"><b>Reset Count</b></button>
+    </div>
+    <div class="table-container">
+      <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
+      <div id="TotalsTableContainer"></div>
+    </div>
+  </div> <!-- End of flex-frame -->
   <br><br>
-
+  
   <script>
+  
+         	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+      
     // Roulette Wheel Variables
     let wheelRadius = 280;
     let wheelCenterX;
@@ -314,7 +499,7 @@
         exportTotalsToCSV(Totals);
       });
 
-      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
+      document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.location.href = 'roulette.html';
       });
       
@@ -395,7 +580,7 @@
         if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
           fill(0, 128, 0);
         } else {
-          fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
+          fill(i % 2 === 0 ? color(0) : color(255, 0, 0));
         }
 
         arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
@@ -465,7 +650,7 @@ function populateTotalsTable() {
     // Header Row (Second Half)
     for (let i = 0; i < numSlots / 2; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'red-header' : 'black-header');
+                       (i % 2 === 0 ? 'black-header' : 'red-header');
       tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
     }
 
@@ -474,7 +659,7 @@ function populateTotalsTable() {
     // Data Row (Second Half)
     for (let i = 0; i < numSlots / 2; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'red' : 'black');
+                       (i % 2 === 0 ? 'black' : 'red');
       let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
       let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
       tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
@@ -485,7 +670,7 @@ function populateTotalsTable() {
     // Header Row (First Half)
     for (let i = numSlots / 2; i < numSlots; i++) {
       let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'red-header' : 'black-header');
+                       (i % 2 === 0 ? 'black-header' : 'red-header');
       tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
     }
 
@@ -534,7 +719,7 @@ function populateTotalsTable() {
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+      return `${year}-${month}-${day}-${hours}-${minutes}`;
     }
 
 function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {

@@ -8,726 +8,1437 @@
 8,Change can hurt, but it leads a path to something better.
 9,Enjoy the good luck a companion brings you.
 10,People are naturally attracted to you.
-11,Hidden in a valley beside an open stream- This will be the type of place where you will find your dream.
-12,A chance meeting opens new doors to success and friendship.
-13,You learn from your mistakes... You will learn a lot today.
-14,What ever you're goal is in life, embrace it visualize it, and for it will be yours.
-15,Your shoes will make you happy today.
-16,You cannot love life until you live the life you love.
-17,Be on the lookout for coming events; They cast their shadows beforehand.
-18,Land is always on the mind of a flying bird.
-19,The man or woman you desire feels the same about you.
-20,Meeting adversity well is the source of your strength.
-21,A dream you have will come true.
-22,Our deeds determine us, as much as we determine our deeds.
-23,Never give up. You're not a failure if you don't give up.
-24,You will become great if you believe in yourself.
-25,There is no greater pleasure than seeing your loved ones prosper.
-26,You will marry your lover.
-27,A very attractive person has a message for you.
-28,You already know the answer to the questions lingering inside your head.
-29,It is now, and in this world, that we must live.
-30,You must try, or hate yourself for not trying.
-31,You can make your own happiness.
-32,The greatest risk is not taking one.
-33,The love of your life is stepping into your planet this summer.
-34,Love can last a lifetime, if you want it to.
-35,Adversity is the parent of virtue.
-36,Serious trouble will bypass you.
-37,A short stranger will soon enter your life with blessings to share.
-38,Now is the time to try something new.
-39,Wealth awaits you very soon.
-40,If you feel you are right, stand firmly by your convictions.
-41,Keep your eye out for someone special.
-42,You are very talented in many ways.
-43,A stranger, is a friend you have not spoken to yet.
-44,A new voyage will fill your life with untold memories.
-45,You will travel to many exotic places in your lifetime.
-46,Your ability for accomplishment will follow with success.
-47,Nothing astonishes men so much as common sense and plain dealing.
-48,Its amazing how much good you can do if you dont care who gets the credit.
-49,There will be a happy romance for you shortly.
-50,Your fondest dream will come true within this year.
-51,You have a deep interest in all that is artistic.
-52,Your emotional nature is strong and sensitive.
-53,A letter of great importance may reach you any day now.
-54,Good health will be yours for a long time.
-55,You will become better acquainted with a coworker.
-56,To be old and wise, you must first be young and stupid.
-57,Failure is only the opportunity to begin again more intelligently.
-58,Integrity is doing the right thing, even if nobody is watching.
-59,Conquer your fears or they will conquer you.
-60,You are a lover of words; One day you will write a book.
-61,In this life it is not what we take up, but what we give up, that makes us rich.
-62,Fear can keep us up all night long, but faith makes one fine pillow.
-63,Seek out the significance of your problem at this time.  Try to understand.
-64,Never upset the driver of the car you're in; they're the master of your destiny until you get home.
-65,He who slithers among the ground is not always a foe.
-66,You learn from your mistakes, you will learn a lot today.
-67,You only need look to your own reflection for inspiration.
-68,You are not judged by your efforts you put in; you are judged on your performance.
-69,Rivers need springs.
-70,Good news from afar may bring you a welcome visitor.
-71,When all else seems to fail, smile for today and just love someone.
-72,Patience is a virtue, unless its against a brick wall.
-73,When you look down, all you see is dirt, so keep looking up.
-74,If you are afraid to shake the dice, you will never throw a six.
-75,Even if the person who appears most wrong, is also quite often right.
-76,A single conversation with a wise man is better than ten years of study.
-77,Happiness is often a rebound from hard work.
-78,The world may be your oyster, but that doesn't mean you'll get it's pearl.
-79,Your life will be filled with magical moments.
-80,You're true love will show himself to you under the moonlight.
-81,Do not follow where the path may lead.  Go where there is no path...
-82,The object of your desire comes closer.
-83,You have a flair for adding a fanciful dimension to any story.
-84,The most useless energy is trying to change what and who God so carefully created.
-85,You will have unexpected great good luck.
-86,All progress occurs because people dare to be different.
-87,Your ability for accomplishment will be followed by success.
-88,The world is always ready to receive talent with open arms.
-89,Things may come to those who wait, but only the things left by those who hustle.
-90,We can't help everyone. But everyone can help someone.
-91,Every day is a new day. But tomorrow is never promised.
-92,It is not necessary to show others you have change; the change will be obvious.
-93,You have a deep appreciation of the arts and music.
-94,If your desires are not extravagant, they will be rewarded.
-95,You try hard, never to fail. You don't, never to win.
-96,Never give up on someone that you don't go a day without thinking about.
-97,It never pays to kick a skunk.
-98,In case of fire, keep calm, pay bill and run.
-99,Next full moon brings an enchanting evening.
-100,Not all closed eye is sleeping nor open eye is seeing.
-101,Impossible is a word only to be found in the dictionary of fools.
-102,You will soon witness a miracle.
-103,The time is alway right to do what is right.
-104,Love is as necessary to human beings as food and shelter.
-105,You will make heads turn.
-106,You are extremely loved.
-107,If you are never patient, you will never get anything done. If you believe you can do it, you will be rewarded with success.
-108,You will soon embark on a business venture.
-109,You believe in the goodness of man kind.
-110,You will have a long and wealthy life.
-111,You will take a pleasant journey to a place far away.
-112,You are a person of culture.
-113,Keep it simple. The more you say, the less people remember.
-114,Life is like a dogsled team. If you ain't the lead dog, the scenery never changes.
-115,Prosperity makes friends and adversity tries them.
-116,Nothing seems impossible to you.
-117,Patience is bitter, but its fruit is sweet.
-118,The only certainty is that nothing is certain.
-119,Success is the sum of my unique visions realized by the sweat of perseverance.
-120,When you expect your opponent to yield, you also should avoid hurting him.
-121,Human evolution: &ldquo;wider freeway but narrower viewpoints.
-122,Intelligence is the door to freedom and alert attention is the mother of intelligence.
-123,Back away from individuals who are impulsive.
-124,Enjoyed the meal? Buy one to go too.
-125,You believe in the goodness of mankind.
-126,A big fortune will descend upon you this year.
-127,Now these three remain, faith, hope, and love. The greatest of these is love.
-128,For success today look first to yourself.
-129,Determination is the wake-up call to the human will.
-130,There are no limitations to the mind except those we aknowledge.
-131,A merry heart does good like a medicine.
-132,Whenever possible, keep it simple.
-133,Your dearest wish will come true.
-134,Poverty is no disgrace.
-135,If you don&rsquo;t do it excellently, don&rsquo;t do it at all.
-136,You have an unusual equipment for success, use it properly.
-137,Emotion is energy in motion.
-138,You will soon be honored by someone you respect.
-139,Punctuality is the politeness of kings and the duty of gentle people everywhere.
-140,Your happiness is intertwined with your outlook on life.
-141,Elegant surroundings will soon be yours.
-142,If you feel you are right, stand firmly by your convictions.
-143,Your smile brings happiness to everyone you meet.
-144,Instead of worrying and agonizing, move ahead constructively.
-145,Do you believe? Endurance and persistence will be rewarded.
-146,A new business venture is on the horizon.
-147,Never underestimate the power of the human touch.
-148,Hold on to the past but eventually, let the times go and keep the memories into the present.
-149,Truth is an unpopular subject. Because it is unquestionably correct.
-150,The most important thing in communication is to hear what isn&rsquo;t being said.
-151,You are broad minded and socially active.
-152,Your dearest dream is coming true. God looks after you especially.
-153,You will recieve some high prize or award.
-154,Your present question marks are going to succeed.
-155,You have a fine capacity for the enjoyment of life.
-156,You will live long and enjoy life.
-157,An admirer is concealing his/her affection for you.
-158,A wish is what makes life happen when you dream of rose petals.
-159,Love can turn cottage into a golden palace.
-160,Lend your money and lose your freind.
-161,You will be rewarded for being a good listener in the next week.
-162,If you never give up on love, It will never give up on you.
-163,Unleash your life force.
-164,Your wish will come true.
-165,There is a prospect of a thrilling time ahead for you.
-166,No distance is too far, if two hearts are tied together.
-167,Land is always in the mind of the flying birds.
-168,Try? No! Do or do not, there is no try.
-169,Do not worry, you will have great peace.
-170,It's about time you asked that special someone on a date.
-171,You create your own stage ... the audience is waiting.
-172,It is never too late. Just as it is never too early.
-173,Discover the power within yourself.
-174,Good things take time.
-175,Stop thinking about the road not taken and pave over the one you did.
-176,Put your unhappiness aside. Life is beautiful, be happy.
-177,You can still love what you can not have in life.
-178,Make a wise choice everyday.
-179,Circumstance does not make the man; it reveals him to himself.
-180,The man who waits till tomorrow, misses the opportunities of today.
-181,Life does not get better by chance. It gets better by change.
-182,If you never expect anything you can never be disappointed.
-183,People in your surroundings will be more cooperative than usual.
-184,True wisdom is found in happiness.
-185,Ones always regrets what could have done. Remember for next time.
-186,Follow your bliss and the Universe will open doors where there were once only walls.
-187,Find a peaceful place where you can make plans for the future.
-188,All the water in the world can't sink a ship unless it gets inside.
-189,The earth is a school learn in it.
-190,In music, one must think with his heart and feel with his brain.
-191,If you speak honestly, everyone will listen.
-192,Ganerosity will repay itself sooner than you imagine.
-193,Do what is right, not what you should.
-194,To effect the quality of the day is no small achievement.
-195,Simplicity and clearity should be the theme in your dress.
-196,Virtuous find joy while Wrongdoers find grieve in their actions.
-197,Not all closed eye is sleeping, nor open eye is seeing.
-198,Bread today is better than cake tomorrow.
-199,In evrything there is a piece of truth.But a piece.
-200,A feeling is an idea with roots.
-201,It's all right to have butterflies in your stomach. Just get them to fly in formation.
-202,Everything will be ok. Don't obsess. Time will prove you right, you must stay where you are.
-203,The finest men like the finest steels have been tempered in the hottest furnace.
-204,The worst of friends may become the best of enemies, but you will always find yourself hanging on.
-205,Let your fantasies unwind...
-206,Don't lead if you won't lead.
-207,Share your hapiness with others today.
-208,It's up to you to clearify.
-209,Your future will be happy and productive.
-210,Seize every second of your life and savor it.
-211,Those who walk in other's tracks leave no footprints.
-212,Failure is the mother of all success.
-213,Difficulty at the beginning useually means ease at the end.
-214,Do not seek so much to find the answer as much as to understand the question better.
-215,Your way of doing what other people do their way is what makes you special.
-216,A beautiful, smart, and loving person will be coming into your life.
-217,Friendship is an ocean that you cannot see bottom.
-218,Your life does not get better by chance, it gets better by change.
-219,Our duty,as men and women,is to proceed as if limits to our ability did not exist.
-220,A pleasant expeience is ahead:don't pass it by.
-221,They say you are stubborn; you call it persistence.
-222,Two small jumps are sometimes better than one big leap.
-223,A new wardrobe brings great joy and change to your life.
-224,The cure for grief is motion.
-225,I hear and I forget. I see and I remember. I do and I understand.
-226,I have a dream....Time to go to bed.
-227,A human being is a deciding being.
-228,Today is an ideal time to water your parsonal garden.
-229,Some men dream of fortunes, others dream of cookies.
-230,Things are never quite the way they seem.
-231,YOUR FAILURES WILL LEAD YOU TO YOUR SUCCESS.
-232,IN ORDER TO GET THE RAINBOW, YOU MUST ENDURE THE RAIN.
-233,Beauty is simply beauty. originality is magical.
-234,Your dream will come true when you least expect it.
-235,Let not your hand be stretched out to receive and shut when you should repay.
-236,Don't worry, half the people you know are below average.
-237,Vision is the art of seeing what is invisible to others.
-238,You don't need talent to gain experience.
-239,A focused mind is one of the most powerful forces in the universe.
-240,Today you shed your last tear. Tomorrow fortune knocks at your door.
-241,Be patient! The Great Wall didn't got build in one day.
-242,Think you can. Think you can't. Either way, you'll be right.
-243,Wisdom is on her way to you.
-244,Digital circuits are made from analog parts.
-245,If you eat a box of fortune cookies, anything is possible.
-246,The best is yet to come.
-247,I'm with you.
-248,Be direct,usually one can accomplish more that way.
-249,A single kind work will keep one warm for years.
-250,Ask a friend to join you on your next voyage.
-251,In God we trust.
-252,Love is free. Lust will cost you everything you have.
-253,Stop searching forever, happiness is just next to you.
-254,You don't need the answers to all of life's questions. Just ask your father what to do.
-255,Jealousy is a useless emotion.
-256,You are not a ghost.
-257,There is someone rather annoying in your life that you need to listen to.
-258,You will plant the smallest seed and it will become the greatest and most mighty tree in the world.
-259,The dream you've been dreaming all your life isn't worth it. Find a new dream, and once you're sure you've found it, fight for it.
-260,See if you can learn anything from the children.
-261,A clear conscience is usually the sign of a bad memory.
-262,Aim high, time flies.
-263,One is not sleeping, does not mean they are awake.
-264,A great pleasure in life is doing what others say you can't.
-265,Your father still loves and is in always with you. Remember that.
-266,Before you can be reborn you must die.
-267,It better to be the hammer than the nail.
-268,You are admired by everyone for your talent and ability.
-269,Save the whales. Collect the whole set.
-270,You will soon discover a major truth about the one you love most.
-271,Your life will prosper only if you acknowledge your faults and work to reduce them.
-272,Pray to God, but row towards shore.
-273,You will soon witness a miracle.
-274,Help, I'm being held prisoner in a  Chinese cookie factory.
-275,Alas! The onion you are eating is someone else&rsquo;s water lily.
-276,You are a persoon with a good sense of justice, now it's time to act like it.
-277,You create enthusiasm around you.
-278,There are big changes ahead for you.
-279,You will have many happy days soon.
-280,Out of confusion comes new patterns.
-281,If you love someone enough and they break your heart, you can't stop yourself from still loving them again even after all that pain.
-282,Look right...Now look left...Now look forward (do this really fast) do you feel any different? good you should feel dizzy.
-283,Live like you are on the bottom, even if you are on the top.
-284,You will soon emerge victorious from the maze you've been traveling in.
-285,Do not judge a book by it's color.
-286,Everything will come your way.
-287,There is a time to be practical now.
-288,Bend the rod while it is still hot.
-289,Darkness is only succesful when there is no light.
-290,Acting is not lying. It is findind someone hiding inside you and letting that person run free.
-291,You will be forced to face fear, but if you do not run, fear will be afraid of you.
-292,You are thinking about doing something. Don't do it, it won't help anything.
-293,Love Conquers all.
-294,The phrase is follow your dreams. Not dream period.
-295,stop nagging to your partner and take it day by day.
-296,Do not think that me or my brothers have supreme control over what will happen to you.
-297,Bad luck and misfortune will follow you all your days.
-298,Remember the fate of the early Worm.
-299,Begin your life anew with strength, grace and wonder.
-300,Be a good friend and a fair enemy.
-301,What goes around comes around.
-302,Bad luck and misfortune will infest your pathetic soul for all eternity.
-303,Use the force.
-304,Trust your intuition.
-305,Encourage your peers.
-306,Let your imagination wander.
-307,Your pain is the breaking of the shell that encloses your understanding.
-308,Patience is key, a wait short or long will have its reward.
-309,Tell them before it's too late...
-310,Be assertive when decisive action is needed.
-311,To determine whether someone is beautiful is not by looking at his/her appearance, but his/her heart.
-312,While you have this day, fill it with life. While you're in this moment, give it your own special meaning and purpose and joy.
-313,Even though it will often be difficult and complicated, you know you have what it takes to get it done.
-314,You can choose, right now and in every moment, to put your powerful and effective abilities to purposeful use. There is always something you can do, no matter what the situation may be, that will move your life forward.
-315,IT IS NOT GOOD TO BE A USER BLESSINGS COME FROM BEING A GIVER NOT A TAKER.
-316,You will prosper in the field of wacky inventions.
-317,Your tongue is your ambassador.
-318,The cure for grief is movement.
-319,Love Is At Your Hands Be Glad And Hold On To It.
-320,You are often asked if it is in yet.
-321,Life to you is a bold and dashing responsibility.
-322,Patience is a key to joy.
-323,A bargain is something you don't need at a price you can't resist.
-324,Stay to your inner-self, you will benefit in many ways.
-325,Rarely do great beauty and great virtue dwell together as they do in you.
-326,You are talented in many ways.
-327,You are the master of every situation.
-328,Your problem just got bigger. Think, what have you done.
-329,If your cookie still in one piece, buy lotto.
-330,Go with the flow will make your transition ever so much easier.
-331,A metaphor could save your life.
-332,There are lessons to be learned by listening to others.
-333,If you want the rainbow, you have to tolerate the rain.
-334,Volition, Strength, Languages, Freedom and Power rests in you.
-335,It takes more than a good memory to have good memories.
-336,Word to the wise: Don't play leapfrog with a unicorn.........
-337,Forgive your enemies, but never forget them.
-338,Don't worry about the stock market. Invest in family.
-339,Your fortune is as sweet as a cookie.
-340,Never trouble trouble till trouble troubles you.
-341,Get off to a new start - come out of your shell.
-342,Cooperate with those who have both know how and integrith.
-343,Minor aches today are likely to pay off handsomely tomorrow.
-344,You are about to become $8.95 poorer. ($6.
-345,Your mouth may be moving, but nobody is listening.
-346,The problem with resisting temptation is that it may never come again.
-347,All your sorrows will vanish.
-348,About time I got out of that cookie.
-349,Love will lead the way.
-350,It is best to act with confidence, no matter how little right you have to it.
-351,Soon, a visitor shall delight you.
-352,What breaks in a moment may take years to mend.
-353,Someone stole your fortune and replaced it with this one.  Your luck sucks.
-354,You will be rewarded for your patience and understanding.
-355,You will achieve all your desires and pleasures.
-356,Never miss a chance to keep your mouth shut.
-357,Nothing Shows A Man's Character More Than What He Laughs At.
-358,Never regret anything that made you smile.
-359,Love Takes Pratice.
-360,Don't take yourself so seriously, no one else does.
-361,At this very moment you can change the rest of your life.
-362,Become who you are.
-363,All comes at the proper time to him who knows how to wait.
-364,The energy is within you.
-365,The quotes that you do not understand, are not meant for you.
-366,You have an important new business development shaping up.
-367,Birds are entangled by their feet and men by their tongues.
-368,Benefit by doing things that others give up on.
-369,Rest has a peaceful effect on your physical and emotional health.
-370,One of the best ways to persuade others is with your ears--by listening to them.
-371,Plan your work and work your plan.
-372,Over self-confidence is equal to being blind.
-373,Those who bring sunshine to the lives of others cannot keep it from themselves.
-374,Before the beginning of great brilliance, there must be chaos.
-375,Old friends make best friends.
-376,Stop searching forever. Happiness is just next to you.
-377,Accept something that you cannot change, and you will feel better.
-378,Kiss is not a kiss without the heart.
-379,Enhance your karma by engaging in various charitable activities.
-380,You will have good luck and overcome many hardships.
-381,You never hesitate to tackle the most difficult problems.
-382,Hope is like food. You will starve without it.
-383,WHEN FIRE AND WATER GO TO WAR WATER ALWAYS WINS.
-384,An angry man opens his mouth and shuts up his eyes.
-385,Make the system work for you, not the other way around.
-386,You will be hungry soon, order takeout now.
-387,Be prepared for extra energy.
-388,An unexpected relationship will become permanent.
-389,The love of your life is sitting across from you.
-390,Better be the head of a chicken than the tail of an ox.
-391,To forgive others one more time is to create one more blessing for yourself.
-392,Enjoy yourself while you can.
-393,The ultimate test of a relationship is to disagree but to hold hands.
-394,Excellence is the difference between what I do and what I am capable of.
-395,Do not let what you do not have prevent you from using what you do have.
-396,What ends on hope does not end at all.
-397,People enjoy having you around. Appreciate this.
-398,Everyone agrees. You are the best.
-399,LIFE CONSIST NOT IN HOLDING GOOD CARDS, BUT IN PLAYING THOSE YOU HOLD WELL.
-400,It's better to be alone sometimes.
-401,Let the deeds speak.
-402,You will be called in to fulfill a position of high honor and responsibility.
-403,The man on the top of the mountain did not fall there.
-404,You will conquer obstacles to achieve success.
-405,Joys are often the shadows, cast by sorrows.
-406,Fortune favors the brave.
-407,An upward movement initiated in time can counteract fate.
-408,A journey of a thousand miles begins with a single step.
-409,Sometimes you just need to lay on the floor.
-410,Never give up. Always find a reason to keep trying.
-411,If you have something worth fighting for, then fight for it.
-412,Stop wishing. Start doing.
-413,Accept your past without regrets. Handle your present with confidence. Face your future without fear.
-414,Stay true to those who would do the same for you.
-415,Ask yourself if what you are doing today is getting you closer to where you want to be tomorrow.
-416,Happiness is an activity.
-417,Help is always needed but not always appreciated. Stay true to your heart and help those in need weather they appreciate it or not.
-418,Hone your competitive instincts.
-419,Finish your work on hand don't be greedy.
-420,For success today, look first to yourself.
-421,Your fortune is as sweet as a cookie.
-422,Integrity is the essence of everything successful.
-423,If you're happy, you're successful.
-424,Believing that you are beautiful will make you appear beautiful to others around you.
-425,Happinees comes from a good life.
-426,Before trying to please others think of what makes you happy.
-427,When hungry, order more Chinese food.
-428,Your golden opportunity is coming shortly.
-429,For hate is never conquered by hate. Hate is conquered by love .
-430,You will make many changes before settling down happily.
-431,A man is born to live and not prepare to live.
-432,You cannot become rich except by enriching others.
-433,Don't pursue happiness - create it.
-434,You will be successful in love.
-435,All your fingers can't be of the same length.
-436,Wise sayings often fall on barren ground, but a kind word is never thrown away.
-437,A lifetime of happiness is in store for you.
-438,It is very possible that you will achieve greatness in your lifetime.
-439,Be tactful; overlook your own opportunity.
-440,You are the controller of your destiny.
-441,Everything happens for a reson.
-442,How can you have a beutiful ending without making beautiful mistakes.
-443,You can open doors with your charm and patience.
-444,Welcome the change coming into your life.
-445,You are admired for your adventuous ways.
-446,You are blessed, today is the day to bless others.
-447,The Greatest War Sometimes Isn't On The Battlefield But Against Oneself.
-448,People in your background will be more co-operative than usual.
-449,A good way to stay healthy is to eat more Chinese food.
-450,Anyone who dares to be, can never be weak.
-451,Affirm it, visualize it, believe it, and it`will actualize itself.
-452,The measure of time to your next goal is the measure of your discipline.
-453,Take a minute and let it ride, then take a minute to let it breeze.
-454,We are here to love each other, serve each other and uplift each other.
-455,To affirm is to make firm.
-456,Remember this: duct tape can fix anything, so don't worry about messing things up.
-457,Failure is not defeat until you stop trying.
-458,The days that make us happy make us wise.
-459,Men do not fail... they give up trying.
-460,Time may fly by. But Memories don't.
-461,You will win success in whatever you adopt.
-462,You will outdistance all your competitors.
-463,Money will come to you when you are doing the right thing.
-464,When you get something for nothing, you just haven't been billed for it yet.
-465,You will discover your hidden talents.
-466,You'll advance for with your abilities.
-467,When you can't naturally feel upbeat it can sometimes help you to act as if you did.
-468,You will overcome difficult times.
-469,Your problem just became your stepping stone.  Catch the moment.
-470,I am a fortune. You just broke my little house.
-471,The majority of the word can't is can.
-472,The secret of getting ahead is getting started.
-473,Be most affectionate today.
-474,Change your thoughts and you change the world.
-475,Sing and rejoice, fortune is smiling on you.
-476,A truly great person never puts away the simplicity of a child.
-477,Customer service is like taking a bath you have to keep doing it.
-478,The expanse of your intelligence is a void no universe could ever fill.
-479,Those grapes you cannot taste are always sour.
-480,An unexpected aquaintance will resurface.
-481,If you want the rainbow, then you have to tolerate the rain.
-482,You don't get harmony when everyone sings the same note.
-483,The race is not always to the swift, but to those who keep on running.
-484,The early bird gets the worm, but the second mouse gets the cheese.
-485,The best things in life aren't things.
-486,Don't bother looking for fault. The reward for finding it is low.
-487,Everything has beauty but not everyone sees it.
-488,Nothing is as good or bad as it appears.
-489,Never cut what you can untie.
-490,Meet your opponent half way. You need the exercise.
-491,Laughter is the shortest distance between two people.
-492,We cannot change the direction of the wind, but we can adjust our sails.
-493,We could learn a lot from crayons: Some of are sharp, some are pretty, some have weird names, and all are different colors. But they all have to learn to live in the same box.
-494,Use your instincts now.
-495,If you take a single step to your journey, you'll succeed; it's not best to fail.
-496,In the eyes of lovers, everything is beautiful.
-497,Warning, do not eat your fortune.
-498,Demonstrate refinement in everything you do.
-499,Impossible standards just make life difficult.
-500,A different world cannot be build by indifferent people.
-501,Q. What is H2O? A. Caring, 2 parts Hug and 1 part Open-mind.
-502,All troubles you have can pass away very quickly.
-503,Integrity is the essense of everything successful.
-504,Sometimes the object of the journey is not the end, but the journey itself.
-505,Fear is just excitement in need of an attitude adjustment.
-506,The food here taste so good, even a cave man likes it.
-507,Perhaps you've been focusing too much on spending.
-508,Happiness isn't something you remember, it's something you experience.
-509,Oops... Wrong cookie.
-510,The dream is within you.
-511,Love is on its way.
-512,Be direct, usually one can accomplish more that way.
-513,Use your talents. That's what they are intended for.
-514,The troubles you have now will pass away quickly.
-515,See the light at the end of the tunnel.
-516,Your dream will come true when you least expect it.
-517,Don't 'face' reality, let it be the place from which you leap.
-518,Fortune smiles upon you today.
-519,Believing is doing.
-520,Your dynamic eyes have attracted a secret admirer.
-521,You know where you are going and how to get there.
-522,Go confidently in the direction of your dreams.
-523,Your ability to pick a winner will bring you success.
-524,Humor usually works at the moment of awkwardness.
-525,A good time to finish up old tasks.
-526,Enthusiastic leadership gets you a promotion when you least expect it.
-527,You love Chinese food.
-528,You are far more influential than you think.
-529,Adjust finances, make budgets, to improve your standing.
-530,Happiness is not the absence of conflict, but the ability to cope with it.
-531,An understanding heart warms all that are graced with it's presense.
-532,Your co-workers take pleasure in your great sense of creativity.
-533,You are one of the people who goes places in life.
-534,Others enjoy your company.
-535,When in doubt, let your instincts guide you.
-536,A cheerful message is on its way to you.
-537,A pleasant surprise is in store for you tonight.
-538,To courageously shoulder the responsibility of one's mistake is character.
-539,The joyful energy of the day will have a positive affect on you.
-540,You have a strong desire for a home and your family interests come first.
-541,Dogs have owners, cats have staff.
-542,Be patient: in time, even an egg will walk.
-543,You are not a person who can be ignored.
-544,You always know the right times to be assertive or to simply wait.
-545,Reading to the mind is what exercise is to the body.
-546,Eat something you never tried before.
-547,You need to live authentically, and you can't ignore that.
-548,Make all you can, save all you can, give all you can.
-549,A well-aimed spear is worth three.
-550,To build a better world, start in your community.
-551,When you can't naturally feel upbeat, it can sometimes help to act a if you did.
-552,May you have great luck.
-553,A kind word will keep someone warm for years.
-554,Nothing in the world is accomplished without passion.
-555,Human invented language to satisfy the need to complain.
-556,Accept what comes to you each day.
-557,A small lucky package is on its way to you soon.
-558,In human endeavor, chance favors the prepared mind.
-559,Do not upset the penguin today.
-560,Don't cry.
-561,The best way to give credit is to give it away.
-562,Anything you do, do it well. The last thing you want is to be sorry for what you didn't do.
-563,It takes more then good memory to have good memories.
-564,Grant yourself a wish this year only you can do it.
-565,You will be selected for a promotion because of your accomplishments.
-566,There are many new opportunities that are being presented to you.
-567,You will inherit a large sum of money.
-568,You will recieve a gift from someone that cares about you.
-569,You are not illiterate.
-570,Love because it is the only true adventure.
-571,Keep true to the dreams of your youth.
-572,Treasure what you have.
-573,The greatest precept is continual awareness.
-574,A new friend helps you break out of an old routine.
-575,I have a dream.... Time to go to bed.
-576,Your skill will accomplish what the force of many cannot.
-577,You will soon be surrounded by good friends and laughter.
-578,The best is yet to come.
-579,It is better to be the hammer then the anvil.
-580,He who climbs a ladder must begin at the first step.
-581,Action speaks nothing, without the Motive.
-582,Give yourself some peace and quiet for at least a few hours.
-583,Old dreams never die they just get filed away.
-584,You can fix it with a little extra energy and a positive attitude.
-585,A man without aim is like a clock without hands, as useless if it turns as if it stands.
-586,Many folks are about as happy as they make up their minds to be.
-587,You should be able to make money and hold on to it.
-588,The human spirit is stronger than anything that can happen to it.
-589,Your succeess will astonish everyone.
-590,It is better to have a hen tomorrow than an egg today.
-591,Judge each day not by the harvest you reap but by the seeds you plant.
-592,You like Chinese food.
-593,Your hard work will get payoff today.
-594,No matter what your past has been, you have a spotless future.
-595,Your secret desire to completely change your life will manifest.
-596,Soon you will be sitting on top of the world.
-597,You are never selfish with your advice or your help.
-598,A thrilling time is in store for you.
-599,It's tough to be fascinating.
-600,Luck sometimes visits a fool, but it never sits down with him.
-601,Keep your plans secret for now.
-602,Traveling this year will bring your life into greater perspective.
-603,Only talent people get help  from others.
-604,Constant grinding can turn an iron nod into a needle.
-605,When you're about to turn your heart into a stone remember: you do not walk alone.
-606,You are vigorous in words and action.
-607,The one who snores will always fall asleep first.
-608,Rest is a good thing, but boredom is its brother.
-609,Do not be overly judgemental of your loved one's intentions or actions.
-610,Think of how you can assist on a problem, not who to blame.
-611,The life of every woman or man - the heart of it - is pure and holy joy.
-612,Trust your intuition. The universe is guiding your life.
-613,Use your head, but live in your heart.
-614,Your passions sweep you away.
-615,Think of mother's exhortations more.
-616,The gambler is like the fisherman both have beginners luck.
-617,You are given the chance to take part in an exciting adventure.
-618,The simplest answer is to act.
-619,You will always be surrounded by true friends.
-620,Keep your feet on the ground even though friends flatter you.
-621,You are the man of righteousness and integrity.
-622,He who seeks will find.
-623,The smart thing to do is to begin trusting your intuitions.
-624,Your many hidden talents will become obvious to those around you.
-625,Pick a path with heart.
-626,The human spirit is stronger then anything that can happen to it.
-627,It takes more than good memory to have good memories.
-628,Face facts with dignity.
-629,Be calm when confronting an emergency crisis.
-630,Do you believe? Endurance and persistence will be rewarded.
-631,A new wardrobe brings great joy and change in your life.
-632,Everyone agrees you are the best.
-633,A new outlook brightens your image and brings new friends.
-634,Everything will now come your way.
-635,You will be called to fill a position of high honor and responsibility.
-636,The eyes believe themselves; the ears believe other people.
-637,Good beginning is half done.
-638,Some pursue happiness; you create it.
-639,It's the worst of times, you need to summon your optimism.
-640,You are cautious in showing your true self to others.
-641,Your ability to accomplish tasks will follow with success.
-642,We all have extraordinary coded within us, waiting to be released.
-643,You will have a bright future.
-644,Compassion is a way of being.
-645,You will always have good luck in your personal affairs.
-646,Perhaps you've been focusing too much on that one thing..
-647,Right now there's an energy pushing you in a new direction.
-648,Everybody feels lucky for having you as a friend.
-649,When the moment comes, take  the top one.
-650,Sometimes travel to new places leads to great transformation.
-651,There is always a way - if you are committed.
-652,Life is too short to waste time hating anyone.
-653,All the world may not love a lover but they will be watching him.
-654,Don't just spend time, invest it.
-655,Life  always gets harder near the summit.
-656,Take the chance while you still have the choice.
-657,It is much easier to be cirtical than to be correct.
-658,Enjoy life! It is better to be happy than wise.
-659,To make the cart go, you must grease the wheels.
-660,You are contemplating some action which will bring credit upon you.
-661,You may be disappointed if you fail, but you are doomed if you don't try.
-662,You will always get what you want through your charm and personality.
-663,The big issues are work, career, or status right now.
-664,Your emotional currents are flowing powerfully now.
-665,Any decision you have to make tomorrow is a good decsion.
-666,Consume less. Share more. Enjoy life.
-667,The secret of staying young is good health and lying about your age.
-668,Spring has sprung. Life is blooming.
-669,Go ask your mom.
-670,The possibility of a career change is near.
-671,The important thing is to never stop questioning.
-672,Compassion will cure more then condemnation.
-673,Excuses are easy to manufacture, and hard to sell.
-674,Put your mind into planning today. Look into the future.
-675,Broke is only temporaryl poor is a state of mind.
-676,Here we go. Moo Shu Cereal for breakfast with duck sauce.
-677,Teamwork: the fuel that allows common people attain uncommon results.
-678,Hard words break no bones, fine words butter no parsnips.
-679,We cannot direct the wind but we can adjust the sails.
-680,You are offered the dream of a lifetime.
-681,Working out the kinks today will make for a better tomorrow.
-682,You have a curious smile and a mysterious nature.
-683,Questions provide the key to unlocking our unlimited potential.
-684,You will enjoy razon-sharp spiritual vision today.
-685,Well-arranged time is the surest sign of a well-arranged mind.
-686,Never bring unhappy feelings into your home.
-687,This is really a lovely day.
-688,Bad luck and ill misfortune will infest your pathetic soul for all eternity.
-689,A golden egg of opportunity falls into your lap this month.
-690,You are very grateful for the small pleasures of life.
-691,today you should be a passenger. Stay close to a driver for a day.
-692,For hate is never conquered by hate. Hate is conquered by love.
-693,Service is the rent we pay for the privilege of living on this planet.
-694,Good clothes open many doors. Go shopping.
-695,The leader seeks to communicate his vision to his followers.
-696,Great works are performed not by strength, but by perseverance.
-697,Present your best ideas today to an eager and welcoming audience.
-698,Friends long absent are coming back to you.
-699,The time is right to make new friends.
-700,You may be hungry soon: order a takeout now.
-701,Do not hesitate to look for help, an extra hand should always be welcomed.
-702,What's vice today may be virtue tomorow.
-703,You have an unusually magnetic personality.
-704,You will travel to many places.
-705,Dream lofty dreams, and as you dream, so shall you become.
-706,You have a quiet and unobtrusive nature.
-707,Great thoughts come from the heart.
-708,Judge not according to the appearance.
-709,One who admires you greatly is hidden before your eyes.
-710,Traveling more often is important for your health and happiness.
-711,You have a reputation for being straightforward and honest.
-712,You are always welcome in any gathering.
-713,You will be traveling and coming into a fortune.
-714,Open up your heart - it can always be closed again.
-715,Being happy is not always being perfect.
-716,Next time you have the opportunity, go on a rollercoaster.
-717,Try everything once, even the things you don't think you will like.
-718,Life is too short to hold grudges.
-719,Dream your dream and your dream will dream of you.
-720,Being alone and being lonely are two different things.
-721,Don't worry about things in the past, there is nothing you can do about them now. Don't worry about things that are happening now, make the best of a bad situation. Don't worry about things in the future, they may never happen.
-722,Tomorrow, take a moment to do something just for yourself.
-723,Someone close to you is waiting for you to call.
-724,A virtual fortune cookie will not satisfy your hunger like that of a home made one.
-725,Smile. Tomorrow is another day.
-726,You can never been certain of success, but you can be certain of failure if you never try.
-727,It takes ten times as many muscles to frown as it does to smile.
-728,Shoot for the moon! If you miss you will still be amongst the stars.
-729,Keep your eyes open. You never know what you might see.
-730,Tell them what you really think. Otherwise, nothing will change.
-731,Let your heart make your decisions - it does not get as confused as your head.
-732,Working hard will make you live a happy life.
-733,A pleasant surprise is waiting for you.
+11,A chance meeting opens new doors to success and friendship.
+12,You learn from your mistakes... You will learn a lot today.
+13,What ever you're goal is in life, embrace it visualize it, and for it will be yours.
+14,You cannot love life until you live the life you love.
+15,Be on the lookout for coming events; They cast their shadows beforehand.
+16,Land is always on the mind of a flying bird.
+17,The man or woman you desire feels the same about you.
+18,Meeting adversity well is the source of your strength.
+19,A dream you have will come true.
+20,Our deeds determine us, as much as we determine our deeds.
+21,Never give up. You're not a failure if you don't give up.
+22,You will become great if you believe in yourself.
+23,There is no greater pleasure than seeing your loved ones prosper.
+24,You will marry your lover.
+25,A very attractive person has a message for you.
+26,You already know the answer to the questions lingering inside your head.
+27,It is now, and in this world, that we must live.
+28,You must try, or hate yourself for not trying.
+29,You can make your own happiness.
+30,The greatest risk is not taking one.
+31,The love of your life is stepping into your planet this summer.
+32,Love can last a lifetime, if you want it to.
+33,Adversity is the parent of virtue.
+34,Serious trouble will bypass you.
+35,A short stranger will soon enter your life with blessings to share.
+36,Now is the time to try something new.
+37,Wealth awaits you very soon.
+38,If you feel you are right, stand firmly by your convictions.
+39,Keep your eye out for someone special.
+40,You are very talented in many ways.
+41,A stranger, is a friend you have not spoken to yet.
+42,A new voyage will fill your life with untold memories.
+43,You will travel to many exotic places in your lifetime.
+44,Your ability for accomplishment will follow with success.
+45,Nothing astonishes men so much as common sense and plain dealing.
+46,Its amazing how much good you can do if you dont care who gets the credit.
+47,There will be a happy romance for you shortly.
+48,Your fondest dream will come true within this year.
+49,You have a deep interest in all that is artistic.
+50,Your emotional nature is strong and sensitive.
+51,A letter of great importance may reach you any day now.
+52,Good health will be yours for a long time.
+53,You will become better acquainted with a coworker.
+54,To be old and wise, you must first be young and stupid.
+55,Failure is only the opportunity to begin again more intelligently.
+56,Integrity is doing the right thing, even if nobody is watching.
+57,Conquer your fears or they will conquer you.
+58,You are a lover of words; One day you will write a book.
+59,In this life it is not what we take up, but what we give up, that makes us rich.
+60,Fear can keep us up all night long, but faith makes one fine pillow.
+61,Seek out the significance of your problem at this time.  Try to understand.
+62,Never upset the driver of the car you're in; they're the master of your destiny until you get home.
+63,He who slithers among the ground is not always a foe.
+64,You learn from your mistakes, you will learn a lot today.
+65,You only need look to your own reflection for inspiration.
+66,You are not judged by your efforts you put in; you are judged on your performance.
+67,Rivers need springs.
+68,Good news from afar may bring you a welcome visitor.
+69,When all else seems to fail, smile for today and just love someone.
+70,Patience is a virtue, unless its against a brick wall.
+71,When you look down, all you see is dirt, so keep looking up.
+72,If you are afraid to shake the dice, you will never throw a six.
+73,Even if the person who appears most wrong, is also quite often right.
+74,A single conversation with a wise man is better than ten years of study.
+75,Happiness is often a rebound from hard work.
+76,The world may be your oyster, but that doesn't mean you'll get it's pearl.
+77,Your life will be filled with magical moments.
+78,You're true love will show himself to you under the moonlight.
+79,Do not follow where the path may lead.  Go where there is no path...
+80,The object of your desire comes closer.
+81,You have a flair for adding a fanciful dimension to any story.
+82,The most useless energy is trying to change what and who God so carefully created.
+83,You will have unexpected great good luck.
+84,All progress occurs because people dare to be different.
+85,Your ability for accomplishment will be followed by success.
+86,The world is always ready to receive talent with open arms.
+87,Things may come to those who wait, but only the things left by those who hustle.
+88,We can't help everyone. But everyone can help someone.
+89,Every day is a new day. But tomorrow is never promised.
+90,It is not necessary to show others you have change; the change will be obvious.
+91,You have a deep appreciation of the arts and music.
+92,If your desires are not extravagant, they will be rewarded.
+93,You try hard, never to fail. You don't, never to win.
+94,Never give up on someone that you don't go a day without thinking about.
+95,It never pays to kick a skunk.
+96,In case of fire, keep calm, pay bill and run.
+97,Next full moon brings an enchanting evening.
+98,Not all closed eye is sleeping nor open eye is seeing.
+99,Impossible is a word only to be found in the dictionary of fools.
+100,You will soon witness a miracle.
+101,The time is alway right to do what is right.
+102,Love is as necessary to human beings as food and shelter.
+103,You will make heads turn.
+104,You are extremely loved.
+105,If you are never patient, you will never get anything done. If you believe you can do it, you will be rewarded with success.
+106,You will soon embark on a business venture.
+107,You believe in the goodness of man kind.
+108,You will have a long and wealthy life.
+109,You will take a pleasant journey to a place far away.
+110,You are a person of culture.
+111,Keep it simple. The more you say, the less people remember.
+112,Life is like a dogsled team. If you ain't the lead dog, the scenery never changes.
+113,Prosperity makes friends and adversity tries them.
+114,Nothing seems impossible to you.
+115,Patience is bitter, but its fruit is sweet.
+116,The only certainty is that nothing is certain.
+117,Success is the sum of my unique visions realized by the sweat of perseverance.
+118,When you expect your opponent to yield, you also should avoid hurting him.
+119,Human evolution: &ldquo;wider freeway but narrower viewpoints.
+120,Intelligence is the door to freedom and alert attention is the mother of intelligence.
+121,Back away from individuals who are impulsive.
+122,Enjoyed the meal? Buy one to go too.
+123,You believe in the goodness of mankind.
+124,A big fortune will descend upon you this year.
+125,Now these three remain, faith, hope, and love. The greatest of these is love.
+126,For success today look first to yourself.
+127,Determination is the wake-up call to the human will.
+128,There are no limitations to the mind except those we aknowledge.
+129,A merry heart does good like a medicine.
+130,Whenever possible, keep it simple.
+131,Your dearest wish will come true.
+132,Poverty is no disgrace.
+133,If you don&rsquo;t do it excellently, don&rsquo;t do it at all.
+134,You have an unusual equipment for success, use it properly.
+135,Emotion is energy in motion.
+136,You will soon be honored by someone you respect.
+137,Punctuality is the politeness of kings and the duty of gentle people everywhere.
+138,Your happiness is intertwined with your outlook on life.
+139,Elegant surroundings will soon be yours.
+140,If you feel you are right, stand firmly by your convictions.
+141,Your smile brings happiness to everyone you meet.
+142,Instead of worrying and agonizing, move ahead constructively.
+143,Do you believe? Endurance and persistence will be rewarded.
+144,A new business venture is on the horizon.
+145,Never underestimate the power of the human touch.
+146,Hold on to the past but eventually, let the times go and keep the memories into the present.
+147,Truth is an unpopular subject. Because it is unquestionably correct.
+148,The most important thing in communication is to hear what isn&rsquo;t being said.
+149,You are broad minded and socially active.
+150,Your dearest dream is coming true. God looks after you especially.
+151,You will recieve some high prize or award.
+152,Your present question marks are going to succeed.
+153,You have a fine capacity for the enjoyment of life.
+154,You will live long and enjoy life.
+155,An admirer is concealing his/her affection for you.
+156,A wish is what makes life happen when you dream of rose petals.
+157,Love can turn cottage into a golden palace.
+158,Lend your money and lose your freind.
+159,You will be rewarded for being a good listener in the next week.
+160,If you never give up on love, It will never give up on you.
+161,Unleash your life force.
+162,Your wish will come true.
+163,There is a prospect of a thrilling time ahead for you.
+164,No distance is too far, if two hearts are tied together.
+165,Land is always in the mind of the flying birds.
+166,Try? No! Do or do not, there is no try.
+167,Do not worry, you will have great peace.
+168,It's about time you asked that special someone on a date.
+169,You create your own stage ... the audience is waiting.
+170,It is never too late. Just as it is never too early.
+171,Discover the power within yourself.
+172,Good things take time.
+173,Stop thinking about the road not taken and pave over the one you did.
+174,Put your unhappiness aside. Life is beautiful, be happy.
+175,You can still love what you can not have in life.
+176,Make a wise choice everyday.
+177,Circumstance does not make the man; it reveals him to himself.
+178,The man who waits till tomorrow, misses the opportunities of today.
+179,Life does not get better by chance. It gets better by change.
+180,If you never expect anything you can never be disappointed.
+181,People in your surroundings will be more cooperative than usual.
+182,True wisdom is found in happiness.
+183,Ones always regrets what could have done. Remember for next time.
+184,Follow your bliss and the Universe will open doors where there were once only walls.
+185,Find a peaceful place where you can make plans for the future.
+186,All the water in the world can't sink a ship unless it gets inside.
+187,The earth is a school learn in it.
+188,In music, one must think with his heart and feel with his brain.
+189,If you speak honestly, everyone will listen.
+190,Ganerosity will repay itself sooner than you imagine.
+191,Do what is right, not what you should.
+192,To effect the quality of the day is no small achievement.
+193,Simplicity and clearity should be the theme in your dress.
+194,Virtuous find joy while Wrongdoers find grieve in their actions.
+195,Not all closed eye is sleeping, nor open eye is seeing.
+196,Bread today is better than cake tomorrow.
+197,In evrything there is a piece of truth.But a piece.
+198,A feeling is an idea with roots.
+199,It's all right to have butterflies in your stomach. Just get them to fly in formation.
+200,Everything will be ok. Don't obsess. Time will prove you right, you must stay where you are.
+201,The finest men like the finest steels have been tempered in the hottest furnace.
+202,The worst of friends may become the best of enemies, but you will always find yourself hanging on.
+203,Let your fantasies unwind...
+204,Don't lead if you won't lead.
+205,Share your hapiness with others today.
+206,It's up to you to clearify.
+207,Your future will be happy and productive.
+208,Seize every second of your life and savor it.
+209,Those who walk in other's tracks leave no footprints.
+210,Failure is the mother of all success.
+211,Difficulty at the beginning useually means ease at the end.
+212,Do not seek so much to find the answer as much as to understand the question better.
+213,Your way of doing what other people do their way is what makes you special.
+214,A beautiful, smart, and loving person will be coming into your life.
+215,Friendship is an ocean that you cannot see bottom.
+216,Your life does not get better by chance, it gets better by change.
+217,Our duty,as men and women,is to proceed as if limits to our ability did not exist.
+218,A pleasant expeience is ahead:don't pass it by.
+219,They say you are stubborn; you call it persistence.
+220,Two small jumps are sometimes better than one big leap.
+221,A new wardrobe brings great joy and change to your life.
+222,The cure for grief is motion.
+223,I hear and I forget. I see and I remember. I do and I understand.
+224,I have a dream....Time to go to bed.
+225,A human being is a deciding being.
+226,Today is an ideal time to water your parsonal garden.
+227,Some men dream of fortunes, others dream of cookies.
+228,Things are never quite the way they seem.
+229,YOUR FAILURES WILL LEAD YOU TO YOUR SUCCESS.
+230,IN ORDER TO GET THE RAINBOW, YOU MUST ENDURE THE RAIN.
+231,Beauty is simply beauty. originality is magical.
+232,Your dream will come true when you least expect it.
+233,Let not your hand be stretched out to receive and shut when you should repay.
+234,Don't worry, half the people you know are below average.
+235,Vision is the art of seeing what is invisible to others.
+236,You don't need talent to gain experience.
+237,A focused mind is one of the most powerful forces in the universe.
+238,Today you shed your last tear. Tomorrow fortune knocks at your door.
+239,Be patient! The Great Wall didn't got build in one day.
+240,Think you can. Think you can't. Either way, you'll be right.
+241,Wisdom is on her way to you.
+242,Digital circuits are made from analog parts.
+243,If you eat a box of fortune cookies, anything is possible.
+244,The best is yet to come.
+245,I'm with you.
+246,Be direct,usually one can accomplish more that way.
+247,A single kind work will keep one warm for years.
+248,Ask a friend to join you on your next voyage.
+249,In God we trust.
+250,Love is free. Lust will cost you everything you have.
+251,Stop searching forever, happiness is just next to you.
+252,You don't need the answers to all of life's questions. Just ask your father what to do.
+253,Jealousy is a useless emotion.
+254,You are not a ghost.
+255,There is someone rather annoying in your life that you need to listen to.
+256,You will plant the smallest seed and it will become the greatest and most mighty tree in the world.
+257,The dream you've been dreaming all your life isn't worth it. Find a new dream, and once you're sure you've found it, fight for it.
+258,See if you can learn anything from the children.
+259,A clear conscience is usually the sign of a bad memory.
+260,Aim high, time flies.
+261,One is not sleeping, does not mean they are awake.
+262,A great pleasure in life is doing what others say you can't.
+263,Your father still loves and is in always with you. Remember that.
+264,Before you can be reborn you must die.
+265,It better to be the hammer than the nail.
+266,You are admired by everyone for your talent and ability.
+267,Save the whales. Collect the whole set.
+268,You will soon discover a major truth about the one you love most.
+269,Your life will prosper only if you acknowledge your faults and work to reduce them.
+270,Pray to God, but row towards shore.
+271,You will soon witness a miracle.
+272,Help, I'm being held prisoner in a  Chinese cookie factory.
+273,Alas! The onion you are eating is someone else&rsquo;s water lily.
+274,You are a persoon with a good sense of justice, now it's time to act like it.
+275,You create enthusiasm around you.
+276,There are big changes ahead for you.
+277,You will have many happy days soon.
+278,Out of confusion comes new patterns.
+279,If you love someone enough and they break your heart, you can't stop yourself from still loving them again even after all that pain.
+280,Look right...Now look left...Now look forward (do this really fast) do you feel any different? good you should feel dizzy.
+281,Live like you are on the bottom, even if you are on the top.
+282,You will soon emerge victorious from the maze you've been traveling in.
+283,Do not judge a book by it's color.
+284,Everything will come your way.
+285,There is a time to be practical now.
+286,Bend the rod while it is still hot.
+287,Darkness is only succesful when there is no light.
+288,Acting is not lying. It is findind someone hiding inside you and letting that person run free.
+289,You will be forced to face fear, but if you do not run, fear will be afraid of you.
+290,You are thinking about doing something. Don't do it, it won't help anything.
+291,Love Conquers all.
+292,The phrase is follow your dreams. Not dream period.
+293,stop nagging to your partner and take it day by day.
+294,Do not think that me or my brothers have supreme control over what will happen to you.
+295,Bad luck and misfortune will follow you all your days.
+296,Remember the fate of the early Worm.
+297,Begin your life anew with strength, grace and wonder.
+298,Be a good friend and a fair enemy.
+299,What goes around comes around.
+300,Bad luck and misfortune will infest your pathetic soul for all eternity.
+301,Use the force.
+302,Trust your intuition.
+303,Encourage your peers.
+304,Let your imagination wander.
+305,Your pain is the breaking of the shell that encloses your understanding.
+306,Patience is key, a wait short or long will have its reward.
+307,Tell them before it's too late...
+308,Be assertive when decisive action is needed.
+309,To determine whether someone is beautiful is not by looking at his/her appearance, but his/her heart.
+310,While you have this day, fill it with life. While you're in this moment, give it your own special meaning and purpose and joy.
+311,Even though it will often be difficult and complicated, you know you have what it takes to get it done.
+312,You can choose, right now and in every moment, to put your powerful and effective abilities to purposeful use. There is always something you can do, no matter what the situation may be, that will move your life forward.
+313,IT IS NOT GOOD TO BE A USER BLESSINGS COME FROM BEING A GIVER NOT A TAKER.
+314,You will prosper in the field of wacky inventions.
+315,Your tongue is your ambassador.
+316,The cure for grief is movement.
+317,Love Is At Your Hands Be Glad And Hold On To It.
+318,You are often asked if it is in yet.
+319,Life to you is a bold and dashing responsibility.
+320,Patience is a key to joy.
+321,A bargain is something you don't need at a price you can't resist.
+322,Stay to your inner-self, you will benefit in many ways.
+323,Rarely do great beauty and great virtue dwell together as they do in you.
+324,You are talented in many ways.
+325,You are the master of every situation.
+326,Your problem just got bigger. Think, what have you done.
+327,If your cookie still in one piece, buy lotto.
+328,Go with the flow will make your transition ever so much easier.
+329,A metaphor could save your life.
+330,There are lessons to be learned by listening to others.
+331,If you want the rainbow, you have to tolerate the rain.
+332,Volition, Strength, Languages, Freedom and Power rests in you.
+333,It takes more than a good memory to have good memories.
+334,Word to the wise: Don't play leapfrog with a unicorn.........
+335,Forgive your enemies, but never forget them.
+336,Don't worry about the stock market. Invest in family.
+337,Your fortune is as sweet as a cookie.
+338,Never trouble trouble till trouble troubles you.
+339,Get off to a new start - come out of your shell.
+340,Cooperate with those who have both know how and integrith.
+341,Minor aches today are likely to pay off handsomely tomorrow.
+342,You are about to become $8.95 poorer. ($6.
+343,Your mouth may be moving, but nobody is listening.
+344,The problem with resisting temptation is that it may never come again.
+345,All your sorrows will vanish.
+346,About time I got out of that cookie.
+347,Love will lead the way.
+348,It is best to act with confidence, no matter how little right you have to it.
+349,Soon, a visitor shall delight you.
+350,What breaks in a moment may take years to mend.
+351,Someone stole your fortune and replaced it with this one.  Your luck sucks.
+352,You will be rewarded for your patience and understanding.
+353,You will achieve all your desires and pleasures.
+354,Never miss a chance to keep your mouth shut.
+355,Nothing Shows A Man's Character More Than What He Laughs At.
+356,Never regret anything that made you smile.
+357,Love Takes Pratice.
+358,Don't take yourself so seriously, no one else does.
+359,At this very moment you can change the rest of your life.
+360,Become who you are.
+361,All comes at the proper time to him who knows how to wait.
+362,The energy is within you.
+363,The quotes that you do not understand, are not meant for you.
+364,You have an important new business development shaping up.
+365,Birds are entangled by their feet and men by their tongues.
+366,Benefit by doing things that others give up on.
+367,Rest has a peaceful effect on your physical and emotional health.
+368,One of the best ways to persuade others is with your ears--by listening to them.
+369,Plan your work and work your plan.
+370,Over self-confidence is equal to being blind.
+371,Those who bring sunshine to the lives of others cannot keep it from themselves.
+372,Before the beginning of great brilliance, there must be chaos.
+373,Old friends make best friends.
+374,Stop searching forever. Happiness is just next to you.
+375,Accept something that you cannot change, and you will feel better.
+376,Kiss is not a kiss without the heart.
+377,Enhance your karma by engaging in various charitable activities.
+378,You will have good luck and overcome many hardships.
+379,You never hesitate to tackle the most difficult problems.
+380,Hope is like food. You will starve without it.
+381,WHEN FIRE AND WATER GO TO WAR WATER ALWAYS WINS.
+382,An angry man opens his mouth and shuts up his eyes.
+383,Make the system work for you, not the other way around.
+384,You will be hungry soon, order takeout now.
+385,Be prepared for extra energy.
+386,An unexpected relationship will become permanent.
+387,The love of your life is sitting across from you.
+388,Better be the head of a chicken than the tail of an ox.
+389,To forgive others one more time is to create one more blessing for yourself.
+390,Enjoy yourself while you can.
+391,The ultimate test of a relationship is to disagree but to hold hands.
+392,Excellence is the difference between what I do and what I am capable of.
+393,Do not let what you do not have prevent you from using what you do have.
+394,What ends on hope does not end at all.
+395,People enjoy having you around. Appreciate this.
+396,Everyone agrees. You are the best.
+397,LIFE CONSIST NOT IN HOLDING GOOD CARDS, BUT IN PLAYING THOSE YOU HOLD WELL.
+398,It's better to be alone sometimes.
+399,Let the deeds speak.
+400,You will be called in to fulfill a position of high honor and responsibility.
+401,The man on the top of the mountain did not fall there.
+402,You will conquer obstacles to achieve success.
+403,Joys are often the shadows, cast by sorrows.
+404,Fortune favors the brave.
+405,An upward movement initiated in time can counteract fate.
+406,A journey of a thousand miles begins with a single step.
+407,Sometimes you just need to lay on the floor.
+408,Never give up. Always find a reason to keep trying.
+409,If you have something worth fighting for, then fight for it.
+410,Stop wishing. Start doing.
+411,Accept your past without regrets. Handle your present with confidence. Face your future without fear.
+412,Stay true to those who would do the same for you.
+413,Ask yourself if what you are doing today is getting you closer to where you want to be tomorrow.
+414,Happiness is an activity.
+415,Help is always needed but not always appreciated. Stay true to your heart and help those in need weather they appreciate it or not.
+416,Hone your competitive instincts.
+417,Finish your work on hand don't be greedy.
+418,For success today, look first to yourself.
+419,Your fortune is as sweet as a cookie.
+420,Integrity is the essence of everything successful.
+421,If you're happy, you're successful.
+422,Believing that you are beautiful will make you appear beautiful to others around you.
+423,Happinees comes from a good life.
+424,Before trying to please others think of what makes you happy.
+425,When hungry, order more Chinese food.
+426,Your golden opportunity is coming shortly.
+427,For hate is never conquered by hate. Hate is conquered by love .
+428,You will make many changes before settling down happily.
+429,A man is born to live and not prepare to live.
+430,You cannot become rich except by enriching others.
+431,Don't pursue happiness - create it.
+432,You will be successful in love.
+433,All your fingers can't be of the same length.
+434,Wise sayings often fall on barren ground, but a kind word is never thrown away.
+435,A lifetime of happiness is in store for you.
+436,It is very possible that you will achieve greatness in your lifetime.
+437,Be tactful; overlook your own opportunity.
+438,You are the controller of your destiny.
+439,Everything happens for a reson.
+440,How can you have a beutiful ending without making beautiful mistakes.
+441,You can open doors with your charm and patience.
+442,Welcome the change coming into your life.
+443,You are admired for your adventuous ways.
+444,You are blessed, today is the day to bless others.
+445,The Greatest War Sometimes Isn't On The Battlefield But Against Oneself.
+446,People in your background will be more co-operative than usual.
+447,A good way to stay healthy is to eat more Chinese food.
+448,Anyone who dares to be, can never be weak.
+449,Affirm it, visualize it, believe it, and it`will actualize itself.
+450,The measure of time to your next goal is the measure of your discipline.
+451,Take a minute and let it ride, then take a minute to let it breeze.
+452,We are here to love each other, serve each other and uplift each other.
+453,To affirm is to make firm.
+454,Remember this: duct tape can fix anything, so don't worry about messing things up.
+455,Failure is not defeat until you stop trying.
+456,The days that make us happy make us wise.
+457,Men do not fail... they give up trying.
+458,Time may fly by. But Memories don't.
+459,You will win success in whatever you adopt.
+460,You will outdistance all your competitors.
+461,Money will come to you when you are doing the right thing.
+462,When you get something for nothing, you just haven't been billed for it yet.
+463,You will discover your hidden talents.
+464,You'll advance for with your abilities.
+465,When you can't naturally feel upbeat it can sometimes help you to act as if you did.
+466,You will overcome difficult times.
+467,Your problem just became your stepping stone.  Catch the moment.
+468,I am a fortune. You just broke my little house.
+469,The majority of the word can't is can.
+470,The secret of getting ahead is getting started.
+471,Be most affectionate today.
+472,Change your thoughts and you change the world.
+473,Sing and rejoice, fortune is smiling on you.
+474,A truly great person never puts away the simplicity of a child.
+475,Customer service is like taking a bath you have to keep doing it.
+476,The expanse of your intelligence is a void no universe could ever fill.
+477,Those grapes you cannot taste are always sour.
+478,An unexpected aquaintance will resurface.
+479,If you want the rainbow, then you have to tolerate the rain.
+480,You don't get harmony when everyone sings the same note.
+481,The race is not always to the swift, but to those who keep on running.
+482,The early bird gets the worm, but the second mouse gets the cheese.
+483,The best things in life aren't things.
+484,Don't bother looking for fault. The reward for finding it is low.
+485,Everything has beauty but not everyone sees it.
+486,Nothing is as good or bad as it appears.
+487,Never cut what you can untie.
+488,Meet your opponent half way. You need the exercise.
+489,Laughter is the shortest distance between two people.
+490,We cannot change the direction of the wind, but we can adjust our sails.
+491,We could learn a lot from crayons: Some of are sharp, some are pretty, some have weird names, and all are different colors. But they all have to learn to live in the same box.
+492,Use your instincts now.
+493,If you take a single step to your journey, you'll succeed; it's not best to fail.
+494,In the eyes of lovers, everything is beautiful.
+495,Warning, do not eat your fortune.
+496,Demonstrate refinement in everything you do.
+497,Impossible standards just make life difficult.
+498,A different world cannot be build by indifferent people.
+499,Q. What is H2O? A. Caring, 2 parts Hug and 1 part Open-mind.
+500,All troubles you have can pass away very quickly.
+501,Integrity is the essense of everything successful.
+502,Sometimes the object of the journey is not the end, but the journey itself.
+503,Fear is just excitement in need of an attitude adjustment.
+504,The food here taste so good, even a cave man likes it.
+505,Perhaps you've been focusing too much on spending.
+506,Happiness isn't something you remember, it's something you experience.
+507,Oops... Wrong cookie.
+508,The dream is within you.
+509,Love is on its way.
+510,Be direct, usually one can accomplish more that way.
+511,Use your talents. That's what they are intended for.
+512,The troubles you have now will pass away quickly.
+513,See the light at the end of the tunnel.
+514,Your dream will come true when you least expect it.
+515,Don't 'face' reality, let it be the place from which you leap.
+516,Fortune smiles upon you today.
+517,Believing is doing.
+518,Your dynamic eyes have attracted a secret admirer.
+519,You know where you are going and how to get there.
+520,Go confidently in the direction of your dreams.
+521,Your ability to pick a winner will bring you success.
+522,Humor usually works at the moment of awkwardness.
+523,A good time to finish up old tasks.
+524,Enthusiastic leadership gets you a promotion when you least expect it.
+525,You love Chinese food.
+526,You are far more influential than you think.
+527,Adjust finances, make budgets, to improve your standing.
+528,Happiness is not the absence of conflict, but the ability to cope with it.
+529,An understanding heart warms all that are graced with it's presense.
+530,Your co-workers take pleasure in your great sense of creativity.
+531,You are one of the people who goes places in life.
+532,Others enjoy your company.
+533,When in doubt, let your instincts guide you.
+534,A cheerful message is on its way to you.
+535,A pleasant surprise is in store for you tonight.
+536,To courageously shoulder the responsibility of one's mistake is character.
+537,The joyful energy of the day will have a positive affect on you.
+538,You have a strong desire for a home and your family interests come first.
+539,Dogs have owners, cats have staff.
+540,Be patient: in time, even an egg will walk.
+541,You are not a person who can be ignored.
+542,You always know the right times to be assertive or to simply wait.
+543,Reading to the mind is what exercise is to the body.
+544,Eat something you never tried before.
+545,You need to live authentically, and you can't ignore that.
+546,Make all you can, save all you can, give all you can.
+547,A well-aimed spear is worth three.
+548,To build a better world, start in your community.
+549,When you can't naturally feel upbeat, it can sometimes help to act a if you did.
+550,May you have great luck.
+551,A kind word will keep someone warm for years.
+552,Nothing in the world is accomplished without passion.
+553,Human invented language to satisfy the need to complain.
+554,Accept what comes to you each day.
+555,A small lucky package is on its way to you soon.
+556,In human endeavor, chance favors the prepared mind.
+557,Do not upset the penguin today.
+558,Don't cry.
+559,The best way to give credit is to give it away.
+560,Anything you do, do it well. The last thing you want is to be sorry for what you didn't do.
+561,It takes more then good memory to have good memories.
+562,Grant yourself a wish this year only you can do it.
+563,You will be selected for a promotion because of your accomplishments.
+564,There are many new opportunities that are being presented to you.
+565,You will inherit a large sum of money.
+566,You will recieve a gift from someone that cares about you.
+567,You are not illiterate.
+568,Love because it is the only true adventure.
+569,Keep true to the dreams of your youth.
+570,Treasure what you have.
+571,The greatest precept is continual awareness.
+572,A new friend helps you break out of an old routine.
+573,I have a dream.... Time to go to bed.
+574,Your skill will accomplish what the force of many cannot.
+575,You will soon be surrounded by good friends and laughter.
+576,The best is yet to come.
+577,It is better to be the hammer then the anvil.
+578,He who climbs a ladder must begin at the first step.
+579,Action speaks nothing, without the Motive.
+580,Give yourself some peace and quiet for at least a few hours.
+581,Old dreams never die they just get filed away.
+582,You can fix it with a little extra energy and a positive attitude.
+583,A man without aim is like a clock without hands, as useless if it turns as if it stands.
+584,Many folks are about as happy as they make up their minds to be.
+585,You should be able to make money and hold on to it.
+586,The human spirit is stronger than anything that can happen to it.
+587,Your succeess will astonish everyone.
+588,It is better to have a hen tomorrow than an egg today.
+589,Judge each day not by the harvest you reap but by the seeds you plant.
+590,You like Chinese food.
+591,Your hard work will get payoff today.
+592,No matter what your past has been, you have a spotless future.
+593,Your secret desire to completely change your life will manifest.
+594,Soon you will be sitting on top of the world.
+595,You are never selfish with your advice or your help.
+596,A thrilling time is in store for you.
+597,It's tough to be fascinating.
+598,Luck sometimes visits a fool, but it never sits down with him.
+599,Keep your plans secret for now.
+600,Traveling this year will bring your life into greater perspective.
+601,Only talent people get help  from others.
+602,Constant grinding can turn an iron nod into a needle.
+603,When you're about to turn your heart into a stone remember: you do not walk alone.
+604,You are vigorous in words and action.
+605,The one who snores will always fall asleep first.
+606,Rest is a good thing, but boredom is its brother.
+607,Do not be overly judgemental of your loved one's intentions or actions.
+608,Think of how you can assist on a problem, not who to blame.
+609,The life of every woman or man - the heart of it - is pure and holy joy.
+610,Trust your intuition. The universe is guiding your life.
+611,Use your head, but live in your heart.
+612,Your passions sweep you away.
+613,Think of mother's exhortations more.
+614,The gambler is like the fisherman both have beginners luck.
+615,You are given the chance to take part in an exciting adventure.
+616,The simplest answer is to act.
+617,You will always be surrounded by true friends.
+618,Keep your feet on the ground even though friends flatter you.
+619,You are the man of righteousness and integrity.
+620,He who seeks will find.
+621,The smart thing to do is to begin trusting your intuitions.
+622,Your many hidden talents will become obvious to those around you.
+623,Pick a path with heart.
+624,The human spirit is stronger then anything that can happen to it.
+625,It takes more than good memory to have good memories.
+626,Face facts with dignity.
+627,Be calm when confronting an emergency crisis.
+628,Do you believe? Endurance and persistence will be rewarded.
+629,A new wardrobe brings great joy and change in your life.
+630,Everyone agrees you are the best.
+631,A new outlook brightens your image and brings new friends.
+632,Everything will now come your way.
+633,You will be called to fill a position of high honor and responsibility.
+634,The eyes believe themselves; the ears believe other people.
+635,Good beginning is half done.
+636,Some pursue happiness; you create it.
+637,It's the worst of times, you need to summon your optimism.
+638,You are cautious in showing your true self to others.
+639,Your ability to accomplish tasks will follow with success.
+640,We all have extraordinary coded within us, waiting to be released.
+641,You will have a bright future.
+642,Compassion is a way of being.
+643,You will always have good luck in your personal affairs.
+644,Perhaps you've been focusing too much on that one thing..
+645,Right now there's an energy pushing you in a new direction.
+646,Everybody feels lucky for having you as a friend.
+647,When the moment comes, take  the top one.
+648,Sometimes travel to new places leads to great transformation.
+649,There is always a way - if you are committed.
+650,Life is too short to waste time hating anyone.
+651,All the world may not love a lover but they will be watching him.
+652,Don't just spend time, invest it.
+653,Life  always gets harder near the summit.
+654,Take the chance while you still have the choice.
+655,It is much easier to be cirtical than to be correct.
+656,Enjoy life! It is better to be happy than wise.
+657,To make the cart go, you must grease the wheels.
+658,You are contemplating some action which will bring credit upon you.
+659,You may be disappointed if you fail, but you are doomed if you don't try.
+660,You will always get what you want through your charm and personality.
+661,The big issues are work, career, or status right now.
+662,Your emotional currents are flowing powerfully now.
+663,Any decision you have to make tomorrow is a good decsion.
+664,Consume less. Share more. Enjoy life.
+665,The secret of staying young is good health and lying about your age.
+666,Spring has sprung. Life is blooming.
+667,The possibility of a career change is near.
+668,The important thing is to never stop questioning.
+669,Compassion will cure more then condemnation.
+670,Excuses are easy to manufacture, and hard to sell.
+671,Put your mind into planning today. Look into the future.
+672,Broke is only temporaryl poor is a state of mind.
+673,Here we go. Moo Shu Cereal for breakfast with duck sauce.
+674,Teamwork: the fuel that allows common people attain uncommon results.
+675,Hard words break no bones, fine words butter no parsnips.
+676,We cannot direct the wind but we can adjust the sails.
+677,You are offered the dream of a lifetime.
+678,Working out the kinks today will make for a better tomorrow.
+679,You have a curious smile and a mysterious nature.
+680,Questions provide the key to unlocking our unlimited potential.
+681,You will enjoy razon-sharp spiritual vision today.
+682,Well-arranged time is the surest sign of a well-arranged mind.
+683,Never bring unhappy feelings into your home.
+684,A golden egg of opportunity falls into your lap this month.
+685,You are very grateful for the small pleasures of life.
+686,today you should be a passenger. Stay close to a driver for a day.
+687,For hate is never conquered by hate. Hate is conquered by love.
+688,Service is the rent we pay for the privilege of living on this planet.
+689,The leader seeks to communicate his vision to his followers.
+690,Great works are performed not by strength, but by perseverance.
+691,Present your best ideas today to an eager and welcoming audience.
+692,Friends long absent are coming back to you.
+693,The time is right to make new friends.
+694,You may be hungry soon: order a takeout now.
+695,Do not hesitate to look for help, an extra hand should always be welcomed.
+696,You have an unusually magnetic personality.
+697,Dream lofty dreams, and as you dream, so shall you become.
+698,You have a quiet and unobtrusive nature.
+699,Judge not according to the appearance.
+700,One who admires you greatly is hidden before your eyes.
+701,Traveling more often is important for your health and happiness.
+702,You have a reputation for being straightforward and honest.
+703,You are always welcome in any gathering.
+704,You will be traveling and coming into a fortune.
+705,Open up your heart - it can always be closed again.
+706,Being happy is not always being perfect.
+707,Next time you have the opportunity, go on a rollercoaster.
+708,Try everything once, even the things you don't think you will like.
+709,Life is too short to hold grudges.
+710,Being alone and being lonely are two different things.
+711,Don't worry about things in the past, there is nothing you can do about them now. Don't worry about things that are happening now, make the best of a bad situation. Don't worry about things in the future, they may never happen.
+712,Tomorrow, take a moment to do something just for yourself.
+713,Someone close to you is waiting for you to call.
+714,Smile. Tomorrow is another day.
+715,You can never been certain of success, but you can be certain of failure if you never try.
+716,It takes ten times as many muscles to frown as it does to smile.
+717,Shoot for the moon! If you miss you will still be amongst the stars.
+718,Keep your eyes open. You never know what you might see.
+719,Tell them what you really think. Otherwise, nothing will change.
+720,Let your heart make your decisions - it does not get as confused as your head.
+721,Working hard will make you live a happy life.
+722,A pleasant surprise is waiting for you.
+723,Today it's up to you to create the peacefulness you long for.
+724,A friend asks only for your time not your money.
+725,If you refuse to accept anything but the best, you very often get it.
+726,A smile is your passport into the hearts of others.
+727,A good way to keep healthy is to eat more Chinese food.
+728,Your high-minded principles spell success.
+729,Hard work pays off in the future, laziness pays off now.
+730,Change can hurt, but it leads a path to something better.
+731,Enjoy the good luck a companion brings you.
+732,People are naturally attracted to you.
+733,A chance meeting opens new doors to success and friendship.
+734,You learn from your mistakes... You will learn a lot today.
+735,What ever you're goal is in life, embrace it visualize it, and for it will be yours.
+736,You cannot love life until you live the life you love.
+737,Be on the lookout for coming events; They cast their shadows beforehand.
+738,Land is always on the mind of a flying bird.
+739,The man or woman you desire feels the same about you.
+740,Meeting adversity well is the source of your strength.
+741,A dream you have will come true.
+742,Our deeds determine us, as much as we determine our deeds.
+743,Never give up. You're not a failure if you don't give up.
+744,You will become great if you believe in yourself.
+745,There is no greater pleasure than seeing your loved ones prosper.
+746,You will marry your lover.
+747,A very attractive person has a message for you.
+748,You already know the answer to the questions lingering inside your head.
+749,It is now, and in this world, that we must live.
+750,You must try, or hate yourself for not trying.
+751,You can make your own happiness.
+752,The greatest risk is not taking one.
+753,The love of your life is stepping into your planet this summer.
+754,Love can last a lifetime, if you want it to.
+755,Adversity is the parent of virtue.
+756,Serious trouble will bypass you.
+757,A short stranger will soon enter your life with blessings to share.
+758,Now is the time to try something new.
+759,Wealth awaits you very soon.
+760,If you feel you are right, stand firmly by your convictions.
+761,Keep your eye out for someone special.
+762,You are very talented in many ways.
+763,A stranger, is a friend you have not spoken to yet.
+764,A new voyage will fill your life with untold memories.
+765,You will travel to many exotic places in your lifetime.
+766,Your ability for accomplishment will follow with success.
+767,Nothing astonishes men so much as common sense and plain dealing.
+768,Its amazing how much good you can do if you dont care who gets the credit.
+769,There will be a happy romance for you shortly.
+770,Your fondest dream will come true within this year.
+771,You have a deep interest in all that is artistic.
+772,Your emotional nature is strong and sensitive.
+773,A letter of great importance may reach you any day now.
+774,Good health will be yours for a long time.
+775,You will become better acquainted with a coworker.
+776,To be old and wise, you must first be young and stupid.
+777,Failure is only the opportunity to begin again more intelligently.
+778,Integrity is doing the right thing, even if nobody is watching.
+779,Conquer your fears or they will conquer you.
+780,You are a lover of words; One day you will write a book.
+781,In this life it is not what we take up, but what we give up, that makes us rich.
+782,Fear can keep us up all night long, but faith makes one fine pillow.
+783,Seek out the significance of your problem at this time.  Try to understand.
+784,Never upset the driver of the car you're in; they're the master of your destiny until you get home.
+785,He who slithers among the ground is not always a foe.
+786,You learn from your mistakes, you will learn a lot today.
+787,You only need look to your own reflection for inspiration.
+788,You are not judged by your efforts you put in; you are judged on your performance.
+789,Rivers need springs.
+790,Good news from afar may bring you a welcome visitor.
+791,When all else seems to fail, smile for today and just love someone.
+792,Patience is a virtue, unless its against a brick wall.
+793,When you look down, all you see is dirt, so keep looking up.
+794,If you are afraid to shake the dice, you will never throw a six.
+795,Even if the person who appears most wrong, is also quite often right.
+796,A single conversation with a wise man is better than ten years of study.
+797,Happiness is often a rebound from hard work.
+798,The world may be your oyster, but that doesn't mean you'll get it's pearl.
+799,Your life will be filled with magical moments.
+800,You're true love will show himself to you under the moonlight.
+801,Do not follow where the path may lead.  Go where there is no path...
+802,The object of your desire comes closer.
+803,You have a flair for adding a fanciful dimension to any story.
+804,The most useless energy is trying to change what and who God so carefully created.
+805,You will have unexpected great good luck.
+806,All progress occurs because people dare to be different.
+807,Your ability for accomplishment will be followed by success.
+808,The world is always ready to receive talent with open arms.
+809,Things may come to those who wait, but only the things left by those who hustle.
+810,We can't help everyone. But everyone can help someone.
+811,Every day is a new day. But tomorrow is never promised.
+812,It is not necessary to show others you have change; the change will be obvious.
+813,You have a deep appreciation of the arts and music.
+814,If your desires are not extravagant, they will be rewarded.
+815,You try hard, never to fail. You don't, never to win.
+816,Never give up on someone that you don't go a day without thinking about.
+817,It never pays to kick a skunk.
+818,In case of fire, keep calm, pay bill and run.
+819,Next full moon brings an enchanting evening.
+820,Not all closed eye is sleeping nor open eye is seeing.
+821,Impossible is a word only to be found in the dictionary of fools.
+822,You will soon witness a miracle.
+823,The time is alway right to do what is right.
+824,Love is as necessary to human beings as food and shelter.
+825,You will make heads turn.
+826,You are extremely loved.
+827,If you are never patient, you will never get anything done. If you believe you can do it, you will be rewarded with success.
+828,You will soon embark on a business venture.
+829,You believe in the goodness of man kind.
+830,You will have a long and wealthy life.
+831,You will take a pleasant journey to a place far away.
+832,You are a person of culture.
+833,Keep it simple. The more you say, the less people remember.
+834,Life is like a dogsled team. If you ain't the lead dog, the scenery never changes.
+835,Prosperity makes friends and adversity tries them.
+836,Nothing seems impossible to you.
+837,Patience is bitter, but its fruit is sweet.
+838,The only certainty is that nothing is certain.
+839,Success is the sum of my unique visions realized by the sweat of perseverance.
+840,When you expect your opponent to yield, you also should avoid hurting him.
+841,Human evolution: &ldquo;wider freeway but narrower viewpoints.
+842,Intelligence is the door to freedom and alert attention is the mother of intelligence.
+843,Back away from individuals who are impulsive.
+844,Enjoyed the meal? Buy one to go too.
+845,You believe in the goodness of mankind.
+846,A big fortune will descend upon you this year.
+847,Now these three remain, faith, hope, and love. The greatest of these is love.
+848,For success today look first to yourself.
+849,Determination is the wake-up call to the human will.
+850,There are no limitations to the mind except those we aknowledge.
+851,A merry heart does good like a medicine.
+852,Whenever possible, keep it simple.
+853,Your dearest wish will come true.
+854,Poverty is no disgrace.
+855,If you don&rsquo;t do it excellently, don&rsquo;t do it at all.
+856,You have an unusual equipment for success, use it properly.
+857,Emotion is energy in motion.
+858,You will soon be honored by someone you respect.
+859,Punctuality is the politeness of kings and the duty of gentle people everywhere.
+860,Your happiness is intertwined with your outlook on life.
+861,Elegant surroundings will soon be yours.
+862,If you feel you are right, stand firmly by your convictions.
+863,Your smile brings happiness to everyone you meet.
+864,Instead of worrying and agonizing, move ahead constructively.
+865,Do you believe? Endurance and persistence will be rewarded.
+866,A new business venture is on the horizon.
+867,Never underestimate the power of the human touch.
+868,Hold on to the past but eventually, let the times go and keep the memories into the present.
+869,Truth is an unpopular subject. Because it is unquestionably correct.
+870,The most important thing in communication is to hear what isn&rsquo;t being said.
+871,You are broad minded and socially active.
+872,Your dearest dream is coming true. God looks after you especially.
+873,You will recieve some high prize or award.
+874,Your present question marks are going to succeed.
+875,You have a fine capacity for the enjoyment of life.
+876,You will live long and enjoy life.
+877,An admirer is concealing his/her affection for you.
+878,A wish is what makes life happen when you dream of rose petals.
+879,Love can turn cottage into a golden palace.
+880,Lend your money and lose your freind.
+881,You will be rewarded for being a good listener in the next week.
+882,If you never give up on love, It will never give up on you.
+883,Unleash your life force.
+884,Your wish will come true.
+885,There is a prospect of a thrilling time ahead for you.
+886,No distance is too far, if two hearts are tied together.
+887,Land is always in the mind of the flying birds.
+888,Try? No! Do or do not, there is no try.
+889,Do not worry, you will have great peace.
+890,It's about time you asked that special someone on a date.
+891,You create your own stage ... the audience is waiting.
+892,It is never too late. Just as it is never too early.
+893,Discover the power within yourself.
+894,Good things take time.
+895,Stop thinking about the road not taken and pave over the one you did.
+896,Put your unhappiness aside. Life is beautiful, be happy.
+897,You can still love what you can not have in life.
+898,Make a wise choice everyday.
+899,Circumstance does not make the man; it reveals him to himself.
+900,The man who waits till tomorrow, misses the opportunities of today.
+901,Life does not get better by chance. It gets better by change.
+902,If you never expect anything you can never be disappointed.
+903,People in your surroundings will be more cooperative than usual.
+904,True wisdom is found in happiness.
+905,Ones always regrets what could have done. Remember for next time.
+906,Follow your bliss and the Universe will open doors where there were once only walls.
+907,Find a peaceful place where you can make plans for the future.
+908,All the water in the world can't sink a ship unless it gets inside.
+909,The earth is a school learn in it.
+910,In music, one must think with his heart and feel with his brain.
+911,If you speak honestly, everyone will listen.
+912,Ganerosity will repay itself sooner than you imagine.
+913,Do what is right, not what you should.
+914,To effect the quality of the day is no small achievement.
+915,Simplicity and clearity should be the theme in your dress.
+916,Virtuous find joy while Wrongdoers find grieve in their actions.
+917,Not all closed eye is sleeping, nor open eye is seeing.
+918,Bread today is better than cake tomorrow.
+919,In evrything there is a piece of truth.But a piece.
+920,A feeling is an idea with roots.
+921,It's all right to have butterflies in your stomach. Just get them to fly in formation.
+922,Everything will be ok. Don't obsess. Time will prove you right, you must stay where you are.
+923,The finest men like the finest steels have been tempered in the hottest furnace.
+924,The worst of friends may become the best of enemies, but you will always find yourself hanging on.
+925,Let your fantasies unwind...
+926,Don't lead if you won't lead.
+927,Share your hapiness with others today.
+928,It's up to you to clearify.
+929,Your future will be happy and productive.
+930,Seize every second of your life and savor it.
+931,Those who walk in other's tracks leave no footprints.
+932,Failure is the mother of all success.
+933,Difficulty at the beginning useually means ease at the end.
+934,Do not seek so much to find the answer as much as to understand the question better.
+935,Your way of doing what other people do their way is what makes you special.
+936,A beautiful, smart, and loving person will be coming into your life.
+937,Friendship is an ocean that you cannot see bottom.
+938,Your life does not get better by chance, it gets better by change.
+939,Our duty,as men and women,is to proceed as if limits to our ability did not exist.
+940,A pleasant expeience is ahead:don't pass it by.
+941,They say you are stubborn; you call it persistence.
+942,Two small jumps are sometimes better than one big leap.
+943,A new wardrobe brings great joy and change to your life.
+944,The cure for grief is motion.
+945,I hear and I forget. I see and I remember. I do and I understand.
+946,I have a dream....Time to go to bed.
+947,A human being is a deciding being.
+948,Today is an ideal time to water your parsonal garden.
+949,Some men dream of fortunes, others dream of cookies.
+950,Things are never quite the way they seem.
+951,YOUR FAILURES WILL LEAD YOU TO YOUR SUCCESS.
+952,IN ORDER TO GET THE RAINBOW, YOU MUST ENDURE THE RAIN.
+953,Beauty is simply beauty. originality is magical.
+954,Your dream will come true when you least expect it.
+955,Let not your hand be stretched out to receive and shut when you should repay.
+956,Don't worry, half the people you know are below average.
+957,Vision is the art of seeing what is invisible to others.
+958,You don't need talent to gain experience.
+959,A focused mind is one of the most powerful forces in the universe.
+960,Today you shed your last tear. Tomorrow fortune knocks at your door.
+961,Be patient! The Great Wall didn't got build in one day.
+962,Think you can. Think you can't. Either way, you'll be right.
+963,Wisdom is on her way to you.
+964,Digital circuits are made from analog parts.
+965,If you eat a box of fortune cookies, anything is possible.
+966,The best is yet to come.
+967,I'm with you.
+968,Be direct,usually one can accomplish more that way.
+969,A single kind work will keep one warm for years.
+970,Ask a friend to join you on your next voyage.
+971,In God we trust.
+972,Love is free. Lust will cost you everything you have.
+973,Stop searching forever, happiness is just next to you.
+974,You don't need the answers to all of life's questions. Just ask your father what to do.
+975,Jealousy is a useless emotion.
+976,You are not a ghost.
+977,There is someone rather annoying in your life that you need to listen to.
+978,You will plant the smallest seed and it will become the greatest and most mighty tree in the world.
+979,The dream you've been dreaming all your life isn't worth it. Find a new dream, and once you're sure you've found it, fight for it.
+980,See if you can learn anything from the children.
+981,A clear conscience is usually the sign of a bad memory.
+982,Aim high, time flies.
+983,One is not sleeping, does not mean they are awake.
+984,A great pleasure in life is doing what others say you can't.
+985,Your father still loves and is in always with you. Remember that.
+986,Before you can be reborn you must die.
+987,It better to be the hammer than the nail.
+988,You are admired by everyone for your talent and ability.
+989,Save the whales. Collect the whole set.
+990,You will soon discover a major truth about the one you love most.
+991,Your life will prosper only if you acknowledge your faults and work to reduce them.
+992,Pray to God, but row towards shore.
+993,You will soon witness a miracle.
+994,Help, I'm being held prisoner in a  Chinese cookie factory.
+995,Alas! The onion you are eating is someone else&rsquo;s water lily.
+996,You are a persoon with a good sense of justice, now it's time to act like it.
+997,You create enthusiasm around you.
+998,There are big changes ahead for you.
+999,You will have many happy days soon.
+1000,Out of confusion comes new patterns.
+1001,If you love someone enough and they break your heart, you can't stop yourself from still loving them again even after all that pain.
+1002,Look right...Now look left...Now look forward (do this really fast) do you feel any different? good you should feel dizzy.
+1003,Live like you are on the bottom, even if you are on the top.
+1004,You will soon emerge victorious from the maze you've been traveling in.
+1005,Do not judge a book by it's color.
+1006,Everything will come your way.
+1007,There is a time to be practical now.
+1008,Bend the rod while it is still hot.
+1009,Darkness is only succesful when there is no light.
+1010,Acting is not lying. It is findind someone hiding inside you and letting that person run free.
+1011,You will be forced to face fear, but if you do not run, fear will be afraid of you.
+1012,You are thinking about doing something. Don't do it, it won't help anything.
+1013,Love Conquers all.
+1014,The phrase is follow your dreams. Not dream period.
+1015,stop nagging to your partner and take it day by day.
+1016,Do not think that me or my brothers have supreme control over what will happen to you.
+1017,Bad luck and misfortune will follow you all your days.
+1018,Remember the fate of the early Worm.
+1019,Begin your life anew with strength, grace and wonder.
+1020,Be a good friend and a fair enemy.
+1021,What goes around comes around.
+1022,Bad luck and misfortune will infest your pathetic soul for all eternity.
+1023,Use the force.
+1024,Trust your intuition.
+1025,Encourage your peers.
+1026,Let your imagination wander.
+1027,Your pain is the breaking of the shell that encloses your understanding.
+1028,Patience is key, a wait short or long will have its reward.
+1029,Tell them before it's too late...
+1030,Be assertive when decisive action is needed.
+1031,To determine whether someone is beautiful is not by looking at his/her appearance, but his/her heart.
+1032,While you have this day, fill it with life. While you're in this moment, give it your own special meaning and purpose and joy.
+1033,Even though it will often be difficult and complicated, you know you have what it takes to get it done.
+1034,You can choose, right now and in every moment, to put your powerful and effective abilities to purposeful use. There is always something you can do, no matter what the situation may be, that will move your life forward.
+1035,IT IS NOT GOOD TO BE A USER BLESSINGS COME FROM BEING A GIVER NOT A TAKER.
+1036,You will prosper in the field of wacky inventions.
+1037,Your tongue is your ambassador.
+1038,The cure for grief is movement.
+1039,Love Is At Your Hands Be Glad And Hold On To It.
+1040,You are often asked if it is in yet.
+1041,Life to you is a bold and dashing responsibility.
+1042,Patience is a key to joy.
+1043,A bargain is something you don't need at a price you can't resist.
+1044,Stay to your inner-self, you will benefit in many ways.
+1045,Rarely do great beauty and great virtue dwell together as they do in you.
+1046,You are talented in many ways.
+1047,You are the master of every situation.
+1048,Your problem just got bigger. Think, what have you done.
+1049,If your cookie still in one piece, buy lotto.
+1050,Go with the flow will make your transition ever so much easier.
+1051,A metaphor could save your life.
+1052,There are lessons to be learned by listening to others.
+1053,If you want the rainbow, you have to tolerate the rain.
+1054,Volition, Strength, Languages, Freedom and Power rests in you.
+1055,It takes more than a good memory to have good memories.
+1056,Word to the wise: Don't play leapfrog with a unicorn.........
+1057,Forgive your enemies, but never forget them.
+1058,Don't worry about the stock market. Invest in family.
+1059,Your fortune is as sweet as a cookie.
+1060,Never trouble trouble till trouble troubles you.
+1061,Get off to a new start - come out of your shell.
+1062,Cooperate with those who have both know how and integrith.
+1063,Minor aches today are likely to pay off handsomely tomorrow.
+1064,You are about to become $8.95 poorer. ($6.
+1065,Your mouth may be moving, but nobody is listening.
+1066,The problem with resisting temptation is that it may never come again.
+1067,All your sorrows will vanish.
+1068,About time I got out of that cookie.
+1069,Love will lead the way.
+1070,It is best to act with confidence, no matter how little right you have to it.
+1071,Soon, a visitor shall delight you.
+1072,What breaks in a moment may take years to mend.
+1073,Someone stole your fortune and replaced it with this one.  Your luck sucks.
+1074,You will be rewarded for your patience and understanding.
+1075,You will achieve all your desires and pleasures.
+1076,Never miss a chance to keep your mouth shut.
+1077,Nothing Shows A Man's Character More Than What He Laughs At.
+1078,Never regret anything that made you smile.
+1079,Love Takes Pratice.
+1080,Don't take yourself so seriously, no one else does.
+1081,At this very moment you can change the rest of your life.
+1082,Become who you are.
+1083,All comes at the proper time to him who knows how to wait.
+1084,The energy is within you.
+1085,The quotes that you do not understand, are not meant for you.
+1086,You have an important new business development shaping up.
+1087,Birds are entangled by their feet and men by their tongues.
+1088,Benefit by doing things that others give up on.
+1089,Rest has a peaceful effect on your physical and emotional health.
+1090,One of the best ways to persuade others is with your ears--by listening to them.
+1091,Plan your work and work your plan.
+1092,Over self-confidence is equal to being blind.
+1093,Those who bring sunshine to the lives of others cannot keep it from themselves.
+1094,Before the beginning of great brilliance, there must be chaos.
+1095,Old friends make best friends.
+1096,Stop searching forever. Happiness is just next to you.
+1097,Accept something that you cannot change, and you will feel better.
+1098,Kiss is not a kiss without the heart.
+1099,Enhance your karma by engaging in various charitable activities.
+1100,You will have good luck and overcome many hardships.
+1101,You never hesitate to tackle the most difficult problems.
+1102,Hope is like food. You will starve without it.
+1103,WHEN FIRE AND WATER GO TO WAR WATER ALWAYS WINS.
+1104,An angry man opens his mouth and shuts up his eyes.
+1105,Make the system work for you, not the other way around.
+1106,You will be hungry soon, order takeout now.
+1107,Be prepared for extra energy.
+1108,An unexpected relationship will become permanent.
+1109,The love of your life is sitting across from you.
+1110,Better be the head of a chicken than the tail of an ox.
+1111,To forgive others one more time is to create one more blessing for yourself.
+1112,Enjoy yourself while you can.
+1113,The ultimate test of a relationship is to disagree but to hold hands.
+1114,Excellence is the difference between what I do and what I am capable of.
+1115,Do not let what you do not have prevent you from using what you do have.
+1116,What ends on hope does not end at all.
+1117,People enjoy having you around. Appreciate this.
+1118,Everyone agrees. You are the best.
+1119,LIFE CONSIST NOT IN HOLDING GOOD CARDS, BUT IN PLAYING THOSE YOU HOLD WELL.
+1120,It's better to be alone sometimes.
+1121,Let the deeds speak.
+1122,You will be called in to fulfill a position of high honor and responsibility.
+1123,The man on the top of the mountain did not fall there.
+1124,You will conquer obstacles to achieve success.
+1125,Joys are often the shadows, cast by sorrows.
+1126,Fortune favors the brave.
+1127,An upward movement initiated in time can counteract fate.
+1128,A journey of a thousand miles begins with a single step.
+1129,Sometimes you just need to lay on the floor.
+1130,Never give up. Always find a reason to keep trying.
+1131,If you have something worth fighting for, then fight for it.
+1132,Stop wishing. Start doing.
+1133,Accept your past without regrets. Handle your present with confidence. Face your future without fear.
+1134,Stay true to those who would do the same for you.
+1135,Ask yourself if what you are doing today is getting you closer to where you want to be tomorrow.
+1136,Happiness is an activity.
+1137,Help is always needed but not always appreciated. Stay true to your heart and help those in need weather they appreciate it or not.
+1138,Hone your competitive instincts.
+1139,Finish your work on hand don't be greedy.
+1140,For success today, look first to yourself.
+1141,Your fortune is as sweet as a cookie.
+1142,Integrity is the essence of everything successful.
+1143,If you're happy, you're successful.
+1144,Believing that you are beautiful will make you appear beautiful to others around you.
+1145,Happinees comes from a good life.
+1146,Before trying to please others think of what makes you happy.
+1147,When hungry, order more Chinese food.
+1148,Your golden opportunity is coming shortly.
+1149,For hate is never conquered by hate. Hate is conquered by love .
+1150,You will make many changes before settling down happily.
+1151,A man is born to live and not prepare to live.
+1152,You cannot become rich except by enriching others.
+1153,Don't pursue happiness - create it.
+1154,You will be successful in love.
+1155,All your fingers can't be of the same length.
+1156,Wise sayings often fall on barren ground, but a kind word is never thrown away.
+1157,A lifetime of happiness is in store for you.
+1158,It is very possible that you will achieve greatness in your lifetime.
+1159,Be tactful; overlook your own opportunity.
+1160,You are the controller of your destiny.
+1161,Everything happens for a reson.
+1162,How can you have a beutiful ending without making beautiful mistakes.
+1163,You can open doors with your charm and patience.
+1164,Welcome the change coming into your life.
+1165,You are admired for your adventuous ways.
+1166,You are blessed, today is the day to bless others.
+1167,The Greatest War Sometimes Isn't On The Battlefield But Against Oneself.
+1168,People in your background will be more co-operative than usual.
+1169,A good way to stay healthy is to eat more Chinese food.
+1170,Anyone who dares to be, can never be weak.
+1171,Affirm it, visualize it, believe it, and it`will actualize itself.
+1172,The measure of time to your next goal is the measure of your discipline.
+1173,Take a minute and let it ride, then take a minute to let it breeze.
+1174,We are here to love each other, serve each other and uplift each other.
+1175,To affirm is to make firm.
+1176,Remember this: duct tape can fix anything, so don't worry about messing things up.
+1177,Failure is not defeat until you stop trying.
+1178,The days that make us happy make us wise.
+1179,Men do not fail... they give up trying.
+1180,Time may fly by. But Memories don't.
+1181,You will win success in whatever you adopt.
+1182,You will outdistance all your competitors.
+1183,Money will come to you when you are doing the right thing.
+1184,When you get something for nothing, you just haven't been billed for it yet.
+1185,You will discover your hidden talents.
+1186,You'll advance for with your abilities.
+1187,When you can't naturally feel upbeat it can sometimes help you to act as if you did.
+1188,You will overcome difficult times.
+1189,Your problem just became your stepping stone.  Catch the moment.
+1190,I am a fortune. You just broke my little house.
+1191,The majority of the word can't is can.
+1192,The secret of getting ahead is getting started.
+1193,Be most affectionate today.
+1194,Change your thoughts and you change the world.
+1195,Sing and rejoice, fortune is smiling on you.
+1196,A truly great person never puts away the simplicity of a child.
+1197,Customer service is like taking a bath you have to keep doing it.
+1198,The expanse of your intelligence is a void no universe could ever fill.
+1199,Those grapes you cannot taste are always sour.
+1200,An unexpected aquaintance will resurface.
+1201,If you want the rainbow, then you have to tolerate the rain.
+1202,You don't get harmony when everyone sings the same note.
+1203,The race is not always to the swift, but to those who keep on running.
+1204,The early bird gets the worm, but the second mouse gets the cheese.
+1205,The best things in life aren't things.
+1206,Don't bother looking for fault. The reward for finding it is low.
+1207,Everything has beauty but not everyone sees it.
+1208,Nothing is as good or bad as it appears.
+1209,Never cut what you can untie.
+1210,Meet your opponent half way. You need the exercise.
+1211,Laughter is the shortest distance between two people.
+1212,We cannot change the direction of the wind, but we can adjust our sails.
+1213,We could learn a lot from crayons: Some of are sharp, some are pretty, some have weird names, and all are different colors. But they all have to learn to live in the same box.
+1214,Use your instincts now.
+1215,If you take a single step to your journey, you'll succeed; it's not best to fail.
+1216,In the eyes of lovers, everything is beautiful.
+1217,Warning, do not eat your fortune.
+1218,Demonstrate refinement in everything you do.
+1219,Impossible standards just make life difficult.
+1220,A different world cannot be build by indifferent people.
+1221,Q. What is H2O? A. Caring, 2 parts Hug and 1 part Open-mind.
+1222,All troubles you have can pass away very quickly.
+1223,Integrity is the essense of everything successful.
+1224,Sometimes the object of the journey is not the end, but the journey itself.
+1225,Fear is just excitement in need of an attitude adjustment.
+1226,The food here taste so good, even a cave man likes it.
+1227,Perhaps you've been focusing too much on spending.
+1228,Happiness isn't something you remember, it's something you experience.
+1229,Oops... Wrong cookie.
+1230,The dream is within you.
+1231,Love is on its way.
+1232,Be direct, usually one can accomplish more that way.
+1233,Use your talents. That's what they are intended for.
+1234,The troubles you have now will pass away quickly.
+1235,See the light at the end of the tunnel.
+1236,Your dream will come true when you least expect it.
+1237,Don't 'face' reality, let it be the place from which you leap.
+1238,Fortune smiles upon you today.
+1239,Believing is doing.
+1240,Your dynamic eyes have attracted a secret admirer.
+1241,You know where you are going and how to get there.
+1242,Go confidently in the direction of your dreams.
+1243,Your ability to pick a winner will bring you success.
+1244,Humor usually works at the moment of awkwardness.
+1245,A good time to finish up old tasks.
+1246,Enthusiastic leadership gets you a promotion when you least expect it.
+1247,You love Chinese food.
+1248,You are far more influential than you think.
+1249,Adjust finances, make budgets, to improve your standing.
+1250,Happiness is not the absence of conflict, but the ability to cope with it.
+1251,An understanding heart warms all that are graced with it's presense.
+1252,Your co-workers take pleasure in your great sense of creativity.
+1253,You are one of the people who goes places in life.
+1254,Others enjoy your company.
+1255,When in doubt, let your instincts guide you.
+1256,A cheerful message is on its way to you.
+1257,A pleasant surprise is in store for you tonight.
+1258,To courageously shoulder the responsibility of one's mistake is character.
+1259,The joyful energy of the day will have a positive affect on you.
+1260,You have a strong desire for a home and your family interests come first.
+1261,Dogs have owners, cats have staff.
+1262,Be patient: in time, even an egg will walk.
+1263,You are not a person who can be ignored.
+1264,You always know the right times to be assertive or to simply wait.
+1265,Reading to the mind is what exercise is to the body.
+1266,Eat something you never tried before.
+1267,You need to live authentically, and you can't ignore that.
+1268,Make all you can, save all you can, give all you can.
+1269,A well-aimed spear is worth three.
+1270,To build a better world, start in your community.
+1271,When you can't naturally feel upbeat, it can sometimes help to act a if you did.
+1272,May you have great luck.
+1273,A kind word will keep someone warm for years.
+1274,Nothing in the world is accomplished without passion.
+1275,Human invented language to satisfy the need to complain.
+1276,Accept what comes to you each day.
+1277,A small lucky package is on its way to you soon.
+1278,In human endeavor, chance favors the prepared mind.
+1279,Do not upset the penguin today.
+1280,Don't cry.
+1281,The best way to give credit is to give it away.
+1282,Anything you do, do it well. The last thing you want is to be sorry for what you didn't do.
+1283,It takes more then good memory to have good memories.
+1284,Grant yourself a wish this year only you can do it.
+1285,You will be selected for a promotion because of your accomplishments.
+1286,There are many new opportunities that are being presented to you.
+1287,You will inherit a large sum of money.
+1288,You will recieve a gift from someone that cares about you.
+1289,You are not illiterate.
+1290,Love because it is the only true adventure.
+1291,Keep true to the dreams of your youth.
+1292,Treasure what you have.
+1293,The greatest precept is continual awareness.
+1294,A new friend helps you break out of an old routine.
+1295,I have a dream.... Time to go to bed.
+1296,Your skill will accomplish what the force of many cannot.
+1297,You will soon be surrounded by good friends and laughter.
+1298,The best is yet to come.
+1299,It is better to be the hammer then the anvil.
+1300,He who climbs a ladder must begin at the first step.
+1301,Action speaks nothing, without the Motive.
+1302,Give yourself some peace and quiet for at least a few hours.
+1303,Old dreams never die they just get filed away.
+1304,You can fix it with a little extra energy and a positive attitude.
+1305,A man without aim is like a clock without hands, as useless if it turns as if it stands.
+1306,Many folks are about as happy as they make up their minds to be.
+1307,You should be able to make money and hold on to it.
+1308,The human spirit is stronger than anything that can happen to it.
+1309,Your succeess will astonish everyone.
+1310,It is better to have a hen tomorrow than an egg today.
+1311,Judge each day not by the harvest you reap but by the seeds you plant.
+1312,You like Chinese food.
+1313,Your hard work will get payoff today.
+1314,No matter what your past has been, you have a spotless future.
+1315,Your secret desire to completely change your life will manifest.
+1316,Soon you will be sitting on top of the world.
+1317,You are never selfish with your advice or your help.
+1318,A thrilling time is in store for you.
+1319,It's tough to be fascinating.
+1320,Luck sometimes visits a fool, but it never sits down with him.
+1321,Keep your plans secret for now.
+1322,Traveling this year will bring your life into greater perspective.
+1323,Only talent people get help  from others.
+1324,Constant grinding can turn an iron nod into a needle.
+1325,When you're about to turn your heart into a stone remember: you do not walk alone.
+1326,You are vigorous in words and action.
+1327,The one who snores will always fall asleep first.
+1328,Rest is a good thing, but boredom is its brother.
+1329,Do not be overly judgemental of your loved one's intentions or actions.
+1330,Think of how you can assist on a problem, not who to blame.
+1331,The life of every woman or man - the heart of it - is pure and holy joy.
+1332,Trust your intuition. The universe is guiding your life.
+1333,Use your head, but live in your heart.
+1334,Your passions sweep you away.
+1335,Think of mother's exhortations more.
+1336,The gambler is like the fisherman both have beginners luck.
+1337,You are given the chance to take part in an exciting adventure.
+1338,The simplest answer is to act.
+1339,You will always be surrounded by true friends.
+1340,Keep your feet on the ground even though friends flatter you.
+1341,You are the man of righteousness and integrity.
+1342,He who seeks will find.
+1343,The smart thing to do is to begin trusting your intuitions.
+1344,Your many hidden talents will become obvious to those around you.
+1345,Pick a path with heart.
+1346,The human spirit is stronger then anything that can happen to it.
+1347,It takes more than good memory to have good memories.
+1348,Face facts with dignity.
+1349,Be calm when confronting an emergency crisis.
+1350,Do you believe? Endurance and persistence will be rewarded.
+1351,A new wardrobe brings great joy and change in your life.
+1352,Everyone agrees you are the best.
+1353,A new outlook brightens your image and brings new friends.
+1354,Everything will now come your way.
+1355,You will be called to fill a position of high honor and responsibility.
+1356,The eyes believe themselves; the ears believe other people.
+1357,Good beginning is half done.
+1358,Some pursue happiness; you create it.
+1359,It's the worst of times, you need to summon your optimism.
+1360,You are cautious in showing your true self to others.
+1361,Your ability to accomplish tasks will follow with success.
+1362,We all have extraordinary coded within us, waiting to be released.
+1363,You will have a bright future.
+1364,Compassion is a way of being.
+1365,You will always have good luck in your personal affairs.
+1366,Perhaps you've been focusing too much on that one thing..
+1367,Right now there's an energy pushing you in a new direction.
+1368,Everybody feels lucky for having you as a friend.
+1369,When the moment comes, take  the top one.
+1370,Sometimes travel to new places leads to great transformation.
+1371,There is always a way - if you are committed.
+1372,Life is too short to waste time hating anyone.
+1373,All the world may not love a lover but they will be watching him.
+1374,Don't just spend time, invest it.
+1375,Life  always gets harder near the summit.
+1376,Take the chance while you still have the choice.
+1377,It is much easier to be cirtical than to be correct.
+1378,Enjoy life! It is better to be happy than wise.
+1379,To make the cart go, you must grease the wheels.
+1380,You are contemplating some action which will bring credit upon you.
+1381,You may be disappointed if you fail, but you are doomed if you don't try.
+1382,You will always get what you want through your charm and personality.
+1383,The big issues are work, career, or status right now.
+1384,Your emotional currents are flowing powerfully now.
+1385,Any decision you have to make tomorrow is a good decsion.
+1386,Consume less. Share more. Enjoy life.
+1387,The secret of staying young is good health and lying about your age.
+1388,Spring has sprung. Life is blooming.
+1389,The possibility of a career change is near.
+1390,The important thing is to never stop questioning.
+1391,Compassion will cure more then condemnation.
+1392,Excuses are easy to manufacture, and hard to sell.
+1393,Put your mind into planning today. Look into the future.
+1394,Broke is only temporaryl poor is a state of mind.
+1395,Here we go. Moo Shu Cereal for breakfast with duck sauce.
+1396,Teamwork: the fuel that allows common people attain uncommon results.
+1397,Hard words break no bones, fine words butter no parsnips.
+1398,We cannot direct the wind but we can adjust the sails.
+1399,You are offered the dream of a lifetime.
+1400,Working out the kinks today will make for a better tomorrow.
+1401,You have a curious smile and a mysterious nature.
+1402,Questions provide the key to unlocking our unlimited potential.
+1403,You will enjoy razon-sharp spiritual vision today.
+1404,Well-arranged time is the surest sign of a well-arranged mind.
+1405,Never bring unhappy feelings into your home.
+1406,A golden egg of opportunity falls into your lap this month.
+1407,You are very grateful for the small pleasures of life.
+1408,today you should be a passenger. Stay close to a driver for a day.
+1409,For hate is never conquered by hate. Hate is conquered by love.
+1410,Service is the rent we pay for the privilege of living on this planet.
+1411,The leader seeks to communicate his vision to his followers.
+1412,Great works are performed not by strength, but by perseverance.
+1413,Present your best ideas today to an eager and welcoming audience.
+1414,Friends long absent are coming back to you.
+1415,The time is right to make new friends.
+1416,You may be hungry soon: order a takeout now.
+1417,Do not hesitate to look for help, an extra hand should always be welcomed.
+1418,You have an unusually magnetic personality.
+1419,Dream lofty dreams, and as you dream, so shall you become.
+1420,You have a quiet and unobtrusive nature.
+1421,Judge not according to the appearance.
+1422,One who admires you greatly is hidden before your eyes.
+1423,Traveling more often is important for your health and happiness.
+1424,You have a reputation for being straightforward and honest.
+1425,You are always welcome in any gathering.
+1426,You will be traveling and coming into a fortune.
+1427,Open up your heart - it can always be closed again.
+1428,Being happy is not always being perfect.
+1429,Next time you have the opportunity, go on a rollercoaster.
+1430,Try everything once, even the things you don't think you will like.
+1431,Life is too short to hold grudges.
+1432,Being alone and being lonely are two different things.
+1433,Don't worry about things in the past, there is nothing you can do about them now. Don't worry about things that are happening now, make the best of a bad situation. Don't worry about things in the future, they may never happen.
+1434,Tomorrow, take a moment to do something just for yourself.
+1435,Someone close to you is waiting for you to call.
+1436,Smile. Tomorrow is another day.
+1437,You can never been certain of success, but you can be certain of failure if you never try.
+1438,It takes ten times as many muscles to frown as it does to smile.
+1439,Shoot for the moon! If you miss you will still be amongst the stars.
+1440,Keep your eyes open. You never know what you might see.
+1441,Tell them what you really think. Otherwise, nothing will change.
+1442,Let your heart make your decisions - it does not get as confused as your head.
+1443,Working hard will make you live a happy life.
+1444,A pleasant surprise is waiting for you.

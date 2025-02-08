@@ -1,12 +1,42 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include all your CSS styles -->
     <title>CSV Reader</title>
     <style>
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
         body {
             background-color: black;
             color: lightgreen;
@@ -18,11 +48,13 @@
         .container {
             width: 100%;
             display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
             padding: 20px;
+            box-sizing: border-box;
         }
+
         .container h1 {
             margin: 0;
         }
@@ -78,6 +110,7 @@ table {
     border: 1px solid red;
     color: black;
     font-family: Arial, sans-serif;
+    table-layout: fixed;
     /* Remove table-layout fixed */
 }
 
@@ -86,6 +119,7 @@ th, td {
     padding: 8px;
     text-align: center;
     font-weight: bold;
+    width: 20px; /* Adjust to fit exactly two characters */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap; /* Prevents text wrapping */
@@ -99,7 +133,10 @@ td:first-child, th:first-child {
     color: white;
     text-align: center;
 }
-
+/* Bright green border between columns 6 and 17 */
+th:nth-child(20), td:nth-child(20) {
+    border-right: 5px solid purple; /* Thicker bright green border */
+}
 
         th {
             color: white;
@@ -118,17 +155,21 @@ td:first-child, th:first-child {
             color: red;
             font-weight: bold;
         }
-        .light-red {
-            background-color: lightcoral;
+        .lightcoral {
+            background-color: lightcoral !important;
             font-weight: bold;
         }
         .default-light-yellow {
             background-color: lightyellow;
         }
         .light-green {
-            background-color: lightgreen;
+            background-color: lightgreen !important;
             color: black;
         }
+        .purple {
+    		background-color: purple !important;
+    		color: white;
+    	}
         .light-blue {
             background-color: lightblue;
         }
@@ -146,6 +187,12 @@ td:first-child, th:first-child {
         }
         .LightSteelBlue {
             background-color: LightSteelBlue;
+        }
+        .Thistle {
+            background-color: Thistle;
+        }
+        .GreenYellow {
+        	background-color: GreenYellow;
         }
         .Gold {
             background-color: Gold;
@@ -170,29 +217,16 @@ td:first-child, th:first-child {
             border: none;
             color: white;
         }
-        #saveButton {
-            background-color: blue;
-        }
-        #showStatsButton {
-            background-color: slategray;
-        }
-        #savePdfButton {
-            background-color: purple;
-        }
-        #sortByHighestValue {
-            background-color: red;
-        }
-        #sortByLowestValue {
-            background-color: lightcoral;
-        }   
-        #sortCols {
-            background-color: lightgreen;
-            color: black;
-        }     
+
         .file-input-container {
             display: flex;
             align-items: center;
-            margin: 5px 0;
+                border: 2px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 75%; /* Ensure full width */
+    background-color: #333;
+    overflow: auto; /* Prevent overflow clipping */
         }
         .file-input-container > * {
             margin-right: 5px;
@@ -201,7 +235,7 @@ td:first-child, th:first-child {
             margin-left: 5px;
         }
         .row-count {
-            color: yellow;
+            color: DarkKhaki;
             font-size: 24px;
             margin: 0;
         }
@@ -212,6 +246,11 @@ td:first-child, th:first-child {
            font-size: 20px;
            color: lightgray;
         }
+        h3 {
+           font-size: 30px;
+           color: black;
+        }
+    
         .info-item2 {
     width: 60px;
     height: 40px;
@@ -222,51 +261,793 @@ td:first-child, th:first-child {
     font-weight: bold;
     cursor: pointer; /* Add this line to show the hand symbol on hover */
 }
+
+.header-red {
+    background-color: red;
+    color: white;
+}
+
+.header-black {
+    background-color: black;
+    color: white;
+}
+
+.header-green {
+    background-color: green;
+    color: white;
+}
+
+.header-default {
+    background-color: lightgray;
+    color: black;
+}
+      .framed-buttons {
+        border: 2px solid lightblue; /* Frame color */
+        padding: 15px;
+        background-color: #f9f9f9; /* Light background for contrast */
+        border-radius: 10px; /* Rounded corners */
+        display: inline-flex; /* Inline layout for buttons */
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        justify-content: space-around; /* Space between buttons */
+    }
+
+    .button {
+        font-size: 120%; /* 20% larger than 60% */
+        padding: 6px 12px; /* Increased padding by 20% */
+        margin: 5px; /* Keeps consistent spacing */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    }
+
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    .button-red {
+        background-color: red;
+        color: white;
+    }
+    .button-lightcoral {
+        background-color: lightcoral;
+        color: white;
+    }
+    .button-blue {
+        background-color: blue;
+        color: white;
+    }
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    .button-lightgreen {
+        background-color: lightgreen;
+        color: black;
+    }
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray; 
+      color: black !important;
+    }  
+
+    .button-purple:hover {
+      background-color: darkviolet;
+    }
+    
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {	
+        background-color: violet;
+        color: black;
+    }
+    
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    }
+
+
+<!-- Modal Styles -->
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .modal-content button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #splitRowBtn {
+    background-color: #007bff;
+    color: white;
+  }
+
+  #singleRowBtn {
+    background-color: #28a745;
+    color: white;
+  }
+
+  #splitRowBtn:hover {
+    background-color: #0056b3;
+  }
+
+  #singleRowBtn:hover {
+    background-color: #218838;
+  }
+  
+          .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+        
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    } 
+    
+    .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+}
+
+
     </style>
-<!-- jsPDF Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- jsPDF AutoTable Plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+    <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
+
+<!-- Custom Modal -->
+<div id="savePdfModal" class="modal">
+  <div class="modal-content">
+    <h3>Select PDF Format</h3>
+    <p>Choose how you want to save the PDF:</p>
+    <button id="splitRowBtn">Split Row</button>
+    <button id="singleRowBtn">Single Row</button>
+  </div>
+</div>
+
+
+    <div class="container">
+        <div>
+            <div class="framed-section2" >
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+            	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
+            </div>
+        </div>
+        <br>
+    </div>    
+               <!-- Instructions Modal -->
+        <div id="instructionsModal" class="modal">
+            <div class="modal-content">
+                <button class="close-button" id="closeModalButton">&times;</button>
+                <h3>Instructions</h3>
+                <p>Select a .csv file that starts with "Multi" or "SaveCSV"<br><br>
+                   Clicking a colored box will load a run of whatever the number is in parens, times 1,000.<br><br>
+                   Currently, the 8 (1) box will actually load a 10,000 row run.<br><br>
+                </p>
+            </div>
+        </div>
+        
+    <!-- Your HTML content remains the same -->
     <div class="container">
         <div class="info-container">
-            <h1>Spins Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<div class="info-item2 clickable" data-type="8">8 (1)</div>
-<div class="info-item2 clickable" data-type="9">9 (2)</div>
-<div class="info-item2 clickable" data-type="10">10 (3)</div>
-<div class="info-item2 clickable" data-type="11">11 (4)</div>
-<div class="info-item2 clickable" data-type="12">12 (5)</div>
-<div class="info-item2 clickable" data-type="13">13 (6)</div>
-<div class="info-item2 clickable" data-type="14">14 (7)</div>
-<div class="info-item2 clickable" data-type="15">15 (8)</div>
-<div class="info-item2 clickable" data-type="16">16 (9)</div>
-<div class="info-item2 clickable" data-type="17">17 (10)</div>
+            <h1>View Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="info-item2" data-type="8">8</div>
+            <div class="info-item2" data-type="9">9</div>
+            <div class="info-item2" data-type="10">10</div>
+            <div class="info-item2" data-type="11">11</div>
+            <div class="info-item2" data-type="12">12</div>
+            <div class="info-item2" data-type="13">13</div>
+            <div class="info-item2" data-type="14">14</div>
+            <div class="info-item2" data-type="15">15</div>
+            <div class="info-item2" data-type="16">16</div>
+            <div class="info-item2" data-type="17">17</div>
         </div>
         <div class="file-input-container">
-            <h2>Select CSV file</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="sortByHighestValue">Sort by Highest Value</button>
-            <button id="sortByLowestValue">Reverse Sort</button>
-            <button id="sortCols">Sort Columns</button>
-            <button id="saveButton">Save to CSV</button>
-            <button id="savePdfButton">Save to PDF</button> <!-- New button for PDF generation -->
-            <button id="showStatsButton">View Stats</button>
-            <div id="rowCount" class="row-count">Runs: 0</div>
-        </div>
+            <button id="sortByHighestValue" class="button button-red">Sort by Highest Value</button>
+            <button id="sortByLowestValue" class="button button-lightcoral">Reverse Sort</button>
+            <button id="sortCols" class="button button-lightgreen">Sort Columns</button>
+            <button id="saveButton" class="button button-blue">Save to CSV</button>
+            <button id="savePdfButton" class="button button-purple">Save to PDF</button>
+        </div> 
     </div>
-
+                <div id="rowCount" class="row-count" align="center""></div>
+                
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
     </table>
-    <script>
+  </div>
 
-    document.getElementById('sortCols').addEventListener('click', function() {
-        window.open('sort.html', '_blank');  // Opens sort.html in a new tab or window
+  <script>
+    
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+          
+
+    
+           // Function to generate a formatted timestamp // 
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}`;
+        }
+        
+              // Function to get color for a style
+        function getColorForStyle(style) {
+            const colorMap = {
+                'default-light-yellow': [255, 255, 224],
+                'lightcoral': [255, 204, 204],
+                'light-blue': [173, 216, 230],
+                'light-orange': [255, 165, 0],
+                'violet': [238, 130, 238],
+                'DarkKhaki': [189, 183, 107],
+                'DarkSeaGreen': [143, 188, 143],
+                'LightSteelBlue': [176, 196, 222],
+                'light-green': [144, 238, 144],
+                'Thistle': [216, 191, 216],
+                'GreenYellow': [173, 255, 47],
+                'Gold': [255, 215, 0],
+            };
+
+            return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
+        }
+        
+        let headerAdded = false;
+        let rowCounter = 1;
+
+        function clearTable() {
+            document.querySelector('#csvTable thead').innerHTML = '';
+            document.querySelector('#csvTable tbody').innerHTML = '';
+            headerAdded = false;
+            rowCounter = 1;
+        }
+
+function createHeaderRow(headerRow) {
+    if (!headerAdded) {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6'];    
+        const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+        const thead = document.getElementById('csvTable').querySelector('thead');
+        const tr = document.createElement('tr');
+
+        // Debugging to verify values
+        console.log('Header Row:', headerRow);
+        console.log('Column Order:', columnOrder);
+        console.log('Header Indices:', headerIndices);
+
+        // Add Line Number Header
+        const thLineNumber = document.createElement('th');
+        thLineNumber.textContent = '#';
+        thLineNumber.style.backgroundColor = 'slategray';
+        thLineNumber.style.color = 'white';
+        tr.appendChild(thLineNumber);
+
+        headerIndices.forEach((index, i) => {
+            const th = document.createElement('th');
+            let headerValue = index >= 0 ? headerRow[index] : '';
+
+            // Convert '37' to '00' for display purposes
+            if (headerValue === '37') {
+                headerValue = '00';
+            }
+
+            th.textContent = headerValue;
+
+            // Apply specific header colors
+            if (headerValue === '0' || headerValue === '00') {
+                // Green for '0' and '00'
+                th.style.backgroundColor = 'green';
+                th.style.color = 'white';
+                console.log(`Header ${headerValue} set to green.`);
+            } else if (redColumns.includes(headerValue)) {
+                // Red for specific columns
+                th.style.backgroundColor = 'red';
+                th.style.color = 'white';
+                console.log(`Header ${headerValue} set to red.`);
+            } else if (blackColumns.includes(headerValue)) {
+                // Black for specific columns
+                th.style.backgroundColor = 'black';
+                th.style.color = 'white';
+                console.log(`Header ${headerValue} set to black.`);
+            } else {
+                // Default style for undefined columns
+                th.style.backgroundColor = 'lightgray';
+                th.style.color = 'black';
+            }
+
+            tr.appendChild(th);
+        });
+
+        thead.appendChild(tr);
+        headerAdded = true;
+    }
+}
+
+
+
+        function createDataCell(cellValue) {
+            const td = document.createElement('td');
+            td.textContent = cellValue === '0' ? '' : cellValue;
+            const numValue = Number(cellValue);
+            if (numValue === 3) td.classList.add('DarkSeaGreen');
+            else if (numValue === 4) td.classList.add('Gold');
+            else if (numValue >= 5) td.classList.add('light-green');
+            return td;
+        }
+
+function displayCSVData(csvText, isFirstFile) {
+    const lines = csvText.split('\n').map(line => line.split(','));
+    const tbody = document.querySelector('#csvTable tbody');
+    const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6'];    
+    const group1Columns = ['14', '2', '0', '28', '9'];
+    const group2Columns = ['13', '1', '37', '27', '10'];
+
+    // Create header row only for the first file
+    if (isFirstFile && !headerAdded) {
+        createHeaderRow(lines[0]); // Pass the header row to `createHeaderRow`
+    }
+
+    const headerIndices = columnOrder.map(col => lines[0].indexOf(col));
+
+    // Process each row, skipping the header row if it's not the first file
+    for (let i = 1; i < lines.length; i++) {
+        if (lines[i].some(cell => cell.trim())) {
+            const tr = document.createElement('tr');
+
+            // Add Line Number
+            const tdLineNumber = document.createElement('td');
+            tdLineNumber.textContent = rowCounter++;
+            tdLineNumber.style.backgroundColor = 'slategray';
+            tdLineNumber.style.color = 'white';
+            tr.appendChild(tdLineNumber);
+
+            let group1Sum = 0;
+            let group2Sum = 0;
+            let group1Cells = [];
+            let group2Cells = [];
+
+            // Populate row cells
+            headerIndices.forEach((index, j) => {
+                const td = document.createElement('td');
+                let cellValue = index >= 0 ? lines[i][index] : '';
+                if (cellValue === '0') {
+                    cellValue = '';
+                }
+                td.textContent = cellValue;
+
+                // Apply background color based on value
+                if (!isNaN(cellValue)) {
+                    const numValue = Number(cellValue);
+                    if (numValue === 3) td.classList.add('DarkSeaGreen');
+                    else if (numValue === 4) td.classList.add('Gold');
+                    else if (numValue >= 5) td.classList.add('light-green');
+                }
+
+                // Apply light-yellow background to group columns
+                if (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j])) {
+                    td.classList.add('default-light-yellow');
+                }
+
+                // Collect cells for group sums
+                if (group1Columns.includes(columnOrder[j])) {
+                    group1Cells.push(td);
+                    group1Sum += parseInt(cellValue) || 0;
+                } else if (group2Columns.includes(columnOrder[j])) {
+                    group2Cells.push(td);
+                    group2Sum += parseInt(cellValue) || 0;
+                }
+
+                tr.appendChild(td);
+            });
+
+            // Apply group-based coloring for group sums
+            applyGroupColoring(group1Cells, group1Sum);
+            applyGroupColoring(group2Cells, group2Sum);
+
+            tbody.appendChild(tr);
+        }
+    }
+
+    // Update row count after processing all rows
+	let rowCount = document.querySelectorAll('#csvTable tbody tr').length;
+    document.getElementById('rowCount').innerHTML = `Runs: <span class="zero-highlight">${rowCount}</span>`;
+}
+
+
+
+function applyGroupColoring(cells, sum) {
+    const colorClasses = {
+        8: 'lightcoral',
+        9: 'light-blue',
+        10: 'light-orange',
+        11: 'violet',
+        12: 'DarkKhaki',
+        13: 'DarkSeaGreen',
+        14: 'LightSteelBlue',
+        15: 'Thistle',
+        16: 'GreenYellow',
+        17: 'Gold'
+    };
+    const colorClass = colorClasses[sum];
+    if (colorClass) cells.forEach(td => td.classList.add(colorClass));
+}
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    clearTable();
+
+    // Get the files as an array and sort by filename
+    const files = Array.from(event.target.files)
+        .filter(file => file.name.endsWith('.csv'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (files.length === 0) {
+        alert("Please select .csv files only.");
+        return;
+    }
+
+    files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            displayCSVData(e.target.result, index === 0);
+        };
+        reader.readAsText(file);
+    });
+});
+
+        
+
+
+
+        // Event listener for clickable elements
+        document.querySelectorAll('.info-item2.clickable').forEach(element => {
+            element.addEventListener('click', function() {
+                const dataType = element.getAttribute('data-type');
+                const fileName = `OnServer_${dataType}.csv`;
+
+                fetch(fileName)
+                    .then(response => response.text())
+                    .then(csvText => displayCSVData(csvText))
+                    .catch(error => console.error('Error fetching the file:', error));
+            });
+        });
+
+document.getElementById('saveButton').addEventListener('click', function() {
+    const table = document.getElementById('csvTable');
+    let csvContent = '';
+    const rows = table.querySelectorAll('tr');
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
+
+    // Define the correct column order (0 to 37)
+    const columnOrder = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37'];
+
+    // Get the header row and determine correct indices
+    let headerRow = Array.from(rows[0].querySelectorAll('th')).map(th => th.textContent.trim());
+
+    // Replace '00' with '37' in the header row
+    headerRow = headerRow.map(value => value === '00' ? '37' : value);
+
+    // Find indices of columns in the required order
+    let headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+
+    console.log("Column Order: ", columnOrder);
+    console.log("Header Indices: ", headerIndices);
+
+    // Process each row and rearrange columns
+    rows.forEach((row, rowIndex) => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
+
+        if (rowIndex === 0) {
+            // If it's the header row, replace '00' with '37' and reorder columns
+            rowData = headerIndices.map(index => index >= 0 ? headerRow[index] : '');
+        } else {
+            // Rearrange columns for the rest of the rows
+            rowData = headerIndices.map(index => index >= 0 ? cols[index].textContent.trim() : '');
+        }
+
+        csvContent += rowData.join(',') + '\n';
     });
 
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+
+    // Set the download attribute with a filename including the row count and timestamp
+    link.setAttribute("download", `SaveCSV_${rowCount}_${timestamp}.csv`);
+    link.style.display = 'none';
+
+    // Append the link to the body, click it and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+
 document.getElementById('savePdfButton').addEventListener('click', function() {
+    // Show the modal
+    document.getElementById('savePdfModal').style.display = 'block';
+});
+
+// Handle 'Split Row' button click
+document.getElementById('splitRowBtn').addEventListener('click', function() {
+    document.getElementById('savePdfModal').style.display = 'none';
+    savePDFSplit();  // Call function for Split Row layout
+});
+
+// Handle 'Single Row' button click
+document.getElementById('singleRowBtn').addEventListener('click', function() {
+    document.getElementById('savePdfModal').style.display = 'none';
+    savePDFSingle();  // Call function for Single Row layout
+});
+
+
+function savePDFSplit() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    const table = document.querySelector('#csvTable');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+    );
+
+    // Define split indices (keeping index 0 for row numbers)
+    const topHalfIndices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    const bottomHalfIndices = [0,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+
+    // Extract header rows including row header
+    const topHalfHeaders = topHalfIndices.map(idx => headers[idx]);
+    const bottomHalfHeaders = bottomHalfIndices.map(idx => headers[idx]);
+
+    const processedData = [];
+
+    // Process each row of data
+    data.forEach((row, index) => {
+        const rowNumber = index + 1;
+
+        // First half with row number
+        const topHalf = topHalfIndices.map(idx => row[idx] || "");
+        topHalf[0] = rowNumber.toString(); 
+
+        // Second half with an empty cell for row number space
+        const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
+        bottomHalf[0] = ''; 
+
+        // Push the first half of the header with row #
+        processedData.push(topHalfHeaders);
+        processedData.push(topHalf);
+
+        // Push the second half of the header with empty cell instead of row number
+        const bottomHeaderRow = [...bottomHalfHeaders];
+        bottomHeaderRow[0] = '';
+
+        processedData.push(bottomHeaderRow);
+        processedData.push(bottomHalf);
+
+        // Add an empty row for spacing
+        processedData.push(Array(topHalfHeaders.length).fill(''));
+    });
+
+    const timestamp = getFormattedTimestamp();
+    const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
+
+    doc.autoTable({
+        body: processedData,
+        startY: 20,  // Decreased starting Y position
+        theme: 'grid',
+        margin: { top: 20, left: 16, right: 16, bottom: 10 },  // Reduced margins
+        styles: {
+            fontSize: 10,  // Reduced font size
+            cellPadding: 1.5,  // Reduced padding
+            overflow: 'linebreak',
+            fontStyle: 'bold',
+            halign: 'center',
+        },
+        headStyles: {
+            fontSize: 6,  // Slightly smaller header font size
+            textColor: [255, 255, 255],
+            fillColor: [0, 51, 102],
+            halign: 'center',
+        },
+        didParseCell: function (data) {
+            const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+            const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+            const greenColumns = ['0', '00'];
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+
+            const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
+
+            if (isHeaderRow) {
+                const headerValue = data.cell.raw.trim();
+                if (greenColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 200, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (redColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [255, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (blackColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else {
+                    data.cell.styles.fillColor = [200, 200, 200];
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
+                return;
+            }
+
+            if (data.column.index === 0) {
+                if (data.cell.raw === '#') {
+                    data.cell.styles.fillColor = [112, 128, 144];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (data.row.raw.every(cell => cell === "")) {
+                    data.cell.styles.fillColor = [255, 255, 255];
+                    data.cell.styles.textColor = [0, 0, 0];
+                } else {
+                    data.cell.styles.fillColor = [211, 211, 211];
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
+                return;
+            }
+
+            if (data.row.raw.every(cell => cell === "")) {
+                data.cell.styles.fillColor = [255, 255, 255];
+                data.cell.styles.textColor = [0, 0, 0];
+                return;
+            }
+
+            let appliedColor = false;
+            const cellValue = parseFloat(data.cell.raw);
+
+            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                appliedColor = true;
+            }
+
+            if (!appliedColor) {
+                data.cell.styles.fillColor = [211, 211, 211];
+            }
+        },
+        didDrawPage: function () {
+            doc.setFontSize(12);  // Smaller title font
+            doc.text(filename.replace('.pdf', ''), 14, 10);  // Moved closer to top
+        }
+    });
+
+    doc.save(filename);
+}
+
+// Function to get the correct color based on the provided style
+function getColorForStyle(style) {
+    const colorMap = {
+        'lightcoral': [255, 204, 204],
+        'light-blue': [173, 216, 230],
+        'light-orange': [255, 165, 0],
+        'violet': [238, 130, 238],
+        'DarkKhaki': [189, 183, 107],
+        'DarkSeaGreen': [143, 188, 143],
+        'LightSteelBlue': [176, 196, 222],
+        'Thistle': [216, 191, 216],
+        'GreenYellow': [173, 255, 47],
+        'Gold': [255, 215, 0],
+        'light-green': [144, 238, 144],
+        'default-light-yellow': [255, 255, 224]
+    };
+
+    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
+}
+
+function savePDFSingle() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 
@@ -278,7 +1059,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `Wheel_${rowCount}_${timestamp}.pdf`;
+    const filename = `SavePDF_${rowCount}_${timestamp}.pdf`;
 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;
@@ -289,7 +1070,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
     const columnWidth = pageWidth / columnCount;
 
     const group1Columns = [8, 9, 10, 11, 12];
-    const group2Columns = [27, 28, 29, 30, 31];
+    const group2Columns = [28, 29, 30, 31, 32];
 
     const sumConditions = {
         8: 'light-red',
@@ -302,7 +1083,6 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
         15: 'Thistle',
         16: 'GreenYellow',
         17: 'Gold'
-
     };
 
     function getColorForStyle(style) {
@@ -314,6 +1094,8 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
             'DarkKhaki': [189, 183, 107],
             'DarkSeaGreen': [143, 188, 143],
             'LightSteelBlue': [176, 196, 222],
+            'Thistle': [216, 191, 216],
+            'GreenYellow': [173, 255, 47],
             'Gold': [255, 215, 0],
             'light-green': [144, 238, 144],
             'default-light-yellow': [255, 255, 224]
@@ -334,8 +1116,8 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
             { number: 12, color: 'DarkKhaki' },
             { number: 13, color: 'DarkSeaGreen' },
             { number: 14, color: 'LightSteelBlue' },
-            { number: 15, color: 'Gold' },
-            { number: 16, color: 'Gold' },
+            { number: 15, color: 'Thistle' },
+            { number: 16, color: 'GreenYellow' },
             { number: 17, color: 'Gold' }
         ];
 
@@ -372,7 +1154,7 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
         },
         columnStyles: {
             0: {
-                cellWidth: 15, 
+                cellWidth: columnWidth,
                 fillColor: getColorForStyle('light-green')
             },
             1: {
@@ -388,646 +1170,202 @@ document.getElementById('savePdfButton').addEventListener('click', function() {
                 return acc;
             }, {})
         },
-        didParseCell: function (data) {
-            if (data.row.section === 'head') {
-                if (data.column.index === 10 || data.column.index === 29) {
-                    data.cell.styles.fillColor = [0, 200, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (data.column.index === 1) {
-                    data.cell.styles.fillColor = [0, 0, 0];
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else if (data.column.index % 2 === 0) {
-                    data.cell.styles.fillColor = [255, 0, 0];
-                } else {
-                    data.cell.styles.fillColor = [0, 0, 0];
+didParseCell: function (data) {
+    if (data.row.section === 'head') {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00']; // For green columns
+
+        // Default lightgray background for all cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
+
+        // Apply colors based on header value
+        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
+
+        if (greenColumns.includes(headerValue)) {
+            // Green for '0' and '00'
+            data.cell.styles.fillColor = [0, 200, 0]; // Green RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (redColumns.includes(headerValue)) {
+            // Red for specific columns
+            data.cell.styles.fillColor = [255, 0, 0]; // Red RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (blackColumns.includes(headerValue)) {
+            // Black for specific columns
+            data.cell.styles.fillColor = [0, 0, 0]; // Black RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        }
+    }
+
+    if (data.row.section === 'body') {
+        const row = data.row.raw;
+
+        // Default lightgray background for all body cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
+
+        if (data.column.index === 0) {
+            // Line number column
+            data.cell.styles.fillColor = [112, 128, 144]; // Slategray
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else {
+            let group1Sum = 0;
+            let group2Sum = 0;
+
+            // Calculate sums for group columns
+            group1Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group1Sum += value;
+            });
+
+            group2Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group2Sum += value;
+            });
+
+            let appliedColor = false;
+
+            // Apply group-based coloring
+            if (group1Columns.includes(data.column.index)) {
+                const group1CellStyle = sumConditions[group1Sum];
+                if (group1CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                    appliedColor = true;
                 }
             }
 
-            if (data.row.section === 'body') {
-                const row = data.row.raw;
-
-                if (data.column.index === 0) {
-                    data.cell.styles.fillColor = [112, 128, 144]; // Slategray
-                    data.cell.styles.textColor = [255, 255, 255];
-                } else {
-                    let group1Sum = 0;
-                    let group2Sum = 0;
-
-                    group1Columns.forEach(index => {
-                        const value = parseFloat(row[index]);
-                        if (!isNaN(value)) group1Sum += value;
-                    });
-
-                    group2Columns.forEach(index => {
-                        const value = parseFloat(row[index]);
-                        if (!isNaN(value)) group2Sum += value;
-                    });
-
-                    let appliedColor = false;
-
-                    if (group1Columns.includes(data.column.index)) {
-                        const group1CellStyle = sumConditions[group1Sum];
-                        if (group1CellStyle) {
-                            data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                            appliedColor = true;
-                        }
-                    }
-
-                    if (group2Columns.includes(data.column.index)) {
-                        const group2CellStyle = sumConditions[group2Sum];
-                        if (group2CellStyle) {
-                            data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                            appliedColor = true;
-                        }
-                    }
-
-                    const cellValue = parseFloat(data.cell.text);
-                    if (!isNaN(cellValue) && cellValue >= 4) {
-                        data.cell.styles.fillColor = getColorForStyle('light-green');
-                        appliedColor = true;
-                    }
-
-                    const lightYellowColumns = [8, 9, 10, 11, 12, 27, 28, 29, 30, 31];
-                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-                    }
+            if (group2Columns.includes(data.column.index)) {
+                const group2CellStyle = sumConditions[group2Sum];
+                if (group2CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                    appliedColor = true;
                 }
             }
-        },
+
+            // Specific value-based coloring
+            const cellValue = parseFloat(data.cell.text);
+            
+        if (!isNaN(cellValue)) {
+            if (cellValue === 3) {
+                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+                appliedColor = true;
+            } else if (cellValue === 4) {
+                data.cell.styles.fillColor = getColorForStyle('Gold');
+                appliedColor = true;
+            } else if (cellValue === 5) {
+                data.cell.styles.fillColor = getColorForStyle('light-green');
+                appliedColor = true;
+            } else if (cellValue === 6) {
+                data.cell.styles.fillColor = getColorForStyle('light-orange');
+                appliedColor = true;
+            } else if (cellValue >= 7) {
+                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+                appliedColor = true;
+            }
+        }
+
+            // Apply default light-yellow for specific columns if no color applied
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+            }
+        }
+    }
+},
+
+
         didDrawPage: function () {
             doc.setFontSize(16);
             const titleX = 14;
             doc.text(filename.replace('.pdf', ''), titleX, 15);
 
             const legendWidth = 8 * 8 + 7 * 2;
-            const xStart = pageWidth - legendWidth - 14;
+            const xStart = pageWidth - legendWidth - 50;  // Move legend to the left by 50 units (about 2 inches)
 
             drawColorLegend(xStart);
         }
     });
 
     doc.save(filename);
-});
-
-
-
-
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
-
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
-
-function getColorForStyle(style) {
-    const colorMap = {
-        'default-light-yellow': [255, 255, 224],
-        'light-red': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-    };
-
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
 }
 
 
-
-        function clearTable() {
-            console.log('Clearing table'); // Debugging statement
-            document.querySelector('#csvTable thead').innerHTML = '';
-            document.querySelector('#csvTable tbody').innerHTML = '';
-        }
-        
-        
-
-document.getElementById('fileInput').addEventListener('change', function(event) {
-    clearTable();
-    
-    const files = Array.from(event.target.files);
-    const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
-    const group1Columns = ['14', '2', '0', '28', '9'];
-    const group2Columns = ['13', '1', '37', '27', '10'];
-    let headerIndices = [];
-    let headerProcessed = false;
-    let csvData = [];  // Array to store processed CSV data
-    const table = document.getElementById('csvTable');
-    
-    
-// Sort by highest order
-document.getElementById('sortByHighestValue').addEventListener('click', function() {
-    console.log("Sort by Highest button clicked");
-    const tableBody = table.querySelector('tbody');
-    let rowsArray = Array.from(tableBody.rows);
-
-    rowsArray.sort((rowA, rowB) => {
-        const valuesA = Array.from(rowA.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
-        const valuesB = Array.from(rowB.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
-        
-        valuesA.sort((a, b) => b - a);
-        valuesB.sort((a, b) => b - a);
-
-        for (let i = 0; i < valuesA.length; i++) {
-            if (valuesA[i] !== valuesB[i]) {
-                return valuesB[i] - valuesA[i];  // Sort in descending order
-            }
-        }
-        return 0;
-    });
-
-    tableBody.innerHTML = ''; // Clear current rows
-    rowsArray.forEach(row => tableBody.appendChild(row)); // Append sorted rows
-    console.log("Sorting by highest complete", rowsArray);
-});
-
-// Reverse the order to sort by lowest
-document.getElementById('sortByLowestValue').addEventListener('click', function() {
-    console.log("Sort by Lowest button clicked");
-    const tableBody = table.querySelector('tbody');
-    let rowsArray = Array.from(tableBody.rows);
-
-    // Simply reverse the existing order of rows
-    rowsArray.reverse();
-
-    tableBody.innerHTML = ''; // Clear current rows
-    rowsArray.forEach(row => tableBody.appendChild(row)); // Append reversed rows
-    console.log("Sorting by lowest complete", rowsArray);
-});
-
-
-
-
-    function processFile(file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const lines = event.target.result.split('\n').map(line => line.split(','));
-
-            if (!headerProcessed) {
-                const headerRow = lines[0];
-                headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-                const thead = table.querySelector('thead');
-                const tr = document.createElement('tr');
-                
-                // Add Line Number Header
-                const th = document.createElement('th');
-                th.textContent = '#';
-                th.style.backgroundColor = 'red'; // Set background color for line number header
-                tr.appendChild(th);
-
-                headerIndices.forEach((index, i) => {
-                    const th = document.createElement('th');
-                    let headerValue = index >= 0 ? headerRow[index] : '';
-                    if (headerValue === '37') {
-                        headerValue = '00';
-                    }
-                    th.textContent = headerValue;
-                    if (th.textContent === '0' || th.textContent === '00') {
-                        th.style.backgroundColor = 'green';
-                    } else if (i % 2 === 0) {
-                        th.style.backgroundColor = 'black';
-                    } else {
-                        th.style.backgroundColor = 'red';
-                    }
-                    tr.appendChild(th);
-                });
-                thead.appendChild(tr);
-                headerProcessed = true;
-            }
-
-            for (let i = 1; i < lines.length; i++) {
-                if (lines[i].some(cell => cell.trim())) {
-                    csvData.push(lines[i].map(cell => cell.trim()));  // Store each row in csvData array
-                }
-            }
-
-            // Update row count display
-            document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`;
-
-            if (files.length > 0) {
-                processFile(files.shift());
-            } else {
-                csvData.forEach((row, rowIndex) => {
-                    const tr = document.createElement('tr');
-                    let group1Sum = 0;
-                    let group2Sum = 0;
-                    let group1Cells = [];
-                    let group2Cells = [];
-
-// Add Line Number Cell (Row Header)
-const tdLineNumber = document.createElement('td');
-tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
-tdLineNumber.style.backgroundColor = 'slategray'; // Set background color to slategray
-tdLineNumber.style.color = 'white'; // Set text color to white for contrast
-tdLineNumber.style.width = '40px'; // Set fixed width to 40px (adjust as needed)
-tdLineNumber.style.minWidth = '50px'; // Set minimum width to 40px (adjust as needed)
-tdLineNumber.style.maxWidth = '50px'; // Ensure it doesn't expand beyond 40px
-tdLineNumber.style.textAlign = 'center'; // Center align text in the cell
-tr.appendChild(tdLineNumber);  // Append line number cell to the row
-
-
-
-                    headerIndices.forEach(index => {
-                        const td = document.createElement('td');
-                        let cellValue = index >= 0 ? row[index] : '';
-                        
-                        // Change '0' to an empty space
-                        if (cellValue === '0') {
-                            cellValue = '';
-                        }
-                        
-                        td.textContent = cellValue;
-
-                        if (index >= 0 && (group1Columns.includes(columnOrder[headerIndices.indexOf(index)]) || group2Columns.includes(columnOrder[headerIndices.indexOf(index)]))) {
-                            td.classList.add('default-light-yellow');
-                        }
-
-                        if (index >= 0 && group1Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
-                            group1Cells.push(td);
-                            if (!isNaN(cellValue) && cellValue !== '') {
-                                group1Sum += Number(cellValue);
-                            }
-                        }
-
-                        if (index >= 0 && group2Columns.includes(columnOrder[headerIndices.indexOf(index)])) {
-                            group2Cells.push(td);
-                            if (!isNaN(cellValue) && cellValue !== '') {
-                                group2Sum += Number(cellValue);
-                            }
-                        }
-
-                        if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
-                            td.classList.remove('default-light-yellow', 'light-red');
-                            td.classList.add('light-green');
-                        }
-
-                        tr.appendChild(td);
-                    });
-
-                    // Apply background color based on the sum conditions
-                    group1Cells.forEach(td => {
-                        if (group1Sum === 8) {
-                            td.classList.remove('default-light-yellow');
-                            td.classList.add('light-red');
-                        } else if (group1Sum === 9) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-blue');
-                            }
-                        } else if (group1Sum === 10) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-orange');
-                            }
-                        } else if (group1Sum === 11) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('violet');
-                            }
-                        } else if (group1Sum === 12) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkKhaki');
-                            }
-                        } else if (group1Sum === 13) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkSeaGreen');
-                            }
-                        } else if (group1Sum === 14) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('LightSteelBlue');
-                            }
-                        } else if (group1Sum === 15) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('Gold');
-                            }
-                        }
-                    });
-
-                    group2Cells.forEach(td => {
-                        if (group2Sum === 8) {
-                            td.classList.remove('default-light-yellow');
-                            td.classList.add('light-red');
-                        } else if (group2Sum === 9) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-blue');
-                            }
-                        } else if (group2Sum === 10) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('light-orange');
-                            }
-                        } else if (group2Sum === 11) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('violet');
-                            }
-                        } else if (group2Sum === 12) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkKhaki');
-                            }
-                        } else if (group2Sum === 13) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('DarkSeaGreen');
-                            }
-                        } else if (group2Sum === 14) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('LightSteelBlue');
-                            }
-                        } else if (group2Sum === 15) {
-                            if (!td.classList.contains('light-green')) {
-                                td.classList.remove('default-light-yellow');
-                                td.classList.add('Gold');
-                            }
-                        }
-                    });
-
-                    table.querySelector('tbody').appendChild(tr);
-                });
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    processFile(files.shift());
-});
-
-
-        
- document.getElementById('saveButton').addEventListener('click', function() {
-    const table = document.getElementById('csvTable');
-    let csvContent = '';
-    const rows = table.querySelectorAll('tr');
-    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
-
-    rows.forEach((row, rowIndex) => {
-        const cols = row.querySelectorAll('th, td');
-        let rowData = [];
-
-        cols.forEach(col => {
-            let cellData = col.textContent;
-            
-            // Replace the header "00" with "37" in the first row (header row)
-            if (rowIndex === 0 && cellData === '00') {
-                cellData = '37';
-            }
-
-            rowData.push(cellData);
-        });
-
-        csvContent += rowData.join(',') + '\n';
-    });
-
-    // Create a Blob from the CSV content
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-  
-        // Get the formatted timestamp
-        const timestamp = getFormattedTimestamp();
-        
-        // Set the download attribute with a filename including the row count and timestamp
-        link.setAttribute("download", `Wheel_${rowCount}_${timestamp}.csv`);
-        link.style.display = 'none';
-        
-    // Append the link to the body, click it and remove it
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
-
-// Function to get formatted timestamp
-function getFormattedTimestamp() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
-}
-
-
-
-            document.getElementById('showStatsButton').addEventListener('click', function() {
+        // Event listener for 'showStatsButton'
+        document.getElementById('viewStatsButton').addEventListener('click', function() {
             console.log('Show Stats button clicked'); // Debugging statement
             localStorage.setItem('clearTable', 'true');
             localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
             window.open('view-stats.html', '_blank');
         });
-        
-        // Existing code...
 
-document.querySelectorAll('.info-item2.clickable').forEach(element => {
-  element.addEventListener('click', function() {
-    clearTable(); // Clear table at the start of each click
-    
-    const dataType = element.getAttribute('data-type');
-    const fileName = `OnServer_${dataType}.csv`; // Dynamically set file name based on data-type
-
-    console.log('Clicked info item!'); // For debugging, log when an item is clicked
-    console.log('Fetching file:', fileName); // For debugging, log which file is being fetched
-
-    fetch(fileName)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.text(); // Parse the response as text
-      })
-      .then(csvText => {
-        console.log('CSV data fetched successfully'); // Log success message
-
-        const lines = csvText.split('\n').map(line => line.split(',')); // Split CSV text into rows/columns
-        const columnOrder = ['6', '21', '33', '16', '4', '23', '35', '14', '2', '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18'];
-        const group1Columns = ['14', '2', '0', '28', '9'];
-        const group2Columns = ['13', '1', '37', '27', '10'];
-        let headerIndices = [];
-        let headerProcessed = false;
-        let csvData = [];
-        const table = document.getElementById('csvTable');
-
-        if (!headerProcessed) {
-          const headerRow = lines[0];
-          headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-          const thead = table.querySelector('thead');
-          const tr = document.createElement('tr');
-
-          // Add Line Number Header
-          const thLineNumber = document.createElement('th');
-          thLineNumber.textContent = '#'; // Line number header
-          tr.appendChild(thLineNumber);
-
-          // Add headers for the remaining columns
-          headerIndices.forEach(index => {
-            const th = document.createElement('th');
-            let headerValue = index >= 0 ? headerRow[index] : '';
-            if (headerValue === '37') {
-              headerValue = '00';
-            }
-            th.textContent = headerValue;
-            if (th.textContent === '0' || th.textContent === '00') {
-              th.style.backgroundColor = 'green'; // Highlight '0' and '00'
-            }
-            tr.appendChild(th);
-          });
-          thead.appendChild(tr);
-          headerProcessed = true;
-        }
-
-        for (let i = 1; i < lines.length; i++) {
-          if (lines[i].some(cell => cell.trim())) {
-            csvData.push(lines[i]); // Filter out empty rows
-          }
-        }
-
-        document.getElementById('rowCount').textContent = `Runs: ${csvData.length}`; // Display row count
-
-        // Loop through CSV data and build table rows
-        csvData.forEach((row, rowIndex) => {
-          const tr = document.createElement('tr');
-
-          // Add Line Number Cell
-          const tdLineNumber = document.createElement('td');
-          tdLineNumber.textContent = rowIndex + 1; // Line number starts from 1
-          tdLineNumber.style.backgroundColor = 'slategray'; // Styling line number cell
-          tdLineNumber.style.color = 'white';
-          tr.appendChild(tdLineNumber);
-
-          let group1Sum = 0;
-          let group2Sum = 0;
-          let group1Cells = [];
-          let group2Cells = [];
-
-          headerIndices.forEach((index, i) => {
-            const td = document.createElement('td');
-            let cellValue = row[index] || ''; // Adjust index for full column row
-            if (cellValue === '0') {
-              cellValue = '';
-            }
-            td.textContent = cellValue;
-
-            // Highlight cells based on column groups
-            if (i >= 0 && (group1Columns.includes(columnOrder[i]) || group2Columns.includes(columnOrder[i]))) {
-              td.classList.add('default-light-yellow');
-            }
-
-            // Group 1 sum and styling
-            if (i >= 0 && group1Columns.includes(columnOrder[i])) {
-              group1Cells.push(td);
-              if (!isNaN(cellValue) && cellValue !== '') {
-                group1Sum += Number(cellValue);
-              }
-            }
-
-            // Group 2 sum and styling
-            if (i >= 0 && group2Columns.includes(columnOrder[i])) {
-              group2Cells.push(td);
-              if (!isNaN(cellValue) && cellValue !== '') {
-                group2Sum += Number(cellValue);
-              }
-            }
-
-            // Apply green background if cell value is 4 or higher
-            if (!isNaN(cellValue) && cellValue !== '' && Number(cellValue) >= 4) {
-              td.classList.remove('default-light-yellow', 'light-red');
-              td.classList.add('light-green');
-            }
-
-            tr.appendChild(td);
-          });
-
-          // Apply color logic for group 1 based on group1Sum
-          group1Cells.forEach(td => {
-            if (group1Sum === 8) td.classList.add('light-red');
-            else if (group1Sum === 9) td.classList.add('light-blue');
-            else if (group1Sum === 10) td.classList.add('light-orange');
-            else if (group1Sum === 11) td.classList.add('violet');
-            else if (group1Sum === 12) td.classList.add('DarkKhaki');
-            else if (group1Sum === 13) td.classList.add('DarkSeaGreen');
-            else if (group1Sum === 14) td.classList.add('LightSteelBlue');
-            else if (group1Sum === 15) td.classList.add('Gold');
-          });
-
-          // Apply color logic for group 2 based on group2Sum
-          group2Cells.forEach(td => {
-            if (group2Sum === 8) td.classList.add('light-red');
-            else if (group2Sum === 9) td.classList.add('light-blue');
-            else if (group2Sum === 10) td.classList.add('light-orange');
-            else if (group2Sum === 11) td.classList.add('violet');
-            else if (group2Sum === 12) td.classList.add('DarkKhaki');
-            else if (group2Sum === 13) td.classList.add('DarkSeaGreen');
-            else if (group2Sum === 14) td.classList.add('LightSteelBlue');
-            else if (group2Sum === 15) td.classList.add('Gold');
-          });
-
-          table.querySelector('tbody').appendChild(tr);
+        // Event listener for 'sortCols' button
+        document.getElementById('sortCols').addEventListener('click', function() {
+            window.open('sort.html', '_blank');  // Opens sort.html in a new tab or window
         });
-      })
-      .catch(error => {
-        console.error('Error fetching the file:', error); // Handle fetch errors
-        if (error.name === 'FetchError' || error.name === 'NetworkError') {
-          console.error('Network error encountered:', error);
-          console.error('Check your internet connection or the server URL.');
-        }
-      });
-  });
-});
 
-	
-    // Function to generate a formatted timestamp
-    function getFormattedTimestamp() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
-    }
-    
-    
+        // Event listener for 'sortByHighestValue' button
+        document.getElementById('sortByHighestValue').addEventListener('click', function() {
+            console.log("Sort by Highest button clicked");
+            const tableBody = document.querySelector('#csvTable tbody');
+            let rowsArray = Array.from(tableBody.rows);
+
+            rowsArray.sort((rowA, rowB) => {
+                const valuesA = Array.from(rowA.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
+                const valuesB = Array.from(rowB.cells).slice(1).map(cell => parseInt(cell.textContent) || 0);
+
+                valuesA.sort((a, b) => b - a);
+                valuesB.sort((a, b) => b - a);
+
+                for (let i = 0; i < valuesA.length; i++) {
+                    if (valuesA[i] !== valuesB[i]) {
+                        return valuesB[i] - valuesA[i];  // Sort in descending order
+                    }
+                }
+                return 0;
+            });
+
+            tableBody.innerHTML = ''; // Clear current rows
+            rowsArray.forEach(row => tableBody.appendChild(row)); // Append sorted rows
+            console.log("Sorting by highest complete", rowsArray);
+        });
+
+        // Event listener for 'sortByLowestValue' button
+        document.getElementById('sortByLowestValue').addEventListener('click', function() {
+            console.log("Sort by Lowest button clicked");
+            const tableBody = document.querySelector('#csvTable tbody');
+            let rowsArray = Array.from(tableBody.rows);
+
+            // Simply reverse the existing order of rows
+            rowsArray.reverse();
+
+            tableBody.innerHTML = ''; // Clear current rows
+            rowsArray.forEach(row => tableBody.appendChild(row)); // Append reversed rows
+            console.log("Sorting by lowest complete", rowsArray);
+        });    
 
     </script>
+    
+    <script>
+    // Modal functionality
+    const modal = document.getElementById('instructionsModal');
+    const howToUseButton = document.getElementById('howToUseButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    howToUseButton.onclick = function() {
+      modal.style.display = 'flex';
+    }
+
+    closeModalButton.onclick = function() {
+      modal.style.display = 'none';
+    }
+
+    // Close the modal if clicked outside of the modal content
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+    
+
+  </script>
 </body>
 </html>

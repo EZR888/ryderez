@@ -15,8 +15,19 @@
       justify-content: center;
       height: 100vh;
       font-family: Arial, sans-serif;
-      padding: 10px;
+      padding: 0px;
       box-sizing: border-box;
+    }
+    
+     /* Flexbox wrapper to prevent content cutoff */
+    .flex-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* Full height of the viewport */
+      width: 100vw;  /* Full width of the viewport */
+      overflow: auto; /* Allows scrolling when zoomed in */
     }
 
     .wheel-container {
@@ -66,6 +77,9 @@
       background-color: #008CBA; /* Blue */
       color: white;
     }
+    .highlight-yellow {
+  		background-color: lightyellow !important;
+	}
 
     table {
       border-collapse: collapse;
@@ -126,6 +140,11 @@
       color: lightgreen;
       text-align: center;
     }
+    
+    #viewDataButton {
+      background-color: lightgray; /* Orange */
+      color: black;
+    }
 
     #TotalsTableContainer {
       display: flex;
@@ -146,9 +165,37 @@
       max-width: 100%;
     }
 
+
+/* CSS for centering content and adding padding to cells */
+#TotalsTableContainer table td {
+  text-align: center;  /* Center the text horizontally */
+  vertical-align: middle;  /* Center the text vertically */
+  padding: 10px;  /* Add padding to ensure space within cells */
+  min-width: 40px;  /* Ensure minimum width to prevent flattening */
+  height: 30px;  /* Set a height to ensure all cells are the same size */
+}
+
+#TotalsTableContainer table th {
+  text-align: center;  /* Center the header text */
+  padding: 10px;  /* Add padding to ensure space in header cells */
+  min-width: 40px;  /* Ensure headers have consistent width with cells */
+}
+
+
     .blink {
       animation: blink 1s step-start infinite;
     }
+    
+    @keyframes yellowBlink {
+  0% { background-color: yellow; }
+  50% { background-color: white; }
+  100% { background-color: yellow; }
+}
+
+.blink-yellow {
+  animation: yellowBlink 1s step-start infinite;
+}
+
 
     @keyframes blink {
       0% { background-color: white; }
@@ -208,29 +255,117 @@
         font-size: 12px;
       }
     }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    } 
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    
   </style>
 </head>
 <body>
-  <div>
-    <h1 class="lgreen-text">Roulette Wheel</h1>
-  </div>
-  <div class="wheel-container">
-    <div id="output"></div>
-  </div>
-  <br>
-  <div class="button-container">
-    <button id="startButton" class="button"><b>Spin</b></button>
-    <button id="saveDataButton" class="button"><b>Save Data</b></button>
-    <button id="accessSimulatorButton" class="button"><b>Access Simulator</b></button>
-  </div>
-
-  <div class="table-container">
-    <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
-    <div id="TotalsTableContainer"></div>
-  </div>
   <br><br>
-
+  
+          <div>
+            <div class="framed-section2">
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+    			<button id="densityButton" class="button button-LightSteelBlue">Density</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
+            </div>
+        </div>
+        
+  <div class="flex-frame">  <!-- Flexbox frame added here -->
+    <h1 class="lgreen-text">Roulette Wheel</h1>
+    <div class="wheel-container">
+      <div id="output"></div>
+    </div>
+    <br><br>
+    <div class="button-container">
+      <button id="startButton" class="button"><b>Spin</b></button>
+      <button id="saveDataButton" class="button"><b>Save Data</b></button>
+      <button id="resetButton" class="button"><b>Reset Count</b></button>
+    </div>
+    <div class="table-container">
+      <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
+      <div id="TotalsTableContainer"></div>
+    </div>
+  </div> <!-- End of flex-frame -->
+  <br><br>
+  
   <script>
+  
+         	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+      
     // Roulette Wheel Variables
     let wheelRadius = 280;
     let wheelCenterX;
@@ -246,12 +381,14 @@
     let finalIndex;
     let winningNumber;
     let numSlots = 38;
-    let slotNumbers = [18, 6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31];
+    let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18 ];
     let slotAngle;
     let wheelSound;
     let soundLoaded = false;
     let Totals = new Array(38).fill(0);
+    let spinCount = 0;
 
+    // Setup function
     function setup() {
       let canvas = createCanvas(600, 600);
       canvas.parent('output');
@@ -261,21 +398,56 @@
 
       document.getElementById('startButton').addEventListener('click', () => {
         startWheelSpin();
+        updateSpinCounter();
       });
 
-      document.getElementById('saveDataButton').addEventListener('click', () => {
-        exportTotalsToCSV(Totals, 'totals_data.csv');
+      document.getElementById('resetButton').addEventListener('click', () => {
+        resetSpinCounter();
         clearAndResetTotals();
       });
 
-      document.getElementById('accessSimulatorButton').addEventListener('click', () => {
-        window.location.href = 'roulette.html';
+      document.getElementById('saveDataButton').addEventListener('click', () => {
+        exportTotalsToCSV(Totals);
       });
 
-      // Load and prepare the sound once, so it's ready for the first spin
+      document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.location.href = 'roulette.html';
+      });
+      
+      // New event listener for the View Data button
+      document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+
       loadAndPlaySound();
     }
 
+    // Function to update the spin counter
+    function updateSpinCounter() {
+      spinCount++;
+      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+    }
+
+    // Function to reset the spin counter
+    function resetSpinCounter() {
+      spinCount = 0;
+      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+    }
+
+    // Start wheel spin function
+    function startWheelSpin() {
+      if (!isSpinning) {
+        if (soundLoaded) {
+          wheelSound.play();
+        } else {
+          console.error('Sound not loaded');
+        }
+        isSpinning = true;
+        ballAngle = cryptoRandom(0, 360);
+        ballSpeed = cryptoRandom(5, 10);
+      }
+    }
+    
     function draw() {
       background(0);
       drawWheel();
@@ -295,7 +467,6 @@
             wheelSound.stop();
           }
 
-          // Update totals
           if (winningNumber !== undefined) {
             let index = slotNumbers.indexOf(winningNumber);
             Totals[index]++;
@@ -320,7 +491,7 @@
         if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
           fill(0, 128, 0);
         } else {
-          fill(i % 2 === 0 ? color(255, 0, 0) : color(0));
+          fill(i % 2 === 0 ? color(0) : color(255, 0, 0));
         }
 
         arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
@@ -370,85 +541,133 @@
       });
     }
 
-    function startWheelSpin() {
-      if (!isSpinning) {
-        if (soundLoaded) {
-          wheelSound.play();
-        } else {
-          console.error('Sound not loaded');
-        }
-        isSpinning = true;
-        ballAngle = random(360);
-        ballSpeed = random(5, 10);
-      }
+    function cryptoRandom(min, max) {
+      const array = new Uint32Array(1);
+      window.crypto.getRandomValues(array);
+      const randomNumber = array[0] / (0xFFFFFFFF + 1);
+      return Math.floor(randomNumber * (max - min) + min);
     }
 
-    function populateTotalsTable() {
-      let tableContainer = document.getElementById('TotalsTableContainer');
-      let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
+// Store the index of the last updated cell
+let lastUpdatedIndex = null;
 
-      // Header Row (First Half)
-      for (let i = 0; i < numSlots / 2; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                         (i % 2 === 0 ? 'red-header' : 'black-header');
-        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-      }
+function populateTotalsTable() {
+  let tableContainer = document.getElementById('TotalsTableContainer');
 
-      tableHTML += '</tr></thead><tbody><tr>';
+  // Only create the table if it doesn't already exist
+  if (!tableContainer.querySelector('table')) {
+    let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
 
-      // Data Row (First Half)
-      for (let i = 0; i < numSlots / 2; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                         (i % 2 === 0 ? 'red' : 'black');
-        let displayValue = Totals[i] > 0 ? Totals[i] : '&nbsp;';
-        let cellClass = i === finalIndex ? 'blink' : '';
-        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
-      }
-
-      tableHTML += '</tr></tbody></table></div>';
-
-      // Second Half
-      tableHTML += '<div class="table-half"><table id="TotalsTable2"><thead><tr>';
-      for (let i = numSlots / 2; i < numSlots; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                         (i % 2 === 0 ? 'red-header' : 'black-header');
-        tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-      }
-      tableHTML += '</tr></thead><tbody><tr>';
-      for (let i = numSlots / 2; i < numSlots; i++) {
-        let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                         (i % 2 === 0 ? 'red' : 'black');
-        let displayValue = Totals[i] > 0 ? Totals[i] : '&nbsp;';
-        let cellClass = i === finalIndex ? 'blink' : '';
-        tableHTML += `<td class="${colorClass} ${cellClass}">${displayValue}</td>`;
-      }
-      tableHTML += '</tr></tbody></table></div>';
-
-      tableContainer.innerHTML = tableHTML;
+    // Header Row (Second Half)
+    for (let i = 0; i < numSlots / 2; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                       (i % 2 === 0 ? 'black-header' : 'red-header');
+      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
     }
+
+    tableHTML += '</tr></thead><tbody><tr>';
+
+    // Data Row (Second Half)
+    for (let i = 0; i < numSlots / 2; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                       (i % 2 === 0 ? 'black' : 'red');
+      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
+      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    }
+
+    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
+
+    // Header Row (First Half)
+    for (let i = numSlots / 2; i < numSlots; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
+                       (i % 2 === 0 ? 'black-header' : 'red-header');
+      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
+    }
+
+    tableHTML += '</tr></thead><tbody><tr>';
+
+    // Data Row (First Half)
+    for (let i = numSlots / 2; i < numSlots; i++) {
+      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
+                       (i % 2 === 0 ? 'black' : 'red');
+      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
+      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
+      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
+    }
+
+
+    tableHTML += '</tr></tbody></table></div>';
+    tableContainer.innerHTML = tableHTML;
+  }
+
+  // Update the specific cell with the new total and blinking effect
+  let tableCells = document.querySelectorAll(`#TotalsTable1 td, #TotalsTable2 td`);
+
+  // Remove blinking effect from the previously updated cell
+  if (lastUpdatedIndex !== null && tableCells[lastUpdatedIndex]) {
+    tableCells[lastUpdatedIndex].classList.remove('blink-yellow');
+  }
+
+  // Update the cell content and add blinking effect to the updated cell
+  if (finalIndex !== null && tableCells[finalIndex]) {
+    tableCells[finalIndex].textContent = Totals[finalIndex] === 0 ? '' : Totals[finalIndex];
+    tableCells[finalIndex].classList.add('blink-yellow');
+  }
+
+  // Update the last updated index
+  lastUpdatedIndex = finalIndex;
+}
+
+
+
+    // Function to generate a formatted timestamp
+    function getFormattedTimestamp() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}-${hours}-${minutes}`;
+    }
+
+function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
+  const formattedTimestamp = getFormattedTimestamp();
+  const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
+
+  // Define the new order of slot numbers, changing '00' to '37'
+  const orderedSlotNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37];
+
+  // Map totals to the new slot number order, replacing '00' index with '37'
+  const orderedTotals = orderedSlotNumbers.map(number => {
+    const index = slotNumbers.indexOf(number === 37 ? '00' : number);
+    return index !== -1 ? totals[index] : 0;
+  });
+
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  // Add headers with '37' instead of '00'
+  csvContent += orderedSlotNumbers.join(",") + "\n";
+
+  // Add totals row
+  csvContent += orderedTotals.join(",") + "\n";
+
+  // Create a link to download the CSV file
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 
     function clearAndResetTotals() {
-      Totals.fill(0); // Reset Totals array to 0
-      populateTotalsTable(); // Clear and repopulate the table
-    }
-
-    function exportTotalsToCSV(data, filename) {
-      const csvContent = "data:text/csv;charset=utf-8,"
-          + "Number,Frequency\n"
-          + data.map((freq, index) => `${slotNumbers[index]},${freq}`).join("\n");
-      
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-    }
-
-    function singleSpin() {
-      if (!isSpinning) {
-        startWheelSpin();
-      }
+      Totals.fill(0);
+      populateTotalsTable();
     }
   </script>
 </body>

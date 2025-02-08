@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette P-Values</title>
+    <style>
+            .framed-buttons {
+            border: 2px solid lightblue;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            text-align: center;
+            color: black;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }   
+    body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+    }
+    .container h1 {
+            margin: 0;
+    }
+        .button {
+            font-size: 120%;
+            padding: 6px 12px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .button-single {
+            background-color: salmon;
+            color: black;
+        }
+        .button-purple {
+            background-color: purple;
+            color: white;
+        }
+        #viewDataButton {
+            background-color: lightgray;
+            color: black !important;
+        }
+
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+        .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+        .results-container h3 {
+            color: lightgreen;
+            margin-bottom: 10px;
+        }
+        .results-container p {
+            color: white;
+            margin: 5px 0;
+        }
+        #explanation {
+            border: 1px solid lightgreen;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #222;
+            border-radius: 5px;
+            color: white;
+        }
+        #topContributors {
+            color: white;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+            color: black;
+            background-color: lightgreen;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+        input[type="file"]:hover {
+            background-color: white;
+            color: black;
+            cursor: pointer;
+        }
+            .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+        .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <div class="framed-section2">
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
+            </div>
+        </div>
+        <br>
+        <div id="instructionsModal" class="modal">
+            <div class="modal-content">
+                <button class="close-button" id="closeModalButton">&times;</button>
+                <h3>How To Read This Screen</h3>
+                <p>...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-container">
+            <h1 class="header-text">Data Analysis</h1>
+        </div>
+        <div class="results-container">
+            <input type="file" id="fileInput" accept=".csv" multiple>
+            <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies, Based on 100 million Runs:</span></h3>
+            <canvas id="chiSquareChart"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
+            <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
+            <br>
+            <div id="resultsTableContainer" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+<script>
+//document.getElementById('runButton').addEventListener('click', function() {
+//    const numLargeRuns = 10000000; // 10 million spins
+//    const largeDatasetCounts = generateLargeDataset(numLargeRuns);
+//    const largeDatasetProportions = calculateProportions(largeDatasetCounts);
+
+//    const fileInput = document.getElementById('fileInput');
+//    if (fileInput.files.length === 0) {
+//        alert("Please upload a CSV file.");
+//        return;
+//    }
+
+//    const file = fileInput.files[0];
+//    const reader = new FileReader();
+//    reader.onload = function(e) {
+//        const csvData = e.target.result;
+//        const observedCounts = processCSVData(csvData);
+//        const totalSpins = observedCounts.reduce((a, b) => a + b, 0);
+
+//        performChiSquareAnalysis(observedCounts, largeDatasetProportions, totalSpins);
+//    };
+//    reader.readAsText(file);
+//});
+
+//function generateLargeDataset(numRuns) {
+//    const counts = Array(38).fill(0);
+//    for (let i = 0; i < numRuns; i++) {
+//        for (let j = 0; j < 38; j++) {
+//            const spin = Math.floor(Math.random() * 38);
+//            counts[spin]++;
+//        }
+//    }
+//   return counts;
+//}
+
+//function calculateProportions(dataset) {
+//    const totalSpins = dataset.reduce((sum, count) => sum + count, 0);
+//    return dataset.map(count => count / totalSpins);
+//}
+
+
+//function processCSVData(csvData) {
+//    const rows = csvData.trim().split("\n");
+//    const counts = Array(38).fill(0);
+
+//    rows.forEach((row, index) => {
+//        const values = row.split(",").map(Number);
+//        const isHeader = values.length === 38 && values.every((val, idx) => val === idx);
+//        if (index === 0 && isHeader) {
+//            console.log("Header row detected and skipped:", row);
+//            return;
+//        }
+//        if (values.length === 38) {
+//            values.forEach((val, idx) => counts[idx] += val);
+//        } else {
+//            console.warn("Invalid row length detected and skipped:", row);
+//        }
+//    });
+
+//    console.log("Observed Counts from CSV:", counts);
+//    return counts;
+//}
+
+// Precomputed P-values from a 100 million run
+
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
+const precomputedPValues = [
+    0.328371, 0.320564, 0.187269, 0.695280, 0.746468, 0.836557, 0.416906, 0.794401, 
+    0.040540, 0.408294, 0.515757, 0.783009, 0.391777, 0.911854, 0.468207, 0.827663, 
+    0.675655, 0.169939, 0.109421, 0.279119, 0.029257, 0.273692, 0.065271, 0.817703, 
+    0.489189, 0.527648, 0.233497, 0.653215, 0.163438, 0.919789, 0.861944, 0.323545, 
+    0.000958, 0.855583, 0.440825, 0.623568, 0.089564, 0.445702
+];
+
+// Function to process multiple uploaded CSVs and compare p-values
+function processMultipleCSVFiles(files) {
+    let totalCounts = Array(38).fill(0);
+    let totalSpins = 0;
+    let filenames = [];
+
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const { counts, spins } = processCSVData(e.target.result);
+            filenames.push(file.name);
+
+            // Aggregate counts from all files
+            totalCounts = totalCounts.map((val, i) => val + counts[i]);
+            totalSpins += spins;
+
+            if (filenames.length === files.length) { // Process when all files are read
+                const expectedFrequency = totalSpins / 38;
+                const expectedCounts = Array(38).fill(expectedFrequency);
+
+                // Compute observed p-values (Binomial test)
+                const observedPValues = totalCounts.map((observed, i) => {
+                    return (2 * Math.min(
+                        jStat.binomial.cdf(observed, totalSpins, 1 / 38), 
+                        1 - jStat.binomial.cdf(observed - 1, totalSpins, 1 / 38)
+                    )).toFixed(6);
+                });
+
+                // Perform analysis and update UI
+                performAnalysis(totalCounts, expectedCounts, observedPValues, totalSpins, filenames);
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Function to analyze and display results
+function performAnalysis(observed, expected, observedPValues, totalSpins, filenames = []) {
+    let results = observed.map((obs, i) => ({
+        number: i,
+        observed: obs,
+        expected: expected[i],
+        pValue: parseFloat(observedPValues[i])
+    }));
+
+    // Sort by lowest p-values first
+    results.sort((a, b) => a.pValue - b.pValue);
+
+    // Filter for significant p-values (p < 0.05)
+    const significantResults = results.filter(r => r.pValue < 0.05);
+
+    const totalRows = totalSpins / 38;
+    document.getElementById("totalSpins").textContent = totalRows;
+    document.getElementById("conclusion").textContent = 
+        significantResults.length > 0 ? "There is evidence of non-randomness." : "No significant deviations detected.";
+    document.getElementById("conclusion").style.color = significantResults.length > 0 ? "yellow" : "white";
+
+    // Display sorted results table
+    displayResultsTable(results, filenames);
+    generateChart(observed, expected);
+}
+
+// Function to process CSV and extract counts
+function processCSVData(csvData) {
+    const rows = csvData.trim().split("\n");
+    const counts = Array(38).fill(0);
+    let totalSpins = 0;
+
+    rows.forEach((row, index) => {
+        const values = row.split(",").map(Number);
+
+        // Skip header row (only log once per file)
+        if (index === 0 && values.length === 38 && values.every((val, idx) => val === idx)) {
+            if (index === 0) console.log("Skipped header row:", row);
+            return;
+        }
+
+        if (values.length === 38) {
+            values.forEach((val, idx) => {
+                counts[idx] += val;
+                totalSpins += val;
+            });
+        } else {
+            console.warn("Invalid row length detected and skipped:", row);
+        }
+    });
+
+    return { counts, spins: totalSpins };
+}
+
+function calculateCumulativeProbabilities(observedCounts, observedPValues) {
+    let cumulativeSum = 0;
+    let cumulativePValues = Array(38).fill(0);
+
+    for (let i = 0; i < observedCounts.length; i++) {
+        if (observedCounts[i] > 0) {
+            cumulativeSum += parseFloat(observedPValues[i]); 
+        }
+        cumulativePValues[i] = Math.min(cumulativeSum, 1).toFixed(6); // Ensure max value is 1
+    }
+
+    return cumulativePValues;
+}
+
+
+// Function to display sorted results
+function displayResultsTable(results, filenames) {
+    let tableHTML = `
+        <h3><span style="color: lightgreen;">Sorted P-Value Analysis (Binomial Test):</span></h3>
+        <table border="1" style="width: 100%; color: white; text-align: center; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #444;color: salmon;">
+                    <th>Number</th>
+                    <th>Observed</th>
+                    <th>Expected</th>
+                    <th>Obs P-Val</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    results.forEach(r => {
+        tableHTML += `
+            <tr>
+                <td style="color: yellow;">${r.number}</td>
+                <td>${r.observed}</td>
+                <td>${r.expected.toFixed(2)}</td>
+                <td style="color: ${r.pValue < 0.05 ? 'red' : 'white'};">${r.pValue.toFixed(6)}</td>
+            </tr>`;
+    });
+
+    tableHTML += `</tbody></table>`;
+
+    if (filenames.length > 0) {
+        tableHTML += `<h3><span style="color: lightgreen;">Processed Files:</span></h3>
+                      <p style="color: white;">${filenames.join("<br>")}</p>`;
+    } else {
+        tableHTML += `<p style="color: red;">No files processed.</p>`;
+    }
+
+    document.getElementById("resultsTableContainer").innerHTML = tableHTML;
+}
+
+// Function to update UI and display Chi-Square results with cumulative probabilities
+function performChiSquareAnalysis(observed, expected, observedPValues, totalSpins, filenames =[]) {
+    let chiSquare = 0;
+    const contributions = [];
+
+    observed.forEach((obs, i) => {
+        const exp = expected[i];
+        const contribution = Math.pow(obs - exp, 2) / exp;
+        chiSquare += contribution;
+        contributions.push({ number: i, contribution, observed: obs, expected: exp });
+    });
+
+    contributions.sort((a, b) => b.contribution - a.contribution);
+
+    const degreesOfFreedom = observed.length - 1;
+    const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
+
+    const conclusion = pValue < 0.05
+        ? "There is evidence of non-randomness."
+        : "No evidence of non-randomness.";
+
+    //FIX: Use the correct function for cumulative probabilities
+const cumulativeObservedPValues = calculateCumulativeProbabilities(observed, observedPValues);
+const cumulativePrecomputedPValues = calculateCumulativeProbabilities(observed, precomputedPValues);
+
+    document.getElementById("totalSpins").textContent = totalSpins;
+    document.getElementById("pValue").textContent = pValue.toFixed(6);
+    document.getElementById("conclusion").textContent = conclusion;
+    document.getElementById("conclusion").style.color = pValue < 0.05 ? "yellow" : "white";
+
+    generateChart(observed, expected);
+
+    // : Pass the corrected cumulative p-values
+    displayResultsTable(observed, expected, observedPValues, precomputedPValues, cumulativeObservedPValues, cumulativePrecomputedPValues, filenames);
+}
+
+// Function to generate the chart
+function generateChart(observed, expected) {
+    const ctx = document.getElementById('chiSquareChart').getContext('2d');
+    if (window.myChart) window.myChart.destroy();
+
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({ length: observed.length }, (_, i) => i),
+            datasets: [
+                {
+                    label: 'Observed',
+                    data: observed,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                },
+                {
+                    label: 'Expected (Static Dataset)',
+                    data: expected,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Observed vs Expected Frequencies' }
+            }
+        }
+    });
+}
+
+function exportPValueComparisonToCSV(observedCounts, expectedCounts, observedPValues, precomputedPValues, filenames) {
+    if (!filenames || !Array.isArray(filenames)) {
+        console.error("Filenames array is undefined or not valid.");
+        return;
+    }
+
+let cumulativeObservedPValues = calculateCumulativeProbabilities(observedCounts, observedPValues);
+let cumulativePrecomputedPValues = calculateCumulativeProbabilities(observedCounts, precomputedPValues);
+
+
+
+    let csvContent = "Number,Observed,Expected,Obs P-Val,100m P-Value,Cu Obs P-Val,Cu 100m P-Val\n";
+
+    for (let i = 0; i < 38; i++) {
+        csvContent += `${i},${observedCounts[i]},${expectedCounts[i].toFixed(2)},${observedPValues[i]},${precomputedPValues[i]},${cumulativeObservedPValues[i]},${cumulativePrecomputedPValues[i]}\n`;
+    }
+
+    csvContent += `\nProcessed Files:\n`;
+    filenames.forEach(filename => {
+        csvContent += `${filename}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "PValue_Comparison.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Event listener for file upload
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = event.target.files;
+    if (files.length === 0) {
+        alert("Please upload at least one CSV file.");
+        return;
+    }
+    processMultipleCSVFiles(files);
+});
+
+
+</script>
+
+</body>
+</html>

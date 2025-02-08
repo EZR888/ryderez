@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roulette P-Value Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/scipy.js@0.15.2/dist/scipy.min.js"></script> 
+  <script src="/Users/ezryder/Library/Mobile Documents/com~apple~CloudDocs/Desktop/new-alliance/site/js/script.js"></script>  
+  
+</head>
+<body>
+  <h2>Roulette P-Value Calculator</h2>
+  <div id="your-run">
+    <h3>Your Run</h3>
+    <label for="your-double-zero">Double Zero Hits:</label>
+    <input type="text" id="your-double-zero">
+    <label for="your-zero">Zero Hits:</label>
+    <input type="text" id="your-zero">
+    <button onclick="calculateYourRun()">Calculate</button>
+    <p id="your-result"></p>
+  </div>
+  <div id="eric-run">
+    </div>
+
+<script>
+
+let combinedPValue; // Declare combinedPValue outside the function
+    
+function calculateYourRun() {
+  const doubleZeroHits = document.getElementById('your-double-zero').value.split(',').map(Number);
+  const zeroHits = document.getElementById('your-zero').value.split(',').map(Number);
+
+  // Calculate the multinomial PMF for double zero hits
+  function calculateMultinomialPMF(hits) {
+    const n = hits.reduce((sum, hit) => sum + hit, 0);
+    const p = 1 / 38;
+    const probs = new Array(hits.length).fill(p);
+    const permutations = calculatePermutations(hits);
+    return multinomial.pmf(hits, n, probs) * permutations;
+  }
+
+  // Calculate the number of permutations
+  function calculatePermutations(hits) {
+    const n = hits.reduce((sum, hit) => sum + hit, 0);
+    const counts = new Map();
+    for (const hit of hits) {
+      counts.set(hit, (counts.get(hit) || 0) + 1);
+    }
+    let permutations = 1;
+    for (const count of counts.values()) {
+      permutations *= factorial(n) / factorial(count);
+    }
+    return permutations;
+  }
+
+  // Calculate the factorial
+  function factorial(n) {
+    if (n === 0 || n === 1) {
+      return 1;
+    }
+    return n * factorial(n - 1);
+  }
+
+  // Calculate the combined p-value
+  const probDoubleZero = calculateMultinomialPMF(doubleZeroHits);
+  const probZero = calculateMultinomialPMF(zeroHits);
+  const pValues = [probDoubleZero, probZero];
+  const combinedChi2 = -2 * pValues.reduce((sum, p) => sum + Math.log(p), 0);
+  const combinedPValue = 1 - scipy.stats.chi2.cdf(combinedChi2, 2 * pValues.length);
+
+  const result = `Overall p-value for your run: ${combinedPValue.toFixed(6)}`;
+  document.getElementById('your-result').textContent = result;
+}
+  const result = `Overall p-value for your run: ${combinedPValue.toFixed(6)}`;
+  document.getElementById('your-result').textContent = result;
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stairway to Heaven - Music by Numbers</title>
+</head>
+<body>
+    <h1>Stairway to Heaven - Intro Arpeggio</h1>
+    <button id="playButton">Play Arpeggio</button>
+    
+<script>
+const notes = {
+    1: 261.63,  // C (Middle C)
+    2: 277.18,  // C#
+    3: 293.66,  // D
+    4: 311.13,  // D#
+    5: 329.63,  // E
+    6: 349.23,  // F
+    7: 369.99,  // F#
+    8: 392.00,  // G
+    9: 415.30,  // G#
+    10: 440.00, // A
+    11: 466.16, // A#
+    12: 493.88  // B
+};
+
+// Octave shift to simulate lower guitar tones
+const lowerOctave = freq => freq / 1.4;
+
+// Sequence: each array contains [note, duration (in seconds)]
+const sequence = [
+    [10, 0.5], [1, 0.5], [5, 0.5], [10, 0.5],  // Am
+    [10, 0.5], [1, 0.5], [5, 0.5], [9, 0.5],   // Am(maj7)
+    [10, 0.5], [1, 0.5], [5, 0.5], [8, 0.5],   // Am7
+    [3, 0.5], [7, 0.5], [10, 0.5], [3, 0.5],   // D
+    [6, 0.5], [10, 0.5], [1, 0.5], [5, 0.5],   // Fmaj7
+    [8, 0.5], [12, 0.5], [3, 0.5], [8, 0.5],   // G
+    [10, 0.5], [1, 0.5], [5, 0.5], [10, 0.5]   // Am
+];
+
+async function playNote(audioCtx, frequency, duration) {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'triangle'; // More complex tone
+    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    // Attack and release for smoother transitions
+    const attack = 0.1; // Attack time (fade-in)
+    const release = 0.2; // Release time (fade-out)
+    const startTime = audioCtx.currentTime;
+    const endTime = startTime + duration;
+
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.7, startTime + attack); // Fade-in
+    gainNode.gain.setValueAtTime(0.7, endTime - release);
+    gainNode.gain.linearRampToValueAtTime(0, endTime); // Fade-out
+
+    oscillator.start(startTime);
+    oscillator.stop(endTime);
+
+    return new Promise(resolve => setTimeout(resolve, duration * 1000));
+}
+
+async function playSequence() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    for (const [note, duration] of sequence) {
+        const frequency = lowerOctave(notes[note]); // Lower the octave for richness
+        await playNote(audioCtx, frequency, duration);
+    }
+}
+
+// Event listener for the button
+
+document.getElementById('playButton').addEventListener('click', playSequence);
+
+</script>
+</body>
+</html>
+
+
+
+

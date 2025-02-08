@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Total Odds Calculator</title>
+</head>
+<body>
+    <h1>Cluster Total Odds Calculator</h1>
+
+    <!-- Form for entering cluster hit totals -->
+    <form id="oddsForm">
+        <h3>Your Hits</h3>
+        <label>Total Hits in Double Zero Cluster:</label>
+        <input type="number" id="yourDoubleZeroTotal" value="10"><br>
+        <label>Total Hits in Zero Cluster:</label>
+        <input type="number" id="yourZeroTotal" value="5"><br>
+
+        <h3>Someone Else's Hits</h3>
+        <label>Total Hits in Double Zero Cluster:</label>
+        <input type="number" id="otherDoubleZeroTotal" value="7"><br>
+        <label>Total Hits in Zero Cluster:</label>
+        <input type="number" id="otherZeroTotal" value="12"><br>
+
+        <input type="button" value="Calculate Odds" onclick="calculateOdds()">
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        // Function to calculate binomial probability mass function (PMF)
+        function binomialPMF(k, n, p) {
+            function factorial(x) {
+                if (x === 0 || x === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= x; i++) {
+                    result *= i;
+                }
+                return result;
+            }
+
+            let combinations = factorial(n) / (factorial(k) * factorial(n - k));
+            return combinations * Math.pow(p, k) * Math.pow(1 - p, n - k);
+        }
+
+        // Function to calculate the odds of getting a specific total in a cluster
+        function calculateClusterOdds(totalHits, spins, p) {
+            let probability = 0;
+            for (let k = totalHits; k <= spins; k++) {
+                probability += binomialPMF(k, spins, p);
+            }
+            return probability;
+        }
+
+        // Function to calculate and display the odds
+        function calculateOdds() {
+            let spins = 38;  // Number of spins (trials)
+            let p = 5 / 38;  // Probability of hitting a number in a cluster (5 numbers in each cluster)
+
+            // Parse inputs from the form
+            let yourDoubleZeroTotal = parseInt(document.getElementById("yourDoubleZeroTotal").value);
+            let yourZeroTotal = parseInt(document.getElementById("yourZeroTotal").value);
+            let otherDoubleZeroTotal = parseInt(document.getElementById("otherDoubleZeroTotal").value);
+            let otherZeroTotal = parseInt(document.getElementById("otherZeroTotal").value);
+
+            // Calculate the odds for your clusters
+            let yourDoubleZeroOdds = calculateClusterOdds(yourDoubleZeroTotal, spins, p);
+            let yourZeroOdds = calculateClusterOdds(yourZeroTotal, spins, p);
+
+            // Calculate the odds for the other person's clusters
+            let otherDoubleZeroOdds = calculateClusterOdds(otherDoubleZeroTotal, spins, p);
+            let otherZeroOdds = calculateClusterOdds(otherZeroTotal, spins, p);
+
+            // Calculate the combined odds (assuming independence)
+            let combinedOdds = yourDoubleZeroOdds * yourZeroOdds * otherDoubleZeroOdds * otherZeroOdds;
+
+            // Display the results
+            document.getElementById('results').innerHTML = `
+                <h3>Results</h3>
+                <p>Odds of your Double Zero Cluster total: ${yourDoubleZeroOdds.toFixed(10)}</p>
+                <p>Odds of your Zero Cluster total: ${yourZeroOdds.toFixed(10)}</p>
+                <p>Odds of the other person's Double Zero Cluster total: ${otherDoubleZeroOdds.toFixed(10)}</p>
+                <p>Odds of the other person's Zero Cluster total: ${otherZeroOdds.toFixed(10)}</p>
+                <p>Combined odds: ${combinedOdds.toExponential(6)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

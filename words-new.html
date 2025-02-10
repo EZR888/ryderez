@@ -80,6 +80,10 @@
             color: white;
             overflow-wrap: break-word;
         }
+        .highlight {
+            color: salmon;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -92,7 +96,7 @@
     </div>
 
     <div id="wordCounter">Word #: 0</div>
-    <div id="timer">Time: 0 seconds</div>
+    <div id="timer">Time: 0.000 seconds</div>
     <div id="wordListContainer">
         <div>Running Word List</div>
         <div id="wordList"></div>
@@ -103,7 +107,7 @@
         let wordCount = 0;
         let rngInterval = null;
         let timerInterval = null;
-        let timer = 0;
+        let startTime = 0;
         let currentNumber = 1;
         let running = false;
 
@@ -123,10 +127,7 @@
             startButton.style.backgroundColor = 'gray';
 
             resetTimer();
-            timerInterval = setInterval(() => {
-                timer++;
-                updateTimerDisplay();
-            }, 1000);
+            startTimer();
 
             rngInterval = setInterval(() => {
                 currentNumber = Math.floor(Math.random() * 2508) + 1;
@@ -137,6 +138,8 @@
         function catchWord() {
             if (!running) return;
             lookupWord(currentNumber);
+            resetTimer();  // 🟢 Reset timer on "Catch"
+            startTimer();  // 🟢 Start counting again after "Catch"
         }
 
         function stopRNG() {
@@ -150,12 +153,18 @@
         }
 
         function resetTimer() {
-            timer = 0;
+            startTime = performance.now();
             updateTimerDisplay();
         }
 
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerDisplay, 10);
+        }
+
         function updateTimerDisplay() {
-            timerDisplay.textContent = `Time: ${timer} seconds`;
+            const elapsedTime = (performance.now() - startTime) / 1000;
+            timerDisplay.textContent = `Time: ${elapsedTime.toFixed(3)} seconds`;
         }
 
         function updateWordCount() {
@@ -178,10 +187,18 @@
                 const selectedLine = lines[lineNumber - 1]; 
                 const word = selectedLine.split(',')[1]?.trim() || "No word found";
 
-                selectedWords.push(word);
+                const wordSpan = document.createElement("span");
+                wordSpan.textContent = word;
+
+                // 🟠 1 in 5 chance to highlight the word in salmon color!
+                if (Math.random() < 0.2) {
+                    wordSpan.classList.add("highlight");
+                }
+
+                selectedWords.push(wordSpan.outerHTML);
                 wordCount++;
                 updateWordCount();
-                document.getElementById('wordList').textContent = selectedWords.join(', ');
+                document.getElementById('wordList').innerHTML = selectedWords.join(', ');
 
                 console.log(`Caught word from line ${lineNumber}: ${word}`);
             } catch (error) {

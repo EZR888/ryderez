@@ -20,9 +20,9 @@
         .container {
             border: 2px solid lightgray;
             border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            width: 60%;
+            padding: 30px;
+            text-align: top;
+            width: 40%;
             min-width: 350px;
             background-color: #333;
         }
@@ -73,7 +73,7 @@
             font-size: 18px;
         }
         #wordCounter span {
-            color: orange; /* "Word #:" label */
+            color: salmon; /* "Word #:" label */
         }
         #wordCounter strong {
             color: yellow; /* Value of Word # */
@@ -83,7 +83,7 @@
             font-size: 18px;
         }
         #timer span {
-            color: orange; /* "Time:" label and "seconds" */
+            color: salmon; /* "Time:" label and "seconds" */
         }
         #timeValue {
             color: yellow !important; /* Actual time */
@@ -96,6 +96,7 @@
         #wordListTitle {
             color: lightgreen; /* "Running Word List" */
             font-weight: bold;
+            font-size: 24px;
         }
         #wordList {
             margin-top: 10px;
@@ -104,14 +105,14 @@
             overflow-wrap: break-word;
         }
         .highlight {
-            color: salmon;
+            color: orange;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Random Intelligence</h1>
+        <h1><center>Random Intelligence</center></h1>
         
         <div class="button-container">
             <button id="start">Start</button>
@@ -122,7 +123,7 @@
         <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
         <div id="timer"><span>Time:</span> <span id="timeValue">0.000</span> <span>seconds</span></div>
         <div id="wordListContainer">
-            <div id="wordListTitle">Running Word List</div>
+            <div id="wordListTitle">Running Word List</div><br><br><br>
             <div id="wordList"></div>
         </div>
     </div>

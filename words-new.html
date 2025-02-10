@@ -8,14 +8,25 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #222;
             color: #fff;
         }
+
+        /* 🔳 BOUNDING BOX STYLING */
+        .container {
+            border: 2px solid lightgray;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            width: 60%;
+            min-width: 350px;
+            background-color: #333;
+        }
+
         h1 {
             color: #90ee90;
             font-size: 36px;
@@ -23,10 +34,10 @@
         }
         .button-container {
             display: flex;
+            justify-content: center;
             gap: 10px;
         }
         button {
-            margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
             border: none;
@@ -99,19 +110,21 @@
     </style>
 </head>
 <body>
-    <h1>Random Intelligence</h1>
-    
-    <div class="button-container">
-        <button id="start">Start</button>
-        <button id="catch">Catch</button>
-        <button id="stop">Stop</button>
-    </div>
+    <div class="container">
+        <h1>Random Intelligence</h1>
+        
+        <div class="button-container">
+            <button id="start">Start</button>
+            <button id="catch">Catch</button>
+            <button id="stop">Stop</button>
+        </div>
 
-    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
-    <div id="timer"><span>Time:</span> <span id="timeValue">0.000</span> <span>seconds</span></div>
-    <div id="wordListContainer">
-        <div id="wordListTitle">Running Word List</div>
-        <div id="wordList"></div>
+        <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
+        <div id="timer"><span>Time:</span> <span id="timeValue">0.000</span> <span>seconds</span></div>
+        <div id="wordListContainer">
+            <div id="wordListTitle">Running Word List</div>
+            <div id="wordList"></div>
+        </div>
     </div>
 
     <script>

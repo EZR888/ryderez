@@ -60,24 +60,36 @@
         #wordCounter {
             margin-top: 20px;
             font-size: 18px;
-            color: white;
+        }
+        #wordCounter span {
+            color: orange; /* "Word #:" label */
+        }
+        #wordCounter strong {
+            color: yellow; /* Value of Word # */
         }
         #timer {
             margin-top: 10px;
             font-size: 18px;
-            color: white;
+        }
+        #timer span {
+            color: orange; /* "Time:" label and "seconds" */
+        }
+        #timeValue {
+            color: yellow !important; /* Actual time */
         }
         #wordListContainer {
             margin-top: 20px;
             font-size: 18px;
-            color: white;
-            max-width: 80%;
             text-align: center;
+        }
+        #wordListTitle {
+            color: lightgreen; /* "Running Word List" */
+            font-weight: bold;
         }
         #wordList {
             margin-top: 10px;
             font-size: 16px;
-            color: white;
+            color: lightgray; /* Default word color */
             overflow-wrap: break-word;
         }
         .highlight {
@@ -95,10 +107,10 @@
         <button id="stop">Stop</button>
     </div>
 
-    <div id="wordCounter">Word #: 0</div>
-    <div id="timer">Time: 0.000 seconds</div>
+    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
+    <div id="timer"><span>Time:</span> <span id="timeValue">0.000</span> <span>seconds</span></div>
     <div id="wordListContainer">
-        <div>Running Word List</div>
+        <div id="wordListTitle">Running Word List</div>
         <div id="wordList"></div>
     </div>
 
@@ -114,7 +126,7 @@
         const startButton = document.getElementById('start');
         const catchButton = document.getElementById('catch');
         const stopButton = document.getElementById('stop');
-        const timerDisplay = document.getElementById('timer');
+        const timerDisplay = document.getElementById('timeValue');
 
         startButton.addEventListener('click', startRNG);
         catchButton.addEventListener('click', catchWord);
@@ -127,7 +139,7 @@
             startButton.style.backgroundColor = 'gray';
 
             resetTimer();
-            startTimer();
+            timerInterval = setInterval(updateTimerDisplay, 10);
 
             rngInterval = setInterval(() => {
                 currentNumber = Math.floor(Math.random() * 2508) + 1;
@@ -137,9 +149,13 @@
 
         function catchWord() {
             if (!running) return;
+
             lookupWord(currentNumber);
-            resetTimer();  // 🟢 Reset timer on "Catch"
-            startTimer();  // 🟢 Start counting again after "Catch"
+
+            // Reset and restart the timer when Catch is pressed
+            resetTimer();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerDisplay, 10);
         }
 
         function stopRNG() {
@@ -157,18 +173,13 @@
             updateTimerDisplay();
         }
 
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimerDisplay, 10);
-        }
-
         function updateTimerDisplay() {
             const elapsedTime = (performance.now() - startTime) / 1000;
-            timerDisplay.textContent = `Time: ${elapsedTime.toFixed(3)} seconds`;
+            timerDisplay.textContent = elapsedTime.toFixed(3);
         }
 
         function updateWordCount() {
-            document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
+            document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
         }
 
         async function lookupWord(lineNumber) {

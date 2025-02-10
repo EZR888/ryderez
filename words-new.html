@@ -21,6 +21,10 @@
             font-size: 36px;
             margin-bottom: 20px;
         }
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
         button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -35,6 +39,18 @@
         }
         #start:hover {
             background-color: darkgreen;
+        }
+        #catch {
+            background-color: blue;
+        }
+        #catch:hover {
+            background-color: darkblue;
+        }
+        #stop {
+            background-color: red;
+        }
+        #stop:hover {
+            background-color: darkred;
         }
         #output {
             margin-top: 20px;
@@ -68,7 +84,13 @@
 </head>
 <body>
     <h1>Random Intelligence</h1>
-    <button id="start">Start</button>
+    
+    <div class="button-container">
+        <button id="start">Start</button>
+        <button id="catch">Catch</button>
+        <button id="stop">Stop</button>
+    </div>
+
     <div id="wordCounter">Word #: 0</div>
     <div id="timer">Time: 0 seconds</div>
     <div id="wordListContainer">
@@ -82,26 +104,23 @@
         let rngInterval = null;
         let timerInterval = null;
         let timer = 0;
-        let currentNumber = 1; // The currently cycling number
+        let currentNumber = 1;
         let running = false;
 
         const startButton = document.getElementById('start');
+        const catchButton = document.getElementById('catch');
+        const stopButton = document.getElementById('stop');
         const timerDisplay = document.getElementById('timer');
 
-        startButton.addEventListener('click', toggleRNG);
-
-        function toggleRNG() {
-            if (running) {
-                stopRNG();
-            } else {
-                startRNG();
-            }
-        }
+        startButton.addEventListener('click', startRNG);
+        catchButton.addEventListener('click', catchWord);
+        stopButton.addEventListener('click', stopRNG);
 
         function startRNG() {
+            if (running) return;
             running = true;
-            startButton.textContent = 'Stop';
-            startButton.style.backgroundColor = 'red';
+            startButton.textContent = 'Running...';
+            startButton.style.backgroundColor = 'gray';
 
             resetTimer();
             timerInterval = setInterval(() => {
@@ -111,8 +130,13 @@
 
             rngInterval = setInterval(() => {
                 currentNumber = Math.floor(Math.random() * 2508) + 1;
-                console.log(`Cycling: ${currentNumber}`); // Debugging log
-            }, 100); // Change every 100ms
+                console.log(`Cycling: ${currentNumber}`); 
+            }, 100);
+        }
+
+        function catchWord() {
+            if (!running) return;
+            lookupWord(currentNumber);
         }
 
         function stopRNG() {
@@ -123,9 +147,6 @@
             timerInterval = null;
             startButton.textContent = 'Start';
             startButton.style.backgroundColor = 'green';
-
-            // Lookup the word for the stopped number
-            lookupWord(currentNumber);
         }
 
         function resetTimer() {
@@ -162,7 +183,7 @@
                 updateWordCount();
                 document.getElementById('wordList').textContent = selectedWords.join(', ');
 
-                console.log(`Selected word from line ${lineNumber}: ${word}`);
+                console.log(`Caught word from line ${lineNumber}: ${word}`);
             } catch (error) {
                 console.error('Error loading the lookup file:', error);
             }

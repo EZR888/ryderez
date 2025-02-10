@@ -17,7 +17,7 @@
             color: #fff;
         }
         h1 {
-            color: #90ee90; /* Light green */
+            color: #90ee90;
             font-size: 36px;
             margin-bottom: 20px;
         }
@@ -77,11 +77,13 @@
     </div>
 
     <script>
-        const selectedWords = [];
+        let selectedWords = [];
         let wordCount = 0;
         let rngInterval = null;
         let timerInterval = null;
         let timer = 0;
+        let currentNumber = 1; // The currently cycling number
+        let running = false;
 
         const startButton = document.getElementById('start');
         const timerDisplay = document.getElementById('timer');
@@ -89,7 +91,7 @@
         startButton.addEventListener('click', toggleRNG);
 
         function toggleRNG() {
-            if (rngInterval) {
+            if (running) {
                 stopRNG();
             } else {
                 startRNG();
@@ -97,6 +99,7 @@
         }
 
         function startRNG() {
+            running = true;
             startButton.textContent = 'Stop';
             startButton.style.backgroundColor = 'red';
 
@@ -107,28 +110,22 @@
             }, 1000);
 
             rngInterval = setInterval(() => {
-                const rng1 = Math.floor(Math.random() * 66) + 1; // RNG1: Number between 1 and 66
-                const rng2 = Math.floor(Math.random() * 66) + 1; // RNG2: Number between 1 and 66
-
-                if (rng1 === rng2) {
-                    const sliceNumber = rng1; // Slice determined by matching RNG1 and RNG2
-                    const rng3 = Math.floor(Math.random() * 38) + 1; // RNG3: Number between 1 and 38
-
-                    console.log(`Match found! Slice: ${sliceNumber}, Word Index: ${rng3}`);
-
-                    loadAndLookup(sliceNumber, rng3);
-                    resetTimer();
-                }
-            }, 100); // Run RNG every 100ms
+                currentNumber = Math.floor(Math.random() * 2508) + 1;
+                console.log(`Cycling: ${currentNumber}`); // Debugging log
+            }, 100); // Change every 100ms
         }
 
         function stopRNG() {
+            running = false;
             clearInterval(rngInterval);
             clearInterval(timerInterval);
             rngInterval = null;
             timerInterval = null;
             startButton.textContent = 'Start';
             startButton.style.backgroundColor = 'green';
+
+            // Lookup the word for the stopped number
+            lookupWord(currentNumber);
         }
 
         function resetTimer() {
@@ -144,36 +141,28 @@
             document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
         }
 
-        async function loadAndLookup(sliceNumber, wordIndex) {
+        async function lookupWord(lineNumber) {
             const file = 'lookup.txt';
 
             try {
                 const response = await fetch(file);
                 const text = await response.text();
                 const lines = text.split('\n').filter(line => line.trim() !== '');
-                const sliceSize = 38; // Each slice contains 38 lines
 
-                const startLine = (sliceNumber - 1) * sliceSize;
-                const endLine = Math.min(startLine + sliceSize, lines.length);
-                const selectedLine = lines.slice(startLine, endLine);
-
-                if (selectedLine.length > 0) {
-                    const line = selectedLine[wordIndex - 1];
-                    if (line) {
-                        const word = line.split(',')[1]?.trim() || 'No word found';
-
-                        selectedWords.push(word);
-                        wordCount++;
-                        updateWordCount();
-                        document.getElementById('wordList').textContent = selectedWords.join(', ');
-
-                        console.log(`Selected word: ${word}`);
-                    } else {
-                        console.log('Invalid word index.');
-                    }
-                } else {
-                    console.log('No valid lines in the selected slice.');
+                if (lineNumber < 1 || lineNumber > lines.length) {
+                    console.error("Line number out of range.");
+                    return;
                 }
+
+                const selectedLine = lines[lineNumber - 1]; 
+                const word = selectedLine.split(',')[1]?.trim() || "No word found";
+
+                selectedWords.push(word);
+                wordCount++;
+                updateWordCount();
+                document.getElementById('wordList').textContent = selectedWords.join(', ');
+
+                console.log(`Selected word from line ${lineNumber}: ${word}`);
             } catch (error) {
                 console.error('Error loading the lookup file:', error);
             }

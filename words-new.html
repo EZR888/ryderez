@@ -45,6 +45,9 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    	}
         #start {
             background-color: green;
         }
@@ -63,6 +66,20 @@
         #stop:hover {
             background-color: darkred;
         }
+        #bonus {
+            background-color: DarkKhaki;
+            color: black;
+        }
+        #bonus:hover {
+            background-color: Khaki;
+        }    
+        #all {
+            background-color: Gold;
+            color: black;
+        }
+        #all:hover {
+            background-color: lightyellow;
+        }  
         #output {
             margin-top: 20px;
             font-size: 24px;
@@ -115,10 +132,17 @@
         <h1><center>Random Intelligence</center></h1>
         
         <div class="button-container">
-            <button id="start">Start</button>
-            <button id="catch">Catch</button>
-            <button id="stop">Stop</button>
-        </div>
+    		<button id="start">Start</button>
+    		<button id="catch">Catch</button>
+    		<button id="stop">Stop</button>
+		</div>
+		<br>
+
+		<!-- New Button Container for Bonus and All -->
+		<div class="button-container">
+    		<button id="bonus">Bonus</button>
+    		<button id="all">All</button>
+		</div>
 
         <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
         <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
@@ -162,6 +186,13 @@ let isHighlighted = false;
 let firstSelectionMade = false; // Ensures we keep the first set of randomly selected words
 let showingBothSets = false; // Tracks if both sets are currently displayed
 
+// Get button elements
+const bonusButton = document.getElementById('bonus');
+const allButton = document.getElementById('all');
+
+bonusButton.addEventListener('click', toggleHighlight);
+allButton.addEventListener('click', showBothHighlightSets);
+
 function toggleHighlight() {
     const wordListContainer = document.getElementById('wordList');
     const words = Array.from(wordListContainer.children); // Get all word elements
@@ -169,9 +200,31 @@ function toggleHighlight() {
     if (words.length === 0) return; // Do nothing if no words are displayed
 
     if (showingBothSets) {
-        // If both sets are displayed, revert to toggling behavior
+        // If both sets are displayed, revert back to toggling behavior
         showingBothSets = false;
         isHighlighted = false;
+    }
+
+    if (!firstSelectionMade) {
+        // Save the original highlighted words only on the first toggle
+        highlightedWords = words.filter(word => word.classList.contains('highlight'));
+
+        // Remove existing highlights
+        words.forEach(word => word.classList.remove('highlight'));
+
+        // Randomly select 8 words and save them permanently for toggling
+        newHighlightedWords = [];
+        while (newHighlightedWords.length < 8 && newHighlightedWords.length < words.length) {
+            let randomIndex = Math.floor(Math.random() * words.length);
+            if (!newHighlightedWords.includes(words[randomIndex])) {
+                newHighlightedWords.push(words[randomIndex]);
+                words[randomIndex].classList.add('highlight');
+            }
+        }
+
+        firstSelectionMade = true; // Mark that we have our first selection
+        isHighlighted = true;
+        return;
     }
 
     if (isHighlighted) {
@@ -179,29 +232,9 @@ function toggleHighlight() {
         words.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
     } else {
-        if (!firstSelectionMade) {
-            // Save the original highlighted words only on the first toggle
-            highlightedWords = words.filter(word => word.classList.contains('highlight'));
-
-            // Remove existing highlights
-            words.forEach(word => word.classList.remove('highlight'));
-
-            // Randomly select 8 words and save them permanently for toggling
-            newHighlightedWords = [];
-            while (newHighlightedWords.length < 8 && newHighlightedWords.length < words.length) {
-                let randomIndex = Math.floor(Math.random() * words.length);
-                if (!newHighlightedWords.includes(words[randomIndex])) {
-                    newHighlightedWords.push(words[randomIndex]);
-                    words[randomIndex].classList.add('highlight');
-                }
-            }
-
-            firstSelectionMade = true; // Mark that we have our first selection
-        } else {
-            // Toggle back to the new highlighted words
-            words.forEach(word => word.classList.remove('highlight'));
-            newHighlightedWords.forEach(word => word.classList.add('highlight'));
-        }
+        // Toggle back to the new highlighted words
+        words.forEach(word => word.classList.remove('highlight'));
+        newHighlightedWords.forEach(word => word.classList.add('highlight'));
     }
 
     isHighlighted = !isHighlighted;

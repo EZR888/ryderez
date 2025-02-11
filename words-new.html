@@ -148,13 +148,19 @@
         stopButton.addEventListener('click', stopRNG);
         
         document.addEventListener('keydown', function(event) {
-    if (event.key.toLowerCase() === 'h') {
+    const key = event.key.toLowerCase();
+    if (key === 'h') {
         toggleHighlight();
+    } else if (key === 'g') {
+        showBothHighlightSets();
     }
 });
 
-let highlightedWords = [];
+let highlightedWords = []; // Stores the original highlighted words
+let newHighlightedWords = []; // Stores the first randomly selected words
 let isHighlighted = false;
+let firstSelectionMade = false; // Ensures we keep the first set of randomly selected words
+let showingBothSets = false; // Tracks if both sets are currently displayed
 
 function toggleHighlight() {
     const wordListContainer = document.getElementById('wordList');
@@ -162,29 +168,59 @@ function toggleHighlight() {
 
     if (words.length === 0) return; // Do nothing if no words are displayed
 
+    if (showingBothSets) {
+        // If both sets are displayed, revert to toggling behavior
+        showingBothSets = false;
+        isHighlighted = false;
+    }
+
     if (isHighlighted) {
-        // If already highlighted, revert to the previous state
+        // If currently using the new highlight set, revert to the original highlights
         words.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
     } else {
-        // Save the current highlighted words
-        highlightedWords = words.filter(word => word.classList.contains('highlight'));
+        if (!firstSelectionMade) {
+            // Save the original highlighted words only on the first toggle
+            highlightedWords = words.filter(word => word.classList.contains('highlight'));
 
-        // Remove current highlights
-        words.forEach(word => word.classList.remove('highlight'));
+            // Remove existing highlights
+            words.forEach(word => word.classList.remove('highlight'));
 
-        // Randomly select 8 words and highlight them
-        let newHighlights = [];
-        while (newHighlights.length < 8 && newHighlights.length < words.length) {
-            let randomIndex = Math.floor(Math.random() * words.length);
-            if (!newHighlights.includes(words[randomIndex])) {
-                newHighlights.push(words[randomIndex]);
-                words[randomIndex].classList.add('highlight');
+            // Randomly select 8 words and save them permanently for toggling
+            newHighlightedWords = [];
+            while (newHighlightedWords.length < 8 && newHighlightedWords.length < words.length) {
+                let randomIndex = Math.floor(Math.random() * words.length);
+                if (!newHighlightedWords.includes(words[randomIndex])) {
+                    newHighlightedWords.push(words[randomIndex]);
+                    words[randomIndex].classList.add('highlight');
+                }
             }
+
+            firstSelectionMade = true; // Mark that we have our first selection
+        } else {
+            // Toggle back to the new highlighted words
+            words.forEach(word => word.classList.remove('highlight'));
+            newHighlightedWords.forEach(word => word.classList.add('highlight'));
         }
     }
 
     isHighlighted = !isHighlighted;
+}
+
+function showBothHighlightSets() {
+    const wordListContainer = document.getElementById('wordList');
+    const words = Array.from(wordListContainer.children); // Get all word elements
+
+    if (words.length === 0 || !firstSelectionMade) return; // Do nothing if no words are displayed
+
+    // Remove all highlights first
+    words.forEach(word => word.classList.remove('highlight'));
+
+    // Highlight both sets at the same time
+    highlightedWords.forEach(word => word.classList.add('highlight'));
+    newHighlightedWords.forEach(word => word.classList.add('highlight'));
+
+    showingBothSets = true;
 }
 
 

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Word Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
+        h1 {
+            color: #90ee90; /* Light green */
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+        #wordCounter {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+        }
+        #wordListContainer {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            max-width: 80%;
+            text-align: center;
+        }
+        #wordList {
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+            overflow-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Intelligence</h1>
+    <button id="ai">Click For Word</button>
+    <div id="wordCounter">Word #: 0</div>
+    <div id="wordListContainer">
+        <div>Running Word List</div>
+        <div id="wordList"></div>
+    </div>
+
+    <script>
+        const selectedWords = [];
+        let wordCount = 0;
+        let currentNumber = 1; // Start at 1
+        let running = true; // Control flag for the loop
+
+        // Start RNG cycling numbers from 1 to 2508 continuously
+        function startCycling() {
+            setInterval(() => {
+                if (running) {
+                    currentNumber = Math.floor(Math.random() * 2508) + 1;
+                    console.log(`Cycling: ${currentNumber}`); // Debug log
+                }
+            }, 100); // Change every 100ms
+        }
+
+        // Handle AI button click
+        document.getElementById('ai').addEventListener('click', () => {
+            wordCount++;
+            updateWordCount();
+            lookupWord(currentNumber);
+        });
+
+        // Update the Word Counter
+        function updateWordCount() {
+            document.getElementById('wordCounter').textContent = `Word #: ${wordCount}`;
+        }
+
+        // Fetch and display the word from lookup.txt
+        async function lookupWord(lineNumber) {
+            const file = 'lookup.txt'; 
+
+            try {
+                const response = await fetch(file);
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                if (lineNumber < 1 || lineNumber > lines.length) {
+                    console.error("Line number out of range.");
+                    return;
+                }
+
+                const selectedLine = lines[lineNumber - 1]; 
+                const word = selectedLine.split(',')[1]?.trim() || "No word found";
+
+                selectedWords.push(word);
+                document.getElementById('wordList').textContent = selectedWords.join(', ');
+
+                console.log(`Selected word from line ${lineNumber}: ${word}`);
+            } catch (error) {
+                console.error('Error loading the lookup file:', error);
+            }
+        }
+
+        // Start the RNG cycling loop
+        startCycling();
+    </script>
+</body>
+</html>

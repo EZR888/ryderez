@@ -121,7 +121,7 @@
         </div>
 
         <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
-        <div id="timer"><span>Time:</span> <span id="timeValue">0.000</span> <span>seconds</span></div>
+        <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
         <div id="wordListContainer">
             <div id="wordListTitle">Running Word List</div>
             <div id="wordList"></div>
@@ -267,7 +267,7 @@ function showBothHighlightSets() {
 
         function updateTimerDisplay() {
             const elapsedTime = (performance.now() - startTime) / 1000;
-            timerDisplay.textContent = elapsedTime.toFixed(3);
+            timerDisplay.textContent = elapsedTime.toFixed(2);
         }
 
         function updateWordCount() {

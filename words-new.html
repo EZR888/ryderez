@@ -52,7 +52,7 @@
             background-color: green;
         }
         #start:hover {
-            background-color: darkgreen;
+            background-color: darkgreen !important;
         }
         #catch {
             background-color: blue;
@@ -80,6 +80,13 @@
         #all:hover {
             background-color: lightyellow;
         }  
+        #reset {
+    		background-color: thistle;
+    		color: black;
+		}
+		#reset:hover {
+    		background-color: pink;
+		}
         #output {
             margin-top: 20px;
             font-size: 24px;
@@ -142,6 +149,7 @@
 		<div class="button-container">
     		<button id="bonus">Bonus</button>
     		<button id="all">All</button>
+    		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
 
         <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
@@ -255,6 +263,38 @@ function showBothHighlightSets() {
 
     showingBothSets = true;
 }
+
+function resetHighlights() {
+    // Clear the word list completely
+    document.getElementById('wordList').innerHTML = '';
+
+    // Reset all variables
+    selectedWords = [];
+    wordCount = 0;
+    highlightedWords = [];
+    newHighlightedWords = [];
+    isHighlighted = false;
+    firstSelectionMade = false;
+    showingBothSets = false;
+
+    // Reset the word counter and timer display
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
+    document.getElementById('timeValue').textContent = '0.00';
+
+    // Stop any running timers or intervals
+    clearInterval(rngInterval);
+    clearInterval(timerInterval);
+    rngInterval = null;
+    timerInterval = null;
+    running = false;
+
+    // Reset Start button appearance
+    startButton.textContent = 'Start';
+    startButton.style.backgroundColor = 'green';
+}
+
+// Attach event listener for Reset button
+document.getElementById('reset').addEventListener('click', resetHighlights);
 
 
         function startRNG() {

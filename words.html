@@ -145,6 +145,21 @@
     margin-top: 10px;
 }
 
+#savePDF {
+    background-color: darkorange;
+    color: black;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#savePDF:hover {
+    background-color: orangered;
+    color: white;
+}
 
     </style>
 </head>
@@ -177,7 +192,10 @@
 		</div>
 
     </div>
-    
+
+<div style="text-align: center; margin-top: 20px;">
+    <button id="savePDF">Save Word List to PDF</button>
+</div>
 
     <script>
         let selectedWords = [];
@@ -468,6 +486,61 @@ document.getElementById('reset').addEventListener('click', resetHighlights);
                 console.error('Error loading the lookup file:', error);
             }
         }
+        
+document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
+
+function saveWordListToPDF() {
+    const wordListContainer = document.getElementById('wordList');
+    const words = Array.from(wordListContainer.children); // Get all word elements
+
+    if (words.length === 0) {
+        alert("No words to save.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf; // Ensure jsPDF is available
+    const doc = new jsPDF();
+
+    // Get current date & time in mm/dd/yyyy hh:mm format
+    const now = new Date();
+    const timestamp = now.toLocaleString('en-US', {
+        month: '2-digit', day: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+    });
+
+    // PDF Title
+    doc.setFontSize(18);
+    doc.text("Saved Word List", 105, 15, { align: "center" });
+
+    // Add timestamp
+    doc.setFontSize(12);
+    doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
+
+    doc.setFontSize(14);
+    let y = 40; // Start position for words in the PDF
+
+    words.forEach((word, index) => {
+        let text = word.textContent.trim();
+        
+        if (word.classList.contains('highlight')) {
+            doc.setFont("helvetica", "bold"); // Bold the highlighted words
+            doc.text(text, 20, y);
+            doc.setFont("helvetica", "normal"); // Reset font
+        } else {
+            doc.text(text, 20, y);
+        }
+        
+        y += 8; // Move down for next word
+        if (y > 280) { // Prevent overflow on a single page
+            doc.addPage();
+            y = 20;
+        }
+    });
+
+    // Save PDF
+    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
+}
+
     </script>
 </body>
 </html>

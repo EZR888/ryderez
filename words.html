@@ -243,20 +243,19 @@ function toggleHighlight() {
         // Save the original highlighted words only on the first toggle
         highlightedWords = words.filter(word => word.classList.contains('highlight'));
 
-        // Remove existing highlights
-        words.forEach(word => word.classList.remove('highlight'));
-
         // Calculate 20% of displayed words (rounded up)
-        let numToSelect = Math.ceil(words.length * 0.18);
+        let numToSelect = Math.ceil(words.length * 0.2);
         newHighlightedWords = [];
 
         while (newHighlightedWords.length < numToSelect && newHighlightedWords.length < words.length) {
             let randomIndex = Math.floor(Math.random() * words.length);
             if (!newHighlightedWords.includes(words[randomIndex])) {
                 newHighlightedWords.push(words[randomIndex]);
-                words[randomIndex].classList.add('highlight');
             }
         }
+
+        // Apply highlights without removing previous ones
+        newHighlightedWords.forEach(word => word.classList.add('highlight'));
 
         firstSelectionMade = true; // Mark that we have our first selection
         isHighlighted = true;
@@ -265,13 +264,13 @@ function toggleHighlight() {
     }
 
     if (isHighlighted) {
-        // If currently using the new highlight set, revert to the original highlights
-        words.forEach(word => word.classList.remove('highlight'));
+        // Show original highlights (no removal)
+        newHighlightedWords.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
         refineButton.textContent = "Refine"; // Change button text back to Refine
     } else {
-        // Toggle back to the new highlighted words
-        words.forEach(word => word.classList.remove('highlight'));
+        // Show refined selection (no removal)
+        highlightedWords.forEach(word => word.classList.remove('highlight'));
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
         refineButton.textContent = "Orig"; // Change button text to Orig
     }
@@ -279,17 +278,13 @@ function toggleHighlight() {
     isHighlighted = !isHighlighted;
 }
 
-
 function showBothHighlightSets() {
     const wordListContainer = document.getElementById('wordList');
     const words = Array.from(wordListContainer.children); // Get all word elements
 
     if (words.length === 0 || !firstSelectionMade) return; // Do nothing if no words are displayed
 
-    // Remove all highlights first
-    words.forEach(word => word.classList.remove('highlight'));
-
-    // Highlight both sets at the same time
+    // Highlight both sets at the same time without clearing
     highlightedWords.forEach(word => word.classList.add('highlight'));
     newHighlightedWords.forEach(word => word.classList.add('highlight'));
 

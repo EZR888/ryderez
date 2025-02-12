@@ -247,7 +247,7 @@ function toggleHighlight() {
         words.forEach(word => word.classList.remove('highlight'));
 
         // Calculate 20% of displayed words (rounded up)
-        let numToSelect = Math.ceil(words.length * 0.2);
+        let numToSelect = Math.ceil(words.length * 0.18);
         newHighlightedWords = [];
 
         while (newHighlightedWords.length < numToSelect && newHighlightedWords.length < words.length) {

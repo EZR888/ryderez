@@ -299,6 +299,7 @@ function toggleHighlight() {
     isHighlighted = !isHighlighted;
 }
 
+
 function showBothHighlightSets() {
     if (!stopped) return; // Ensure Stop has been pressed first
 
@@ -428,15 +429,20 @@ document.getElementById('reset').addEventListener('click', resetHighlights);
             timerInterval = setInterval(updateTimerDisplay, 10);
         }
 
-        function stopRNG() {
-            running = false;
-            clearInterval(rngInterval);
-            clearInterval(timerInterval);
-            rngInterval = null;
-            timerInterval = null;
-            startButton.textContent = 'Start';
-            startButton.style.backgroundColor = 'green';
-        }
+function stopRNG() {
+    running = false;
+    clearInterval(rngInterval);
+    clearInterval(timerInterval);
+    rngInterval = null;
+    timerInterval = null;
+    startButton.textContent = 'Start';
+    startButton.style.backgroundColor = 'green';
+    
+    stopped = true; // Allow Refine & All buttons to be used
+    refineButton.disabled = false;
+    allButton.disabled = false;
+}
+
 
         function resetTimer() {
             startTime = performance.now();

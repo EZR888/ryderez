@@ -68,22 +68,28 @@
         }
         
         #bonus {
-            background-color: green;
+    		background-color: #66C766; /* Lighter Green */
+    		color: black;
         }
         #bonus:hover {
-            background-color: darkgreen !important;
+            background-color: green !important;
+            color: white;
         }
         #all {
-            background-color: blue;
+   			 background-color: #9999FF; /* Lighter Blue */
+   			 color: black;
         }
         #all:hover {
-            background-color: darkblue;
+            background-color: blue;
+            color: white;
         }
         #reset {
-            background-color: red;
+    		background-color: #FF9999; /* Lighter Red */
+    		color: black;
         }
         #reset:hover {
-            background-color: darkred;
+            background-color: red;
+            color: white;
         }
  
         #output {
@@ -313,8 +319,7 @@ document.getElementById('reset').addEventListener('click', resetHighlights);
             if (running) return;
             running = true;
             startButton.textContent = 'Running...';
-            startButton.style.backgroundColor = 'gray';
-
+            startButton.style.backgroundColor = 'slategray';
             resetTimer();
             timerInterval = setInterval(updateTimerDisplay, 10);
 

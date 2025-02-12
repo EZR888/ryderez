@@ -66,27 +66,26 @@
         #stop:hover {
             background-color: darkred;
         }
+        
         #bonus {
-            background-color: DarkKhaki;
-            color: black;
+            background-color: green;
         }
         #bonus:hover {
-            background-color: Khaki;
-        }    
+            background-color: darkgreen !important;
+        }
         #all {
-            background-color: Gold;
-            color: black;
+            background-color: blue;
         }
         #all:hover {
-            background-color: lightyellow;
-        }  
+            background-color: darkblue;
+        }
         #reset {
-    		background-color: thistle;
-    		color: black;
-		}
-		#reset:hover {
-    		background-color: pink;
-		}
+            background-color: red;
+        }
+        #reset:hover {
+            background-color: darkred;
+        }
+ 
         #output {
             margin-top: 20px;
             font-size: 24px;
@@ -103,7 +102,7 @@
             color: yellow; /* Value of Word # */
         }
         #timer {
-            margin-top: 10px;
+            margin-top: 20px;
             font-size: 18px;
         }
         #timer span {
@@ -132,6 +131,15 @@
             color: orange;
             font-weight: bold;
         }
+.word-info-container {
+    display: flex;
+    justify-content: center; /* Centers both elements horizontally */
+    align-items: center; /* Aligns them vertically */
+    gap: 20px; /* Adds space between them */
+    margin-top: 10px;
+}
+
+
     </style>
 </head>
 <body>
@@ -143,8 +151,18 @@
     		<button id="catch">Catch</button>
     		<button id="stop">Stop</button>
 		</div>
-		<br>
 
+<div class="word-info-container">
+    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
+    <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
+</div>
+
+        <div id="wordListContainer">
+            <div id="wordListTitle">Running Word List</div>
+            <div id="wordList"></div>
+            <br><br><br><br><br><br>
+        </div> 
+        
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
     		<button id="bonus">Bonus</button>
@@ -152,14 +170,8 @@
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
 
-        <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
-        <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
-        <div id="wordListContainer">
-            <div id="wordListTitle">Running Word List</div>
-            <div id="wordList"></div>
-            <br><br><br><br><br><br>
-        </div>
     </div>
+    
 
     <script>
         let selectedWords = [];

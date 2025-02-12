@@ -524,31 +524,20 @@ function saveWordListToPDF() {
     doc.setFontSize(12);
     doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
 
-    doc.setFontSize(14);
-    let y = 40; // Start position for words in the PDF
-
-    words.forEach((word, index) => {
+    // Convert words into a single comma-separated string
+    let wordString = words.map(word => {
         let text = word.textContent.trim();
-        
-        if (word.classList.contains('highlight')) {
-            doc.setFont("helvetica", "bold"); // Bold the highlighted words
-            doc.text(text, 20, y);
-            doc.setFont("helvetica", "normal"); // Reset font
-        } else {
-            doc.text(text, 20, y);
-        }
-        
-        y += 8; // Move down for next word
-        if (y > 280) { // Prevent overflow on a single page
-            doc.addPage();
-            y = 20;
-        }
-    });
+        return word.classList.contains('highlight') ? `**${text}**` : text; // Bold highlighted words
+    }).join(', ');
 
-    // Save PDF
-    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
+    // Ensure text fits within the PDF width
+    const maxWidth = 180;
+    doc.text(wordString, 20, 40, { maxWidth });
+
+    // Save PDF with proper name & prevent Chrome .crdownload issue
+    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`, { returnPromise: true });
 }
- 
+
 
     </script>
 </body>

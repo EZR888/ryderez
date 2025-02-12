@@ -265,7 +265,11 @@ function toggleHighlight() {
     }
 
     if (!firstSelectionMade) {
+        // Save the original highlighted words only on the first toggle
         highlightedWords = words.filter(word => word.classList.contains('highlight'));
+
+        // **FIX: Remove all previous highlights before selecting new ones**
+        words.forEach(word => word.classList.remove('highlight'));
 
         // Calculate 20% of displayed words (rounded up)
         let numToSelect = Math.ceil(words.length * 0.2);
@@ -278,21 +282,24 @@ function toggleHighlight() {
             }
         }
 
+        // Apply new highlights
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
 
         firstSelectionMade = true;
         isHighlighted = true;
-        refineButton.textContent = "Orig";
+        refineButton.textContent = "Orig"; // Change button text to Orig
         disableStartCatch(); // Disable Start & Catch when Refine is used
         return;
     }
 
     if (isHighlighted) {
-        newHighlightedWords.forEach(word => word.classList.remove('highlight'));
+        // Show only the original highlighted words
+        words.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
         refineButton.textContent = "Refine";
     } else {
-        highlightedWords.forEach(word => word.classList.remove('highlight'));
+        // Show only the newly refined highlighted words
+        words.forEach(word => word.classList.remove('highlight'));
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
         refineButton.textContent = "Orig";
     }
@@ -525,31 +532,34 @@ function saveWordListToPDF() {
     doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
 
     doc.setFontSize(14);
-    let x = 20; // Start X position
-    let y = 40; // Start Y position
-    const maxWidth = 180; // Maximum width for text
+    doc.setFont("helvetica", "normal"); // Ensure normal font for all text
 
-    words.forEach((word, index) => {
+    // **String all words together, separated by commas**
+    let wordString = words.map(word => {
         let text = word.textContent.trim();
+        return word.classList.contains('highlight') ? `{RED}${text}` : text; // Mark highlighted words
+    }).join(', ');
 
-        if (word.classList.contains('highlight')) {
-            doc.setTextColor(255, 0, 0); // Red color for highlighted words
-            doc.setFont("helvetica", "bold"); // Bold for highlighted words
+    // **Process each word and change color when necessary**
+    let splitText = wordString.split(/, /);
+    let x = 20, y = 40, maxWidth = 180;
+
+    splitText.forEach((word, index) => {
+        if (word.startsWith("{RED}")) {
+            doc.setTextColor(255, 0, 0); // Set color to red
+            word = word.replace("{RED}", ""); // Remove placeholder
         } else {
-            doc.setTextColor(0, 0, 0); // Default black color
-            doc.setFont("helvetica", "normal"); // Normal font for regular words
+            doc.setTextColor(0, 0, 0); // Default black text
         }
 
-        // Add text, ensuring it wraps within the max width
-        let splitText = doc.splitTextToSize(text, maxWidth);
-        doc.text(splitText, x, y);
-        y += 8; // Move down for the next word
-
-        // If we reach the bottom of the page, add a new page
-        if (y > 280) {
-            doc.addPage();
-            y = 20;
+        // Append text in a single line, handling spacing properly
+        let textWidth = doc.getTextWidth(word + ", ");
+        if (x + textWidth > maxWidth) {
+            x = 20; // Move to new line
+            y += 8;
         }
+        doc.text(word + (index < splitText.length - 1 ? ", " : ""), x, y);
+        x += textWidth;
     });
 
     // Save PDF with proper name

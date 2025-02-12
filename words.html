@@ -195,7 +195,8 @@
 </div>
     </div>
 
-
+<!-- Include jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
         let selectedWords = [];
@@ -504,7 +505,8 @@ function saveWordListToPDF() {
         return;
     }
 
-    const { jsPDF } = window.jspdf; // Ensure jsPDF is available
+    // Load jsPDF correctly
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
     // Get current date & time in mm/dd/yyyy hh:mm format
@@ -546,6 +548,7 @@ function saveWordListToPDF() {
     // Save PDF
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
 }
+ 
 
     </script>
 </body>

@@ -171,7 +171,7 @@
         
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
-    		<button id="bonus">Bonus</button>
+			<button id="bonus">Refine</button>
     		<button id="all">All</button>
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
@@ -206,6 +206,15 @@
     }
 });
 
+// Get button elements
+const refineButton = document.getElementById('bonus'); // Renamed from "bonus"
+const allButton = document.getElementById('all');
+const resetButton = document.getElementById('reset');
+
+refineButton.addEventListener('click', toggleHighlight);
+allButton.addEventListener('click', showBothHighlightSets);
+resetButton.addEventListener('click', resetHighlights);
+
 let highlightedWords = []; // Stores the original highlighted words
 let newHighlightedWords = []; // Stores the first randomly selected words
 let isHighlighted = false;
@@ -214,7 +223,6 @@ let showingBothSets = false; // Tracks if both sets are currently displayed
 
 // Get button elements
 const bonusButton = document.getElementById('bonus');
-const allButton = document.getElementById('all');
 
 bonusButton.addEventListener('click', toggleHighlight);
 allButton.addEventListener('click', showBothHighlightSets);
@@ -250,6 +258,7 @@ function toggleHighlight() {
 
         firstSelectionMade = true; // Mark that we have our first selection
         isHighlighted = true;
+        refineButton.textContent = "Orig"; // Change button text to Orig
         return;
     }
 
@@ -257,10 +266,12 @@ function toggleHighlight() {
         // If currently using the new highlight set, revert to the original highlights
         words.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
+        refineButton.textContent = "Refine"; // Change button text back to Refine
     } else {
         // Toggle back to the new highlighted words
         words.forEach(word => word.classList.remove('highlight'));
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
+        refineButton.textContent = "Orig"; // Change button text to Orig
     }
 
     isHighlighted = !isHighlighted;
@@ -306,14 +317,14 @@ function resetHighlights() {
     timerInterval = null;
     running = false;
 
-    // Reset Start button appearance
+    // Reset button states
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
+    refineButton.textContent = "Refine"; // Reset button text
 }
 
 // Attach event listener for Reset button
 document.getElementById('reset').addEventListener('click', resetHighlights);
-
 
         function startRNG() {
             if (running) return;

@@ -524,17 +524,35 @@ function saveWordListToPDF() {
     doc.setFontSize(12);
     doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
 
-    // Convert words into a single comma-separated string
-    let wordString = words.map(word => {
+    doc.setFontSize(14);
+    let x = 20; // Start X position
+    let y = 40; // Start Y position
+    const maxWidth = 180; // Maximum width for text
+
+    words.forEach((word, index) => {
         let text = word.textContent.trim();
-        return word.classList.contains('highlight') ? `**${text}**` : text; // Bold highlighted words
-    }).join(', ');
 
-    // Ensure text fits within the PDF width
-    const maxWidth = 180;
-    doc.text(wordString, 20, 40, { maxWidth });
+        if (word.classList.contains('highlight')) {
+            doc.setTextColor(255, 0, 0); // Red color for highlighted words
+            doc.setFont("helvetica", "bold"); // Bold for highlighted words
+        } else {
+            doc.setTextColor(0, 0, 0); // Default black color
+            doc.setFont("helvetica", "normal"); // Normal font for regular words
+        }
 
-    // Save PDF with proper name & prevent Chrome .crdownload issue
+        // Add text, ensuring it wraps within the max width
+        let splitText = doc.splitTextToSize(text, maxWidth);
+        doc.text(splitText, x, y);
+        y += 8; // Move down for the next word
+
+        // If we reach the bottom of the page, add a new page
+        if (y > 280) {
+            doc.addPage();
+            y = 20;
+        }
+    });
+
+    // Save PDF with proper name
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`, { returnPromise: true });
 }
 

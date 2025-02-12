@@ -220,6 +220,11 @@ let newHighlightedWords = []; // Stores the first randomly selected words
 let isHighlighted = false;
 let firstSelectionMade = false; // Ensures we keep the first set of randomly selected words
 let showingBothSets = false; // Tracks if both sets are currently displayed
+let stopped = false; // Tracks if Stop has been pressed
+
+// Disable Refine and All at the start
+refineButton.disabled = true;
+allButton.disabled = true;
 
 // Get button elements
 const bonusButton = document.getElementById('bonus');
@@ -228,19 +233,19 @@ bonusButton.addEventListener('click', toggleHighlight);
 allButton.addEventListener('click', showBothHighlightSets);
 
 function toggleHighlight() {
+    if (!stopped) return; // Ensure Stop has been pressed first
+
     const wordListContainer = document.getElementById('wordList');
     const words = Array.from(wordListContainer.children); // Get all word elements
 
     if (words.length === 0) return; // Do nothing if no words are displayed
 
     if (showingBothSets) {
-        // If both sets are displayed, revert back to toggling behavior
         showingBothSets = false;
         isHighlighted = false;
     }
 
     if (!firstSelectionMade) {
-        // Save the original highlighted words only on the first toggle
         highlightedWords = words.filter(word => word.classList.contains('highlight'));
 
         // Calculate 20% of displayed words (rounded up)
@@ -254,48 +259,46 @@ function toggleHighlight() {
             }
         }
 
-        // Apply highlights without removing previous ones
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
 
-        firstSelectionMade = true; // Mark that we have our first selection
+        firstSelectionMade = true;
         isHighlighted = true;
-        refineButton.textContent = "Orig"; // Change button text to Orig
+        refineButton.textContent = "Orig";
+        disableStartCatch(); // Disable Start & Catch when Refine is used
         return;
     }
 
     if (isHighlighted) {
-        // Show original highlights (no removal)
         newHighlightedWords.forEach(word => word.classList.remove('highlight'));
         highlightedWords.forEach(word => word.classList.add('highlight'));
-        refineButton.textContent = "Refine"; // Change button text back to Refine
+        refineButton.textContent = "Refine";
     } else {
-        // Show refined selection (no removal)
         highlightedWords.forEach(word => word.classList.remove('highlight'));
         newHighlightedWords.forEach(word => word.classList.add('highlight'));
-        refineButton.textContent = "Orig"; // Change button text to Orig
+        refineButton.textContent = "Orig";
     }
 
     isHighlighted = !isHighlighted;
 }
 
 function showBothHighlightSets() {
+    if (!stopped) return; // Ensure Stop has been pressed first
+
     const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children); // Get all word elements
+    const words = Array.from(wordListContainer.children);
 
-    if (words.length === 0 || !firstSelectionMade) return; // Do nothing if no words are displayed
+    if (words.length === 0 || !firstSelectionMade) return;
 
-    // Highlight both sets at the same time without clearing
     highlightedWords.forEach(word => word.classList.add('highlight'));
     newHighlightedWords.forEach(word => word.classList.add('highlight'));
 
     showingBothSets = true;
+    disableStartCatch(); // Disable Start & Catch when All is used
 }
 
 function resetHighlights() {
-    // Clear the word list completely
     document.getElementById('wordList').innerHTML = '';
 
-    // Reset all variables
     selectedWords = [];
     wordCount = 0;
     highlightedWords = [];
@@ -303,22 +306,80 @@ function resetHighlights() {
     isHighlighted = false;
     firstSelectionMade = false;
     showingBothSets = false;
+    stopped = false; // Allow Start again
 
-    // Reset the word counter and timer display
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
     document.getElementById('timeValue').textContent = '0.00';
 
-    // Stop any running timers or intervals
     clearInterval(rngInterval);
     clearInterval(timerInterval);
     rngInterval = null;
     timerInterval = null;
     running = false;
 
-    // Reset button states
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
-    refineButton.textContent = "Refine"; // Reset button text
+    refineButton.textContent = "Refine";
+
+    enableStartCatch(); // Re-enable Start & Catch
+    disableRefineAll(); // Disable Refine & All until Stop is pressed
+}
+
+function disableStartCatch() {
+    startButton.disabled = true;
+    catchButton.disabled = true;
+}
+
+function enableStartCatch() {
+    startButton.disabled = false;
+    catchButton.disabled = false;
+}
+
+function disableRefineAll() {
+    refineButton.disabled = true;
+    allButton.disabled = true;
+}
+
+function enableRefineAll() {
+    refineButton.disabled = false;
+    allButton.disabled = false;
+}
+
+function startRNG() {
+    if (running) return;
+    running = true;
+    startButton.textContent = 'Running...';
+    startButton.style.backgroundColor = 'slategray';
+    resetTimer();
+    timerInterval = setInterval(updateTimerDisplay, 10);
+
+    rngInterval = setInterval(() => {
+        currentNumber = Math.floor(Math.random() * 2508) + 1;
+        console.log(`Cycling: ${currentNumber}`); 
+    }, 100);
+}
+
+function stopRNG() {
+    running = false;
+    clearInterval(rngInterval);
+    clearInterval(timerInterval);
+    rngInterval = null;
+    timerInterval = null;
+    startButton.textContent = 'Start';
+    startButton.style.backgroundColor = 'green';
+    
+    stopped = true; // Allow Refine & All buttons to be used
+    enableRefineAll();
+}
+
+function resetTimer() {
+    startTime = performance.now();
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const elapsedTime = (performance.now() - startTime) / 1000;
+    timerDisplay.textContent = elapsedTime.toFixed(2);
 }
 
 // Attach event listener for Reset button

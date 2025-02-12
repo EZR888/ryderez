@@ -246,9 +246,11 @@ function toggleHighlight() {
         // Remove existing highlights
         words.forEach(word => word.classList.remove('highlight'));
 
-        // Randomly select 8 words and save them permanently for toggling
+        // Calculate 20% of displayed words (rounded up)
+        let numToSelect = Math.ceil(words.length * 0.2);
         newHighlightedWords = [];
-        while (newHighlightedWords.length < 8 && newHighlightedWords.length < words.length) {
+
+        while (newHighlightedWords.length < numToSelect && newHighlightedWords.length < words.length) {
             let randomIndex = Math.floor(Math.random() * words.length);
             if (!newHighlightedWords.includes(words[randomIndex])) {
                 newHighlightedWords.push(words[randomIndex]);
@@ -276,6 +278,7 @@ function toggleHighlight() {
 
     isHighlighted = !isHighlighted;
 }
+
 
 function showBothHighlightSets() {
     const wordListContainer = document.getElementById('wordList');

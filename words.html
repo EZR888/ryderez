@@ -566,6 +566,96 @@ function saveWordListToPDF() {
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`, { returnPromise: true });
 }
 
+let previousWord = null; // Stores the last caught word
+let sentence = ""; // Stores the flowing sentence
+
+function catchWord() {
+    if (!running) return;
+
+    fetchWord(currentNumber);
+    
+    // Reset and restart the timer when Catch is pressed
+    resetTimer();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimerDisplay, 10);
+}
+
+// Fetches a word that makes sense in the sentence
+async function fetchWord(lineNumber) {
+    const file = 'lookup.txt';
+
+    try {
+        const response = await fetch(file);
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+
+        if (lineNumber < 1 || lineNumber > lines.length) {
+            console.error("Line number out of range.");
+            return;
+        }
+
+        let selectedLine = lines[lineNumber - 1]; 
+        let newWord = selectedLine.split(',')[1]?.trim() || "No word found";
+
+        // If this is the first word, just add it
+        if (!previousWord) {
+            sentence = newWord.charAt(0).toUpperCase() + newWord.slice(1); // Capitalize first word
+        } else {
+            newWord = findNextValidWord(newWord); // Ensure the next word fits
+            sentence += ` ${newWord}`;
+        }
+
+        // Update previous word for next iteration
+        previousWord = newWord;
+
+        // Update displayed sentence
+        updateWordListDisplay(sentence);
+
+    } catch (error) {
+        console.error('Error loading the lookup file:', error);
+    }
+}
+
+// Function to find a valid word that fits grammatically
+function findNextValidWord(newWord) {
+    const connectors = ["and", "but", "so", "because", "if", "then", "or"];
+    const endings = [".", "?", "!"];
+    const punctuation = [",", ";", ":"];
+
+    // **Basic sentence logic** (You can expand this further!)
+    if (isVerb(previousWord) && isNoun(newWord)) {
+        return newWord; // "He runs house" → "He runs to the house"
+    }
+    if (isNoun(previousWord) && isVerb(newWord)) {
+        return newWord; // "Dog runs" → "The dog runs"
+    }
+    if (isNoun(previousWord) && isNoun(newWord)) {
+        return `${connectors[Math.floor(Math.random() * connectors.length)]} ${newWord}`;
+    }
+    if (Math.random() < 0.2) {
+        return newWord + endings[Math.floor(Math.random() * endings.length)]; // Randomly end sentence
+    }
+    if (Math.random() < 0.2) {
+        return punctuation[Math.floor(Math.random() * punctuation.length)] + " " + newWord; // Add punctuation
+    }
+
+    return newWord; // Default case
+}
+
+// **Basic Part-of-Speech Checkers (Expand for better accuracy)**
+function isNoun(word) {
+    const nounEndings = ["ion", "ment", "ness", "ity", "ship", "er", "or", "ist"];
+    return nounEndings.some(ending => word.endsWith(ending));
+}
+function isVerb(word) {
+    const verbEndings = ["ing", "ed", "ify", "ize", "ate"];
+    return verbEndings.some(ending => word.endsWith(ending));
+}
+
+// Updates the displayed sentence dynamically
+function updateWordListDisplay(text) {
+    document.getElementById('wordList').innerText = text;
+}
 
     </script>
 </body>

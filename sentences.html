@@ -255,33 +255,36 @@ function toggleHighlight() {
     if (!stopped) return; // Ensure Stop has been pressed first
 
     const wordListContainer = document.getElementById('wordList');
-    let rawText = wordListContainer.innerText;
+    let rawText = wordListContainer.innerText.trim();
+
+    if (!rawText) return; // Exit if no words have been caught
 
     if (!firstSelectionMade) {
         firstSelectionMade = true;
         isHighlighted = true;
         refineButton.textContent = "Orig";
-        disableStartCatch(); // Disable Start & Catch when Refine is used
+        disableStartCatch();
         return;
     }
 
     if (isHighlighted) {
-        // Restore original word order
-        wordListContainer.innerText = rawText;
+        // Restore original word list
+        wordListContainer.innerText = selectedWords.join(", ");
         refineButton.textContent = "Refine";
     } else {
-        // **Generate a readable story from the words**
-        let refinedText = generateStory(rawText);
+        // **Generate and replace with readable story**
+        let refinedText = generateStory(selectedWords);
         wordListContainer.innerText = refinedText;
+        selectedWords = refinedText.split(" "); // Update for PDF saving
         refineButton.textContent = "Orig";
     }
 
     isHighlighted = !isHighlighted;
 }
 
-// **Function to refine collected words into a story**
-function generateStory(text) {
-    let words = text.split(/\s+/); // Split words
+// **Function to refine caught words into a structured story**
+function generateStory(wordsArray) {
+    let words = [...wordsArray]; // Clone array to keep order
     let structuredText = "";
     let sentence = [];
 
@@ -505,9 +508,9 @@ document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
 
 function saveWordListToPDF() {
     const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children); // Get all word elements
+    let content = wordListContainer.innerText.trim();
 
-    if (words.length === 0) {
+    if (!content) {
         alert("No words to save.");
         return;
     }
@@ -534,36 +537,21 @@ function saveWordListToPDF() {
     doc.setFontSize(14);
     doc.setFont("helvetica", "normal"); // Ensure normal font for all text
 
-    // **String all words together, separated by commas**
-    let wordString = words.map(word => {
-        let text = word.textContent.trim();
-        return word.classList.contains('highlight') ? `{RED}${text}` : text; // Mark highlighted words
-    }).join(', ');
+    // Ensure text is wrapped properly in the PDF
+    let splitText = doc.splitTextToSize(content, 180);
+    let y = 40;
 
-    // **Process each word and change color when necessary**
-    let splitText = wordString.split(/, /);
-    let x = 20, y = 40, maxWidth = 180;
-
-    splitText.forEach((word, index) => {
-        if (word.startsWith("{RED}")) {
-            doc.setTextColor(255, 0, 0); // Set color to red
-            word = word.replace("{RED}", ""); // Remove placeholder
-        } else {
-            doc.setTextColor(0, 0, 0); // Default black text
+    splitText.forEach(line => {
+        doc.text(line, 20, y);
+        y += 8;
+        if (y > 280) {
+            doc.addPage();
+            y = 20;
         }
-
-        // Append text in a single line, handling spacing properly
-        let textWidth = doc.getTextWidth(word + ", ");
-        if (x + textWidth > maxWidth) {
-            x = 20; // Move to new line
-            y += 8;
-        }
-        doc.text(word + (index < splitText.length - 1 ? ", " : ""), x, y);
-        x += textWidth;
     });
 
     // Save PDF with proper name
-    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`, { returnPromise: true });
+    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
 }
 
 

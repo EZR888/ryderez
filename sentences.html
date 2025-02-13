@@ -284,7 +284,7 @@ function toggleHighlight() {
 
 // **Function to refine caught words into a structured story**
 function generateStory(wordsArray) {
-    let words = [...wordsArray]; // Clone array to keep order
+    let words = [...wordsArray]; // Clone array to preserve order
     let structuredText = "";
     let sentence = [];
 
@@ -293,13 +293,11 @@ function generateStory(wordsArray) {
 
     words.forEach((word, index) => {
         if (word.match(/^\d+$/)) {
-            sentence.push(`(${word})`); // Wrap numbers
+            sentence.push(`(${word})`); // Wrap numbers in parentheses
         } else if (word.match(/^[A-Z]/) && index !== 0) {
-            // **Start a new sentence if a capitalized word appears mid-list**
             structuredText += sentence.join(" ") + ". ";
-            sentence = [word];
+            sentence = [word]; // Start a new sentence if a capitalized word appears mid-list
         } else if (Math.random() < 0.1) {
-            // **Randomly insert connectors for better flow**
             sentence.push(connectors[Math.floor(Math.random() * connectors.length)]);
             sentence.push(word);
         } else {
@@ -307,7 +305,7 @@ function generateStory(wordsArray) {
         }
     });
 
-    structuredText += sentence.join(" ") + "."; // Ensure last sentence ends
+    structuredText += sentence.join(" ") + "."; // Ensure the last sentence ends
     return structuredText.replace(/\s+([,.!?;:])/g, "$1"); // Fix spacing before punctuation
 }
 

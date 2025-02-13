@@ -255,58 +255,62 @@ function toggleHighlight() {
     if (!stopped) return; // Ensure Stop has been pressed first
 
     const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children); // Get all word elements
-
-    if (words.length === 0) return; // Do nothing if no words are displayed
-
-    if (showingBothSets) {
-        showingBothSets = false;
-        isHighlighted = false;
-    }
+    let rawText = wordListContainer.innerText;
 
     if (!firstSelectionMade) {
-        // Save the original highlighted words only on the first toggle
-        highlightedWords = words.filter(word => word.classList.contains('highlight'));
-
-        // **FIX: Remove all previous highlights before selecting new ones**
-        words.forEach(word => word.classList.remove('highlight'));
-
-        // Calculate 20% of displayed words (rounded up)
-        let numToSelect = Math.ceil(words.length * 0.2);
+        // First time: Highlight 20% of words
+        highlightedWords = rawText.split(' ').filter((_, index) => index % 5 === 0);
         newHighlightedWords = [];
-
-        while (newHighlightedWords.length < numToSelect && newHighlightedWords.length < words.length) {
-            let randomIndex = Math.floor(Math.random() * words.length);
-            if (!newHighlightedWords.includes(words[randomIndex])) {
-                newHighlightedWords.push(words[randomIndex]);
-            }
-        }
-
-        // Apply new highlights
-        newHighlightedWords.forEach(word => word.classList.add('highlight'));
-
         firstSelectionMade = true;
         isHighlighted = true;
-        refineButton.textContent = "Orig"; // Change button text to Orig
+        refineButton.textContent = "Orig";
         disableStartCatch(); // Disable Start & Catch when Refine is used
         return;
     }
 
     if (isHighlighted) {
-        // Show only the original highlighted words
-        words.forEach(word => word.classList.remove('highlight'));
-        highlightedWords.forEach(word => word.classList.add('highlight'));
+        // Restore original words
+        wordListContainer.innerText = rawText;
         refineButton.textContent = "Refine";
     } else {
-        // Show only the newly refined highlighted words
-        words.forEach(word => word.classList.remove('highlight'));
-        newHighlightedWords.forEach(word => word.classList.add('highlight'));
+        // **Refine the text into readable sentences**
+        let refinedText = improveReadability(rawText);
+        wordListContainer.innerText = refinedText;
         refineButton.textContent = "Orig";
     }
 
     isHighlighted = !isHighlighted;
 }
 
+// **Function to smooth and structure the paragraph naturally**
+function improveReadability(text) {
+    let words = text.split(/\s+/); // Split by spaces
+    let structuredText = "";
+    let sentence = [];
+
+    const connectors = ["and", "but", "so", "because", "then", "thus", "however"];
+    const punctuation = [",", ";", ":"];
+
+    words.forEach((word, index) => {
+        if (word.match(/^\d+$/)) {
+            // **Fix numbers appearing oddly**
+            sentence.push(`(${word})`);
+        } else if (word.match(/^[A-Z]/) && index !== 0) {
+            // **Capitalize and start new sentence if needed**
+            structuredText += sentence.join(" ") + ". ";
+            sentence = [word];
+        } else if (Math.random() < 0.15) {
+            // **Randomly insert connectors for better flow**
+            sentence.push(connectors[Math.floor(Math.random() * connectors.length)]);
+            sentence.push(word);
+        } else {
+            sentence.push(word);
+        }
+    });
+
+    structuredText += sentence.join(" ") + "."; // Ensure last sentence ends
+    return structuredText.replace(/\s+([,.!?;:])/g, "$1"); // Fix spacing before punctuation
+}
 
 function showBothHighlightSets() {
     if (!stopped) return; // Ensure Stop has been pressed first

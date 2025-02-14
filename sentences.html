@@ -252,27 +252,19 @@ bonusButton.addEventListener('click', toggleHighlight);
 allButton.addEventListener('click', showBothHighlightSets);
 
 function toggleHighlight() {
-    console.log("Refine button clicked!"); // DEBUGGING CHECK
-
-    if (!stopped) {
-        console.log("Stop button has not been pressed yet.");
-        return;
-    }
+    console.log("Refine button clicked!");
 
     const wordListContainer = document.getElementById('wordList');
+    let rawText = wordListContainer.innerText.trim();
 
-    if (!selectedWords.length) {
-        console.log("No words have been caught.");
-        return; 
-    }
+    if (!rawText) return; // Exit if no words have been caught
 
     if (!firstSelectionMade) {
         console.log("First selection being made...");
         firstSelectionMade = true;
         isHighlighted = true;
-        refineButton.textContent = "Orig";
+        refineButton.textContent = "Orig"; // Change button to Orig
         disableStartCatch();
-        return;
     }
 
     if (isHighlighted) {
@@ -283,7 +275,7 @@ function toggleHighlight() {
         console.log("Generating story...");
         let refinedText = generateStory(selectedWords);
         wordListContainer.innerText = refinedText;
-        refinedWords = refinedText; // Store refined text for saving to PDF
+        refinedWords = refinedText; // Store refined text for PDF saving
         refineButton.textContent = "Orig";
     }
 

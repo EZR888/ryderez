@@ -251,13 +251,13 @@ const bonusButton = document.getElementById('bonus');
 bonusButton.addEventListener('click', toggleHighlight);
 allButton.addEventListener('click', showBothHighlightSets);
 
+
 function toggleHighlight() {
     if (!stopped) return; // Ensure Stop has been pressed first
 
     const wordListContainer = document.getElementById('wordList');
-    let rawText = wordListContainer.innerText.trim();
 
-    if (!rawText) return; // Exit if no words have been caught
+    if (!selectedWords.length) return; // Exit if no words have been caught
 
     if (!firstSelectionMade) {
         firstSelectionMade = true;
@@ -268,14 +268,14 @@ function toggleHighlight() {
     }
 
     if (isHighlighted) {
-        // Restore original word list
+        // Restore original words
         wordListContainer.innerText = selectedWords.join(", ");
         refineButton.textContent = "Refine";
     } else {
-        // **Generate and replace with readable story**
+        // Generate and display structured story
         let refinedText = generateStory(selectedWords);
         wordListContainer.innerText = refinedText;
-        selectedWords = refinedText.split(" "); // Update for PDF saving
+        refinedWords = refinedText; // Store refined text for saving to PDF
         refineButton.textContent = "Orig";
     }
 
@@ -284,12 +284,12 @@ function toggleHighlight() {
 
 // **Function to refine caught words into a structured story**
 function generateStory(wordsArray) {
-    let words = [...wordsArray]; // Clone array to preserve order
+    let words = [...wordsArray]; // Clone array to maintain order
     let structuredText = "";
     let sentence = [];
 
     const connectors = ["and", "but", "so", "because", "then", "thus", "however"];
-    const punctuation = [",", ";", ":"];
+    const punctuation = [",", ";", ":", "."];
 
     words.forEach((word, index) => {
         if (word.match(/^\d+$/)) {
@@ -305,7 +305,7 @@ function generateStory(wordsArray) {
         }
     });
 
-    structuredText += sentence.join(" ") + "."; // Ensure the last sentence ends
+    structuredText += sentence.join(" ") + "."; // Ensure last sentence ends
     return structuredText.replace(/\s+([,.!?;:])/g, "$1"); // Fix spacing before punctuation
 }
 
@@ -506,14 +506,13 @@ document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
 
 function saveWordListToPDF() {
     const wordListContainer = document.getElementById('wordList');
-    let content = wordListContainer.innerText.trim();
+    let content = isHighlighted ? refinedWords : selectedWords.join(", ");
 
     if (!content) {
         alert("No words to save.");
         return;
     }
 
-    // Load jsPDF correctly
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
@@ -533,7 +532,7 @@ function saveWordListToPDF() {
     doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
 
     doc.setFontSize(14);
-    doc.setFont("helvetica", "normal"); // Ensure normal font for all text
+    doc.setFont("helvetica", "normal");
 
     // Ensure text is wrapped properly in the PDF
     let splitText = doc.splitTextToSize(content, 180);

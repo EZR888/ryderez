@@ -199,22 +199,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
-        let selectedWords = [];
-        let wordCount = 0;
-        let rngInterval = null;
-        let timerInterval = null;
-        let startTime = 0;
-        let currentNumber = 1;
-        let running = false;
+let selectedWords = [];
+let wordCount = 0;
+let rngInterval = null;
+let timerInterval = null;
+let startTime = 0;
+let currentNumber = 1;
+let running = false;
+let isHighlighted = false; // Tracks if refined mode is active
+let firstSelectionMade = false; // Ensures the first refine state works
+let refinedWords = ""; // Stores the refined message for toggling & saving
 
-        const startButton = document.getElementById('start');
-        const catchButton = document.getElementById('catch');
-        const stopButton = document.getElementById('stop');
-        const timerDisplay = document.getElementById('timeValue');
+const startButton = document.getElementById('start');
+const catchButton = document.getElementById('catch');
+const stopButton = document.getElementById('stop');
+const refineButton = document.getElementById('bonus'); // Bonus is now Refine
+const resetButton = document.getElementById('reset');
+const timerDisplay = document.getElementById('timeValue');
 
-        startButton.addEventListener('click', startRNG);
-        catchButton.addEventListener('click', catchWord);
-        stopButton.addEventListener('click', stopRNG);
+startButton.addEventListener('click', startRNG);
+catchButton.addEventListener('click', catchWord);
+stopButton.addEventListener('click', stopRNG);
+refineButton.addEventListener('click', refineMessage);
+resetButton.addEventListener('click', resetHighlights);
         
         document.addEventListener('keydown', function(event) {
     const key = event.key.toLowerCase();
@@ -330,12 +337,9 @@ function resetHighlights() {
 
     selectedWords = [];
     wordCount = 0;
-    highlightedWords = [];
-    newHighlightedWords = [];
     isHighlighted = false;
     firstSelectionMade = false;
-    showingBothSets = false;
-    stopped = false; // Allow Start again
+    stopped = false; 
 
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
     document.getElementById('timeValue').textContent = '0.00';
@@ -350,10 +354,11 @@ function resetHighlights() {
     startButton.style.backgroundColor = 'green';
     refineButton.textContent = "Refine";
 
-    enableStartCatch(); // Re-enable Start & Catch
-    disableRefineAll(); // Disable Refine & All until Stop is pressed
+    enableStartCatch();
+    refineButton.disabled = true;
 }
 
+// Start and Catch button enabling/disabling
 function disableStartCatch() {
     startButton.disabled = true;
     catchButton.disabled = true;
@@ -414,30 +419,19 @@ function updateTimerDisplay() {
 // Attach event listener for Reset button
 document.getElementById('reset').addEventListener('click', resetHighlights);
 
-        function startRNG() {
-            if (running) return;
-            running = true;
-            startButton.textContent = 'Running...';
-            startButton.style.backgroundColor = 'slategray';
-            resetTimer();
-            timerInterval = setInterval(updateTimerDisplay, 10);
+function startRNG() {
+    if (running) return;
+    running = true;
+    startButton.textContent = 'Running...';
+    startButton.style.backgroundColor = 'slategray';
+    resetTimer();
+    timerInterval = setInterval(updateTimerDisplay, 10);
 
-            rngInterval = setInterval(() => {
-                currentNumber = Math.floor(Math.random() * 2508) + 1;
-                console.log(`Cycling: ${currentNumber}`); 
-            }, 100);
-        }
-
-        function catchWord() {
-            if (!running) return;
-
-            lookupWord(currentNumber);
-
-            // Reset and restart the timer when Catch is pressed
-            resetTimer();
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimerDisplay, 10);
-        }
+    rngInterval = setInterval(() => {
+        currentNumber = Math.floor(Math.random() * 2508) + 1;
+        console.log(`Cycling: ${currentNumber}`);
+    }, 100);
+}
 
 function stopRNG() {
     running = false;
@@ -447,28 +441,38 @@ function stopRNG() {
     timerInterval = null;
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
-    
-    stopped = true; // Allow Refine & All buttons to be used
+
+    stopped = true; // Allow Refine to be used
     refineButton.disabled = false;
-    allButton.disabled = false;
 }
 
+// Function to catch a word
+async function catchWord() {
+    if (!running) return;
 
-        function resetTimer() {
-            startTime = performance.now();
-            updateTimerDisplay();
-        }
+    await lookupWord(currentNumber);
 
-        function updateTimerDisplay() {
-            const elapsedTime = (performance.now() - startTime) / 1000;
-            timerDisplay.textContent = elapsedTime.toFixed(2);
-        }
+    resetTimer();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimerDisplay, 10);
+}
+
+// Timer functions
+function resetTimer() {
+    startTime = performance.now();
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const elapsedTime = (performance.now() - startTime) / 1000;
+    timerDisplay.textContent = elapsedTime.toFixed(2);
+}
 
         function updateWordCount() {
             document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
         }
 
-        async function lookupWord(lineNumber) {
+async function lookupWord(lineNumber) {
     const file = 'lookup.txt';
 
     try {
@@ -481,17 +485,18 @@ function stopRNG() {
             return;
         }
 
-        const selectedLine = lines[lineNumber - 1]; 
+        const selectedLine = lines[lineNumber - 1];
         const word = selectedLine.split(',')[1]?.trim() || "No word found";
 
         const wordSpan = document.createElement("span");
-        wordSpan.textContent = word; // Ensure we only store text
+        wordSpan.textContent = word;
 
+        // 1 in 5 chance to highlight the word
         if (Math.random() < 0.2) {
             wordSpan.classList.add("highlight");
         }
 
-        selectedWords.push(word); // Only push text (not HTML)
+        selectedWords.push(word);
         wordCount++;
         updateWordCount();
         document.getElementById('wordList').innerText = selectedWords.join(", ");
@@ -561,7 +566,7 @@ async function refineMessage() {
     if (!stopped) return;
 
     const wordListContainer = document.getElementById('wordList');
-    let rawWords = selectedWords.map(word => word.replace(/<\/?span.*?>/g, "").trim());
+    let rawWords = selectedWords.filter(word => isNaN(word)); // Remove numbers
 
     if (rawWords.length === 0) return;
 
@@ -581,7 +586,7 @@ async function refineMessage() {
         refineButton.textContent = "Refine";
     } else {
         console.log("Calling ChatGPT to generate a refined message...");
-        
+
         // If already generated, use cached version
         if (!refinedWords) {
             refinedWords = await callChatGPT(rawWords);
@@ -596,8 +601,7 @@ async function refineMessage() {
 }
 
 async function callChatGPT(wordsArray) {
-    const apiKey = "YOUR_OPENAI_API_KEY";  // Replace with your Cloudflare Worker URL if applicable
-    const endpoint = "https://api.openai.com/v1/chat/completions";
+    const endpoint = "https://your-cloudflare-worker-url.com/"; // Use your Cloudflare Worker URL
 
     const formattedWords = formatWordsForAI(wordsArray);
 
@@ -615,10 +619,7 @@ async function callChatGPT(wordsArray) {
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
         });
 
@@ -632,12 +633,12 @@ async function callChatGPT(wordsArray) {
             return "There was an error generating your message. Try again later.";
         }
     } catch (error) {
-        console.error("Error calling OpenAI API:", error);
+        console.error("Error calling Cloudflare Worker:", error);
         return "There was an error generating your message. Try again later.";
     }
 }
 
-// **Formats Words to Make Better Sentences**
+// Format words for ChatGPT
 function formatWordsForAI(wordsArray) {
     let filteredWords = wordsArray.filter(word => isNaN(word)); // Remove numbers
     let groupedWords = [];
@@ -651,34 +652,6 @@ function formatWordsForAI(wordsArray) {
     }
 
     return groupedWords.join(", ");
-}
-
-async function callChatGPT(words) {
-    const endpoint = "https://openai-proxy.your-cloudflare-account.workers.dev/";
-
-    const requestBody = {
-        model: "gpt-4", 
-        messages: [
-            { role: "system", content: "You are a spiritual guide sending meaningful messages from beyond..." },
-            { role: "user", content: `Here are the words: ${words}. Create a short, profound message with them.` }
-        ],
-        temperature: 0.7
-    };
-
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-        console.log("ChatGPT Response:", data);
-        return data.choices[0].message.content;
-    } catch (error) {
-        console.error("Error calling Cloudflare Worker:", error);
-        return "There was an error generating your message. Try again later.";
-    }
 }
 
     function generateRefinedMessage(wordsArray) {

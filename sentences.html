@@ -251,15 +251,23 @@ const bonusButton = document.getElementById('bonus');
 bonusButton.addEventListener('click', toggleHighlight);
 allButton.addEventListener('click', showBothHighlightSets);
 
-
 function toggleHighlight() {
-    if (!stopped) return; // Ensure Stop has been pressed first
+    console.log("Refine button clicked!"); // DEBUGGING CHECK
+
+    if (!stopped) {
+        console.log("Stop button has not been pressed yet.");
+        return;
+    }
 
     const wordListContainer = document.getElementById('wordList');
 
-    if (!selectedWords.length) return; // Exit if no words have been caught
+    if (!selectedWords.length) {
+        console.log("No words have been caught.");
+        return; 
+    }
 
     if (!firstSelectionMade) {
+        console.log("First selection being made...");
         firstSelectionMade = true;
         isHighlighted = true;
         refineButton.textContent = "Orig";
@@ -268,11 +276,11 @@ function toggleHighlight() {
     }
 
     if (isHighlighted) {
-        // Restore original words
+        console.log("Reverting to original words...");
         wordListContainer.innerText = selectedWords.join(", ");
         refineButton.textContent = "Refine";
     } else {
-        // Generate and display structured story
+        console.log("Generating story...");
         let refinedText = generateStory(selectedWords);
         wordListContainer.innerText = refinedText;
         refinedWords = refinedText; // Store refined text for saving to PDF
@@ -280,11 +288,13 @@ function toggleHighlight() {
     }
 
     isHighlighted = !isHighlighted;
+    console.log("New isHighlighted value:", isHighlighted);
 }
 
 // **Function to refine caught words into a structured story**
 function generateStory(wordsArray) {
-    let words = [...wordsArray]; // Clone array to maintain order
+    console.log("generateStory() called with:", wordsArray); // DEBUGGING CHECK
+    let words = [...wordsArray];
     let structuredText = "";
     let sentence = [];
 
@@ -293,10 +303,10 @@ function generateStory(wordsArray) {
 
     words.forEach((word, index) => {
         if (word.match(/^\d+$/)) {
-            sentence.push(`(${word})`); // Wrap numbers in parentheses
+            sentence.push(`(${word})`);
         } else if (word.match(/^[A-Z]/) && index !== 0) {
             structuredText += sentence.join(" ") + ". ";
-            sentence = [word]; // Start a new sentence if a capitalized word appears mid-list
+            sentence = [word];
         } else if (Math.random() < 0.1) {
             sentence.push(connectors[Math.floor(Math.random() * connectors.length)]);
             sentence.push(word);
@@ -305,8 +315,9 @@ function generateStory(wordsArray) {
         }
     });
 
-    structuredText += sentence.join(" ") + "."; // Ensure last sentence ends
-    return structuredText.replace(/\s+([,.!?;:])/g, "$1"); // Fix spacing before punctuation
+    structuredText += sentence.join(" ") + ".";
+    console.log("Generated story:", structuredText); // DEBUGGING CHECK
+    return structuredText.replace(/\s+([,.!?;:])/g, "$1"); 
 }
 
 function showBothHighlightSets() {
@@ -468,39 +479,39 @@ function stopRNG() {
         }
 
         async function lookupWord(lineNumber) {
-            const file = 'lookup.txt';
+    const file = 'lookup.txt';
 
-            try {
-                const response = await fetch(file);
-                const text = await response.text();
-                const lines = text.split('\n').filter(line => line.trim() !== '');
+    try {
+        const response = await fetch(file);
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
 
-                if (lineNumber < 1 || lineNumber > lines.length) {
-                    console.error("Line number out of range.");
-                    return;
-                }
-
-                const selectedLine = lines[lineNumber - 1]; 
-                const word = selectedLine.split(',')[1]?.trim() || "No word found";
-
-                const wordSpan = document.createElement("span");
-                wordSpan.textContent = word;
-
-                // 🟠 1 in 5 chance to highlight the word in salmon color!
-                if (Math.random() < 0.2) {
-                    wordSpan.classList.add("highlight");
-                }
-
-                selectedWords.push(wordSpan.outerHTML);
-                wordCount++;
-                updateWordCount();
-                document.getElementById('wordList').innerHTML = selectedWords.join(', ');
-
-                console.log(`Caught word from line ${lineNumber}: ${word}`);
-            } catch (error) {
-                console.error('Error loading the lookup file:', error);
-            }
+        if (lineNumber < 1 || lineNumber > lines.length) {
+            console.error("Line number out of range.");
+            return;
         }
+
+        const selectedLine = lines[lineNumber - 1]; 
+        const word = selectedLine.split(',')[1]?.trim() || "No word found";
+
+        const wordSpan = document.createElement("span");
+        wordSpan.textContent = word; // Ensure we only store text
+
+        if (Math.random() < 0.2) {
+            wordSpan.classList.add("highlight");
+        }
+
+        selectedWords.push(word); // Only push text (not HTML)
+        wordCount++;
+        updateWordCount();
+        document.getElementById('wordList').innerText = selectedWords.join(", ");
+
+        console.log(`Caught word from line ${lineNumber}: ${word}`);
+    } catch (error) {
+        console.error('Error loading the lookup file:', error);
+    }
+}
+
         
 document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
 

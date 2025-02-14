@@ -601,13 +601,12 @@ async function refineMessage() {
 }
 
 async function callChatGPT(words) {
-    const apiKey = "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"; // Replace with your real API key
-    const endpoint = "https://api.openai.com/v1/chat/completions";
+    const endpoint = "https://openai-proxy.your-cloudflare-account.workers.dev/";
 
     const requestBody = {
-        model: "gpt-4",
+        model: "gpt-4", 
         messages: [
-            { role: "system", content: "You are a spiritual guide sending meaningful messages from beyond. Generate a thought-provoking message using these words in a mystical, guardian-angel-like tone." },
+            { role: "system", content: "You are a spiritual guide sending meaningful messages from beyond..." },
             { role: "user", content: `Here are the words: ${words}. Create a short, profound message with them.` }
         ],
         temperature: 0.7
@@ -616,24 +615,15 @@ async function callChatGPT(words) {
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
         });
 
         const data = await response.json();
         console.log("ChatGPT Response:", data);
-
-        if (data.choices && data.choices.length > 0) {
-            return data.choices[0].message.content;
-        } else {
-            console.error("Unexpected response structure:", data);
-            return "There was an error generating your message. Try again later.";
-        }
+        return data.choices[0].message.content;
     } catch (error) {
-        console.error("Error calling OpenAI API:", error);
+        console.error("Error calling Cloudflare Worker:", error);
         return "There was an error generating your message. Try again later.";
     }
 }

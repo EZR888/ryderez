@@ -187,7 +187,6 @@
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
 			<button id="bonus">Refine</button>
-    		<button id="all">All</button>
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
 <div style="text-align: center; margin-top: 20px;">
@@ -232,13 +231,7 @@ resetButton.addEventListener('click', resetHighlights);
     }
 });
 
-// Get button elements
-const refineButton = document.getElementById('bonus'); // Renamed from "bonus"
-const allButton = document.getElementById('all');
-const resetButton = document.getElementById('reset');
-
 refineButton.addEventListener('click', toggleHighlight);
-allButton.addEventListener('click', showBothHighlightSets);
 resetButton.addEventListener('click', resetHighlights);
 
 let highlightedWords = []; // Stores the original highlighted words
@@ -248,13 +241,6 @@ let stopped = false; // Tracks if Stop has been pressed
 
 // Disable Refine and All at the start
 refineButton.disabled = true;
-allButton.disabled = true;
-
-// Get button elements
-const bonusButton = document.getElementById('bonus');
-
-bonusButton.addEventListener('click', toggleHighlight);
-allButton.addEventListener('click', showBothHighlightSets);
 
 function toggleHighlight() {
     console.log("Refine button clicked!");
@@ -557,11 +543,6 @@ function saveWordListToPDF() {
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
 }
 
-   // Ensure the refine button is properly selected
-    let isHighlighted = false; // Tracks whether words have been refined
-    let firstSelectionMade = false; // Ensures words are refined only once before toggling
-    let refinedWords = ""; // Stores the refined message for toggling & saving
-
 async function refineMessage() {
     if (!stopped) return;
 
@@ -653,50 +634,6 @@ function formatWordsForAI(wordsArray) {
 
     return groupedWords.join(", ");
 }
-
-    function generateRefinedMessage(wordsArray) {
-        let words = [...wordsArray];
-        let message = "";
-
-        let intro = [
-            "Hey, listen up.",
-            "You were meant to see this.",
-            "Funny how these things work, isn’t it?",
-            "This isn’t random. Pay attention."
-        ];
-
-        let body = [
-            "Life moves fast, but sometimes you need to slow down. Take a breath. Let go of the noise. What matters will still be there.",
-            "You might be waiting for a sign. Well, here it is.",
-            "Trust isn’t just given—it’s built. You already know who’s worth it.",
-            "Boundaries are important, but so is knowing when to let go. Some things, some people, aren’t meant to be carried forever.",
-            "You’ve been stuck between choices, but deep down, you already know the answer. You just need to act on it.",
-            "Health is more than just how you feel today. Take care of yourself like you would a friend.",
-            "The past doesn’t have to define the future. You get to decide how this next part plays out.",
-            "Not everything is a competition. Focus on what’s real, not what looks good from a distance."
-        ];
-
-        let outro = [
-            "If you’ve been waiting for a reason to move forward—this is it.",
-            "The universe has a funny way of sending messages. Consider this one of them.",
-            "You don’t have to have all the answers today. Just take the next step.",
-            "Keep going. You’re closer than you think."
-        ];
-
-        let randomPick = arr => arr[Math.floor(Math.random() * arr.length)];
-
-        message += randomPick(intro) + "\n\n";
-        message += randomPick(body) + "\n\n";
-
-        let nameMentions = words.filter(word => /^[A-Z]/.test(word)); // Find words that look like names
-        if (nameMentions.length > 0) {
-            message += nameMentions.join(", ") + "—their presence is felt. Maybe in memory, maybe in something more. But they’re here.\n\n";
-        }
-
-        message += randomPick(outro);
-
-        return message;
-    }
 
     // Attach function to the Refine button
     refineButton.addEventListener('click', refineMessage);

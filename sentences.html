@@ -558,16 +558,19 @@ function saveWordListToPDF() {
     let refinedWords = ""; // Stores the refined message for toggling & saving
 
 async function refineMessage() {
-    if (!stopped) return;
-
-    const wordListContainer = document.getElementById('wordList');
-    let rawWords = selectedWords.map(word => word.replace(/<\/?span.*?>/g, "").trim());
-
-    if (rawWords.length === 0) return;
-
     console.log("Refine button clicked!");
 
+    const wordListContainer = document.getElementById('wordList');
+
+    // Ensure words are properly retrieved
+    let rawWords = selectedWords.map(word => word.replace(/<\/?span.*?>/g, "").trim());
+    if (rawWords.length === 0) {
+        console.log("No words to refine.");
+        return;
+    }
+
     if (!firstSelectionMade) {
+        console.log("First selection being made...");
         firstSelectionMade = true;
         isHighlighted = true;
         refineButton.textContent = "Orig";
@@ -579,24 +582,30 @@ async function refineMessage() {
         console.log("Reverting to original words...");
         wordListContainer.innerText = selectedWords.join(", ");
         refineButton.textContent = "Refine";
-    } else {
-        console.log("Calling ChatGPT to generate a refined message...");
-        let refinedText = await callChatGPT(rawWords.join(", "));
+        isHighlighted = false;
+        return;
+    }
+
+    console.log("Calling ChatGPT to generate a refined message...");
+    let refinedText = await callChatGPT(rawWords.join(", "));
+
+    if (refinedText) {
+        console.log("Refined message received:", refinedText);
         wordListContainer.innerText = refinedText;
         refinedWords = refinedText;
         refineButton.textContent = "Orig";
+        isHighlighted = true;
+    } else {
+        console.error("No refined text received from API.");
     }
-
-    isHighlighted = !isHighlighted;
-    console.log("New isHighlighted value:", isHighlighted);
 }
 
 async function callChatGPT(words) {
-    const apiKey = "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";  // ❗ Replace with your actual API key ❗
+    const apiKey = "sk-proj-h15v31tcIFClzPQ3ugNcKwSIMwh1Bb9hn4cy6GKRU19vz-wT8Bty_c9RHNeulA53XXrW1tS0UyT3BlbkFJDXcf412j8oz9-6XKz1jL3kL4vIJleFo5hSal9UfQbyDlnb3FBGd82wD0GIO_E2pK-IYSObPmAAsk-proj-h15v31tcIFClzPQ3ugNcKwSIMwh1Bb9hn4cy6GKRU19vz-wT8Bty_c9RHNeulA53XXrW1tS0UyT3BlbkFJDXcf412j8oz9-6XKz1jL3kL4vIJleFo5hSal9UfQbyDlnb3FBGd82wD0GIO_E2pK-IYSObPmAA"; // Replace with your real API key
     const endpoint = "https://api.openai.com/v1/chat/completions";
 
     const requestBody = {
-        model: "gpt-4",  // Use "gpt-4" or "gpt-3.5-turbo"
+        model: "gpt-4",
         messages: [
             { role: "system", content: "You are a spiritual guide sending meaningful messages from beyond. Generate a thought-provoking message using these words in a mystical, guardian-angel-like tone." },
             { role: "user", content: `Here are the words: ${words}. Create a short, profound message with them.` }
@@ -616,7 +625,13 @@ async function callChatGPT(words) {
 
         const data = await response.json();
         console.log("ChatGPT Response:", data);
-        return data.choices[0].message.content;
+
+        if (data.choices && data.choices.length > 0) {
+            return data.choices[0].message.content;
+        } else {
+            console.error("Unexpected response structure:", data);
+            return "There was an error generating your message. Try again later.";
+        }
     } catch (error) {
         console.error("Error calling OpenAI API:", error);
         return "There was an error generating your message. Try again later.";

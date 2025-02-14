@@ -318,7 +318,7 @@ function showBothHighlightSets() {
     disableStartCatch(); // Disable Start & Catch when All is used
 }
 
-function resetHighlights() {
+function function resetHighlights() {
     document.getElementById('wordList').innerHTML = '';
 
     selectedWords = [];
@@ -344,7 +344,7 @@ function resetHighlights() {
     refineButton.disabled = true;
 }
 
-// Start and Catch button enabling/disabling
+// **Button Enabling/Disabling**
 function disableStartCatch() {
     startButton.disabled = true;
     catchButton.disabled = true;
@@ -389,7 +389,7 @@ function stopRNG() {
     startButton.style.backgroundColor = 'green';
     
     stopped = true; // Allow Refine & All buttons to be used
-    enableRefineAll();
+    refineButton.disabled = false;
 }
 
 function resetTimer() {
@@ -547,13 +547,13 @@ async function refineMessage() {
     if (!stopped) return;
 
     const wordListContainer = document.getElementById('wordList');
-    let rawWords = selectedWords.filter(word => isNaN(word)); // Remove numbers
 
-    if (rawWords.length === 0) return;
+    if (selectedWords.length === 0) return;
 
     console.log("Refine button clicked!");
 
     if (!firstSelectionMade) {
+        console.log("First refine state triggered...");
         firstSelectionMade = true;
         isHighlighted = true;
         refineButton.textContent = "Orig";
@@ -570,7 +570,8 @@ async function refineMessage() {
 
         // If already generated, use cached version
         if (!refinedWords) {
-            refinedWords = await callChatGPT(rawWords);
+            refinedWords = await callChatGPT(selectedWords);
+            console.log("Refined message received:", refinedWords);
         }
 
         wordListContainer.innerText = refinedWords;
@@ -581,6 +582,7 @@ async function refineMessage() {
     console.log("New isHighlighted value:", isHighlighted);
 }
 
+// ✅ **Call ChatGPT API through Cloudflare Worker**
 async function callChatGPT(wordsArray) {
     const endpoint = "https://your-cloudflare-worker-url.com/"; // Use your Cloudflare Worker URL
 
@@ -619,7 +621,7 @@ async function callChatGPT(wordsArray) {
     }
 }
 
-// Format words for ChatGPT
+// ✅ **Formats Words to Make Better Sentences**
 function formatWordsForAI(wordsArray) {
     let filteredWords = wordsArray.filter(word => isNaN(word)); // Remove numbers
     let groupedWords = [];

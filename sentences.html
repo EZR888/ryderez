@@ -556,7 +556,6 @@ function saveWordListToPDF() {
     let isHighlighted = false; // Tracks whether words have been refined
     let firstSelectionMade = false; // Ensures words are refined only once before toggling
     let refinedWords = ""; // Stores the refined message for toggling & saving
-    let selectedWords = []; // Stores caught words
 
     function refineMessage() {
         if (!stopped) return; // Ensure Stop has been pressed first

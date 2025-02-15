@@ -529,7 +529,7 @@ async function identifyProperNouns(wordsArray) {
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are an expert in grammar. Identify which words in the following list are proper nouns." },
+            { role: "system", content: "You are an expert in grammar. Identify which words in the following list are proper nouns and create factual sounding sentences using other words provided with them." },
             { role: "user", content: `Here is a list of words: ${wordsArray.join(", ")}. Return only the proper nouns.` }
         ],
         temperature: 0.3
@@ -565,7 +565,7 @@ async function callChatGPT(wordPairs) {
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are a wise observer creating meaningful insights from word pairs containing proper nouns." },
+            { role: "system", content: "You are a news reporter creating connections between word pairs." },
             { role: "user", content: `Here are the words: ${wordPairs.join(", ")}. Generate fact-like observations for each pair.` }
         ],
         temperature: 0.7

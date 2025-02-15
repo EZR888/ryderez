@@ -561,11 +561,6 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
     }
 });
 
-// Navigation buttons
-document.getElementById("runButton").addEventListener("click", () => {
-    const csvData = JSON.parse(localStorage.getItem('csvData')) || [];
-    processCSVData(csvData);
-});
 </script>
 
 </body>

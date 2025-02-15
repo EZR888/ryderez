@@ -222,7 +222,11 @@ catchButton.addEventListener('click', catchWord);
 stopButton.addEventListener('click', stopRNG);
 refineButton.addEventListener('click', refineMessage);
 resetButton.addEventListener('click', resetHighlights);
-        
+  
+let stopped = false;
+refineButton.disabled = true;
+resetButton.disabled = true;
+      
 document.addEventListener('keydown', function(event) {
     const key = event.key.toLowerCase();
     if (key === 'h') {
@@ -373,6 +377,15 @@ function stopRNG() {
     timerInterval = null;
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
+
+    stopped = true;
+
+    // 🛑 Disable Start & Catch, Enable Refine & Reset
+    startButton.disabled = true;
+    catchButton.disabled = true;
+    stopButton.disabled = true;
+    refineButton.disabled = false;
+    resetButton.disabled = false;
 }
 
 function resetTimer() {
@@ -414,14 +427,10 @@ async function lookupWord(lineNumber) {
         const selectedLine = lines[lineNumber - 1];
         const word = selectedLine.split(',')[1]?.trim() || "No word found";
 
-        const wordSpan = document.createElement("span");
-        wordSpan.textContent = word;
-
         selectedWords.push(word);
         wordCount++;
         updateWordCount();
-        document.getElementById('wordList').appendChild(wordSpan);
-        document.getElementById('wordList').appendChild(document.createTextNode(", "));
+        document.getElementById('wordList').innerText = selectedWords.join(", ");
 
         console.log(`Caught word from line ${lineNumber}: ${word}`);
     } catch (error) {
@@ -487,7 +496,6 @@ async function refineMessage() {
 
     console.log("Refine button clicked!");
 
-    // Send full list to OpenAI to determine proper nouns
     let properNouns = await identifyProperNouns(selectedWords);
 
     if (properNouns.length === 0) {
@@ -497,7 +505,6 @@ async function refineMessage() {
 
     console.log("Proper nouns identified:", properNouns);
 
-    // Pair words where at least one is a proper noun
     let properNounPairs = [];
     for (let i = 0; i < selectedWords.length - 1; i++) {
         if (properNouns.includes(selectedWords[i]) || properNouns.includes(selectedWords[i + 1])) {
@@ -508,7 +515,6 @@ async function refineMessage() {
     let refinedWords = await callChatGPT(properNounPairs);
     document.getElementById('wordList').innerText = refinedWords;
 
-    // Highlight identified proper nouns in orange
     let wordListElements = document.getElementById('wordList').textContent.split(", ");
     let highlightedHTML = wordListElements.map(word => {
         return properNouns.includes(word) ? `<span style="color: orange;">${word}</span>` : word;
@@ -552,6 +558,7 @@ async function identifyProperNouns(wordsArray) {
     }
 }
 
+
 // ✅ **Call ChatGPT API through Cloudflare Worker**
 async function callChatGPT(wordPairs) {
     const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
@@ -593,22 +600,13 @@ function resetHighlights() {
     selectedWords = [];
     wordCount = 0;
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
-}
 
-// ✅ **Formats Words to Make Better Sentences**
-function formatWordsForAI(wordsArray) {
-    let filteredWords = wordsArray.filter(word => isNaN(word)); // Remove numbers
-    let groupedWords = [];
-
-    for (let i = 0; i < filteredWords.length; i += 2) {
-        if (filteredWords[i + 1]) {
-            groupedWords.push(`[${filteredWords[i]}, ${filteredWords[i + 1]}]`);
-        } else {
-            groupedWords.push(`[${filteredWords[i]}]`);
-        }
-    }
-
-    return groupedWords.join(", ");
+    // 🛑 Reset button states
+    startButton.disabled = false;
+    catchButton.disabled = false;
+    stopButton.disabled = false;
+    refineButton.disabled = true;
+    resetButton.disabled = true;
 }
 
     // Attach function to the Refine button

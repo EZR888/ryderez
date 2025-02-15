@@ -292,6 +292,9 @@
 
 <div class="results-container">
     <input type="file" id="fileInput" accept=".csv" multiple>
+    <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
+    <input type="number" id="numRuns" min="1" max="50000000" value="100" />
+    <button id="runButton">Run</button>
     <div class="header-container">
     <h2 class="header-text">Cluster Stats</h2>
     </div>
@@ -369,204 +372,260 @@
     </table>
 </div>
 
-<script>
+    <script>
+    
 function updateClusterStats(csvData) {
-    const cluster00Cols = [13, 1, 37, 27, 10]; 
-    const cluster0Cols = [9, 28, 0, 2, 14];
+    const cluster00Cols = [13, 1, 37, 27, 10]; // Column indexes for Cluster 00
+    const cluster0Cols = [9, 28, 0, 2, 14];   // Column indexes for Cluster 0
 
     let cluster00Sums = { 13: 0, 1: 0, 37: 0, 27: 0, 10: 0, total: 0 };
     let cluster0Sums = { 9: 0, 28: 0, 0: 0, 2: 0, 14: 0, total: 0 };
 
-    csvData.forEach(row => {
+    csvData.forEach((row, rowIndex) => {
         cluster00Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10);
+            let value = parseInt(row[colIndex] || 0, 10); // Ensure numeric
             cluster00Sums[colIndex] += value;
             cluster00Sums.total += value;
         });
 
         cluster0Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10);
+            let value = parseInt(row[colIndex] || 0, 10); // Ensure numeric
             cluster0Sums[colIndex] += value;
             cluster0Sums.total += value;
         });
+
+        console.log(`Row ${rowIndex + 1}: Cluster 00 Sum = ${cluster00Sums.total}, Cluster 0 Sum = ${cluster0Sums.total}`);
     });
 
+    // Update the table with computed values
     cluster00Cols.forEach(colIndex => {
-        let cell = document.getElementById(`cluster00-${colIndex}`);
-        if (cell) cell.textContent = cluster00Sums[colIndex] > 0 ? cluster00Sums[colIndex] : "-";
+document.getElementById(`cluster00-${colIndex}`).textContent = 
+    cluster00Sums[colIndex] > 0 ? cluster00Sums[colIndex] : "-";
     });
-
-    let total00Cell = document.getElementById("cluster00-total");
-    if (total00Cell) total00Cell.textContent = cluster00Sums.total > 0 ? cluster00Sums.total : "-";
-
+document.getElementById("cluster00-total").textContent = 
+    cluster00Sums.total > 0 ? cluster00Sums.total : "-";
+    
     cluster0Cols.forEach(colIndex => {
-        let cell = document.getElementById(`cluster0-${colIndex}`);
-        if (cell) cell.textContent = cluster0Sums[colIndex] > 0 ? cluster0Sums[colIndex] : "-";
+document.getElementById(`cluster0-${colIndex}`).textContent = 
+    cluster0Sums[colIndex] > 0 ? cluster0Sums[colIndex] : "-";
+    });
+document.getElementById("cluster0-total").textContent = 
+    cluster0Sums.total > 0 ? cluster0Sums.total : "-";}
+
+
+// 🟢 Clear all tables and localStorage on page load
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Clearing tables and localStorage on page load...");
+
+    // 🟢 Reset localStorage
+    localStorage.removeItem("csvData");
+
+    // 🟢 Clear table contents
+    document.getElementById("statsTable").querySelector("thead").innerHTML = "";
+    document.getElementById("statsTable").querySelector("tbody").innerHTML = "";
+    
+    document.getElementById("clusterStatsTable").querySelector("tbody").innerHTML = "";
+    
+    document.getElementById("quadrantTable").querySelector("tbody").innerHTML = `
+        <tr>
+            <td><img src="upleft.png" alt="Upper Left Image"></td>
+            <td><img src="upright.png" alt="Upper Right Image"></td>
+        </tr>
+        <tr>
+            <td id="UpperLeftHits">-</td>
+            <td id="UpperRightHits">-</td>
+        </tr>
+        <tr>
+            <td><img src="lowleft.png" alt="Lower Left Image"></td>
+            <td><img src="lowright.png" alt="Lower Right Image"></td>
+        </tr>
+        <tr>
+            <td id="LowerLeftHits">-</td>
+            <td id="LowerRightHits">-</td>
+        </tr>`;
+
+    // 🟢 Reset text content where needed
+    document.getElementById("runsCount").innerHTML = "";
+    document.getElementById("cluster00-total").textContent = "-";
+    document.getElementById("cluster0-total").textContent = "-";
+
+    // 🟢 Reset Cluster Cells
+    const clusterCells = ["13", "1", "37", "27", "10", "9", "28", "0", "2", "14"];
+    clusterCells.forEach(id => {
+        let cluster00Cell = document.getElementById(`cluster00-${id}`);
+        let cluster0Cell = document.getElementById(`cluster0-${id}`);
+        if (cluster00Cell) cluster00Cell.textContent = "-";
+        if (cluster0Cell) cluster0Cell.textContent = "-";
     });
 
-    let total0Cell = document.getElementById("cluster0-total");
-    if (total0Cell) total0Cell.textContent = cluster0Sums.total > 0 ? cluster0Sums.total : "-";
-}
-
-// Function to process CSV data and update tables
-function processCSVData(csvData) {
-    if (csvData.length === 0) return;
-
-    localStorage.setItem("csvData", JSON.stringify(csvData));
-
-    updateClusterStats(csvData);
-    updateStatsTable(csvData);
-    updateQuadrantTable(csvData);
-}
-
-// Function to update main stats table
-function updateStatsTable(csvData) {
-    const table = document.getElementById("statsTable");
-    const thead = table.querySelector("thead");
-    const tbody = table.querySelector("tbody");
-
-    thead.innerHTML = "";
-    tbody.innerHTML = "";
-
-    document.getElementById("runsCount").innerHTML = `Runs: <span class="zero-highlight">${csvData.length}</span>`;
-
-    const headers = ["Totals", "Cluster 0", "Cluster 00", "Times Hit"];
-    const trHeader = document.createElement("tr");
-
-    headers.forEach(text => {
-        const th = document.createElement("th");
-        th.textContent = text;
-        trHeader.appendChild(th);
-    });
-
-    thead.appendChild(trHeader);
-
-    let statsData = {
-        highHits: Array(18).fill(0), 
-        cluster0Hits: Array(18).fill(0), 
-        cluster00Hits: Array(18).fill(0)
-    };
-
-    const cluster0Numbers = [0, 9, 14, 28, 2];
-    const cluster00Numbers = [1, 13, 27, 10, 37];
-
-    csvData.forEach(row => {
-        let cluster0Sum = 0;
-        let cluster00Sum = 0;
-
-        row.forEach((num, idx) => {
-            if (!isNaN(num) && num !== undefined) {
-                if (cluster0Numbers.includes(idx)) {
-                    cluster0Sum += num;
-                }
-                if (cluster00Numbers.includes(idx)) {
-                    cluster00Sum += num;
-                }
-                if (num >= 0 && num <= 17) {
-                    statsData.highHits[num]++;
-                }
-            }
-        });
-
-        if (cluster0Sum >= 0 && cluster0Sum <= 17) {
-            statsData.cluster0Hits[cluster0Sum]++;
-        }
-        if (cluster00Sum >= 0 && cluster00Sum <= 17) {
-            statsData.cluster00Hits[cluster00Sum]++;
-        }
-    });
-
-    for (let i = 0; i <= 17; i++) {
-        const tr = document.createElement('tr');
-
-        const tdValue = document.createElement("td");
-        tdValue.textContent = i;
-        tr.appendChild(tdValue);
-
-        const tdCluster0 = document.createElement("td");
-        tdCluster0.textContent = statsData.cluster0Hits[i] || 0;
-        tr.appendChild(tdCluster0);
-
-        const tdCluster00 = document.createElement("td");
-        tdCluster00.textContent = statsData.cluster00Hits[i] || 0;
-        tr.appendChild(tdCluster00);
-
-        const tdTimesHit = document.createElement("td");
-        tdTimesHit.textContent = statsData.highHits[i] || 0;
-        tr.appendChild(tdTimesHit);
-
-        tbody.appendChild(tr);
-    }
-}
-
-// Function to update quadrant table
-function updateQuadrantTable(csvData) {
-    let quadrantHits = { UpperLeft: 0, UpperRight: 0, LowerLeft: 0, LowerRight: 0 };
-
-    const UpperLeft = new Set([5, 22, 34, 15, 3, 24, 36, 13, 1]);
-    const UpperRight = new Set([27, 10, 25, 29, 12, 8, 19, 31, 18]);
-    const LowerLeft = new Set([6, 21, 33, 16, 4, 23, 35, 14, 2]);
-    const LowerRight = new Set([2, 9, 26, 30, 11, 7, 20, 32, 17]);
-
-    csvData.forEach(row => {
-        row.forEach((num, idx) => {
-            if (!isNaN(num) && num !== undefined) {
-                if (UpperLeft.has(idx)) {
-                    quadrantHits.UpperLeft += num;
-                } else if (UpperRight.has(idx)) {
-                    quadrantHits.UpperRight += num;
-                } else if (LowerLeft.has(idx)) {
-                    quadrantHits.LowerLeft += num;
-                } else if (LowerRight.has(idx)) {
-                    quadrantHits.LowerRight += num;
-                }
-            }
-        });
-    });
-
-    document.getElementById('UpperLeftHits').textContent = quadrantHits.UpperLeft;
-    document.getElementById('UpperRightHits').textContent = quadrantHits.UpperRight;
-    document.getElementById('LowerLeftHits').textContent = quadrantHits.LowerLeft;
-    document.getElementById('LowerRightHits').textContent = quadrantHits.LowerRight;
-}
-
-// File input event listener
-document.getElementById("fileInput").addEventListener("change", function(event) {
-    const files = event.target.files;
-    let allCSVData = [];
-    let filesRead = 0;
-
-    if (files.length === 0) return;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (!file.name.endsWith(".csv")) continue;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            let rows = e.target.result.trim().split("\n");
-            if (rows.length > 1) {
-                rows.slice(1).forEach(row => {
-                    const values = row.split(",").map(num => parseInt(num.trim(), 10));
-                    allCSVData.push(values);
-                });
-            }
-
-            filesRead++;
-            if (filesRead === files.length) {
-                processCSVData(allCSVData);
-            }
-        };
-        reader.readAsText(file);
-    }
+    console.log("Tables and storage cleared successfully!");
 });
 
-// Navigation buttons
-document.getElementById("runButton").addEventListener("click", () => {
+
+// Call this function after processing the CSV data
+document.addEventListener("DOMContentLoaded", () => {
     const csvData = JSON.parse(localStorage.getItem('csvData')) || [];
-    processCSVData(csvData);
+    updateClusterStats(csvData);
 });
-</script>
 
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+        const files = event.target.files;
+        let allCSVData = [];
+        let filesRead = 0;
+
+        if (files.length === 0) return;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.name.endsWith(".csv")) continue;
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                let rows = e.target.result.trim().split("\n");
+                if (rows.length > 1) {
+                    rows.slice(1).forEach(row => {
+                        const values = row.split(",").map(num => parseInt(num.trim(), 10));
+                        allCSVData.push(values);
+                    });
+                }
+
+                filesRead++;
+                if (filesRead === files.length) {
+                    processCSVData(allCSVData);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+    });
+
+    function processCSVData(csvData) {
+        if (csvData.length === 0) return;
+        displayResults(csvData);
+    }
+
+function displayResults(csvData) {
+        const table = document.getElementById("statsTable");
+        const thead = table.querySelector("thead");
+        const tbody = table.querySelector("tbody");
+
+        thead.innerHTML = "";
+        tbody.innerHTML = "";
+
+        document.getElementById("runsCount").innerHTML = `Runs: <span class="zero-highlight">${csvData.length}</span>`;
+
+        const headers = ["Totals", "Cluster 0", "Cluster 00", "Times Hit"];
+        const trHeader = document.createElement("tr");
+
+        headers.forEach(text => {
+            const th = document.createElement("th");
+            th.textContent = text;
+            trHeader.appendChild(th);
+        });
+
+        thead.appendChild(trHeader);
+
+        let statsData = {
+            highHits: Array(18).fill(0),  // Now correctly tracking how often 0-17 appears
+            cluster0Hits: Array(18).fill(0), 
+            cluster00Hits: Array(18).fill(0), 
+            quadrantHits: { UpperLeft: 0, UpperRight: 0, LowerLeft: 0, LowerRight: 0 }
+        };
+
+        const cluster0Numbers = [0, 9, 14, 28, 2];
+        const cluster00Numbers = [1, 13, 27, 10, 37];
+
+        const UpperLeft = new Set([5, 22, 34, 15, 3, 24, 36, 13, 1]);
+        const UpperRight = new Set([27, 10, 25, 29, 12, 8, 19, 31, 18]);
+        const LowerLeft = new Set([6, 21, 33, 16, 4, 23, 35, 14, 2]);
+        const LowerRight = new Set([2, 9, 26, 30, 11, 7, 20, 32, 17]);
+
+        csvData.forEach((row, rowIndex) => {
+            let cluster0Sum = 0;
+            let cluster00Sum = 0;
+
+            row.forEach((num, idx) => {
+                if (!isNaN(num) && num !== undefined) {
+                    if (cluster0Numbers.includes(idx)) {
+                        cluster0Sum += num;
+                    }
+                    if (cluster00Numbers.includes(idx)) {
+                        cluster00Sum += num;
+                    }
+                    if (UpperLeft.has(idx)) {
+                        statsData.quadrantHits.UpperLeft += num;
+                    } else if (UpperRight.has(idx)) {
+                        statsData.quadrantHits.UpperRight += num;
+                    } else if (LowerLeft.has(idx)) {
+                        statsData.quadrantHits.LowerLeft += num;
+                    } else if (LowerRight.has(idx)) {
+                        statsData.quadrantHits.LowerRight += num;
+                    }
+
+                    // New: Increment the counter for Times Hit
+                    if (num >= 0 && num <= 17) {
+                        statsData.highHits[num]++;
+                    }
+                }
+            });
+
+            console.log(`Row ${rowIndex + 1}: Cluster 0 Sum = ${cluster0Sum}, Cluster 00 Sum = ${cluster00Sum}`);
+
+            if (cluster0Sum >= 0 && cluster0Sum <= 17) {
+                statsData.cluster0Hits[cluster0Sum]++;
+            }
+            if (cluster00Sum >= 0 && cluster00Sum <= 17) {
+                statsData.cluster00Hits[cluster00Sum]++;
+            }
+        });
+
+        console.log("Final Cluster 0 Hits: ", statsData.cluster0Hits);
+        console.log("Final Cluster 00 Hits: ", statsData.cluster00Hits);
+        console.log("Final Times Hit Counts: ", statsData.highHits);
+
+        for (let i = 0; i <= 17; i++) {
+            const tr = document.createElement('tr');
+
+            const tdValue = document.createElement("td");
+            tdValue.textContent = i;
+            tr.appendChild(tdValue);
+
+            const tdCluster0 = document.createElement("td");
+            tdCluster0.textContent = statsData.cluster0Hits[i] || 0;
+            tr.appendChild(tdCluster0);
+
+            const tdCluster00 = document.createElement("td");
+            tdCluster00.textContent = statsData.cluster00Hits[i] || 0;
+            tr.appendChild(tdCluster00);
+
+            const tdTimesHit = document.createElement("td");
+            tdTimesHit.textContent = statsData.highHits[i] || 0;  // ✅ Now correctly counting occurrences
+            tr.appendChild(tdTimesHit);
+
+            tbody.appendChild(tr);
+        }
+
+        document.getElementById('UpperLeftHits').textContent = statsData.quadrantHits.UpperLeft;
+        document.getElementById('UpperRightHits').textContent = statsData.quadrantHits.UpperRight;
+        document.getElementById('LowerLeftHits').textContent = statsData.quadrantHits.LowerLeft;
+        document.getElementById('LowerRightHits').textContent = statsData.quadrantHits.LowerRight;
+
+    // Update Cluster Stats After Processing CSV Data
+    updateClusterStats(csvData);
+    }
+
+    // =======================================================
+    // ADDITIONAL EVENT LISTENERS
+    // =======================================================
+    document.getElementById("simButton").addEventListener("click", () => { window.open("roulette.html", "_blank"); });
+    document.getElementById("viewDataButton").addEventListener("click", () => { window.open("view-data.html", "_blank"); });
+    document.getElementById("viewPValueButton").addEventListener("click", () => { window.open("pvalues.html", "_blank"); });
+    document.getElementById("viewFreqDistButton").addEventListener("click", () => { window.open("xfreq.html", "_blank"); });
+    document.getElementById("viewStatsButton").addEventListener("click", () => { window.open("view-stats.html", "_blank"); });
+    document.getElementById("singleSpinButton").addEventListener("click", () => { window.open("new-wheel.html", "_blank"); });
+    document.getElementById("densityButton").addEventListener("click", () => { window.open("sort.html", "_blank"); });
+    
+    </script>
 </body>
 </html>

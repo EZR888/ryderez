@@ -208,6 +208,7 @@ let running = false;
 let isHighlighted = false; // Tracks if refined mode is active
 let firstSelectionMade = false; // Ensures the first refine state works
 let refinedWords = ""; // Stores the refined message for toggling & saving
+const maxWords = 88; // Word limit
 
 const startButton = document.getElementById('start');
 const catchButton = document.getElementById('catch');
@@ -222,7 +223,7 @@ stopButton.addEventListener('click', stopRNG);
 refineButton.addEventListener('click', refineMessage);
 resetButton.addEventListener('click', resetHighlights);
         
-        document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function(event) {
     const key = event.key.toLowerCase();
     if (key === 'h') {
         toggleHighlight();
@@ -320,28 +321,9 @@ function showBothHighlightSets() {
 
 function resetHighlights() {
     document.getElementById('wordList').innerHTML = '';
-
     selectedWords = [];
     wordCount = 0;
-    isHighlighted = false;
-    firstSelectionMade = false;
-    stopped = false; 
-
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
-    document.getElementById('timeValue').textContent = '0.00';
-
-    clearInterval(rngInterval);
-    clearInterval(timerInterval);
-    rngInterval = null;
-    timerInterval = null;
-    running = false;
-
-    startButton.textContent = 'Start';
-    startButton.style.backgroundColor = 'green';
-    refineButton.textContent = "Refine";
-
-    enableStartCatch();
-    refineButton.disabled = true;
 }
 
 // **Button Enabling/Disabling**
@@ -365,42 +347,6 @@ function enableRefineAll() {
     allButton.disabled = false;
 }
 
-function startRNG() {
-    if (running) return;
-    running = true;
-    startButton.textContent = 'Running...';
-    startButton.style.backgroundColor = 'slategray';
-    resetTimer();
-    timerInterval = setInterval(updateTimerDisplay, 10);
-
-    rngInterval = setInterval(() => {
-        currentNumber = Math.floor(Math.random() * 2508) + 1;
-        console.log(`Cycling: ${currentNumber}`); 
-    }, 100);
-}
-
-function stopRNG() {
-    running = false;
-    clearInterval(rngInterval);
-    clearInterval(timerInterval);
-    rngInterval = null;
-    timerInterval = null;
-    startButton.textContent = 'Start';
-    startButton.style.backgroundColor = 'green';
-    
-    stopped = true; // Allow Refine & All buttons to be used
-    refineButton.disabled = false;
-}
-
-function resetTimer() {
-    startTime = performance.now();
-    updateTimerDisplay();
-}
-
-function updateTimerDisplay() {
-    const elapsedTime = (performance.now() - startTime) / 1000;
-    timerDisplay.textContent = elapsedTime.toFixed(2);
-}
 
 // Attach event listener for Reset button
 document.getElementById('reset').addEventListener('click', resetHighlights);
@@ -427,25 +373,10 @@ function stopRNG() {
     timerInterval = null;
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
-
-    stopped = true; // Allow Refine to be used
-    refineButton.disabled = false;
 }
 
-// Function to catch a word
-async function catchWord() {
-    if (!running) return;
-
-    await lookupWord(currentNumber);
-
-    resetTimer();
-    clearInterval(timerInterval);
-    timerInterval = setInterval(updateTimerDisplay, 10);
-}
-
-// Timer functions
 function resetTimer() {
-    startTime = performance.now();
+    if (!startTime) startTime = performance.now();
     updateTimerDisplay();
 }
 
@@ -454,10 +385,19 @@ function updateTimerDisplay() {
     timerDisplay.textContent = elapsedTime.toFixed(2);
 }
 
-        function updateWordCount() {
-            document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
-        }
+// 🟠 Function to catch a word
+async function catchWord() {
+    if (!running || wordCount >= maxWords) return;
 
+    await lookupWord(currentNumber);
+
+    if (wordCount >= maxWords) {
+        alert("You've reached the limit of 88 words. Please hit Refine to process the list.");
+        stopRNG();
+    }
+}
+
+// 📌 Function to retrieve words
 async function lookupWord(lineNumber) {
     const file = 'lookup.txt';
 
@@ -477,15 +417,11 @@ async function lookupWord(lineNumber) {
         const wordSpan = document.createElement("span");
         wordSpan.textContent = word;
 
-        // 1 in 5 chance to highlight the word
-        if (Math.random() < 0.2) {
-            wordSpan.classList.add("highlight");
-        }
-
         selectedWords.push(word);
         wordCount++;
         updateWordCount();
-        document.getElementById('wordList').innerText = selectedWords.join(", ");
+        document.getElementById('wordList').appendChild(wordSpan);
+        document.getElementById('wordList').appendChild(document.createTextNode(", "));
 
         console.log(`Caught word from line ${lineNumber}: ${word}`);
     } catch (error) {
@@ -493,6 +429,9 @@ async function lookupWord(lineNumber) {
     }
 }
 
+function updateWordCount() {
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
+}
         
 document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
 
@@ -544,57 +483,84 @@ function saveWordListToPDF() {
 }
 
 async function refineMessage() {
-    if (!stopped) return;
-
-    const wordListContainer = document.getElementById('wordList');
-
     if (selectedWords.length === 0) return;
 
     console.log("Refine button clicked!");
 
-    if (!firstSelectionMade) {
-        console.log("First refine state triggered...");
-        firstSelectionMade = true;
-        isHighlighted = true;
-        refineButton.textContent = "Orig";
-        disableStartCatch();
+    // Send full list to OpenAI to determine proper nouns
+    let properNouns = await identifyProperNouns(selectedWords);
+
+    if (properNouns.length === 0) {
+        alert("No proper nouns found! Hit Restart and Catch more words.");
         return;
     }
 
-    if (isHighlighted) {
-        console.log("Reverting to original words...");
-        wordListContainer.innerText = selectedWords.join(", ");
-        refineButton.textContent = "Refine";
-    } else {
-        console.log("Calling ChatGPT to generate a refined message...");
+    console.log("Proper nouns identified:", properNouns);
 
-        // If already generated, use cached version
-        if (!refinedWords) {
-            refinedWords = await callChatGPT(selectedWords);
-            console.log("Refined message received:", refinedWords);
+    // Pair words where at least one is a proper noun
+    let properNounPairs = [];
+    for (let i = 0; i < selectedWords.length - 1; i++) {
+        if (properNouns.includes(selectedWords[i]) || properNouns.includes(selectedWords[i + 1])) {
+            properNounPairs.push(`[${selectedWords[i]}, ${selectedWords[i + 1]}]`);
         }
-
-        wordListContainer.innerText = refinedWords;
-        refineButton.textContent = "Orig";
     }
 
-    isHighlighted = !isHighlighted;
-    console.log("New isHighlighted value:", isHighlighted);
+    let refinedWords = await callChatGPT(properNounPairs);
+    document.getElementById('wordList').innerText = refinedWords;
+
+    // Highlight identified proper nouns in orange
+    let wordListElements = document.getElementById('wordList').textContent.split(", ");
+    let highlightedHTML = wordListElements.map(word => {
+        return properNouns.includes(word) ? `<span style="color: orange;">${word}</span>` : word;
+    }).join(", ");
+
+    document.getElementById('wordList').innerHTML = highlightedHTML;
+}
+
+// ✅ **Step 1: Ask OpenAI which words are proper nouns**
+async function identifyProperNouns(wordsArray) {
+    const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
+
+    const requestBody = {
+        model: "gpt-3.5-turbo",
+        messages: [
+            { role: "system", content: "You are an expert in grammar. Identify which words in the following list are proper nouns." },
+            { role: "user", content: `Here is a list of words: ${wordsArray.join(", ")}. Return only the proper nouns.` }
+        ],
+        temperature: 0.3
+    };
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+        console.log("Proper Noun Response:", data);
+
+        if (data.choices && data.choices[0]) {
+            return data.choices[0].message.content.split(", ").map(word => word.trim());
+        } else {
+            console.error("Unexpected response structure:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Error calling OpenAI for proper nouns:", error);
+        return [];
+    }
 }
 
 // ✅ **Call ChatGPT API through Cloudflare Worker**
-async function callChatGPT(wordsArray) {
-    const endpoint = "https://openai-proxy.ezryder38.workers.dev/"; // Use your Cloudflare Worker URL
-
-    const formattedWords = formatWordsForAI(wordsArray);
+async function callChatGPT(wordPairs) {
+    const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
 
     const requestBody = {
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are a wise observer creating meaningful insights from a list of words. Each statement must feel factual and philosophical, pairing words together in a way that makes sense." },
-            { role: "user", content: `Here are the words: ${formattedWords}. Generate fact-like observations in the following format:
-            - Words: [word1, word2]
-              Statement.` }
+            { role: "system", content: "You are a wise observer creating meaningful insights from word pairs containing proper nouns." },
+            { role: "user", content: `Here are the words: ${wordPairs.join(", ")}. Generate fact-like observations for each pair.` }
         ],
         temperature: 0.7
     };
@@ -619,6 +585,14 @@ async function callChatGPT(wordsArray) {
         console.error("Error calling Cloudflare Worker:", error);
         return "There was an error generating your message. Try again later.";
     }
+}
+
+// 🔄 Reset Function
+function resetHighlights() {
+    document.getElementById('wordList').innerHTML = '';
+    selectedWords = [];
+    wordCount = 0;
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
 }
 
 // ✅ **Formats Words to Make Better Sentences**

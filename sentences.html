@@ -167,22 +167,25 @@
     <div class="container">
         <h1><center>Random Intelligence</center></h1>
         
+        <div style="text-align: center; margin-bottom: 15px;">
+    <label for="input" style="display: block; color: lightgray;">Enter Your Message:</label>
+    <input type="text" id="input" maxlength="80" placeholder="Type your message here..." 
+           style="width: 80%; padding: 8px; border-radius: 5px; border: none;">
+</div>
+
+        
         <div class="button-container">
     		<button id="start">Start</button>
-    		<button id="catch">Catch</button>
-    		<button id="stop">Stop</button>
 		</div>
 
 <div class="word-info-container">
-    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
-    <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
-</div>
 
         <div id="wordListContainer">
-            <div id="wordListTitle">Running Word List</div>
+            <div id="wordListTitle">Your Message</div>
             <div id="wordList"></div>
             <br><br><br><br><br>
         </div> 
+</div>
         
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
@@ -198,6 +201,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
+let startTime = 0;
 let selectedWords = [];
 let wordCount = 0;
 let rngInterval = null;
@@ -220,8 +224,6 @@ resetButton.addEventListener('click', resetHighlights);
   
 refineButton.disabled = true;
 resetButton.disabled = true;
-
-timerInterval = setInterval(updateTimerDisplay, 10);
 
 function startRNG() {
     if (running) return;
@@ -332,11 +334,6 @@ async function callChatGPT(wordsArray, userInput) {
         console.error("Error calling Cloudflare Worker:", error);
         return "Error generating sentences.";
     }
-}
-
-function updateTimerDisplay() {
-    const elapsedTime = (performance.now() - startTime) / 1000;
-    timerDisplay.textContent = elapsedTime.toFixed(2);
 }
 
 function resetHighlights() {

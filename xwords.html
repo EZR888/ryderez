@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Word Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
+        h1 {
+            color: #90ee90;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        #wordCounter {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        #wordListContainer {
+            margin-top: 10px;
+            font-size: 18px;
+            text-align: center;
+        }
+        #wordList {
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+            overflow-wrap: break-word;
+        }
+        .highlight {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Word Lookup</h1>
+    
+    <button id="wordButton">Click for Word</button>
+    <button id="stopButton">Stop</button>
+    <button id="refineButton">Refine</button>
+    <button id="allButton">All</button>
+    <button id="resetButton">Reset</button>
+    <button id="savePDF">Save to PDF</button>
+
+    <div id="wordCounter">Word #: 0</div>
+    
+    <div id="wordListContainer">
+        <div>Running Word List</div>
+        <div id="wordList"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        let selectedWords = [];
+        let wordCount = 0;
+        let running = false;
+        let stopped = false;
+        let rngInterval = null;
+        let firstWordSelected = false;
+        let secondWordSelected = false;
+        let highlightMap = new Map();
+        
+        const wordButton = document.getElementById('wordButton');
+        const stopButton = document.getElementById('stopButton');
+        const refineButton = document.getElementById('refineButton');
+        const allButton = document.getElementById('allButton');
+        const resetButton = document.getElementById('resetButton');
+        const wordListContainer = document.getElementById('wordList');
+        const wordCounter = document.getElementById('wordCounter');
+        
+        wordButton.addEventListener('click', startWordSelection);
+        stopButton.addEventListener('click', stopSelection);
+        refineButton.addEventListener('click', toggleRefine);
+        allButton.addEventListener('click', showAllHighlights);
+        resetButton.addEventListener('click', resetAll);
+        document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
+
+        function startWordSelection() {
+            if (running) return;
+            running = true;
+            stopped = false;
+            wordButton.textContent = "Selecting...";
+            selectWord();
+        }
+
+        async function selectWord() {
+            if (stopped) return;
+            
+            let word = "";
+            while (!word) {
+                let number = Math.floor(Math.random() * 2508) + 1;
+                word = await lookupWord(number);
+
+                if (!firstWordSelected && (isNumber(word) || !startsWithUppercase(word))) {
+                    word = ""; // Reject if first word is not uppercase
+                    continue;
+                }
+                if (!secondWordSelected && (isNumber(word) || startsWithUppercase(word))) {
+                    word = ""; // Reject if second word is uppercase or a number
+                    continue;
+                }
+            }
+
+            selectedWords.push(word);
+            highlightMap.set(word, Math.random() < 0.2); // 20% chance of highlighting
+            
+            wordListContainer.innerHTML = selectedWords.map(w => 
+                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
+            ).join(', ');
+
+            wordCount++;
+            wordCounter.textContent = `Word #: ${wordCount}`;
+
+            if (!firstWordSelected) {
+                firstWordSelected = true;
+            } else if (!secondWordSelected) {
+                secondWordSelected = true;
+            } else {
+                setTimeout(selectWord, 2000);
+            }
+        }
+
+        function stopSelection() {
+            running = false;
+            stopped = true;
+            wordButton.textContent = "Click for Word";
+        }
+
+        async function lookupWord(lineNumber) {
+            const file = 'lookup.txt';
+
+            try {
+                const response = await fetch(file);
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                if (lineNumber < 1 || lineNumber > lines.length) {
+                    return "";
+                }
+
+                return lines[lineNumber - 1].split(',')[1]?.trim() || "";
+            } catch (error) {
+                console.error('Error loading the lookup file:', error);
+                return "";
+            }
+        }
+
+        function isNumber(word) {
+            return /^\d+$/.test(word);
+        }
+
+        function startsWithUppercase(word) {
+            return /^[A-Z]/.test(word);
+        }
+
+        function toggleRefine() {
+            let highlighted = Array.from(highlightMap.values()).filter(v => v).length;
+            let numToHighlight = Math.ceil(selectedWords.length * 0.18);
+
+            highlightMap.clear();
+            selectedWords.forEach((word, i) => {
+                highlightMap.set(word, i < numToHighlight);
+            });
+
+            wordListContainer.innerHTML = selectedWords.map(w => 
+                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
+            ).join(', ');
+
+            refineButton.textContent = refineButton.textContent === "Refine" ? "Orig" : "Refine";
+        }
+
+        function showAllHighlights() {
+            wordListContainer.innerHTML = selectedWords.map(w => 
+                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
+            ).join(', ');
+        }
+
+        function resetAll() {
+            selectedWords = [];
+            wordCount = 0;
+            highlightMap.clear();
+            firstWordSelected = false;
+            secondWordSelected = false;
+            running = false;
+            stopped = false;
+
+            wordListContainer.innerHTML = "";
+            wordCounter.textContent = "Word #: 0";
+            refineButton.textContent = "Refine";
+        }
+
+        function saveWordListToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text("Saved Word List", 105, 15, { align: "center" });
+
+            let words = selectedWords.join(", ");
+            let splitText = doc.splitTextToSize(words, 180);
+            
+            doc.setFontSize(14);
+            let y = 40;
+            splitText.forEach(line => {
+                doc.text(line, 20, y);
+                y += 8;
+            });
+
+            doc.save("Word_List.pdf");
+        }
+    </script>
+</body>
+</html>

@@ -512,14 +512,14 @@ async function callChatGPT(wordsArray) {
                 content: `Here is a list of words: ${wordsArray.join(", ")}. Create one short sentence for each consecutive word pair, ensuring that:
                 
                 - The sentence contains both words in order.
-                - The sentence is no longer than 12 words.
+                - The sentence is no longer than 6 words.
                 - The sentence makes logical sense.
                 
                 Examples:
-                - Words: [fruit, loud] → Sentence: "Biting into an apple can be loud in a quiet room."
-                - Words: [foreign, scientist] → Sentence: "Foreign scientists are warning about climate change."
+                - Words: [fruit, loud] → Sentence: "Biting an apple can be loud"
+                - Words: [foreign, scientist] → Sentence: "Foreign scientists care about climate change."
                 - Words: [Michelle, smell] → Sentence: "Michelle smelled something funny."
-                - Words: [lamp, dusty] → Sentence: "The old lamp was covered in dusty fingerprints."
+                - Words: [lamp, dusty] → Sentence: "You have an old dusty lamp ."
                 
                 Now, generate sentences for the provided words.`
             }

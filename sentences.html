@@ -165,7 +165,7 @@
 </head>
 <body>
     <div class="container">
-        <h1><center>Random Intelligence</center></h1>
+        <h1><center>AI Medium</center></h1>
         
         <div style="text-align: center; margin-bottom: 15px;">
     <label for="input" style="display: block; color: lightgray;">Enter Your Message:</label>
@@ -300,14 +300,14 @@ async function callChatGPT(wordsArray, userInput) {
         messages: [
             { 
                 role: "system", 
-                content: "You are a spiritual medium, similar to Theresa Caputo, the Long Island Medium. Your job is to take a list of words and connect them in a way that conveys a message from a deceased loved one to the user, validating their presence. Keep it warm, emotional, and reassuring."
+                content: "You are a spiritual medium, similar to Theresa Caputo, the Long Island Medium. Your job is to take a list of words and connect them in a way that conveys a message from a deceased friend or loved one to the user, validating their presence. Keep it factual and not overly sentimental or too emotional."
             },
             { 
                 role: "user", 
                 content: `User is asking: "${userInput}". Here is a list of words: ${wordsArray.join(", ")}. Generate a short spiritual message using these words, ensuring that:
-                - The message sounds like it's from a deceased loved one.
+                - The message sounds like it's from a deceased friend or loved one.
                 - The words provided are naturally integrated.
-                - The tone is reassuring, warm, and validating.
+                - The tone is not too gushy or corny, while still reassuring and validating.
                 
                 Example:
                 - Words: [dog, head, flower, Nancy, 3] → Message: "Nancy, your dog always loved sitting by your chair. He wants you to know the flowers remind him of you."

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Intelligence</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
+
+        /* 🔳 BOUNDING BOX STYLING */
+        .container {
+            border: 2px solid lightgray;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: top;
+            width: 40%;
+            min-width: 350px;
+            background-color: #333;
+        }
+
+        h1 {
+            color: #90ee90;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    	}
+        #start {
+            background-color: green;
+        }
+        #start:hover {
+            background-color: darkgreen !important;
+        }
+        #catch {
+            background-color: blue;
+        }
+        #catch:hover {
+            background-color: darkblue;
+        }
+        #stop {
+            background-color: red;
+        }
+        #stop:hover {
+            background-color: darkred;
+        }
+        
+        #bonus {
+    		background-color: #66C766; /* Lighter Green */
+    		color: black;
+        }
+        #bonus:hover {
+            background-color: green !important;
+            color: white;
+        }
+        #all {
+   			 background-color: #9999FF; /* Lighter Blue */
+   			 color: black;
+        }
+        #all:hover {
+            background-color: blue;
+            color: white;
+        }
+        #reset {
+    		background-color: #FF9999; /* Lighter Red */
+    		color: black;
+        }
+        #reset:hover {
+            background-color: red;
+            color: white;
+        }
+ 
+        #output {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+        #wordCounter {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #wordCounter span {
+            color: salmon; /* "Word #:" label */
+        }
+        #wordCounter strong {
+            color: yellow; /* Value of Word # */
+        }
+        #timer {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #timer span {
+            color: salmon; /* "Time:" label and "seconds" */
+        }
+        #timeValue {
+            color: yellow !important; /* Actual time */
+        }
+        #wordListContainer {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        #wordListTitle {
+            color: lightgreen; /* "Running Word List" */
+            font-weight: bold;
+            font-size: 24px;
+        }
+        #wordList {
+            margin-top: 10px;
+            font-size: 16px;
+            color: lightgray; /* Default word color */
+            overflow-wrap: break-word;
+        }
+        .highlight {
+            color: orange;
+            font-weight: bold;
+        }
+.word-info-container {
+    display: flex;
+    justify-content: center; /* Centers both elements horizontally */
+    align-items: center; /* Aligns them vertically */
+    gap: 20px; /* Adds space between them */
+    margin-top: 10px;
+}
+
+#savePDF {
+    background-color: darkorange;
+    color: black;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+}
+
+#savePDF:hover {
+    background-color: orangered;
+    color: white;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><center>Random Intelligence</center></h1>
+        
+        <div class="button-container">
+    		<button id="start">Start</button>
+    		<button id="catch">Catch</button>
+    		<button id="stop">Stop</button>
+		</div>
+
+<div class="word-info-container">
+    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
+    <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
+</div>
+
+        <div id="wordListContainer">
+            <div id="wordListTitle">Running Word List</div>
+            <div id="wordList"></div>
+            <br><br><br><br><br>
+        </div> 
+        
+		<!-- New Button Container for Bonus and All -->
+		<div class="button-container">
+			<button id="bonus">Refine</button>
+    		<button id="reset">Reset</button> <!-- Reset button -->
+		</div>
+<div style="text-align: center; margin-top: 20px;">
+    <button id="savePDF">Save Word List to PDF</button>
+</div>
+    </div>
+
+<!-- Include jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+let selectedWords = [];
+let wordCount = 0;
+let rngInterval = null;
+let timerInterval = null;
+let startTime = 0;
+let currentNumber = 1;
+let running = false;
+let isHighlighted = false; // Tracks if refined mode is active
+let firstSelectionMade = false; // Ensures the first refine state works
+let refinedWords = ""; // Stores the refined message for toggling & saving
+const maxWords = 18; // Word limit
+
+const startButton = document.getElementById('start');
+const catchButton = document.getElementById('catch');
+const stopButton = document.getElementById('stop');
+const refineButton = document.getElementById('bonus'); // Bonus is now Refine
+const resetButton = document.getElementById('reset');
+const timerDisplay = document.getElementById('timeValue');
+
+startButton.addEventListener('click', startRNG);
+catchButton.addEventListener('click', catchWord);
+stopButton.addEventListener('click', stopRNG);
+refineButton.addEventListener('click', refineMessage);
+resetButton.addEventListener('click', resetHighlights);
+  
+refineButton.disabled = true;
+resetButton.disabled = true;
+      
+document.addEventListener('keydown', function(event) {
+    const key = event.key.toLowerCase();
+    if (key === 'h') {
+        toggleHighlight();
+    } else if (key === 'g') {
+        showBothHighlightSets();
+    }
+});
+
+refineButton.addEventListener('click', toggleHighlight);
+resetButton.addEventListener('click', resetHighlights);
+
+let highlightedWords = []; // Stores the original highlighted words
+let newHighlightedWords = []; // Stores the first randomly selected words
+let showingBothSets = false; // Tracks if both sets are currently displayed
+let stopped = false; // Tracks if Stop has been pressed
+
+// Disable Refine and All at the start
+refineButton.disabled = true;
+
+function toggleHighlight() {
+    console.log("Refine button clicked!");
+
+    const wordListContainer = document.getElementById('wordList');
+    let rawText = wordListContainer.innerText.trim();
+
+    if (!rawText) return; // Exit if no words have been caught
+
+    if (!firstSelectionMade) {
+        console.log("First selection being made...");
+        firstSelectionMade = true;
+        isHighlighted = true;
+        refineButton.textContent = "Orig"; // Change button to Orig
+        disableStartCatch();
+    }
+
+    if (isHighlighted) {
+        console.log("Reverting to original words...");
+        wordListContainer.innerText = selectedWords.join(", ");
+        refineButton.textContent = "Refine";
+    } else {
+        console.log("Generating story...");
+        let refinedText = generateStory(selectedWords);
+        wordListContainer.innerText = refinedText;
+        refinedWords = refinedText; // Store refined text for PDF saving
+        refineButton.textContent = "Orig";
+    }
+
+    isHighlighted = !isHighlighted;
+    console.log("New isHighlighted value:", isHighlighted);
+}
+
+// **Function to refine caught words into a structured story**
+function generateStory(wordsArray) {
+    console.log("generateStory() called with:", wordsArray); // DEBUGGING CHECK
+    let words = [...wordsArray];
+    let structuredText = "";
+    let sentence = [];
+
+    const connectors = ["and", "but", "so", "because", "then", "thus", "however"];
+    const punctuation = [",", ";", ":", "."];
+
+    words.forEach((word, index) => {
+        if (word.match(/^\d+$/)) {
+            sentence.push(`(${word})`);
+        } else if (word.match(/^[A-Z]/) && index !== 0) {
+            structuredText += sentence.join(" ") + ". ";
+            sentence = [word];
+        } else if (Math.random() < 0.1) {
+            sentence.push(connectors[Math.floor(Math.random() * connectors.length)]);
+            sentence.push(word);
+        } else {
+            sentence.push(word);
+        }
+    });
+
+    structuredText += sentence.join(" ") + ".";
+    console.log("Generated story:", structuredText); // DEBUGGING CHECK
+    return structuredText.replace(/\s+([,.!?;:])/g, "$1"); 
+}
+
+function showBothHighlightSets() {
+    if (!stopped) return; // Ensure Stop has been pressed first
+
+    const wordListContainer = document.getElementById('wordList');
+    const words = Array.from(wordListContainer.children);
+
+    if (words.length === 0 || !firstSelectionMade) return;
+
+    highlightedWords.forEach(word => word.classList.add('highlight'));
+    newHighlightedWords.forEach(word => word.classList.add('highlight'));
+
+    showingBothSets = true;
+    disableStartCatch(); // Disable Start & Catch when All is used
+}
+
+function resetHighlights() {
+    document.getElementById('wordList').innerHTML = '';
+    selectedWords = [];
+    wordCount = 0;
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
+}
+
+// **Button Enabling/Disabling**
+function disableStartCatch() {
+    startButton.disabled = true;
+    catchButton.disabled = true;
+}
+
+function enableStartCatch() {
+    startButton.disabled = false;
+    catchButton.disabled = false;
+}
+
+function disableRefineAll() {
+    refineButton.disabled = true;
+    allButton.disabled = true;
+}
+
+function enableRefineAll() {
+    refineButton.disabled = false;
+    allButton.disabled = false;
+}
+
+
+// Attach event listener for Reset button
+document.getElementById('reset').addEventListener('click', resetHighlights);
+
+function startRNG() {
+    if (running) return;
+    running = true;
+    startButton.textContent = 'Running...';
+    startButton.style.backgroundColor = 'slategray';
+    resetTimer();
+    timerInterval = setInterval(updateTimerDisplay, 10);
+
+    rngInterval = setInterval(() => {
+        currentNumber = Math.floor(Math.random() * 2508) + 1;
+        console.log(`Cycling: ${currentNumber}`);
+    }, 100);
+}
+
+function stopRNG() {
+    running = false;
+    clearInterval(rngInterval);
+    clearInterval(timerInterval);
+    rngInterval = null;
+    timerInterval = null;
+    startButton.textContent = 'Start';
+    startButton.style.backgroundColor = 'green';
+
+    stopped = true;
+
+    // 🛑 Disable Start & Catch, Enable Refine & Reset
+    startButton.disabled = true;
+    catchButton.disabled = true;
+    stopButton.disabled = true;
+    refineButton.disabled = false;
+    resetButton.disabled = false;
+}
+
+function resetTimer() {
+    if (!startTime) startTime = performance.now();
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const elapsedTime = (performance.now() - startTime) / 1000;
+    timerDisplay.textContent = elapsedTime.toFixed(2);
+}
+
+// 🟠 Function to catch a word
+async function catchWord() {
+    if (!running || wordCount >= maxWords) return;
+
+    await lookupWord(currentNumber);
+
+    if (wordCount >= maxWords) {
+        alert("You've reached the limit of 18 words. Please hit Refine to process the list.");
+        stopRNG();
+    }
+}
+
+// 📌 Function to retrieve words
+async function lookupWord(lineNumber) {
+    const file = 'lookup.txt';
+
+    try {
+        const response = await fetch(file);
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+
+        if (lineNumber < 1 || lineNumber > lines.length) {
+            console.error("Line number out of range.");
+            return;
+        }
+
+        const selectedLine = lines[lineNumber - 1];
+        const word = selectedLine.split(',')[1]?.trim() || "No word found";
+
+        selectedWords.push(word);
+        wordCount++;
+        updateWordCount();
+        document.getElementById('wordList').innerText = selectedWords.join(", ");
+
+        console.log(`Caught word from line ${lineNumber}: ${word}`);
+    } catch (error) {
+        console.error('Error loading the lookup file:', error);
+    }
+}
+
+function updateWordCount() {
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
+}
+        
+document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
+
+function saveWordListToPDF() {
+    const wordListContainer = document.getElementById('wordList');
+    let content = isHighlighted ? refinedWords : selectedWords.join(", ");
+
+    if (!content) {
+        alert("No words to save.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Get current date & time in mm/dd/yyyy hh:mm format
+    const now = new Date();
+    const timestamp = now.toLocaleString('en-US', {
+        month: '2-digit', day: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+    });
+
+    // PDF Title
+    doc.setFontSize(18);
+    doc.text("Saved Word List", 105, 15, { align: "center" });
+
+    // Add timestamp
+    doc.setFontSize(12);
+    doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
+
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+
+    // Ensure text is wrapped properly in the PDF
+    let splitText = doc.splitTextToSize(content, 180);
+    let y = 40;
+
+    splitText.forEach(line => {
+        doc.text(line, 20, y);
+        y += 8;
+        if (y > 280) {
+            doc.addPage();
+            y = 20;
+        }
+    });
+
+    // Save PDF with proper name
+    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
+}
+
+let isRefined = false; // Tracks current display state
+
+async function refineMessage() {
+    const wordListContainer = document.getElementById('wordList');
+    
+    if (!isRefined) {
+        // If refined text hasn't been generated yet, fetch it once
+        if (!refinedWords) {
+            console.log("Fetching refined words from ChatGPT...");
+            refineButton.disabled = true; // Disable button while waiting for response
+            refinedWords = await callChatGPT(selectedWords);
+            refineButton.disabled = false; // Re-enable button after response
+        }
+        wordListContainer.innerText = refinedWords;
+        refineButton.textContent = "Show Words";
+    } else {
+        wordListContainer.innerText = selectedWords.join(", ");
+        refineButton.textContent = "Refine";
+    }
+
+    isRefined = !isRefined;
+}
+
+
+async function callChatGPT(wordsArray) {
+    const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
+
+    const requestBody = {
+        model: "gpt-3.5-turbo",
+        messages: [
+            { 
+                role: "system", 
+                content: "You are a language assistant that connects pairs of words into short, clear, natural sentences. Each sentence must use both words in order and be no longer than 12 words. Keep it simple, logical, and direct."
+            },
+            { 
+                role: "user", 
+                content: `Here is a list of words: ${wordsArray.join(", ")}. Create one short sentence for each consecutive word pair, ensuring that:
+                
+                - The sentence contains both words in order.
+                - The sentence is no longer than 6 words.
+                - The sentence makes logical sense.
+                
+                Examples:
+                - Words: [fruit, loud] → Sentence: "Biting an apple can be loud"
+                - Words: [foreign, scientist] → Sentence: "Foreign scientists care about climate change."
+                - Words: [Michelle, smell] → Sentence: "Michelle smelled something funny."
+                - Words: [lamp, dusty] → Sentence: "You have an old dusty lamp ."
+                
+                Now, generate sentences for the provided words.`
+            }
+        ],
+        temperature: 0.4
+    };
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+        return data.choices[0]?.message.content || "Error generating sentences.";
+    } catch (error) {
+        console.error("Error calling Cloudflare Worker:", error);
+        return "Error generating sentences.";
+    }
+}
+
+
+// 🔄 Reset Function
+function resetHighlights() {
+    document.getElementById('wordList').innerHTML = '';
+    selectedWords = [];
+    wordCount = 0;
+    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
+    startButton.disabled = false;
+    catchButton.disabled = false;
+    stopButton.disabled = false;
+    refineButton.disabled = true;
+    resetButton.disabled = true;
+}
+
+    // Attach function to the Refine button
+    refineButton.addEventListener('click', refineMessage);
+    
+    </script>
+</body>
+</html>

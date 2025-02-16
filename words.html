@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Intelligence</title>
+    <title>Word Picker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -48,7 +48,7 @@
         .button:hover {
         opacity: 0.8; /* Slight transparency on hover */
     	}
-        #start {
+        #pickWord {
             background-color: green;
         }
         #start:hover {
@@ -67,11 +67,11 @@
             background-color: darkred;
         }
         
-        #bonus {
+        #refine {
     		background-color: #66C766; /* Lighter Green */
     		color: black;
         }
-        #bonus:hover {
+        #refine:hover {
             background-color: green !important;
             color: white;
         }
@@ -164,19 +164,16 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1><center>Random Intelligence</center></h1>
         
         <div class="button-container">
-    		<button id="start">Start</button>
-    		<button id="catch">Catch</button>
+    		<button id="pickWord">Start</button>
     		<button id="stop">Stop</button>
 		</div>
 
-<div class="word-info-container">
-    <div id="wordCounter"><span>Word #:</span> <strong>0</strong></div>
-    <div id="timer"><span>Time:</span> <span id="timeValue">0.00</span> <span>seconds</span></div>
-</div>
+
 
         <div id="wordListContainer">
             <div id="wordListTitle">Running Word List</div>
@@ -186,7 +183,7 @@
         
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
-			<button id="bonus">Refine</button>
+			<button id="refine">Refine</button>
     		<button id="all">All</button>
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
@@ -194,380 +191,216 @@
     <button id="savePDF">Save Word List to PDF</button>
 </div>
     </div>
-
-<!-- Include jsPDF library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <script>
-        let selectedWords = [];
-        let wordCount = 0;
-        let rngInterval = null;
-        let timerInterval = null;
-        let startTime = 0;
-        let currentNumber = 1;
-        let running = false;
+let selectedWords = [];
+let rngInterval = null;
+let running = false;
+let firstWordPicked = false;
+let isRefined = false;
+let firstRefineDone = false;
+let showingBoth = false;
+let originalHighlightedWords = [];
+let refinedHighlightedWords = [];
+let wordCount = 0; // Initialize word count
 
-        const startButton = document.getElementById('start');
-        const catchButton = document.getElementById('catch');
-        const stopButton = document.getElementById('stop');
-        const timerDisplay = document.getElementById('timeValue');
+const pickWordBtn = document.getElementById('pickWord');
+const stopBtn = document.getElementById('stop');
+const refineBtn = document.getElementById('refine');
+const allBtn = document.getElementById('all');
+const resetBtn = document.getElementById('reset');
+const wordListDiv = document.getElementById('wordList');
 
-        startButton.addEventListener('click', startRNG);
-        catchButton.addEventListener('click', catchWord);
-        stopButton.addEventListener('click', stopRNG);
-        
-        document.addEventListener('keydown', function(event) {
-    const key = event.key.toLowerCase();
-    if (key === 'h') {
-        toggleHighlight();
-    } else if (key === 'g') {
-        showBothHighlightSets();
-    }
-});
+pickWordBtn.addEventListener('click', startWordSelection);
+stopBtn.addEventListener('click', stopSelection);
+refineBtn.addEventListener('click', toggleRefine);
+allBtn.addEventListener('click', showBothHighlightSets);
+resetBtn.addEventListener('click', resetSelection);
 
-// Get button elements
-const refineButton = document.getElementById('bonus'); // Renamed from "bonus"
-const allButton = document.getElementById('all');
-const resetButton = document.getElementById('reset');
+function startWordSelection() {
+    if (running) return; 
+    running = true;
+    pickWordBtn.textContent = "Searching...";
+    selectWord();
+}
 
-refineButton.addEventListener('click', toggleHighlight);
-allButton.addEventListener('click', showBothHighlightSets);
-resetButton.addEventListener('click', resetHighlights);
+function stopSelection() {
+    running = false;
+    pickWordBtn.textContent = "Start";
+    clearTimeout(rngInterval);
+}
 
-let highlightedWords = []; // Stores the original highlighted words
-let newHighlightedWords = []; // Stores the first randomly selected words
-let isHighlighted = false;
-let firstSelectionMade = false; // Ensures we keep the first set of randomly selected words
-let showingBothSets = false; // Tracks if both sets are currently displayed
-let stopped = false; // Tracks if Stop has been pressed
+function resetSelection() {
+    selectedWords = [];
+    firstWordPicked = false;
+    originalHighlightedWords = [];
+    refinedHighlightedWords = [];
+    isRefined = false;
+    firstRefineDone = false;
+    showingBoth = false;
+    wordCount = 0; // Reset word count
+    wordListDiv.innerHTML = "";
+    running = false;
+    pickWordBtn.textContent = "Start";
+    refineBtn.textContent = "Refine";
+    clearTimeout(rngInterval);
+    updateWordCount(); // Update word count display
+}
 
-// Disable Refine and All at the start
-refineButton.disabled = true;
-allButton.disabled = true;
+async function selectWord() {
+    if (!running) return;
 
-// Get button elements
-const bonusButton = document.getElementById('bonus');
+    let word = await getValidWord(firstWordPicked ? "any" : "uppercase");
 
-bonusButton.addEventListener('click', toggleHighlight);
-allButton.addEventListener('click', showBothHighlightSets);
-
-function toggleHighlight() {
-    if (!stopped) return; // Ensure Stop has been pressed first
-
-    const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children); // Get all word elements
-
-    if (words.length === 0) return; // Do nothing if no words are displayed
-
-    if (showingBothSets) {
-        showingBothSets = false;
-        isHighlighted = false;
-    }
-
-    if (!firstSelectionMade) {
-        // Save the original highlighted words only on the first toggle
-        highlightedWords = words.filter(word => word.classList.contains('highlight'));
-
-        // **FIX: Remove all previous highlights before selecting new ones**
-        words.forEach(word => word.classList.remove('highlight'));
-
-        // Calculate 20% of displayed words (rounded up)
-        let numToSelect = Math.ceil(words.length * 0.2);
-        newHighlightedWords = [];
-
-        while (newHighlightedWords.length < numToSelect && newHighlightedWords.length < words.length) {
-            let randomIndex = Math.floor(Math.random() * words.length);
-            if (!newHighlightedWords.includes(words[randomIndex])) {
-                newHighlightedWords.push(words[randomIndex]);
-            }
-        }
-
-        // Apply new highlights
-        newHighlightedWords.forEach(word => word.classList.add('highlight'));
-
-        firstSelectionMade = true;
-        isHighlighted = true;
-        refineButton.textContent = "Orig"; // Change button text to Orig
-        disableStartCatch(); // Disable Start & Catch when Refine is used
+    if (!word) {
+        console.log("Retrying word selection...");
+        selectWord();
         return;
     }
 
-    if (isHighlighted) {
-        // Show only the original highlighted words
-        words.forEach(word => word.classList.remove('highlight'));
-        highlightedWords.forEach(word => word.classList.add('highlight'));
-        refineButton.textContent = "Refine";
-    } else {
-        // Show only the newly refined highlighted words
-        words.forEach(word => word.classList.remove('highlight'));
-        newHighlightedWords.forEach(word => word.classList.add('highlight'));
-        refineButton.textContent = "Orig";
+    firstWordPicked = true;
+    selectedWords.push(word);
+    wordCount++; // Increment word count
+    updateWordCount(); // Update display
+
+    let wordSpan = document.createElement("span");
+    wordSpan.textContent = word;
+
+    // 20% chance to highlight
+    if (Math.random() < 0.2) {
+        wordSpan.classList.add("highlight");
+        originalHighlightedWords.push(wordSpan);
     }
 
-    isHighlighted = !isHighlighted;
+    wordListDiv.appendChild(wordSpan);
+    wordListDiv.appendChild(document.createTextNode(", "));
+
+    // Continue selecting words every 2 seconds
+    rngInterval = setTimeout(selectWord, 2000);
 }
 
+async function getValidWord(type) {
+    const file = 'lookup.txt';
+    try {
+        const response = await fetch(file);
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        let word = "";
+
+        while (true) {
+            let lineNumber = Math.floor(Math.random() * 2508);
+            word = lines[lineNumber]?.split(',')[1]?.trim();
+
+            if (!word) continue;
+
+            if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
+            if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
+        }
+    } catch (error) {
+        console.error("Error loading the lookup file:", error);
+        return "";
+    }
+}
+
+function toggleRefine() {
+    let words = Array.from(document.querySelectorAll("#wordList span"));
+
+    if (showingBoth) {
+        words.forEach(word => word.classList.remove("highlight"));
+        originalHighlightedWords.forEach(word => word.classList.add("highlight"));
+        showingBoth = false;
+        refineBtn.textContent = "Refine";
+        return;
+    }
+
+    if (!firstRefineDone) {
+        refinedHighlightedWords = [];
+        words.forEach(word => word.classList.remove("highlight"));
+
+        words.forEach(word => {
+            if (Math.random() < 0.18) {
+                word.classList.add("highlight");
+                refinedHighlightedWords.push(word);
+            }
+        });
+
+        firstRefineDone = true;
+        refineBtn.textContent = "Orig";
+    } else {
+        if (isRefined) {
+            words.forEach(word => word.classList.remove("highlight"));
+            originalHighlightedWords.forEach(word => word.classList.add("highlight"));
+            refineBtn.textContent = "Refine";
+        } else {
+            words.forEach(word => word.classList.remove("highlight"));
+            refinedHighlightedWords.forEach(word => word.classList.add("highlight"));
+            refineBtn.textContent = "Orig";
+        }
+    }
+
+    isRefined = !isRefined;
+}
 
 function showBothHighlightSets() {
-    if (!stopped) return; // Ensure Stop has been pressed first
+    if (!originalHighlightedWords.length || !refinedHighlightedWords.length) return;
 
-    const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children);
+    let words = Array.from(document.querySelectorAll("#wordList span"));
+    words.forEach(word => word.classList.remove("highlight"));
 
-    if (words.length === 0 || !firstSelectionMade) return;
+    originalHighlightedWords.forEach(word => word.classList.add("highlight"));
+    refinedHighlightedWords.forEach(word => word.classList.add("highlight"));
 
-    highlightedWords.forEach(word => word.classList.add('highlight'));
-    newHighlightedWords.forEach(word => word.classList.add('highlight'));
-
-    showingBothSets = true;
-    disableStartCatch(); // Disable Start & Catch when All is used
+    showingBoth = true;
 }
 
-function resetHighlights() {
-    document.getElementById('wordList').innerHTML = '';
+document.getElementById('savePDF').addEventListener('click', saveToPDF);
 
-    selectedWords = [];
-    wordCount = 0;
-    highlightedWords = [];
-    newHighlightedWords = [];
-    isHighlighted = false;
-    firstSelectionMade = false;
-    showingBothSets = false;
-    stopped = false; // Allow Start again
+function saveToPDF() {
+    if (typeof window.jspdf === "undefined") {
+        console.error("jsPDF library is not loaded.");
+        return;
+    }
 
-    document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
-    document.getElementById('timeValue').textContent = '0.00';
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let words = selectedWords.map(word => {
+        return (originalHighlightedWords.some(w => w.textContent === word) || 
+                refinedHighlightedWords.some(w => w.textContent === word)) 
+                ? `{HIGHLIGHT}${word}` 
+                : word;
+    }).join(", ");
 
-    clearInterval(rngInterval);
-    clearInterval(timerInterval);
-    rngInterval = null;
-    timerInterval = null;
-    running = false;
-
-    startButton.textContent = 'Start';
-    startButton.style.backgroundColor = 'green';
-    refineButton.textContent = "Refine";
-
-    enableStartCatch(); // Re-enable Start & Catch
-    disableRefineAll(); // Disable Refine & All until Stop is pressed
-}
-
-function disableStartCatch() {
-    startButton.disabled = true;
-    catchButton.disabled = true;
-}
-
-function enableStartCatch() {
-    startButton.disabled = false;
-    catchButton.disabled = false;
-}
-
-function disableRefineAll() {
-    refineButton.disabled = true;
-    allButton.disabled = true;
-}
-
-function enableRefineAll() {
-    refineButton.disabled = false;
-    allButton.disabled = false;
-}
-
-function startRNG() {
-    if (running) return;
-    running = true;
-    startButton.textContent = 'Running...';
-    startButton.style.backgroundColor = 'slategray';
-    resetTimer();
-    timerInterval = setInterval(updateTimerDisplay, 10);
-
-    rngInterval = setInterval(() => {
-        currentNumber = Math.floor(Math.random() * 2508) + 1;
-        console.log(`Cycling: ${currentNumber}`); 
-    }, 100);
-}
-
-function stopRNG() {
-    running = false;
-    clearInterval(rngInterval);
-    clearInterval(timerInterval);
-    rngInterval = null;
-    timerInterval = null;
-    startButton.textContent = 'Start';
-    startButton.style.backgroundColor = 'green';
-    
-    stopped = true; // Allow Refine & All buttons to be used
-    enableRefineAll();
-}
-
-function resetTimer() {
-    startTime = performance.now();
-    updateTimerDisplay();
-}
-
-function updateTimerDisplay() {
-    const elapsedTime = (performance.now() - startTime) / 1000;
-    timerDisplay.textContent = elapsedTime.toFixed(2);
-}
-
-// Attach event listener for Reset button
-document.getElementById('reset').addEventListener('click', resetHighlights);
-
-        function startRNG() {
-            if (running) return;
-            running = true;
-            startButton.textContent = 'Running...';
-            startButton.style.backgroundColor = 'slategray';
-            resetTimer();
-            timerInterval = setInterval(updateTimerDisplay, 10);
-
-            rngInterval = setInterval(() => {
-                currentNumber = Math.floor(Math.random() * 2508) + 1;
-                console.log(`Cycling: ${currentNumber}`); 
-            }, 100);
-        }
-
-        function catchWord() {
-            if (!running) return;
-
-            lookupWord(currentNumber);
-
-            // Reset and restart the timer when Catch is pressed
-            resetTimer();
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimerDisplay, 10);
-        }
-
-function stopRNG() {
-    running = false;
-    clearInterval(rngInterval);
-    clearInterval(timerInterval);
-    rngInterval = null;
-    timerInterval = null;
-    startButton.textContent = 'Start';
-    startButton.style.backgroundColor = 'green';
-    
-    stopped = true; // Allow Refine & All buttons to be used
-    refineButton.disabled = false;
-    allButton.disabled = false;
-}
-
-
-        function resetTimer() {
-            startTime = performance.now();
-            updateTimerDisplay();
-        }
-
-        function updateTimerDisplay() {
-            const elapsedTime = (performance.now() - startTime) / 1000;
-            timerDisplay.textContent = elapsedTime.toFixed(2);
-        }
-
-        function updateWordCount() {
-            document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>${wordCount}</strong>`;
-        }
-
-        async function lookupWord(lineNumber) {
-            const file = 'lookup.txt';
-
-            try {
-                const response = await fetch(file);
-                const text = await response.text();
-                const lines = text.split('\n').filter(line => line.trim() !== '');
-
-                if (lineNumber < 1 || lineNumber > lines.length) {
-                    console.error("Line number out of range.");
-                    return;
-                }
-
-                const selectedLine = lines[lineNumber - 1]; 
-                const word = selectedLine.split(',')[1]?.trim() || "No word found";
-
-                const wordSpan = document.createElement("span");
-                wordSpan.textContent = word;
-
-                // 🟠 1 in 5 chance to highlight the word in salmon color!
-                if (Math.random() < 0.2) {
-                    wordSpan.classList.add("highlight");
-                }
-
-                selectedWords.push(wordSpan.outerHTML);
-                wordCount++;
-                updateWordCount();
-                document.getElementById('wordList').innerHTML = selectedWords.join(', ');
-
-                console.log(`Caught word from line ${lineNumber}: ${word}`);
-            } catch (error) {
-                console.error('Error loading the lookup file:', error);
-            }
-        }
-        
-document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
-
-function saveWordListToPDF() {
-    const wordListContainer = document.getElementById('wordList');
-    const words = Array.from(wordListContainer.children); // Get all word elements
-
-    if (words.length === 0) {
+    if (!words) {
         alert("No words to save.");
         return;
     }
 
-    // Load jsPDF correctly
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Get current date & time in mm/dd/yyyy hh:mm format
-    const now = new Date();
-    const timestamp = now.toLocaleString('en-US', {
-        month: '2-digit', day: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: true
-    });
-
-    // PDF Title
-    doc.setFontSize(18);
     doc.text("Saved Word List", 105, 15, { align: "center" });
+    const now = new Date();
+    doc.text(`Generated on: ${now.toLocaleString()}`, 105, 25, { align: "center" });
 
-    // Add timestamp
-    doc.setFontSize(12);
-    doc.text(`Saved on: ${timestamp}`, 105, 25, { align: "center" });
-
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "normal"); // Ensure normal font for all text
-
-    // **String all words together, separated by commas**
-    let wordString = words.map(word => {
-        let text = word.textContent.trim();
-        return word.classList.contains('highlight') ? `{RED}${text}` : text; // Mark highlighted words
-    }).join(', ');
-
-    // **Process each word and change color when necessary**
-    let splitText = wordString.split(/, /);
-    let x = 20, y = 40, maxWidth = 180;
-
-    splitText.forEach((word, index) => {
-        if (word.startsWith("{RED}")) {
-            doc.setTextColor(255, 0, 0); // Set color to red
-            word = word.replace("{RED}", ""); // Remove placeholder
+    words.split(", ").forEach((word, index) => {
+        if (word.startsWith("{HIGHLIGHT}")) {
+            doc.setTextColor(255, 140, 0); // Set orange for highlighted words
+            word = word.replace("{HIGHLIGHT}", "");
         } else {
             doc.setTextColor(0, 0, 0); // Default black text
         }
-
-        // Append text in a single line, handling spacing properly
-        let textWidth = doc.getTextWidth(word + ", ");
-        if (x + textWidth > maxWidth) {
-            x = 20; // Move to new line
-            y += 8;
-        }
-        doc.text(word + (index < splitText.length - 1 ? ", " : ""), x, y);
-        x += textWidth;
+        doc.text(word + ", ", 20 + (index % 5) * 30, 40 + Math.floor(index / 5) * 10);
     });
 
-    // Save PDF with proper name
-    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`, { returnPromise: true });
+    doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
+}
+
+function updateWordCount() {
+    document.getElementById('wordListTitle').innerHTML = `Running Word List <strong style="color: yellow;">(${wordCount})</strong>`;
 }
 
 
 
     </script>
+
 </body>
 </html>

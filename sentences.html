@@ -494,12 +494,14 @@ let isRefined = false; // Tracks current display state
 
 async function refineMessage() {
     const wordListContainer = document.getElementById('wordList');
-
+    
     if (!isRefined) {
         // If refined text hasn't been generated yet, fetch it once
         if (!refinedWords) {
             console.log("Fetching refined words from ChatGPT...");
+            refineButton.disabled = true; // Disable button while waiting for response
             refinedWords = await callChatGPT(selectedWords);
+            refineButton.disabled = false; // Re-enable button after response
         }
         wordListContainer.innerText = refinedWords;
         refineButton.textContent = "Show Words";

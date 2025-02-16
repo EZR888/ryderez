@@ -499,24 +499,25 @@ async function refineMessage() {
 
 async function callChatGPT(wordsArray) {
     const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
-    
+
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
             { 
                 role: "system", 
-                content: "You are a language assistant that connects words into simple, logical sentences. Each sentence should use two words at a time and be clear, concise, and natural. The sentences should feel like disconnected observations, not a story." 
+                content: "You are a language assistant that connects pairs of words into clear, natural, second-person sentences. Each sentence should feel conversational and direct, addressing the reader as 'you.' The tone should be straightforward and logical, with no unnecessary elaboration or storytelling."
             },
             { 
                 role: "user", 
-                content: `Here is a list of words: ${wordsArray.join(", ")}. Connect them into simple, logical sentences like these examples: 
+                content: `Here is a list of words: ${wordsArray.join(", ")}. Connect them into simple, natural sentences like these examples:
                 
                 Example:
-                - Words: [study, Wales] → Sentence: "You can study the history of Wales."
-                - Words: [disagree, sun] → Sentence: "Not everyone agrees on the benefits of sunlight."
-                - Words: [messenger, tell] → Sentence: "A messenger always has something to tell."
+                - Words: [study, Wales] → Sentence: "You study the history of Wales."
+                - Words: [disagree, sun] → Sentence: "It’s okay to disagree, but the sun shines on everyone."
+                - Words: [messenger, tell] → Sentence: "The messenger arrived early to tell you the good news."
+                - Words: [eat, bell] → Sentence: "If you eat too fast, you might not hear the bell ring."
                 
-                Now, generate sentences for the provided words.`
+                Now, generate sentences for the provided words in the same style.`
             }
         ],
         temperature: 0.5

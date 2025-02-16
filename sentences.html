@@ -189,7 +189,7 @@
         
 		<!-- New Button Container for Bonus and All -->
 		<div class="button-container">
-			<button id="bonus">Refine</button>
+			<button id="bonus">Words</button>
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
 <div style="text-align: center; margin-top: 20px;">
@@ -201,7 +201,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
-let startTime = 0;
 let selectedWords = [];
 let wordCount = 0;
 let rngInterval = null;
@@ -210,19 +209,20 @@ let running = false;
 let refinedWords = "";
 const maxWords = 12; // Selecting 12 words per request
 const maxRetries = 5; // Prevent infinite loops
+let showingWords = false; // Track if words are displayed
 
 const startButton = document.getElementById('start');
-const refineButton = document.getElementById('bonus'); // Bonus is now Refine
+const wordsButton = document.getElementById('bonus'); // Previously "Refine", now "Words"
 const resetButton = document.getElementById('reset');
 const inputField = document.getElementById('input'); // New input field
 const timerDisplay = document.getElementById('timeValue');
 const wordListContainer = document.getElementById('wordList');
 
 startButton.addEventListener('click', startRNG);
-refineButton.addEventListener('click', refineMessage);
+wordsButton.addEventListener('click', toggleWords);
 resetButton.addEventListener('click', resetHighlights);
   
-refineButton.disabled = true;
+wordsButton.disabled = true;
 resetButton.disabled = true;
 
 function startRNG() {
@@ -266,7 +266,7 @@ async function selectWords() {
     wordListContainer.innerText = refinedWords;
     startButton.textContent = 'Start';
     startButton.style.backgroundColor = 'green';
-    refineButton.disabled = false;
+    wordsButton.disabled = false;
     resetButton.disabled = false;
     running = false;
 }
@@ -287,9 +287,15 @@ async function lookupWord(lineNumber) {
     }
 }
 
-async function refineMessage() {
-    wordListContainer.innerText = "Generating new response...";
-    await selectWords();
+function toggleWords() {
+    if (showingWords) {
+        wordListContainer.innerText = refinedWords; // Show AI-generated message
+        wordsButton.textContent = "Words";
+    } else {
+        wordListContainer.innerText = `Words Used: ${selectedWords.join(", ")}`; // Show RNG-selected words
+        wordsButton.textContent = "Message";
+    }
+    showingWords = !showingWords;
 }
 
 async function callChatGPT(wordsArray, userInput) {
@@ -300,7 +306,12 @@ async function callChatGPT(wordsArray, userInput) {
         messages: [
             { 
                 role: "system", 
-                content: "You are a spiritual medium, similar to Theresa Caputo, the Long Island Medium. Your job is to take a list of words and connect them in a way that conveys a message from a deceased friend or loved one to the user, validating their presence. Keep it factual and not overly sentimental or too emotional."
+                content: `You are a spiritual medium, similar to Theresa Caputo, the Long Island Medium. Your job is to take a list of words and connect them in a way that conveys a message from a deceased friend or loved one to the user, validating their presence. Keep it factual and not overly sentimental or too emotional.
+                
+                - Avoid gendered terms like "husband" or "wife" since the message must be neutral.
+                - Ensure the message is short and natural, using the words smoothly.
+                - The tone should be validating and reassuring, without being overly dramatic.
+                `
             },
             { 
                 role: "user", 
@@ -343,7 +354,7 @@ function resetHighlights() {
     refinedWords = "";
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
     startButton.disabled = false;
-    refineButton.disabled = true;
+    wordsButton.disabled = true;
     resetButton.disabled = true;
 }
 

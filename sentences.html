@@ -306,22 +306,22 @@ async function callChatGPT(wordsArray, userInput) {
         messages: [
             { 
                 role: "system", 
-                content: `You are a spiritual medium, similar to Theresa Caputo, the Long Island Medium. Your job is to take a list of words and connect them in a way that conveys a message from a deceased friend or loved one to the user, validating their presence. Keep it factual and not overly sentimental or too emotional.
+                content: `You are a guardian angel, though not religious. Your job is to take a list of words and connect them in a way that conveys a message to the user, validating your presence. Keep it factual and not overly sentimental or emotional.
                 
                 - Avoid gendered terms like "husband" or "wife" since the message must be neutral.
                 - Ensure the message is short and natural, using the words smoothly.
-                - The tone should be validating and reassuring, without being overly dramatic.
+                - The tone should be concise and crisp.
                 `
             },
             { 
                 role: "user", 
                 content: `User is asking: "${userInput}". Here is a list of words: ${wordsArray.join(", ")}. Generate a short spiritual message using these words, ensuring that:
-                - The message sounds like it's from a deceased friend or loved one.
+                - The message sounds like it's from a friend.
                 - The words provided are naturally integrated.
                 - The tone is not too gushy or corny, while still reassuring and validating.
                 
                 Example:
-                - Words: [dog, head, flower, Nancy, 3] → Message: "Nancy, your dog always loved sitting by your chair. He wants you to know the flowers remind him of you."
+                - Words: [dog, head, flower, Nancy, 3] → Message: "There's someone named Nancy in your life right now. There's an issue with her dog.  Something to do with it's head.  I hope you enjoyed the flowers."
                 
                 Now generate a similar message.`
             }

@@ -306,28 +306,24 @@ async function callChatGPT(wordsArray, userInput) {
         messages: [
             { 
                 role: "system", 
-                content: `You are a spiritual medium providing brief but meaningful messages. The user is reaching out for guidance and validation from a deceased loved one or friend. You must integrate both the words given and the user's message into a coherent response. 
+                content: `You are a guardian angel, though not religious. Your job is to take a list of words and connect them in a way that conveys a message to the user, validating your presence. Keep it factual and not overly sentimental or emotional.
                 
-                - You **must** connect the provided words with the user's input.
                 - Avoid gendered terms like "husband" or "wife" since the message must be neutral.
                 - Ensure the message is short and natural, using the words smoothly.
-                - The tone should be direct, clear, and warm, avoiding excessive emotion.`
+                - The tone should be concise and crisp.
+                `
             },
             { 
                 role: "user", 
-                content: `The user has entered the following message: "${userInput}". Here are 12 randomly selected words: ${wordsArray.join(", ")}. 
-
-                Generate a short spiritual message that:
-                - Uses the words in a natural, meaningful way.
-                - Directly relates to what the user has written.
-                - Feels like a message from a deceased friend or loved one.
+                content: `User is asking: "${userInput}". Here is a list of words: ${wordsArray.join(", ")}. Generate a short spiritual message using these words, ensuring that:
+                - The message sounds like it's from a friend.
+                - The words provided are naturally integrated.
+                - The tone is not too gushy or corny, while still reassuring and validating.
                 
-                **Example:**
-                - User input: "I want to hear from my grandmother." 
-                - Words: [chair, music, yellow, wind, 4, letter, stone, candle, memory, window, brother, book]
-                - Response: "Your grandmother remembers the yellow chair she sat in. She says the candle near the window brings you comfort."
-
-                Now generate a response for the given user message and words.`
+                Example:
+                - Words: [dog, head, flower, Nancy, 3] → Message: "There's someone named Nancy in your life right now. There's an issue with her dog.  Something to do with it's head.  I hope you enjoyed the flowers."
+                
+                Now generate a similar message.`
             }
         ],
         temperature: 0.6
@@ -347,7 +343,7 @@ async function callChatGPT(wordsArray, userInput) {
         return data.choices[0].message.content;
     } catch (error) {
         console.error("Error calling Cloudflare Worker:", error);
-        return "I'm sorry, but I couldn't generate a response. Please try again.";
+        return "Error generating sentences.";
     }
 }
 

@@ -348,15 +348,25 @@ async function callChatGPT(wordsArray, userInput) {
 }
 
 function resetHighlights() {
-    wordListContainer.innerHTML = '';
+    // Ensure wordListContainer is properly selected
+    const wordListContainer = document.getElementById('wordList'); 
+    if (!wordListContainer) {
+        console.error("Error: wordListContainer not found.");
+        return;
+    }
+
+    wordListContainer.innerHTML = ''; // Clear displayed message
     selectedWords = [];
     wordCount = 0;
     refinedWords = "";
+
+    // Reset UI elements
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
     startButton.disabled = false;
     wordsButton.disabled = true;
     resetButton.disabled = true;
 }
+
 
     </script>
 </body>

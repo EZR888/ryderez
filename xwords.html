@@ -94,33 +94,41 @@
         allButton.addEventListener('click', showAll);
         savePDFButton.addEventListener('click', saveToPDF);
 
-        function startWordSelection() {
+        async function startWordSelection() {
             if (running) return;
             running = true;
             stopped = false;
             wordButton.textContent = "Selecting...";
-            selectWord();
+            await selectWord();
         }
 
         async function selectWord() {
-            if (stopped) return;
+            if (stopped) {
+                wordButton.textContent = "Click for Word";
+                return;
+            }
 
             let word = "";
             while (!word) {
                 let number = Math.floor(Math.random() * 2508) + 1;
                 word = await lookupWord(number);
 
+                console.log(`Generated Number: ${number}, Retrieved Word: ${word}`);
+
                 if (!firstWordSelected && (isNumber(word) || !startsWithUppercase(word))) {
+                    console.log("Rejected (First Word must be Uppercase)");
                     word = "";
                     continue;
                 }
-                if (!secondWordSelected && (isNumber(word) || startsWithUppercase(word))) {
+                if (firstWordSelected && !secondWordSelected && (isNumber(word) || startsWithUppercase(word))) {
+                    console.log("Rejected (Second Word must be Lowercase)");
                     word = "";
                     continue;
                 }
             }
 
             selectedWords.push(word);
+            console.log("Accepted Word:", word);
             if (Math.random() < 0.18) {
                 highlightedWords.add(word);
             }
@@ -140,6 +148,7 @@
             running = false;
             stopped = true;
             wordButton.textContent = "Click for Word";
+            console.log("Selection Stopped.");
         }
 
         function resetList() {
@@ -182,6 +191,7 @@
             }).join(', ');
 
             wordListContainer.innerHTML = wordsToDisplay;
+            console.log("Updated Word List:", selectedWords.join(", "));
         }
 
         async function lookupWord(lineNumber) {

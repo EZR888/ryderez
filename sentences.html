@@ -490,12 +490,27 @@ function saveWordListToPDF() {
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
 }
 
+let isRefined = false; // Tracks current display state
+
 async function refineMessage() {
-    if (selectedWords.length === 0) return;
-    console.log("Refine button clicked!");
-    let refinedWords = await callChatGPT(selectedWords);
-    document.getElementById('wordList').innerText = refinedWords;
+    const wordListContainer = document.getElementById('wordList');
+
+    if (!isRefined) {
+        // If refined text hasn't been generated yet, fetch it once
+        if (!refinedWords) {
+            console.log("Fetching refined words from ChatGPT...");
+            refinedWords = await callChatGPT(selectedWords);
+        }
+        wordListContainer.innerText = refinedWords;
+        refineButton.textContent = "Show Words";
+    } else {
+        wordListContainer.innerText = selectedWords.join(", ");
+        refineButton.textContent = "Refine";
+    }
+
+    isRefined = !isRefined;
 }
+
 
 async function callChatGPT(wordsArray) {
     const endpoint = "https://openai-proxy.ezryder38.workers.dev/";

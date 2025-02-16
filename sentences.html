@@ -529,8 +529,8 @@ async function identifyProperNouns(wordsArray) {
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are an expert in grammar. Identify which words in the following list are proper nouns and create factual sounding sentences using other words provided with them." },
-            { role: "user", content: `Here is a list of words: ${wordsArray.join(", ")}. Return only the proper nouns.` }
+            { role: "system", content: "You are an editor for a newspaper, being given a list of words that are missing coordinating conjunctions and adjectives. Create factual sounding sentences using other words provided with them." },
+            { role: "user", content: `Here is a list of words: ${wordsArray.join(", ")}. Return coherent sentences.` }
         ],
         temperature: 0.3
     };
@@ -565,8 +565,8 @@ async function callChatGPT(wordPairs) {
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are a news reporter creating connections between word pairs." },
-            { role: "user", content: `Here are the words: ${wordPairs.join(", ")}. Generate fact-like observations for each pair.` }
+            { role: "system", content: "You are a news reporter creating connections between random words as a challenge." },
+            { role: "user", content: `Here are the words: ${wordPairs.join(", ")}. Generate fact-like sentences.` }
         ],
         temperature: 0.7
     };

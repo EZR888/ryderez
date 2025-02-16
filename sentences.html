@@ -505,22 +505,26 @@ async function callChatGPT(wordsArray) {
         messages: [
             { 
                 role: "system", 
-                content: "You are a language assistant that connects pairs of words into clear, natural, second-person sentences. Each sentence should feel conversational and direct, addressing the reader as 'you.' The tone should be straightforward and logical, with no unnecessary elaboration or storytelling."
+                content: "You are a language assistant that connects pairs of words into short, clear, natural sentences. Each sentence must use both words in order and be no longer than 12 words. Keep it simple, logical, and direct."
             },
             { 
                 role: "user", 
-                content: `Here is a list of words: ${wordsArray.join(", ")}. Connect them into simple, natural sentences like these examples:
+                content: `Here is a list of words: ${wordsArray.join(", ")}. Create one short sentence for each consecutive word pair, ensuring that:
                 
-                Example:
-                - Words: [study, Wales] → Sentence: "You study the history of Wales."
-                - Words: [disagree, sun] → Sentence: "It’s okay to disagree, but the sun shines on everyone."
-                - Words: [messenger, tell] → Sentence: "The messenger arrived early to tell you the good news."
-                - Words: [eat, bell] → Sentence: "If you eat too fast, you might not hear the bell ring."
+                - The sentence contains both words in order.
+                - The sentence is no longer than 12 words.
+                - The sentence makes logical sense.
                 
-                Now, generate sentences for the provided words in the same style.`
+                Examples:
+                - Words: [fruit, loud] → Sentence: "Biting into an apple can be loud in a quiet room."
+                - Words: [foreign, scientist] → Sentence: "Foreign scientists are warning about climate change."
+                - Words: [Michelle, smell] → Sentence: "Michelle smelled something funny."
+                - Words: [lamp, dusty] → Sentence: "The old lamp was covered in dusty fingerprints."
+                
+                Now, generate sentences for the provided words.`
             }
         ],
-        temperature: 0.5
+        temperature: 0.4
     };
 
     try {

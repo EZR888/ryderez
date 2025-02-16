@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Word Lookup</title>
+    <title>Word Selection</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,7 +22,7 @@
             margin-bottom: 20px;
         }
         button {
-            margin-top: 10px;
+            margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
             border: none;
@@ -33,14 +33,6 @@
         }
         button:hover {
             background-color: #666;
-        }
-        #output {
-            margin-top: 20px;
-            font-size: 24px;
-        }
-        #wordCounter {
-            margin-top: 10px;
-            font-size: 18px;
         }
         #wordListContainer {
             margin-top: 10px;
@@ -60,14 +52,14 @@
     </style>
 </head>
 <body>
-    <h1>AI Word Lookup</h1>
+    <h1>Word Selection</h1>
     
     <button id="wordButton">Click for Word</button>
     <button id="stopButton">Stop</button>
+    <button id="resetButton">Reset</button>
     <button id="refineButton">Refine</button>
     <button id="allButton">All</button>
-    <button id="resetButton">Reset</button>
-    <button id="savePDF">Save to PDF</button>
+    <button id="savePDFButton">Save to PDF</button>
 
     <div id="wordCounter">Word #: 0</div>
     
@@ -76,32 +68,31 @@
         <div id="wordList"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
     <script>
         let selectedWords = [];
-        let wordCount = 0;
+        let highlightedWords = new Set();
         let running = false;
         let stopped = false;
-        let rngInterval = null;
         let firstWordSelected = false;
         let secondWordSelected = false;
-        let highlightMap = new Map();
-        
+        let showingRefined = false;
+        let showAllHighlighted = false;
+
         const wordButton = document.getElementById('wordButton');
         const stopButton = document.getElementById('stopButton');
+        const resetButton = document.getElementById('resetButton');
         const refineButton = document.getElementById('refineButton');
         const allButton = document.getElementById('allButton');
-        const resetButton = document.getElementById('resetButton');
+        const savePDFButton = document.getElementById('savePDFButton');
         const wordListContainer = document.getElementById('wordList');
         const wordCounter = document.getElementById('wordCounter');
-        
+
         wordButton.addEventListener('click', startWordSelection);
         stopButton.addEventListener('click', stopSelection);
+        resetButton.addEventListener('click', resetList);
         refineButton.addEventListener('click', toggleRefine);
-        allButton.addEventListener('click', showAllHighlights);
-        resetButton.addEventListener('click', resetAll);
-        document.getElementById('savePDF').addEventListener('click', saveWordListToPDF);
+        allButton.addEventListener('click', showAll);
+        savePDFButton.addEventListener('click', saveToPDF);
 
         function startWordSelection() {
             if (running) return;
@@ -113,31 +104,28 @@
 
         async function selectWord() {
             if (stopped) return;
-            
+
             let word = "";
             while (!word) {
                 let number = Math.floor(Math.random() * 2508) + 1;
                 word = await lookupWord(number);
 
                 if (!firstWordSelected && (isNumber(word) || !startsWithUppercase(word))) {
-                    word = ""; // Reject if first word is not uppercase
+                    word = "";
                     continue;
                 }
                 if (!secondWordSelected && (isNumber(word) || startsWithUppercase(word))) {
-                    word = ""; // Reject if second word is uppercase or a number
+                    word = "";
                     continue;
                 }
             }
 
             selectedWords.push(word);
-            highlightMap.set(word, Math.random() < 0.2); // 20% chance of highlighting
-            
-            wordListContainer.innerHTML = selectedWords.map(w => 
-                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
-            ).join(', ');
+            if (Math.random() < 0.18) {
+                highlightedWords.add(word);
+            }
 
-            wordCount++;
-            wordCounter.textContent = `Word #: ${wordCount}`;
+            updateWordDisplay();
 
             if (!firstWordSelected) {
                 firstWordSelected = true;
@@ -152,6 +140,48 @@
             running = false;
             stopped = true;
             wordButton.textContent = "Click for Word";
+        }
+
+        function resetList() {
+            selectedWords = [];
+            highlightedWords.clear();
+            firstWordSelected = false;
+            secondWordSelected = false;
+            running = false;
+            stopped = false;
+            showingRefined = false;
+            showAllHighlighted = false;
+            wordButton.textContent = "Click for Word";
+            refineButton.textContent = "Refine";
+            allButton.textContent = "All";
+            updateWordDisplay();
+        }
+
+        function toggleRefine() {
+            showingRefined = !showingRefined;
+            refineButton.textContent = showingRefined ? "Orig" : "Refine";
+            updateWordDisplay();
+        }
+
+        function showAll() {
+            showAllHighlighted = !showAllHighlighted;
+            allButton.textContent = showAllHighlighted ? "Hide All" : "All";
+            updateWordDisplay();
+        }
+
+        function updateWordDisplay() {
+            wordCounter.textContent = `Word #: ${selectedWords.length}`;
+
+            let wordsToDisplay = selectedWords.map(word => {
+                if (showingRefined && highlightedWords.has(word)) {
+                    return `<span class="highlight">${word}</span>`;
+                } else if (showAllHighlighted && highlightedWords.has(word)) {
+                    return `<span class="highlight">${word}</span>`;
+                }
+                return word;
+            }).join(', ');
+
+            wordListContainer.innerHTML = wordsToDisplay;
         }
 
         async function lookupWord(lineNumber) {
@@ -181,57 +211,27 @@
             return /^[A-Z]/.test(word);
         }
 
-        function toggleRefine() {
-            let highlighted = Array.from(highlightMap.values()).filter(v => v).length;
-            let numToHighlight = Math.ceil(selectedWords.length * 0.18);
-
-            highlightMap.clear();
-            selectedWords.forEach((word, i) => {
-                highlightMap.set(word, i < numToHighlight);
-            });
-
-            wordListContainer.innerHTML = selectedWords.map(w => 
-                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
-            ).join(', ');
-
-            refineButton.textContent = refineButton.textContent === "Refine" ? "Orig" : "Refine";
-        }
-
-        function showAllHighlights() {
-            wordListContainer.innerHTML = selectedWords.map(w => 
-                highlightMap.get(w) ? `<span class="highlight">${w}</span>` : w
-            ).join(', ');
-        }
-
-        function resetAll() {
-            selectedWords = [];
-            wordCount = 0;
-            highlightMap.clear();
-            firstWordSelected = false;
-            secondWordSelected = false;
-            running = false;
-            stopped = false;
-
-            wordListContainer.innerHTML = "";
-            wordCounter.textContent = "Word #: 0";
-            refineButton.textContent = "Refine";
-        }
-
-        function saveWordListToPDF() {
+        function saveToPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.setFontSize(18);
-            doc.text("Saved Word List", 105, 15, { align: "center" });
+            const words = selectedWords.map(word => 
+                highlightedWords.has(word) ? `{HIGHLIGHT}${word}` : word
+            ).join(', ');
 
-            let words = selectedWords.join(", ");
-            let splitText = doc.splitTextToSize(words, 180);
-            
             doc.setFontSize(14);
-            let y = 40;
-            splitText.forEach(line => {
-                doc.text(line, 20, y);
-                y += 8;
+            doc.text("Selected Words", 10, 10);
+
+            let y = 20;
+            words.split(', ').forEach(word => {
+                if (word.startsWith("{HIGHLIGHT}")) {
+                    doc.setTextColor(255, 165, 0);
+                    doc.text(word.replace("{HIGHLIGHT}", ""), 10, y);
+                    doc.setTextColor(0, 0, 0);
+                } else {
+                    doc.text(word, 10, y);
+                }
+                y += 10;
             });
 
             doc.save("Word_List.pdf");

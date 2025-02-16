@@ -208,7 +208,7 @@ let running = false;
 let isHighlighted = false; // Tracks if refined mode is active
 let firstSelectionMade = false; // Ensures the first refine state works
 let refinedWords = ""; // Stores the refined message for toggling & saving
-const maxWords = 88; // Word limit
+const maxWords = 18; // Word limit
 
 const startButton = document.getElementById('start');
 const catchButton = document.getElementById('catch');
@@ -404,7 +404,7 @@ async function catchWord() {
     await lookupWord(currentNumber);
 
     if (wordCount >= maxWords) {
-        alert("You've reached the limit of 88 words. Please hit Refine to process the list.");
+        alert("You've reached the limit of 18 words. Please hit Refine to process the list.");
         stopRNG();
     }
 }

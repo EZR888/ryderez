@@ -492,115 +492,40 @@ function saveWordListToPDF() {
 
 async function refineMessage() {
     if (selectedWords.length === 0) return;
-
     console.log("Refine button clicked!");
-
-    let properNouns = await identifyProperNouns(selectedWords);
-
-    if (properNouns.length === 0) {
-        alert("No proper nouns found! Hit Restart and Catch more words.");
-        return;
-    }
-
-    console.log("Proper nouns identified:", properNouns);
-
-    let properNounPairs = [];
-    for (let i = 0; i < selectedWords.length - 1; i++) {
-        if (properNouns.includes(selectedWords[i]) || properNouns.includes(selectedWords[i + 1])) {
-            properNounPairs.push(`[${selectedWords[i]}, ${selectedWords[i + 1]}]`);
-        }
-    }
-
-    let refinedWords = await callChatGPT(properNounPairs);
+    let refinedWords = await callChatGPT(selectedWords);
     document.getElementById('wordList').innerText = refinedWords;
-
-    let wordListElements = document.getElementById('wordList').textContent.split(", ");
-    let highlightedHTML = wordListElements.map(word => {
-        return properNouns.includes(word) ? `<span style="color: orange;">${word}</span>` : word;
-    }).join(", ");
-
-    document.getElementById('wordList').innerHTML = highlightedHTML;
 }
 
-// ✅ **Step 1: Ask OpenAI which words are proper nouns**
-async function identifyProperNouns(wordsArray) {
+async function callChatGPT(wordsArray) {
     const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
-
     const requestBody = {
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are an editor for a newspaper, being given a list of words that are missing coordinating conjunctions and adjectives. Create factual sounding sentences using other words provided with them." },
-            { role: "user", content: `Here is a list of words: ${wordsArray.join(", ")}. Return coherent sentences.` }
-        ],
-        temperature: 0.3
-    };
-
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-        console.log("Proper Noun Response:", data);
-
-        if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content.split(", ").map(word => word.trim());
-        } else {
-            console.error("Unexpected response structure:", data);
-            return [];
-        }
-    } catch (error) {
-        console.error("Error calling OpenAI for proper nouns:", error);
-        return [];
-    }
-}
-
-
-// ✅ **Call ChatGPT API through Cloudflare Worker**
-async function callChatGPT(wordPairs) {
-    const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
-
-    const requestBody = {
-        model: "gpt-3.5-turbo",
-        messages: [
-            { role: "system", content: "You are a news reporter creating connections between random words as a challenge." },
-            { role: "user", content: `Here are the words: ${wordPairs.join(", ")}. Generate fact-like sentences.` }
+            { role: "system", content: "Create logical sentences from the provided list of words." },
+            { role: "user", content: `Here are the words: ${wordsArray.join(", ")}. Generate meaningful sentences.` }
         ],
         temperature: 0.7
     };
-
     try {
         const response = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
         });
-
         const data = await response.json();
-        console.log("ChatGPT Response:", data);
-
-        if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content;
-        } else {
-            console.error("Unexpected response structure:", data);
-            return "There was an error generating your message. Try again later.";
-        }
+        return data.choices[0]?.message.content || "Error generating sentences.";
     } catch (error) {
         console.error("Error calling Cloudflare Worker:", error);
-        return "There was an error generating your message. Try again later.";
+        return "Error generating sentences.";
     }
 }
-
 // 🔄 Reset Function
 function resetHighlights() {
     document.getElementById('wordList').innerHTML = '';
     selectedWords = [];
     wordCount = 0;
     document.getElementById('wordCounter').innerHTML = `<span>Word #:</span> <strong>0</strong>`;
-
-    // 🛑 Reset button states
     startButton.disabled = false;
     catchButton.disabled = false;
     stopButton.disabled = false;

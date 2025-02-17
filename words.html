@@ -269,6 +269,88 @@ const localStorageWordListDiv = document.getElementById("localStorageWordList");
 
 let showWordsVisible = false; // Track if words are visible
 
+function syncUserWords() {
+    let storedWords = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+    
+    // Remove duplicate words
+    userWords = [...new Set(storedWords)];
+
+    // Save back the cleaned version
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
+}
+
+addWordBtn.addEventListener("click", () => {
+    syncUserWords(); // Make sure userWords is up-to-date
+    
+    let inputText = wordInput.value.trim();
+    if (!inputText) {
+        alert("Please enter at least one word.");
+        return;
+    }
+
+    let wordsToAdd = inputText.split(",").map(word => word.trim()).filter(word => word);
+
+    let addedWords = [];
+    let duplicateWords = [];
+
+    for (let word of wordsToAdd) {
+        if (!userWords.includes(word) && !masterWords.includes(word)) {
+            userWords.push(word);
+            addedWords.push(word);
+        } else {
+            duplicateWords.push(word);
+        }
+    }
+
+    if (addedWords.length > 0) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
+        localStorageWordListDiv.innerHTML = `Added: <strong>${addedWords.join(", ")}</strong>`;
+    }
+
+    if (duplicateWords.length > 0) {
+        alert(`These words are already in the list: ${duplicateWords.join(", ")}`);
+    }
+
+    wordInput.value = "";
+});
+
+deleteWordBtn.addEventListener("click", () => {
+    syncUserWords(); // Ensure up-to-date data
+
+    let inputText = wordInput.value.trim();
+    if (!inputText) {
+        alert("Enter a word to delete.");
+        return;
+    }
+
+    let wordsToDelete = inputText.split(",").map(word => word.trim()).filter(word => word);
+
+    let notFoundWords = [];
+    let deletedWords = [];
+
+    for (let word of wordsToDelete) {
+        if (userWords.includes(word)) {
+            userWords = userWords.filter(w => w !== word);
+            deletedWords.push(word);
+        } else {
+            notFoundWords.push(word);
+        }
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
+
+    if (deletedWords.length > 0) {
+        localStorageWordListDiv.innerHTML = `Deleted: <strong>${deletedWords.join(", ")}</strong>`;
+    }
+
+    if (notFoundWords.length > 0) {
+        alert(`These words were not found: ${notFoundWords.join(", ")}`);
+    }
+
+    wordInput.value = "";
+});
+
+
 // Function to load words from lookup.txt and store in masterWords array
 async function loadMasterWords() {
     try {
@@ -284,9 +366,16 @@ async function loadMasterWords() {
 }
 
 // Call this function when the page loads
+//window.onload = async function () {
+//    localStorageWordListDiv.style.display = "none"; // ✅ Ensure it's hidden before loading words
+//    await loadMasterWords();;
+//};
+
 window.onload = async function () {
-    localStorageWordListDiv.style.display = "none"; // ✅ Ensure it's hidden before loading words
-    await loadMasterWords();;
+    await loadMasterWords();
+    syncUserWords(); // Ensure userWords is correct
+    loadUserWords();
+    localStorageWordListDiv.style.display = "none"; // Hide word list on load
 };
 
 

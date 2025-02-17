@@ -1,0 +1,33 @@
+Words starting with uppercase letters:
+Afterlife
+August
+Australia
+Canada
+China
+December
+Democracy
+Einstein
+England
+Europe
+Fascism
+February
+Germany
+Ghost
+God
+Ireland
+Italy
+January
+Japan
+July
+June
+March
+May
+Mexico
+November
+October
+Russia
+Scotland
+September
+United States
+Wales
+Washington

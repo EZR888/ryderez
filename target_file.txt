@@ -15,6 +15,7 @@
 15,suggestion
 16, 52
 17,disappoint
+18,Australia
 19,lamp
 20,taste
 21,much
@@ -23,6 +24,7 @@
 24,suit
 25,feet
 26,organize
+27,September
 28,nose
 29,fold
 30,scent
@@ -67,6 +69,7 @@
 69,short
 70,carriage
 71,female
+72,Washington
 73,harbor
 74,temper
 75,conquer
@@ -107,6 +110,7 @@
 110, 76
 111,disgust
 112,Lisa
+113,October
 114,rise
 115,nail
 116,cousin
@@ -151,6 +155,7 @@
 155,skill
 156,hurry
 157,review
+158,May
 159,product
 160,home
 161,brief
@@ -171,6 +176,7 @@
 176,discussion
 177,reserve
 178,modern
+179,January
 180,dozen
 181,sailor
 182,hasten
@@ -294,6 +300,7 @@
 300,drawer
 301,city
 302,rail
+303,March
 304,reduce
 305,hook
 306,daughter
@@ -444,6 +451,7 @@
 451, 70
 452,Fabio
 453,lonely
+454,United States
 455,student
 456,funeral
 457,ready
@@ -582,10 +590,12 @@
 590,kneel
 591,reach
 592,Terri
+593,August
 594,arch
 595,correction
 596,educate
 597,wet
+598,Canada
 599,pleasant
 600,key
 601,disappear
@@ -617,6 +627,7 @@
 627,hat
 628,level
 629,fit
+630,God
 631,collect
 632,inform
 633,smile
@@ -677,6 +688,7 @@
 688,murder
 689,crop
 690,answer
+691,Einstein
 692,plenty
 693,less
 694,meet
@@ -717,6 +729,7 @@
 729,feed
 730,party
 731,attentive
+732,Germany
 733,elder
 734,full
 735,arrive
@@ -773,6 +786,7 @@
 786, 77
 787,offer
 788,truth
+789,Ghost
 790,ribbon
 791,fact
 792,patient
@@ -811,6 +825,7 @@
 825,saddle
 826,bow
 827,congratulation
+828,February
 829,nest
 830,receive
 831,cap
@@ -970,6 +985,7 @@
 985,elsewhere
 986,rain
 987,straight
+988,China
 989,excuse
 990,ashamed
 991,empty
@@ -1023,6 +1039,7 @@
 1039,pile
 1040,blue
 1041,homecoming
+1042,July
 1043,scene
 1044,lawyer
 1045,steer
@@ -1115,6 +1132,7 @@
 1132,wisdom
 1133,male
 1134,who
+1135,Wales
 1136,music
 1137,seize
 1138,annoyance
@@ -1193,6 +1211,7 @@
 1211,book
 1212,airplane
 1213,south
+1214,December
 1215,sure
 1216,ocean
 1217,likely
@@ -1491,6 +1510,7 @@
 1510,history
 1511,Leslie
 1512,meantime
+1513,Japan
 1514,allowance
 1515,Anthony
 1516,important
@@ -1567,6 +1587,7 @@
 1587,razor
 1588,orange
 1589,soap
+1590,Europe
 1591,certainty
 1592,Scott
 1593,adoption
@@ -1583,6 +1604,7 @@
 1604,Ted
 1605,defend
 1606,sink
+1607,Fascism
 1608,join
 1609,great
 1610,include
@@ -1776,6 +1798,7 @@
 1798,produce
 1799,settle
 1800,omission
+1801,Mexico
 1802,develop
 1803,stretch
 1804,neck
@@ -1817,6 +1840,7 @@
 1840,tomorrow
 1841,mill
 1842,least
+1843,Russia
 1844,conquest
 1845,language
 1846,adopt
@@ -2011,6 +2035,7 @@
 2035,someone
 2036,particle
 2037,grandmother
+2038,Scotland
 2039,tide
 2040,across
 2041,absolute
@@ -2066,6 +2091,7 @@
 2091, 10
 2092,verb
 2093,robbery
+2094,England
 2095,smooth
 2096,misery
 2097,Mark
@@ -2101,6 +2127,7 @@
 2127,whiten
 2128,scale
 2129,opposition
+2130,Italy
 2131,motherly
 2132,universe
 2133,minute
@@ -2125,6 +2152,7 @@
 2152,deaf
 2153,exchange
 2154,help
+2155,Ireland
 2156,shame
 2157,western
 2158,knife
@@ -2244,6 +2272,7 @@
 2272,greed
 2273,playright
 2274,shirt
+2275,June
 2276,umbrella
 2277,capital
 2278,scorn
@@ -2289,6 +2318,7 @@
 2318,salary
 2319,pearl
 2320,may
+2321,Democracy
 2322,like
 2323,believe
 2324,oar
@@ -2343,6 +2373,7 @@
 2373,bathe
 2374,ambitious
 2375,slight
+2376,Afterlife
 2377, 5
 2378,friend
 2379,heat
@@ -2455,6 +2486,7 @@
 2486,permit
 2487,inclusive
 2488,follow
+2489,November
 2490,shut
 2491,sad
 2492,ache

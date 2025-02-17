@@ -32,19 +32,22 @@ button:hover {
     color: yellow;
 }
 
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #222;
-            color: #fff;
-        }
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;
+    justify-content: flex-start; /* Align items from the top */
+    height: 100vh;
+    margin: 0;
+    background-color: #222;
+    color: #fff;
+    gap: 20px; /* Space between the two containers */
+    padding-top: 50px; /* Moves everything down */
+}
 
-        /* 🔳 BOUNDING BOX STYLING */
-        .container {
+
+.container {
             border: 2px solid lightgray;
             border-radius: 15px;
             padding: 30px;
@@ -52,7 +55,20 @@ button:hover {
             width: 40%;
             min-width: 350px;
             background-color: #333;
-        }
+}
+
+.word-entry-container {
+    border: 2px solid lightgray;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    width: 40%;
+    min-width: 350px;
+    max-width: 600px;
+    background-color: #444; /* Slightly different shade for contrast */
+    margin-top: 10px; /* Space between sections */
+}
+
 
         h1 {
             color: #90ee90;
@@ -218,21 +234,20 @@ button:hover {
 <br>
 </div>
 
-<div class="container">
-  <div>
-    <label for="wordInput">Enter Word:</label>
-    <input type="text" id="wordInput" placeholder="Type a word..." />
+<div class="word-entry-container">
+  <label for="wordInput">Enter Word:</label>
+  <input type="text" id="wordInput" placeholder="Type a word..." />
 
-    <!-- Buttons Container -->
-    <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <button id="addWord">Add</button>
-        <button id="showWords">Show</button>
-        <button id="deleteWord">Delete</button>
-    </div>
-
-    <div id="localStorageWordList" style="margin-top: 10px; color: yellow;"></div>
+  <!-- Buttons Container -->
+  <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
+      <button id="addWord">Add</button>
+      <button id="showWords">Show</button>
+      <button id="deleteWord">Delete</button>
   </div>
+
+  <div id="localStorageWordList" style="margin-top: 10px; color: yellow;"></div>
 </div>
+
 
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -306,6 +321,27 @@ deleteWordBtn.addEventListener("click", () => {
     wordInput.value = ""; // Clear input field
 });
 
+async function loadMasterWords() {
+    try {
+        const response = await fetch(MASTER_WORDS_FILE);
+        const text = await response.text();
+
+        // Extract words, removing numbers and commas
+        masterWords = text
+            .split('\n')
+            .map(line => {
+                let cleanWord = line.replace(/^\d+,\s*/, "").trim(); // Remove leading numbers & commas
+                return cleanWord;
+            })
+            .filter(word => word); // Remove empty lines
+
+        console.log("Master words loaded:", masterWords); // Debugging output
+    } catch (error) {
+        console.error("Error loading master words:", error);
+    }
+}
+
+
 // 🚀 Load words on page load
 window.onload = async function () {
     await loadMasterWords();
@@ -313,15 +349,37 @@ window.onload = async function () {
 };
 
 // 📌 Load the default master words from lookup.txt
-async function loadMasterWords() {
+async function getValidWord(type) {
     try {
-        const response = await fetch(MASTER_WORDS_FILE);
-        const text = await response.text();
-        masterWords = text.split('\n').map(line => line.trim()).filter(line => line);
+        // Ensure master words are loaded first
+        if (!masterWords.length) await loadMasterWords();
+
+        // Combine master words with user words
+        let combinedWords = [...masterWords, ...userWords];
+
+        // Shuffle combined list properly
+        combinedWords = combinedWords.sort(() => Math.random() - 0.5);
+
+        console.log("Shuffled word list:", combinedWords); // Debugging output
+
+        let word = "";
+
+        while (true) {
+            let randomIndex = Math.floor(Math.random() * combinedWords.length);
+            word = combinedWords[randomIndex]?.trim();
+
+            if (!word) continue;
+
+            // Apply selection rules
+            if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
+            if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
+        }
     } catch (error) {
-        console.error('Error loading master words:', error);
+        console.error("Error loading words:", error);
+        return "";
     }
 }
+
 
 // 📌 Load user words from LocalStorage
 function loadUserWords() {
@@ -462,15 +520,23 @@ async function selectWord() {
 
 async function getValidWord(type) {
     try {
-        // Ensure master words are loaded
+        // Ensure master words are loaded only once
         if (!masterWords.length) {
             const response = await fetch(MASTER_WORDS_FILE);
             const text = await response.text();
-            masterWords = text.split('\n').map(line => line.trim()).filter(line => line);
+
+            // Extract only the words, removing numbers and commas
+            masterWords = text
+                .split('\n')
+                .map(line => line.replace(/^\d+,\s*/, "").trim()) // Remove leading numbers & commas
+                .filter(word => word); // Remove empty lines
         }
 
         // Combine master words with user words
         let combinedWords = [...masterWords, ...userWords];
+
+        // Shuffle words to prevent "Joe" (or any user word) from always appearing first
+        combinedWords.sort(() => Math.random() - 0.5);
 
         let word = "";
 
@@ -480,6 +546,7 @@ async function getValidWord(type) {
 
             if (!word) continue;
 
+            // Apply selection rules
             if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
             if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
         }

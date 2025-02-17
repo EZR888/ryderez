@@ -5,49 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Intelligence</title>
     <style>
-    
-.input-container {
-    display: flex;
-    align-items: center;  /* Aligns text and buttons in the same line */
-    gap: 10px;  /* Adds spacing between elements */
-    margin-bottom: 10px;  /* Adds some spacing below the input field */
-}
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+        }
 
-button {
-    padding: 8px 15px;
-    font-size: 14px;
-    border: none;
-    background-color: #444;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: #666;
-}
-
-#wordList {
-    margin-top: 10px;
-    color: yellow;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center;
-    justify-content: flex-start; /* Align items from the top */
-    height: 100vh;
-    margin: 0;
-    background-color: #222;
-    color: #fff;
-    gap: 20px; /* Space between the two containers */
-    padding-top: 50px; /* Moves everything down */
-}
-
-
-.container {
+        /* 🔳 BOUNDING BOX STYLING */
+        .container {
             border: 2px solid lightgray;
             border-radius: 15px;
             padding: 30px;
@@ -55,20 +25,7 @@ body {
             width: 40%;
             min-width: 350px;
             background-color: #333;
-}
-
-.word-entry-container {
-    border: 2px solid lightgray;
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    width: 40%;
-    min-width: 350px;
-    max-width: 600px;
-    background-color: #444; /* Slightly different shade for contrast */
-    margin-top: 10px; /* Space between sections */
-}
-
+        }
 
         h1 {
             color: #90ee90;
@@ -215,6 +172,9 @@ body {
     		<button id="pickWord">Start</button>
     		<button id="stop">Stop</button>
 		</div>
+
+
+
         <div id="wordListContainer">
             <div id="wordListTitle">Running Word List</div>
             <div id="wordList"></div>
@@ -227,211 +187,15 @@ body {
     		<button id="all">All</button>
     		<button id="reset">Reset</button> <!-- Reset button -->
 		</div>
-		
 <div style="text-align: center; margin-top: 20px;">
     <button id="savePDF">Save Word List to PDF</button>
 </div>
 <br>
-</div>
-
-<div class="word-entry-container">
-  <label for="wordInput">Enter Word:</label>
-  <input type="text" id="wordInput" placeholder="Type a word..." />
-
-  <!-- Buttons Container -->
-  <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
-      <button id="addWord">Add</button>
-      <button id="showWords">Show</button>
-      <button id="deleteWord">Delete</button>
-  </div>
-
-  <div id="localStorageWordList" style="margin-top: 10px; color: yellow;"></div>
-</div>
-
-
+    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
-
-const MASTER_WORDS_FILE = 'lookup.txt'; // The original master list file
-const LOCAL_STORAGE_KEY = 'customWordList'; // Where user words are stored
-
-// ✅ Load existing words from localStorage or initialize an empty array
-let userWords = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-
-// ✅ Get DOM elements
-const wordInput = document.getElementById("wordInput");
-const addWordBtn = document.getElementById("addWord");
-const showWordsBtn = document.getElementById("showWords");
-const deleteWordBtn = document.getElementById("deleteWord");
-const localStorageWordListDiv = document.getElementById("localStorageWordList"); // 🔹 New name
-
-// ✅ Add Word to Local Storage
-addWordBtn.addEventListener("click", () => {
-    let word = wordInput.value.trim();
-
-    if (!word) {
-        alert("Please enter a word.");
-        return;
-    }
-
-    if (userWords.includes(word)) {
-        alert(`"${word}" is already in your list.`);
-        return;
-    }
-
-    userWords.push(word);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
-
-    // Confirm addition
-    localStorageWordList.innerHTML = `Added: <strong>${word}</strong>`;
-    wordInput.value = ""; // Clear input field
-});
-
-// ✅ Show All Words in Local Storage
-showWordsBtn.addEventListener("click", () => {
-    if (userWords.length === 0) {
-        localStorageWordList.innerHTML = "No words added yet.";
-        return;
-    }
-
-    localStorageWordList.innerHTML = `Your Words: ${userWords.join(", ")}`;
-});
-
-// ✅ Delete a Word from Local Storage
-deleteWordBtn.addEventListener("click", () => {
-    let wordToDelete = wordInput.value.trim();
-
-    if (!wordToDelete) {
-        alert("Enter a word to delete.");
-        return;
-    }
-
-    if (!userWords.includes(wordToDelete)) {
-        alert(`"${wordToDelete}" is not in your list.`);
-        return;
-    }
-
-    // Remove the word and update localStorage
-    userWords = userWords.filter(word => word !== wordToDelete);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
-
-    localStorageWordList.innerHTML = `Deleted: <strong>${wordToDelete}</strong>`;
-    wordInput.value = ""; // Clear input field
-});
-
-async function loadMasterWords() {
-    try {
-        const response = await fetch(MASTER_WORDS_FILE);
-        const text = await response.text();
-
-        // Extract words, removing numbers and commas
-        masterWords = text
-            .split('\n')
-            .map(line => {
-                let cleanWord = line.replace(/^\d+,\s*/, "").trim(); // Remove leading numbers & commas
-                return cleanWord;
-            })
-            .filter(word => word); // Remove empty lines
-
-        console.log("Master words loaded:", masterWords); // Debugging output
-    } catch (error) {
-        console.error("Error loading master words:", error);
-    }
-}
-
-
-// 🚀 Load words on page load
-window.onload = async function () {
-    await loadMasterWords();
-    loadUserWords();
-};
-
-// 📌 Load the default master words from lookup.txt
-async function getValidWord(type) {
-    try {
-        // Ensure master words are loaded first
-        if (!masterWords.length) await loadMasterWords();
-
-        // Combine master words with user words
-        let combinedWords = [...masterWords, ...userWords];
-
-        // Shuffle combined list properly
-        combinedWords = combinedWords.sort(() => Math.random() - 0.5);
-
-        console.log("Shuffled word list:", combinedWords); // Debugging output
-
-        let word = "";
-
-        while (true) {
-            let randomIndex = Math.floor(Math.random() * combinedWords.length);
-            word = combinedWords[randomIndex]?.trim();
-
-            if (!word) continue;
-
-            // Apply selection rules
-            if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
-            if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
-        }
-    } catch (error) {
-        console.error("Error loading words:", error);
-        return "";
-    }
-}
-
-
-// 📌 Load user words from LocalStorage
-function loadUserWords() {
-    let storedWords = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (storedWords) {
-        userWords = JSON.parse(storedWords);
-    }
-    updateWordListDisplay();
-}
-
-// 📌 Add a new word to the user's local storage
-function addUserWord() {
-    let wordInput = document.getElementById("wordInput").value.trim();
-    if (!wordInput) return;
-
-    if (!userWords.includes(wordInput)) {
-        userWords.push(wordInput);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords)); // Save locally
-        updateWordListDisplay();
-    }
-
-    document.getElementById("wordInput").value = ""; // Clear input box
-}
-
-// 📌 Update the displayed word list (ONLY user-added words, not master list)
-function updateWordListDisplay() {
-    const userWordListDiv = document.getElementById("localStorageWordList"); // Corrected ID
-
-    if (!userWordListDiv) {
-        console.error("Error: Element with ID 'localStorageWordList' not found.");
-        return;
-    }
-
-    if (userWords.length === 0) {
-        userWordListDiv.innerText = "No custom words added yet.";
-    } else {
-        userWordListDiv.innerText = `Your Words: ${userWords.join(", ")}`;
-    }
-}
-
-
-
-// 📌 Clear only the user's custom words
-function clearUserWords() {
-    userWords = [];
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    updateWordListDisplay();
-}
-
-    
-
-    
 let selectedWords = [];
 let rngInterval = null;
 let running = false;
@@ -519,43 +283,27 @@ async function selectWord() {
 }
 
 async function getValidWord(type) {
+    const file = 'lookup.txt';
     try {
-        // Ensure master words are loaded only once
-        if (!masterWords.length) {
-            const response = await fetch(MASTER_WORDS_FILE);
-            const text = await response.text();
-
-            // Extract only the words, removing numbers and commas
-            masterWords = text
-                .split('\n')
-                .map(line => line.replace(/^\d+,\s*/, "").trim()) // Remove leading numbers & commas
-                .filter(word => word); // Remove empty lines
-        }
-
-        // Combine master words with user words
-        let combinedWords = [...masterWords, ...userWords];
-
-        // Shuffle words to prevent "Joe" (or any user word) from always appearing first
-        combinedWords.sort(() => Math.random() - 0.5);
-
+        const response = await fetch(file);
+        const text = await response.text();
+        const lines = text.split('\n').filter(line => line.trim() !== '');
         let word = "";
 
         while (true) {
-            let randomIndex = Math.floor(Math.random() * combinedWords.length);
-            word = combinedWords[randomIndex]?.trim();
+            let lineNumber = Math.floor(Math.random() * 2508);
+            word = lines[lineNumber]?.split(',')[1]?.trim();
 
             if (!word) continue;
 
-            // Apply selection rules
             if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
             if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
         }
     } catch (error) {
-        console.error("Error loading words:", error);
+        console.error("Error loading the lookup file:", error);
         return "";
     }
 }
-
 
 function toggleRefine() {
     let words = Array.from(document.querySelectorAll("#wordList span"));

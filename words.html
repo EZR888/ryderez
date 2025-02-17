@@ -434,17 +434,21 @@ showWordsBtn.addEventListener("click", () => {
 });
 
 
-// ✅ Delete a Word from Local Storage
 deleteWordBtn.addEventListener("click", () => {
-    let inputText = wordInput.value.trim();
+    let inputText = wordInput.value.trim(); // Capture input text immediately
 
-    if (!inputText) {
-        alert("Enter at least one word to delete.");
-        return;
-    }
+    //if (!inputText) {
+     //   alert("Enter at least one word to delete.");
+    //    return;
+   // }
 
     // Split input into an array, trimming spaces
     let wordsToDelete = inputText.split(",").map(word => word.trim()).filter(word => word);
+
+    //if (wordsToDelete.length === 0) {
+     //   alert("Enter at least one valid word to delete.");
+    //    return;
+   // }
 
     let notFoundWords = [];
     let deletedWords = [];
@@ -458,21 +462,25 @@ deleteWordBtn.addEventListener("click", () => {
         }
     });
 
-    // Update local storage
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
+    if (deletedWords.length === 0 && notFoundWords.length > 0) {
+        alert(`These words were not found: ${notFoundWords.join(", ")}`);
+        return; // Exit early to prevent further execution
+    }
 
-    // Show deleted words
+    // Update local storage if words were deleted
     if (deletedWords.length > 0) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
         localStorageWordListDiv.innerHTML = `Deleted: <strong>${deletedWords.join(", ")}</strong>`;
     }
 
-    // Alert if any words were not found
+    // Show alert for words that were not found
     if (notFoundWords.length > 0) {
         alert(`These words were not found: ${notFoundWords.join(", ")}`);
     }
 
-    // Clear input field
+    // **Clear input field after processing**
     wordInput.value = "";
+    wordInput.focus();
 });
 
 // 📌 Load the master word list from lookup.txt

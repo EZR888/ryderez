@@ -455,42 +455,6 @@ async function loadMasterWords() {
     }
 }
 
-// 📌 Select Word with New Rules
-let uppercaseWordCount = 0;
-
-async function getValidWord() {
-    try {
-        let combinedWords = [...masterWords, ...userWords];
-
-        if (!combinedWords.length) return "";
-
-        let word = "";
-        while (true) {
-            let randomIndex = Math.floor(Math.random() * combinedWords.length);
-            word = combinedWords[randomIndex]?.trim();
-
-            if (!word) continue;
-
-            // Selection rules
-            if (wordCount === 0 && /^[A-Z]/.test(word)) return word; // First word: must be uppercase
-            if (wordCount === 1 && !/^[A-Z]/.test(word)) return word; // Second word: must be lowercase
-            if (wordCount > 1) {
-                if (/^[A-Z]/.test(word)) {
-                    if (uppercaseWordCount >= Math.floor(wordCount / 8)) {
-                        continue; // Skip if more than 1 uppercase every 8 words
-                    }
-                    uppercaseWordCount++;
-                }
-                return word;
-            }
-        }
-    } catch (error) {
-        console.error("Error selecting word:", error);
-        return "";
-    }
-}
-
-
 // 📌 Load user words from LocalStorage
 function loadUserWords() {
     let storedWords = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -633,6 +597,7 @@ async function selectWord() {
 }
 
 let uppercasePositions = []; // Track positions of uppercase words
+let uppercaseWordCount = 0;
 
 async function getValidWord() {
     try {

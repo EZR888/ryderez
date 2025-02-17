@@ -43,7 +43,7 @@ body {
     background-color: #222;
     color: #fff;
     gap: 20px; /* Space between the two containers */
-    padding-top: 50px; /* Moves everything down */
+    padding-top: 60px; /* Moves everything down */
 }
 
 
@@ -68,7 +68,6 @@ body {
     background-color: #444; /* Slightly different shade for contrast */
     margin-top: 10px; /* Space between sections */
 }
-
 
         h1 {
             color: #90ee90;
@@ -108,6 +107,9 @@ body {
         }
         #stop:hover {
             background-color: darkred;
+        }
+        #help {
+            background-color: purple;
         }
         
         #refine {
@@ -204,6 +206,58 @@ body {
     color: white;
 }
 
+<!-- Modal Styles -->
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 99999; /* Ensure it's on top of everything */
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent dark overlay */
+    display: flex; /* Allows centering */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    position: relative; /* Needed for positioning close button */
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); /* Floating effect */
+    animation: fadeIn 0.3s ease-in-out; /* Smooth fade-in */
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: black;
+}
+
+/* Smooth Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
     </style>
 </head>
 <body>
@@ -213,6 +267,7 @@ body {
         
         <div class="button-container">
     		<button id="pickWord">Start</button>
+    		<button class="button button-purple" id="howToUseButton">Help</button>
     		<button id="stop">Stop</button>
 		</div>
         <div id="wordListContainer">
@@ -248,12 +303,10 @@ body {
   <div id="localStorageWordList" style="margin-top: 10px; color: yellow;"></div>
 </div>
 
-
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
-
+    
 const MASTER_WORDS_FILE = 'lookup.txt'; // The original master list file
 const LOCAL_STORAGE_KEY = 'customWordList'; // Where user words are stored
 
@@ -337,12 +390,44 @@ async function loadMasterWords() {
 //    await loadMasterWords();;
 //};
 
-window.onload = async function () {
-    await loadMasterWords();
-    syncUserWords(); // Ensure userWords is correct
+window.onload = function () {
+    // Ensure words are loaded correctly
+    loadMasterWords();
+    syncUserWords();
     loadUserWords();
-    localStorageWordListDiv.style.display = "none"; // Hide word list on load
+    localStorageWordListDiv.style.display = "none";
+
+    // Get modal elements
+    const modal = document.getElementById('instructionsModal');
+    const howToUseButton = document.getElementById('howToUseButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    // Make sure modal stays hidden on load
+    if (modal) {
+        modal.style.display = "none"; 
+    }
+
+    // Check if modal elements exist before assigning event listeners
+    if (modal && howToUseButton && closeModalButton) {
+        howToUseButton.onclick = function () {
+            modal.style.display = "flex";
+        };
+
+        closeModalButton.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        // Close the modal if clicked outside of the modal content
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    } else {
+        console.error("Modal elements not found in the DOM.");
+    }
 };
+
 
 
 // ✅ Add Words (Multiple comma-separated)
@@ -527,6 +612,7 @@ stopBtn.addEventListener('click', stopSelection);
 refineBtn.addEventListener('click', toggleRefine);
 allBtn.addEventListener('click', showBothHighlightSets);
 resetBtn.addEventListener('click', resetSelection);
+howToUseButton.addEventListener('click', howToUseButton);
 
 function startWordSelection() {
     if (running) return; 
@@ -750,11 +836,54 @@ function saveToPDF() {
 
 function updateWordCount() {
     document.getElementById('wordListTitle').innerHTML = `Running Word List <strong style="color: yellow;">(${wordCount})</strong>`;
-}
+};
 
+</script>
 
+<!-- Instructions Modal -->
+<div id="instructionsModal" class="modal">
+    <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How to Use</h3>
+        <p>
+            <br>
+            Click "Start" to begin word selection.<br><br>
+            Use "Refine" to randomly highlight words.<br><br>
+            "Reset" will clear your words<br><br>
+            You can "Add" words, or full names, one at a time, or stringing them together with commas. e.g. Fred, Barny, Wilma Flintstone, George Washington<br><br>
+            You can "Delete" the same way.<br><br>
+            You need to do these additions for each computer or phone or tablet you use, but it's a one-time thing and an easy copy/paste
+        </p>
+    </div>
+</div>
 
-    </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("instructionsModal");
+    const howToUseButton = document.getElementById("howToUseButton");
+    const closeModalButton = document.getElementById("closeModalButton");
+
+    // Ensure modal is hidden on page load
+    modal.style.display = "none";
+
+    // Show modal when the Help button is clicked
+    howToUseButton.addEventListener("click", function () {
+        modal.style.display = "flex";
+    });
+
+    // Hide modal when the close button is clicked
+    closeModalButton.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    // Hide modal when clicking outside the modal content
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+</script>
 
 </body>
 </html>

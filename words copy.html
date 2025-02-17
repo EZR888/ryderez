@@ -267,8 +267,6 @@ const showWordsBtn = document.getElementById("showWords");
 const deleteWordBtn = document.getElementById("deleteWord");
 const localStorageWordListDiv = document.getElementById("localStorageWordList"); // 🔹 New name
 
-let showWordsVisible = false; // Track if words are visible
-
 // Function to load words from lookup.txt and store in masterWords array
 async function loadMasterWords() {
     try {
@@ -285,66 +283,46 @@ async function loadMasterWords() {
 
 // Call this function when the page loads
 window.onload = async function () {
-    localStorageWordListDiv.style.display = "none"; // ✅ Ensure it's hidden before loading words
     await loadMasterWords();
     loadUserWords();
 };
 
-
-// ✅ Add Words (Multiple comma-separated)
-// ✅ Add Multiple Words to Local Storage (Comma-Separated)
+// ✅ Add Word to Local Storage (with `lookup.txt` check)
 addWordBtn.addEventListener("click", async () => {
-    let inputText = wordInput.value.trim();
+    let word = wordInput.value.trim();
 
-    if (!inputText) {
-        alert("Please enter at least one word.");
+    if (!word) {
+        alert("Please enter a word.");
         return;
     }
 
-    // Split words using commas, trim spaces, and filter out empty values
-    let wordsToAdd = inputText.split(",").map(word => word.trim()).filter(word => word);
-
+    // Reload localStorage to get the latest data
     let storedWords = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
 
-    let addedWords = []; // Track successfully added words
-    let duplicateWords = []; // Track words that already exist
-
-    for (let word of wordsToAdd) {
-        if (!userWords.includes(word) && !storedWords.includes(word) && !masterWords.includes(word)) {
-            userWords.push(word);
-            addedWords.push(word);
-        } else {
-            duplicateWords.push(word);
-        }
+    // ✅ Check if the word exists in `userWords`, `localStorage`, or `lookup.txt`
+    if (userWords.includes(word) || storedWords.includes(word) || masterWords.includes(word)) {
+        alert(`"${word}" is already in your list or exists in the master word list.`);
+        return;
     }
 
-    if (addedWords.length > 0) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
-        localStorageWordListDiv.innerHTML = `Added: <strong>${addedWords.join(", ")}</strong>`;
-    }
+    // Add the new word
+    userWords.push(word);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
 
-    if (duplicateWords.length > 0) {
-        alert(`These words are already in the list: ${duplicateWords.join(", ")}`);
-    }
-
+    // Confirm addition
+    localStorageWordList.innerHTML = `Added: <strong>${word}</strong>`;
     wordInput.value = ""; // Clear input field
 });
 
-// ✅ Toggle Show/Hide Words
+// ✅ Show All Words in Local Storage
 showWordsBtn.addEventListener("click", () => {
-    if (showWordsVisible) {
-        localStorageWordListDiv.style.display = "none";
-        showWordsBtn.textContent = "Show";
-    } else {
-        localStorageWordListDiv.style.display = "block"; // Show words
-        localStorageWordListDiv.innerHTML = userWords.length > 0 
-            ? `Your Words: ${userWords.join(", ")}`
-            : "No words added yet.";
-        showWordsBtn.textContent = "Hide";
+    if (userWords.length === 0) {
+        localStorageWordList.innerHTML = "No words added yet.";
+        return;
     }
-    showWordsVisible = !showWordsVisible; // Toggle state
-});
 
+    localStorageWordList.innerHTML = `Your Words: ${userWords.join(", ")}`;
+});
 
 // ✅ Delete a Word from Local Storage
 deleteWordBtn.addEventListener("click", () => {
@@ -360,63 +338,40 @@ deleteWordBtn.addEventListener("click", () => {
         return;
     }
 
+    // Remove the word and update localStorage
     userWords = userWords.filter(word => word !== wordToDelete);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
 
-    localStorageWordListDiv.innerHTML = `Deleted: <strong>${wordToDelete}</strong>`;
+    localStorageWordList.innerHTML = `Deleted: <strong>${wordToDelete}</strong>`;
     wordInput.value = ""; // Clear input field
 });
 
-// 📌 Load the master word list from lookup.txt
 async function loadMasterWords() {
     try {
         const response = await fetch(MASTER_WORDS_FILE);
         const text = await response.text();
 
+        // Extract words, removing numbers and commas
         masterWords = text
             .split('\n')
-            .map(line => line.replace(/^\d+,\s*/, "").trim()) // Remove numbers & commas
+            .map(line => {
+                let cleanWord = line.replace(/^\d+,\s*/, "").trim(); // Remove leading numbers & commas
+                return cleanWord;
+            })
             .filter(word => word); // Remove empty lines
 
+        console.log("Master words loaded:", masterWords); // Debugging output
     } catch (error) {
         console.error("Error loading master words:", error);
     }
 }
 
-// 📌 Select Word with New Rules
-let uppercaseWordCount = 0;
 
-async function getValidWord() {
-    try {
-        let combinedWords = [...masterWords, ...userWords];
-
-        if (!combinedWords.length) return "";
-
-        let word = "";
-        while (true) {
-            let randomIndex = Math.floor(Math.random() * combinedWords.length);
-            word = combinedWords[randomIndex]?.trim();
-
-            if (!word) continue;
-
-            // Selection rules
-            if (wordCount === 0 && /^[A-Z]/.test(word)) return word; // First word: must be uppercase
-            if (wordCount === 1 && !/^[A-Z]/.test(word)) return word; // Second word: must be lowercase
-            if (wordCount > 1) {
-                if (/^[A-Z]/.test(word)) {
-                    if (uppercaseWordCount >= Math.floor(wordCount / 8)) {
-                        continue; // Skip if more than 1 uppercase every 8 words
-                    }
-                    uppercaseWordCount++;
-                }
-                return word;
-            }
-        }
-    } catch (error) {
-        console.error("Error selecting word:", error);
-        return "";
-    }
-}
+// 🚀 Load words on page load
+window.onload = async function () {
+    await loadMasterWords();
+    loadUserWords();
+};
 
 
 // 📌 Load user words from LocalStorage
@@ -522,13 +477,7 @@ function resetSelection() {
     refineBtn.textContent = "Refine";
     clearTimeout(rngInterval);
     updateWordCount(); // Update word count display
-
-    // ✅ Hide localStorage word list & Reset Show/Hide state
-    localStorageWordListDiv.style.display = "none";
-    showWordsBtn.textContent = "Show";
-    showWordsVisible = false; // Reset visibility flag
 }
-
 
 async function selectWord() {
     if (!running) return;

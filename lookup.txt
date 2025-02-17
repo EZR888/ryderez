@@ -563,7 +563,6 @@ bake
 enclosure
 airplane
 fire
-april
 flavor
 speak
 satisfactory
@@ -687,7 +686,6 @@ committee
 judge
 afford
 may
-may
 attentive
 intend
 hire
@@ -727,7 +725,6 @@ council
 many
 eye
 bill
-september
 contain
 under
 ten
@@ -1011,7 +1008,6 @@ annoyance
 iron
 beyond
 smell
-november
 effective
 form
 goat
@@ -1356,7 +1352,6 @@ opposite
 large
 wild
 fright
-august
 total
 way
 toy
@@ -1446,7 +1441,6 @@ cent
 storm
 breakfast
 arise
-june
 again
 invite
 terrible
@@ -1673,7 +1667,6 @@ cultivator
 justice
 gallon
 true
-february
 appear
 cure
 ease
@@ -1738,7 +1731,6 @@ reflect
 pleasant
 silver
 disease
-july
 sting
 lessen
 fruit
@@ -2125,7 +2117,6 @@ train
 where
 discovery
 bribery
-january
 separation
 chairman
 distant

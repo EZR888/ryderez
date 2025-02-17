@@ -477,8 +477,6 @@ function updateWordListDisplay() {
     }
 }
 
-
-
 // 📌 Clear only the user's custom words
 function clearUserWords() {
     userWords = [];
@@ -581,39 +579,53 @@ async function selectWord() {
     rngInterval = setTimeout(selectWord, 2000);
 }
 
-async function getValidWord(type) {
+let uppercasePositions = []; // Track positions of uppercase words
+
+async function getValidWord() {
     try {
-        // Ensure master words are loaded only once
-        if (!masterWords.length) {
-            const response = await fetch(MASTER_WORDS_FILE);
-            const text = await response.text();
-
-            // Extract only the words, removing numbers and commas
-            masterWords = text
-                .split('\n')
-                .map(line => line.replace(/^\d+,\s*/, "").trim()) // Remove leading numbers & commas
-                .filter(word => word); // Remove empty lines
-        }
-
-        // Combine master words with user words (No shuffle needed)
         let combinedWords = [...masterWords, ...userWords];
 
-        console.log("Total words available:", combinedWords.length); // Debugging output
+        if (!combinedWords.length) return "";
 
         let word = "";
+        let attempts = 0;
 
-        while (true) {
+        while (attempts < 1000) { // Prevent infinite loops
             let randomIndex = Math.floor(Math.random() * combinedWords.length);
             word = combinedWords[randomIndex]?.trim();
 
             if (!word) continue;
 
-            // Apply selection rules
-            if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
-            if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
+            // First word must be uppercase
+            if (wordCount === 0 && /^[A-Z]/.test(word)) {
+                uppercasePositions.push(wordCount);
+                return word;
+            }
+
+            // Second word must be lowercase
+            if (wordCount === 1 && !/^[A-Z]/.test(word)) return word;
+
+            // From the third word onward:
+            if (wordCount > 1) {
+                let last8Words = uppercasePositions.filter(pos => pos >= wordCount - 7); // Check last 8 words
+
+                if (/^[A-Z]/.test(word)) {
+                    if (last8Words.length >= 1) {
+                        attempts++;
+                        continue; // Skip if there's already an uppercase word in the last 8 words
+                    }
+                    uppercasePositions.push(wordCount);
+                }
+
+                return word;
+            }
+
+            attempts++;
         }
+
+        return ""; // Return empty string if no valid word found
     } catch (error) {
-        console.error("Error loading words:", error);
+        console.error("Error selecting word:", error);
         return "";
     }
 }

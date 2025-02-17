@@ -267,8 +267,28 @@ const showWordsBtn = document.getElementById("showWords");
 const deleteWordBtn = document.getElementById("deleteWord");
 const localStorageWordListDiv = document.getElementById("localStorageWordList"); // 🔹 New name
 
-// ✅ Add Word to Local Storage
-addWordBtn.addEventListener("click", () => {
+// Function to load words from lookup.txt and store in masterWords array
+async function loadMasterWords() {
+    try {
+        const response = await fetch(MASTER_WORDS_FILE);
+        const text = await response.text();
+        masterWords = text
+            .split('\n')
+            .map(line => line.replace(/^\d+,\s*/, "").trim()) // Remove numbers & commas
+            .filter(word => word); // Remove empty lines
+    } catch (error) {
+        console.error("Error loading master words:", error);
+    }
+}
+
+// Call this function when the page loads
+window.onload = async function () {
+    await loadMasterWords();
+    loadUserWords();
+};
+
+// ✅ Add Word to Local Storage (with `lookup.txt` check)
+addWordBtn.addEventListener("click", async () => {
     let word = wordInput.value.trim();
 
     if (!word) {
@@ -276,11 +296,16 @@ addWordBtn.addEventListener("click", () => {
         return;
     }
 
-    if (userWords.includes(word)) {
-        alert(`"${word}" is already in your list.`);
+    // Reload localStorage to get the latest data
+    let storedWords = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+
+    // ✅ Check if the word exists in `userWords`, `localStorage`, or `lookup.txt`
+    if (userWords.includes(word) || storedWords.includes(word) || masterWords.includes(word)) {
+        alert(`"${word}" is already in your list or exists in the master word list.`);
         return;
     }
 
+    // Add the new word
     userWords.push(word);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
 
@@ -500,13 +525,10 @@ async function getValidWord(type) {
                 .filter(word => word); // Remove empty lines
         }
 
-        // Combine master words with user words
+        // Combine master words with user words (No shuffle needed)
         let combinedWords = [...masterWords, ...userWords];
 
-        // Shuffle words to prevent "Joe" (or any user word) from always appearing first
-        // combinedWords.sort(() => Math.random() - 0.5);
-        
-        // console.log("Shuffled word list:", combinedWords); // Debugging output
+        console.log("Total words available:", combinedWords.length); // Debugging output
 
         let word = "";
 

@@ -82,7 +82,6 @@
 89,awkward
 90,fortune
 91,strength
-92,Alicia
 93,moonlight
 94,struggle
 95,drugs
@@ -251,7 +250,6 @@
 264, 67
 265,moderate
 266,even
-267,Adam
 268,spot
 269,market
 270,lodge
@@ -629,7 +627,6 @@
 663,tender
 664,loosen
 665,blade
-666,Doug
 667,lid
 668,upset
 669,soon
@@ -1421,7 +1418,6 @@
 1493,sign
 1494,instrument
 1495,madden
-1496,Dottie
 1497,neighbor
 1498,group
 1499,fruit
@@ -1432,11 +1428,8 @@
 1504,forgive
 1505,wine
 1506,suspicion
-1507,Hanna
 1508,travel
-1509,Robi
 1510,history
-1511,Leslie
 1512,meantime
 1514,allowance
 1516,important
@@ -1522,7 +1515,6 @@
 1601,calm
 1602,forth
 1603, 31
-1604,Ted
 1605,defend
 1606,sink
 1608,join
@@ -1550,8 +1542,6 @@
 1630,more
 1631,term
 1632,altogether
-1633,Debra
-1634,Zoe
 1635,sweat
 1636,jump
 1637,astonish
@@ -1567,7 +1557,6 @@
 1647,work
 1648,loose
 1649,hide
-1650,Sandy
 1651,nobody
 1652,popular
 1653,duck
@@ -1587,7 +1576,6 @@
 1667,height
 1668,black
 1669,chance
-1670,Victoria
 1671,either
 1672,translator
 1673,ask
@@ -1772,7 +1760,6 @@
 1859,swim
 1860,because
 1861,laughter
-1862,Paul
 1863,anything
 1864,grain
 1866,entertain
@@ -1954,7 +1941,6 @@
 2053,march
 2054,busy
 2055,island
-2056,Michael
 2057,nephew
 2058,everybody
 2059,chicken
@@ -2147,7 +2133,6 @@
 2260,land
 2261,lift
 2262,flash
-2263,Joey
 2264,compose
 2265,latter
 2266,insurance

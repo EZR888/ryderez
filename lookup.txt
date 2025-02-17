@@ -842,7 +842,6 @@ discuss
 floor
 arrive
 connect
-strap
 sorry
 wave
 tidy
@@ -905,7 +904,6 @@ card
 move
 interruption
 breathe
-whip
 price
 holiday
 toe
@@ -1716,7 +1714,6 @@ classification
 represent
 obedient
 blame
-spank
 hindrance
 lid
 grass

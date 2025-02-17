@@ -286,8 +286,7 @@ async function loadMasterWords() {
 // Call this function when the page loads
 window.onload = async function () {
     localStorageWordListDiv.style.display = "none"; // ✅ Ensure it's hidden before loading words
-    await loadMasterWords();
-    loadUserWords();
+    await loadMasterWords();;
 };
 
 
@@ -348,23 +347,43 @@ showWordsBtn.addEventListener("click", () => {
 
 // ✅ Delete a Word from Local Storage
 deleteWordBtn.addEventListener("click", () => {
-    let wordToDelete = wordInput.value.trim();
+    let inputText = wordInput.value.trim();
 
-    if (!wordToDelete) {
-        alert("Enter a word to delete.");
+    if (!inputText) {
+        alert("Enter at least one word to delete.");
         return;
     }
 
-    if (!userWords.includes(wordToDelete)) {
-        alert(`"${wordToDelete}" is not in your list.`);
-        return;
-    }
+    // Split input into an array, trimming spaces
+    let wordsToDelete = inputText.split(",").map(word => word.trim()).filter(word => word);
 
-    userWords = userWords.filter(word => word !== wordToDelete);
+    let notFoundWords = [];
+    let deletedWords = [];
+
+    wordsToDelete.forEach(word => {
+        if (userWords.includes(word)) {
+            userWords = userWords.filter(w => w !== word);
+            deletedWords.push(word);
+        } else {
+            notFoundWords.push(word);
+        }
+    });
+
+    // Update local storage
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
 
-    localStorageWordListDiv.innerHTML = `Deleted: <strong>${wordToDelete}</strong>`;
-    wordInput.value = ""; // Clear input field
+    // Show deleted words
+    if (deletedWords.length > 0) {
+        localStorageWordListDiv.innerHTML = `Deleted: <strong>${deletedWords.join(", ")}</strong>`;
+    }
+
+    // Alert if any words were not found
+    if (notFoundWords.length > 0) {
+        alert(`These words were not found: ${notFoundWords.join(", ")}`);
+    }
+
+    // Clear input field
+    wordInput.value = "";
 });
 
 // 📌 Load the master word list from lookup.txt

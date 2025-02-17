@@ -279,40 +279,6 @@ function syncUserWords() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
 }
 
-addWordBtn.addEventListener("click", () => {
-    syncUserWords(); // Make sure userWords is up-to-date
-    
-    let inputText = wordInput.value.trim();
-    if (!inputText) {
-        alert("Please enter at least one word.");
-        return;
-    }
-
-    let wordsToAdd = inputText.split(",").map(word => word.trim()).filter(word => word);
-
-    let addedWords = [];
-    let duplicateWords = [];
-
-    for (let word of wordsToAdd) {
-        if (!userWords.includes(word) && !masterWords.includes(word)) {
-            userWords.push(word);
-            addedWords.push(word);
-        } else {
-            duplicateWords.push(word);
-        }
-    }
-
-    if (addedWords.length > 0) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userWords));
-        localStorageWordListDiv.innerHTML = `Added: <strong>${addedWords.join(", ")}</strong>`;
-    }
-
-    if (duplicateWords.length > 0) {
-        alert(`These words are already in the list: ${duplicateWords.join(", ")}`);
-    }
-
-    wordInput.value = "";
-});
 
 deleteWordBtn.addEventListener("click", () => {
     syncUserWords(); // Ensure up-to-date data
@@ -437,18 +403,8 @@ showWordsBtn.addEventListener("click", () => {
 deleteWordBtn.addEventListener("click", () => {
     let inputText = wordInput.value.trim(); // Capture input text immediately
 
-    //if (!inputText) {
-     //   alert("Enter at least one word to delete.");
-    //    return;
-   // }
-
     // Split input into an array, trimming spaces
     let wordsToDelete = inputText.split(",").map(word => word.trim()).filter(word => word);
-
-    //if (wordsToDelete.length === 0) {
-     //   alert("Enter at least one valid word to delete.");
-    //    return;
-   // }
 
     let notFoundWords = [];
     let deletedWords = [];

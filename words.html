@@ -610,14 +610,23 @@ async function getValidWord() {
                 let last8Words = uppercasePositions.filter(pos => pos >= wordCount - 7); // Check last 8 words
 
                 if (/^[A-Z]/.test(word)) {
-                    if (last8Words.length >= 1) {
-                        attempts++;
-                        continue; // Skip if there's already an uppercase word in the last 8 words
+                    if (last8Words.length === 0) {
+                        // If no uppercase word in the last 8, allow it.
+                        uppercasePositions.push(wordCount);
+                        return word;
+                    } else {
+                        // If there's already an uppercase in the last 8, allow with a 20% chance.
+                        if (Math.random() < 0.2) { 
+                            uppercasePositions.push(wordCount);
+                            return word;
+                        } else {
+                            attempts++;
+                            continue; // Try again for a lowercase word
+                        }
                     }
-                    uppercasePositions.push(wordCount);
                 }
 
-                return word;
+                return word; // Return lowercase words normally
             }
 
             attempts++;

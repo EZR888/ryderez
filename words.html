@@ -348,38 +348,6 @@ window.onload = async function () {
     loadUserWords();
 };
 
-// 📌 Load the default master words from lookup.txt
-async function getValidWord(type) {
-    try {
-        // Ensure master words are loaded first
-        if (!masterWords.length) await loadMasterWords();
-
-        // Combine master words with user words
-        let combinedWords = [...masterWords, ...userWords];
-
-        // Shuffle combined list properly
-        combinedWords = combinedWords.sort(() => Math.random() - 0.5);
-
-        console.log("Shuffled word list:", combinedWords); // Debugging output
-
-        let word = "";
-
-        while (true) {
-            let randomIndex = Math.floor(Math.random() * combinedWords.length);
-            word = combinedWords[randomIndex]?.trim();
-
-            if (!word) continue;
-
-            // Apply selection rules
-            if (type === "uppercase" && /^[A-Z]/.test(word)) return word;
-            if (type === "any" && !/^\d+$/.test(word) && !/^[A-Z]/.test(word)) return word;
-        }
-    } catch (error) {
-        console.error("Error loading words:", error);
-        return "";
-    }
-}
-
 
 // 📌 Load user words from LocalStorage
 function loadUserWords() {
@@ -536,7 +504,9 @@ async function getValidWord(type) {
         let combinedWords = [...masterWords, ...userWords];
 
         // Shuffle words to prevent "Joe" (or any user word) from always appearing first
-        combinedWords.sort(() => Math.random() - 0.5);
+        // combinedWords.sort(() => Math.random() - 0.5);
+        
+        // console.log("Shuffled word list:", combinedWords); // Debugging output
 
         let word = "";
 

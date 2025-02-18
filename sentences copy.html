@@ -306,27 +306,33 @@ async function callChatGPT(wordsArray, userInput) {
         messages: [
             { 
                 role: "system", 
-                content: `You are a guardian angel, though not religious. Your job is to take a list of words and connect them in a way that conveys a message to the user, validating your presence. Keep it factual and not overly sentimental or emotional.
+                content: `You are an expert in subconscious analysis and symbolic interpretation, skilled in deciphering hidden meanings from words that appear in dreams or spontaneous thoughts.
                 
-                - Avoid gendered terms like "husband" or "wife" since the message must be neutral.
-                - Ensure the message is short and natural, using the words smoothly.
-                - The tone should be concise and crisp.
+                Your task is to take a list of words and identify common themes, emotional undercurrents, and potential subconscious messages. You do **not** provide a literal or dictionary definition of the words, nor do you interpret them in a mystical or supernatural way.
+
+                - Group the words into themes such as **identity, control, transformation, struggle, emotion, places, hidden meanings**, etc.
+                - Consider how the words might relate to **internal conflicts, desires, fears, or transitions**.
+                - Provide only the "Possible Interpretation" section—keep it **concise but meaningful**.
+                - Avoid generic responses—analyze the words **as if they belong to a single subconscious narrative**.
                 `
             },
             { 
                 role: "user", 
-                content: `User is asking: "${userInput}". Here is a list of words: ${wordsArray.join(", ")}. Generate a short spiritual message using these words, ensuring that:
-                - The message sounds like it's from a friend.
-                - The words provided are naturally integrated.
-                - The tone is not too gushy or corny, while still reassuring and validating.
+                content: `User is providing a list of words: ${wordsArray.join(", ")}. 
+
+                Generate a **Possible Interpretation** that uncovers hidden themes and subconscious meaning. The response should:
+                - Identify key themes within the words.
+                - Connect the words in a way that suggests a deeper personal insight.
+                - Offer **a single, structured response**, rather than listing separate explanations for each word.
                 
                 Example:
-                - Words: [dog, head, flower, Nancy, 3] → Message: "There's someone named Nancy in your life right now. There's an issue with her dog.  Something to do with it's head.  I hope you enjoyed the flowers."
+                - Words: [ocean, trapped, escape, mirror, father, running, blue]  
+                - Response: "Your subconscious might be processing a sense of feeling trapped or seeking escape. The ocean could symbolize deep emotions, while 'trapped' and 'escape' indicate tension between staying and leaving. A mirror suggests self-reflection, and 'father' might indicate authority or guidance. 'Running' suggests movement—perhaps a desire for change or freedom. Blue may connect to calmness or sadness, reinforcing a possible emotional undercurrent."
                 
-                Now generate a similar message.`
+                Now generate a similar interpretation for the words provided.`
             }
         ],
-        temperature: 0.6
+        temperature: 0.7
     };
 
     try {
@@ -343,7 +349,7 @@ async function callChatGPT(wordsArray, userInput) {
         return data.choices[0].message.content;
     } catch (error) {
         console.error("Error calling Cloudflare Worker:", error);
-        return "Error generating sentences.";
+        return "Error generating interpretation.";
     }
 }
 

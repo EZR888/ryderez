@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -268,6 +267,7 @@ body {
         
         <div class="button-container">
     		<button id="pickWord">Start</button>
+    		<button id="analyzeAI">AI</button>
     		<button class="button button-purple" id="howToUseButton">Help</button>
     		<button id="stop">Stop</button>
 		</div>
@@ -307,6 +307,60 @@ body {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
+    
+let lastAIResponse = null; // Stores the last AI-generated interpretation
+
+async function callChatGPT(wordsArray) {
+    if (lastAIResponse) return lastAIResponse; // Use stored response if available
+
+    const endpoint = "https://openai-proxy.ezryder38.workers.dev/";
+    
+    const requestBody = {
+        model: "gpt-3.5-turbo",
+        messages: [
+            { 
+                role: "system", 
+                content: `You are an advanced contextual analyst. Your role is to extract **thematic meaning** from a list of words, focusing on the **overall message or emotional tone** rather than categorizing individual words.
+
+                - If the words suggest a **political or social theme**, connect them to **current events in the U.S.**  
+                - If the words relate to **relationships, emotions, or personal life**, describe that theme instead.  
+                - Keep the response **concise and insightful**, avoiding word definitions or direct repetition.  
+                - Use a **third-person, factual tone**, rather than sounding mystical or speculative.  
+                `
+            },
+            { 
+                role: "user", 
+                content: `User is providing a list of words: ${wordsArray.join(", ")}. 
+
+                Generate a **Concise Interpretation** that:
+                - Extracts the primary meaning or feeling from the words.  
+                - Connects the words to **current U.S. events** if relevant.  
+                - Focuses on the **message they collectively imply**, rather than analyzing individual words.  
+            `
+            }
+        ]
+    };
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+
+        lastAIResponse = data.choices?.[0]?.message?.content || "No response received."; // Store response
+        return lastAIResponse;
+    } catch (error) {
+        console.error("Error calling AI:", error);
+        lastAIResponse = "An error occurred while processing your request.";
+        return lastAIResponse;
+    }
+}
+
     
 const MASTER_WORDS_FILE = 'lookup.txt'; // The original master list file
 const LOCAL_STORAGE_KEY = 'customWordList'; // Where user words are stored
@@ -590,6 +644,7 @@ function clearUserWords() {
     updateWordListDisplay();
 }
 
+    
 
     
 let selectedWords = [];
@@ -628,7 +683,29 @@ function stopSelection() {
     running = false;
     pickWordBtn.textContent = "Start";
     clearTimeout(rngInterval);
+    console.log("Selected words:", selectedWords); // Debugging line
 }
+
+document.getElementById("analyzeAI").addEventListener("click", analyzeWordsWithAI);
+
+async function analyzeWordsWithAI() {
+    if (selectedWords.length === 0) {
+        alert("No words selected. Please generate words first.");
+        return;
+    }
+
+    const userInput = document.getElementById("wordInput") ? document.getElementById("wordInput").value : "";
+    
+    try {
+        let response = await callChatGPT(selectedWords, userInput);
+        
+        // Display the response (You can modify this part to show the result in a modal or div)
+        alert("AI Response:\n\n" + response);
+    } catch (error) {
+        console.error("Error calling AI:", error);
+    }
+}
+
 
 function resetSelection() {
     selectedWords = [];
@@ -682,7 +759,7 @@ async function selectWord() {
     wordListDiv.appendChild(document.createTextNode(", "));
 
     // Continue selecting words every 2 seconds
-    rngInterval = setTimeout(selectWord, 888);
+    rngInterval = setTimeout(selectWord, 50);
 }
 
 let uppercasePositions = []; // Track positions of uppercase words
@@ -800,7 +877,7 @@ function showBothHighlightSets() {
 
 document.getElementById('savePDF').addEventListener('click', saveToPDF);
 
-function saveToPDF() {
+async function saveToPDF() {
     if (typeof window.jspdf === "undefined") {
         console.error("jsPDF library is not loaded.");
         return;
@@ -808,6 +885,7 @@ function saveToPDF() {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+
     let words = selectedWords.map(word => {
         return (originalHighlightedWords.some(w => w.textContent === word) || 
                 refinedHighlightedWords.some(w => w.textContent === word)) 
@@ -820,20 +898,45 @@ function saveToPDF() {
         return;
     }
 
+    // Use the stored AI response if available, otherwise generate a new one
+    let aiResponse = lastAIResponse || await callChatGPT(selectedWords);
+
+    if (!aiResponse) {
+        aiResponse = "No AI interpretation available.";
+    }
+
+    // Format PDF
     doc.text("Saved Word List", 105, 15, { align: "center" });
+
     const now = new Date();
     doc.text(`Generated on: ${now.toLocaleString()}`, 105, 25, { align: "center" });
 
+    // Add word list to PDF
+    let yPosition = 40;
     words.split(", ").forEach((word, index) => {
         if (word.startsWith("{HIGHLIGHT}")) {
-            doc.setTextColor(255, 140, 0); // Set orange for highlighted words
+            doc.setTextColor(255, 140, 0); // Orange for highlighted words
             word = word.replace("{HIGHLIGHT}", "");
         } else {
             doc.setTextColor(0, 0, 0); // Default black text
         }
-        doc.text(word + ", ", 20 + (index % 5) * 30, 40 + Math.floor(index / 5) * 10);
+        doc.text(word + ", ", 20 + (index % 5) * 30, yPosition + Math.floor(index / 5) * 10);
     });
 
+    // Reset text color to black
+    doc.setTextColor(0, 0, 0);
+
+    // Add AI Response
+    yPosition += Math.ceil(selectedWords.length / 5) * 10 + 10; // Move below word list
+    doc.text("AI Interpretation:", 20, yPosition);
+    doc.setFont("times", "italic");
+    doc.setFontSize(12);
+
+    // Wrap long AI responses
+    let splitText = doc.splitTextToSize(aiResponse, 170);
+    doc.text(splitText, 20, yPosition + 10);
+
+    // Save the PDF
     doc.save(`Word_List_${now.toISOString().slice(0, 10)}.pdf`);
 }
 

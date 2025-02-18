@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -590,6 +589,7 @@ function clearUserWords() {
     updateWordListDisplay();
 }
 
+    
 
     
 let selectedWords = [];
@@ -682,7 +682,7 @@ async function selectWord() {
     wordListDiv.appendChild(document.createTextNode(", "));
 
     // Continue selecting words every 2 seconds
-    rngInterval = setTimeout(selectWord, 888);
+    rngInterval = setTimeout(selectWord, 1800);
 }
 
 let uppercasePositions = []; // Track positions of uppercase words

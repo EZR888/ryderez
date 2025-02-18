@@ -475,14 +475,17 @@ showWordsBtn.addEventListener("click", () => {
         localStorageWordListDiv.style.display = "none";
         showWordsBtn.textContent = "Show";
     } else {
-        localStorageWordListDiv.style.display = "block"; // Show words
-        localStorageWordListDiv.innerHTML = userWords.length > 0 
-            ? `Your Words: ${userWords.join(", ")}`
-            : "No words added yet.";
+        if (userWords.length === 0) {
+            localStorageWordListDiv.innerHTML = `<span style="color: salmon; font-weight: bold;">No custom words added yet.</span> ${userWords.join(", ")}`;
+        } else {
+            localStorageWordListDiv.innerHTML = `<span style="color: salmon; font-weight: bold;">Your Words:</span> ${userWords.join(", ")}`;
+        }
+        localStorageWordListDiv.style.display = "block"; // Show the list
         showWordsBtn.textContent = "Hide";
     }
     showWordsVisible = !showWordsVisible; // Toggle state
 });
+
 
 
 deleteWordBtn.addEventListener("click", () => {
@@ -572,11 +575,11 @@ function updateWordListDisplay() {
         return;
     }
 
-    if (userWords.length === 0) {
-        userWordListDiv.innerText = "No custom words added yet.";
-    } else {
-        userWordListDiv.innerText = `Your Words: ${userWords.join(", ")}`;
-    }
+if (userWords.length === 0) {
+    userWordListDiv.innerHTML = "No custom words added yet.";
+} else {
+    userWordListDiv.innerHTML = `<span style="color: salmon; font-weight: bold;">Your Words:</span> ${userWords.join(", ")}`;
+}
 }
 
 // 📌 Clear only the user's custom words

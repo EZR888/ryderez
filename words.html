@@ -476,9 +476,9 @@ showWordsBtn.addEventListener("click", () => {
         showWordsBtn.textContent = "Show";
     } else {
         if (userWords.length === 0) {
-            localStorageWordListDiv.innerHTML = `<span style="color: salmon; font-weight: bold;">No custom words added yet.</span> ${userWords.join(", ")}`;
+            localStorageWordListDiv.innerHTML = `<span style="color: salmon;">No custom words added yet.</span> ${userWords.join(", ")}`;
         } else {
-            localStorageWordListDiv.innerHTML = `<span style="color: salmon; font-weight: bold;">Your Words:</span> ${userWords.join(", ")}`;
+            localStorageWordListDiv.innerHTML = `<span style="color: salmon;">Your Words:</span> ${userWords.join(", ")}`;
         }
         localStorageWordListDiv.style.display = "block"; // Show the list
         showWordsBtn.textContent = "Hide";
@@ -849,7 +849,6 @@ function updateWordCount() {
         <button class="close-button" id="closeModalButton">&times;</button>
         <h3>How to Use</h3>
         <p>
-            <br>
             Click "Start" to begin word selection.<br><br>
             Use "Refine" to randomly highlight words.<br><br>
             "Reset" will clear your words<br><br>

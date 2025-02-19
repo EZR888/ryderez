@@ -749,41 +749,41 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
 let csvProcessingStarted = false; // Prevent duplicate processing
 
 function processConcatenatedCSVData(csvData) {
-  if (csvProcessingStarted) return; // If already running, exit function
-  csvProcessingStarted = true; // Set flag to true to prevent multiple runs
+  if (csvProcessingStarted) return;
+  csvProcessingStarted = true;
 
   const rows = csvData.trim().split("\n");
   if (rows.length <= 1) {
     alert("The combined CSV data does not contain enough data.");
-    csvProcessingStarted = false; // Reset flag
+    csvProcessingStarted = false;
     return;
   }
 
   const dataRows = [];
   rows.forEach(row => {
     const values = row.split(",").map(value => value.trim());
+
+    // Check if the row is a header
     const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
     if (isHeader) {
       console.log("Header row detected and skipped:", row);
       return;
     }
 
-    const numericValues = values.map(val => {
-      if (val === "" || isNaN(val)) {
-        return 0;
-      }
-      return Number(val);
-    });
+    const numericValues = values.map(val => (val === "" || isNaN(val)) ? 0 : Number(val));
 
     if (numericValues.length === 38) {
       dataRows.push(numericValues);
     }
   });
 
-  totalRuns = rows.length - 1;
-  console.log("Total Runs from file:", totalRuns);
-  processData(dataRows); // Only call this once
+  totalRuns = dataRows.length; // ✅ FIX: Count actual valid data rows, not all rows
+  console.log("Total Runs after filtering headers:", totalRuns);
+  processData(dataRows);
+
+  csvProcessingStarted = false;
 }
+
 
 document.getElementById("fileInput").addEventListener("change", function(event) {
     const files = event.target.files;

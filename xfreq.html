@@ -457,7 +457,7 @@ function displayResults(differences, groupSums, stats) {
                 <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
                 <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
                 <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
             </tr>`;
 
         // 🟢 **Everything below remains unchanged!**
@@ -513,7 +513,7 @@ function displayResults(differences, groupSums, stats) {
         console.error("Invalid totalRuns for CSV export:", totalRuns);
         return "";
       }
-      let csvContent = "Category,Metric,Value,,Value,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value,Highlight\n";
+      let csvContent = "Category,Metric,Value,,Value,Frequency,P-Value,Cumulative Frequency,Cumulative Probability,Highlight\n";
       const allData = { ...differences, ...groupSums };
       Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
@@ -605,7 +605,7 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
             <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
             <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
             <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
-            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative P-Value</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
           </tr>`;
       let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
       let metricKeys = Object.keys(maxHitsStats);

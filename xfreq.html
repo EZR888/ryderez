@@ -218,6 +218,7 @@
         <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
         <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
         <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
         <button class="button button-single" id="singleSpinButton">Wheel</button>
       </div>
     </div>
@@ -927,12 +928,38 @@ function getRandomCounts(numPicks) {
     // =======================================================
     // ADDITIONAL EVENT LISTENERS
     // =======================================================
-    document.getElementById("simButton").addEventListener("click", () => { window.open("roulette.html", "_blank"); });
-    document.getElementById("viewDataButton").addEventListener("click", () => { window.open("view-data.html", "_blank"); });
-    document.getElementById("viewPValueButton").addEventListener("click", () => { window.open("pvalues.html", "_blank"); });
-    document.getElementById("viewFreqDistButton").addEventListener("click", () => { window.open("xfreq.html", "_blank"); });
-    document.getElementById("viewStatsButton").addEventListener("click", () => { window.open("view-stats.html", "_blank"); });
-    document.getElementById("singleSpinButton").addEventListener("click", () => { window.open("new-wheel.html", "_blank"); });
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+          
 
 </script>
 </body>

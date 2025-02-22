@@ -277,9 +277,29 @@
       zeroSums: [13,1,37,27,10,9,28,0,2,14]
     };
 
-    function sumColumns(counts, indices) {
+function sumColumns(counts, indices) {
       return indices.reduce((sum, idx) => sum + counts[idx], 0);
     }
+    
+// Function to compute Density (sum of top 5 values in a row)
+function calculateDensity(counts) {
+    return counts
+        .slice() // Clone the array to avoid modifying original
+        .sort((a, b) => b - a) // Sort in descending order
+        .slice(0, 5) // Take top 5
+        .reduce((sum, val) => sum + val, 0)
+        .toFixed(6); // 🔥 Trim to 6 decimal places
+}
+
+// Function to compute Variance (spread of values in a row)
+function calculateVariance(counts) {
+    let n = counts.length;
+    let mean = counts.reduce((sum, val) => sum + val, 0) / n;
+    let variance = counts.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+    return parseFloat(variance.toFixed(6)); // 🔥 Ensure it's a number with 6 decimal places
+}
+
+
 
     function calculateAllSums(counts) {
       return {
@@ -295,13 +315,14 @@
     // =======================================================
     // Descriptive Statistics & Frequency Functions
     // =======================================================
-    function calculateDescriptiveStatistics(differences) {
-      if (!Array.isArray(differences) || differences.length === 0) {
+function calculateDescriptiveStatistics(differences, isVariance = false) {
+    if (!Array.isArray(differences) || differences.length === 0) {
         throw new TypeError("The 'differences' argument must be a non-empty array.");
-      }
-      let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
-      let min = Infinity, max = -Infinity;
-      differences.forEach(x => {
+    }
+
+    let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
+    let min = Infinity, max = -Infinity;
+    differences.forEach(x => {
         n++;
         const delta = x - mean;
         const deltaN = delta / n;
@@ -313,28 +334,34 @@
         M2 += term1;
         if (x < min) min = x;
         if (x > max) max = x;
-      });
-      const variance = M2 / n;
-      const stdDev = Math.sqrt(variance);
-      const skewness = (M3 / n) / Math.pow(stdDev, 3);
-      const kurtosis = (M4 / n) / (variance * variance) - 3;
-      return {
-        mean: mean.toFixed(4),
-        variance: variance.toFixed(4),
-        stdDev: stdDev.toFixed(4),
-        median: calculateMedian(differences),
-        min,
-        max,
-        skewness: skewness.toFixed(4),
-        kurtosis: kurtosis.toFixed(4)
-      };
-    }
+    });
 
-    function calculateMedian(arr) {
-      const sorted = arr.slice().sort((a, b) => a - b);
-      const mid = Math.floor(sorted.length / 2);
-      return sorted.length % 2 !== 0 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4);
-    }
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
+
+    return {
+        mean: parseFloat(mean.toFixed(4)),  // 🔥 Always 4 decimal places
+        variance: parseFloat(variance.toFixed(4)),  // 🔥 Always 4 decimal places
+        stdDev: parseFloat(stdDev.toFixed(4)),  // 🔥 Always 4 decimal places
+        median: parseFloat(calculateMedian(differences).toFixed(4)),  // 🔥 Always 4 decimal places
+        min: parseFloat(min.toFixed(4)),  // 🔥 Always 4 decimal places
+        max: parseFloat(max.toFixed(4)),  // 🔥 Always 4 decimal places
+        skewness: parseFloat(skewness.toFixed(4)),  // 🔥 Always 4 decimal places
+        kurtosis: parseFloat(kurtosis.toFixed(4))  // 🔥 Always 4 decimal places
+    };
+}
+
+
+function calculateMedian(arr) {
+    const sorted = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    
+    return sorted.length % 2 !== 0 
+        ? parseFloat(sorted[mid].toFixed(4))  // Ensure number, 4 decimal places
+        : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));  // Ensure number, 4 decimal places
+}
 
     function calculateFrequencyDistribution(data) {
       if (!data || !Array.isArray(data)) {
@@ -405,7 +432,9 @@
       towardEnds: "Towards Ends",
       towardCenter: "Towards Center",
       endsCenterDiff: "Towards Ends - Towards Center",
-      zeroSums: "Zero Sums Total"
+      zeroSums: "Zero Sums Total",
+      Density: "Density (Top 5 Sum)",
+      Variance: "Variance (Within-Run Spread)"
     };
 
     function displayDescriptiveStatistics(stats) {
@@ -433,18 +462,33 @@
     // =======================================================
     // CSV EXPORT FUNCTIONS
     // =======================================================
-function getFreqDistCSV(differences, groupSums, stats) {
+function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
   if (!totalRuns || totalRuns <= 0) {
     console.error("Invalid totalRuns for CSV export:", totalRuns);
     return "";
   }
 
   let csvContent = "Category,Metric,Value,,Value,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
-  const allData = { ...differences, ...groupSums };
+
+  console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
+
+  const densityFreqDist = densityValues.length > 0 ? calculateFrequencyDistribution(densityValues) : {};
+  const varianceFreqDist = varianceValues.length > 0 ? calculateFrequencyDistribution(varianceValues) : {};
+
+  const allData = { 
+    ...differences, 
+    ...groupSums, 
+    Density: densityValues, 
+    Variance: varianceValues 
+  };
 
   Object.entries(stats).forEach(([category, values]) => {
     const categoryLabel = categoryLabels[category] || category;
-    const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+    let frequencyDistribution = 
+      category === "Density" ? densityFreqDist :
+      category === "Variance" ? varianceFreqDist :
+      calculateFrequencyDistribution(allData[category] || []);
+
     const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
     const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
     const metricKeys = Object.keys(values);
@@ -452,36 +496,27 @@ function getFreqDistCSV(differences, groupSums, stats) {
 
     for (let i = 0; i < maxRows; i++) {
       const metric = metricKeys[i] || "";
-      const value = metric ? values[metric] : "";
+      let value = metric ? values[metric] : "";
+
+      if ((category === "Variance" || category === "Density") && value !== "") {
+        value = parseFloat(value).toFixed(4);
+      }
+
       const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
       const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-      // Default calculations
-      let expectedFrequency = (totalRuns > 0 && observedFrequency !== "") ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
-      let adjustedPValue = "";
+      let expectedFrequency = (totalRuns > 0 && observedFrequency !== "") 
+        ? (observedFrequency / totalRuns).toFixed(6) 
+        : "0.000000";
       let cumulativeProbability = "";
-      let highlight = "No";
 
       if (difference !== "" && cumulativeData[difference]) {
-        adjustedPValue = cumulativeData[difference].cumulativeFrequency;
         cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
           ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
           : "0.000000";
-
-        if (parseFloat(cumulativeProbability) < 0.05) { highlight = "Yes"; }
       }
 
-      // 🔥 Overwrite expected frequency and cumulative probability using reference data 🔥
-      let expectedFrequencyLookup = referenceData[categoryLabel]?.[difference]?.pValue;
-      let cumulativeProbabilityLookup = referenceData[categoryLabel]?.[difference]?.cumulativePValue;
-      if (expectedFrequencyLookup !== undefined) {
-        expectedFrequency = expectedFrequencyLookup;
-      }
-      if (cumulativeProbabilityLookup !== undefined) {
-        cumulativeProbability = cumulativeProbabilityLookup;
-      }
-
-      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedFrequency},${observedFrequency},${cumulativeProbability},,${highlight}\n`;
+      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedFrequency},${observedFrequency},${cumulativeProbability},,\n`;
     }
   });
 
@@ -518,10 +553,10 @@ function loadReferenceData(csvFilePath) {
         .catch(error => console.error("Error loading reference data:", error));
 }
 
-function displayResults(differences, groupSums, stats) {
+function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
-    const allCategories = { ...differences, ...groupSums };
+    const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
 
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) return;
@@ -531,22 +566,10 @@ function displayResults(differences, groupSums, stats) {
 
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        const totalSpins = totalRuns * 38; // Calculate total spins dynamically
-
-        let imageLineHTML = `
-            <center>
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalRuns}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Runs</span>
-                &nbsp;&nbsp;
-                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 10px auto;">
-                &nbsp;&nbsp;
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalSpins}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Spins</span>
-            </center><br>`;
+        const totalSpins = totalRuns * 38;
 
         let tableHTML = `
             ${categoryHTML}
-            ${imageLineHTML}
             <table border='1' style="border-collapse: collapse; width: 100%;">
             <tr>
                 <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Metric</th>
@@ -565,12 +588,16 @@ function displayResults(differences, groupSums, stats) {
 
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
-            const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
-            const value = metric ? stats[category][metric] : "";
+            let value = metric ? stats[category][metric] : "";
+
+            // 🔥 Ensure Variance is displayed with exactly 6 decimal places
+            if (category === "Variance" && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            
-            // Default calculation
+
             let pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
             let cumulativeFrequency = "";
             let cumulativePValue = "";
@@ -581,7 +608,6 @@ function displayResults(differences, groupSums, stats) {
                 cumulativePValue = Number(cumulativeData[differenceKey].cumulativeP).toFixed(6);
             }
 
-            // 🔥 Overwrite pValue and cumulativePValue using the reference data 🔥
             if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
                 pValue = referenceData[categoryLabel][differenceKey].pValue;
                 cumulativePValue = referenceData[categoryLabel][differenceKey].cumulativePValue;
@@ -595,7 +621,7 @@ function displayResults(differences, groupSums, stats) {
 
             tableHTML += `
             <tr>
-                <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+                <td style="padding: 8px; text-align: center; ${metricStyle}">${metric}</td>
                 <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
                 <td style="padding: 8px;"></td>
                 <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
@@ -633,11 +659,13 @@ function getMaxHitsCSV(maxHits) {
 
 
 
-function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
+function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues, varianceValues, fileName) {
     let csvContent = "";
 
+    console.log("🟢 Exporting CSV... Checking Density & Variance:", { densityValues, varianceValues });
+
     // Add frequency distribution data
-    csvContent += getFreqDistCSV(differences, groupSums, stats);
+    csvContent += getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
     csvContent += "\n\n";
 
     // Compute max counts stats:
@@ -799,45 +827,81 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
     // PROCESSING FUNCTIONS
     // =======================================================
     // processData: Called after file input processing.
-    function processData(rows) {
-      let statsCollection = {};
-      const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
-      const groupSums = {};
-      for (const key in groupIndices) {
+function processData(rows) {
+    let statsCollection = {};
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    const groupSums = {};
+    let densityValues = [];  // 🔥 Store density values for display
+    let varianceValues = []; // 🔥 Store variance values for display
+
+    for (const key in groupIndices) {
         groupSums[key] = [];
-      }
-      // Initialize maxHits for each number (0–37)
-      let maxHits = Array(38).fill(0);
-      rows.forEach(counts => {
+    }
+
+    let maxHits = Array(38).fill(0); // Track max hits
+
+    rows.forEach(counts => {
         for (const key in groupIndices) {
-          groupSums[key].push(sumColumns(counts, groupIndices[key]));
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
         }
+
+        // Compute existing sums (Top-Bottom, Left-Right, etc.)
         const sums = calculateAllSums(counts);
         differences.topBottomDiff.push(sums.topBottomDiff);
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
+
+        // 🔥 Compute Density (Sum of highest 5 values in counts)
+        let sortedCounts = counts.slice().sort((a, b) => b - a); // Sort descending
+        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+        densityValues.push(parseFloat(density.toFixed(4))); // Ensure 4 decimal places
+
+        // 🔥 Compute Variance for the run (spread of hits)
+        let variance = calculateVariance(counts);
+        varianceValues.push(parseFloat(variance.toFixed(4))); // Ensure 4 decimal places
+
+        // Track max hits
         for (let i = 0; i < 38; i++) {
-          if (counts[i] > maxHits[i]) { maxHits[i] = counts[i]; }
+            if (counts[i] > maxHits[i]) {
+                maxHits[i] = counts[i];
+            }
         }
-      });
-      Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-      });
-      Object.keys(groupSums).forEach(group => {
-        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-      });
-      // Display the standard frequency distribution tables.
-      displayResults(differences, groupSums, statsCollection);
-      // Compute maxHits stats and display additional tables.
-      let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-      let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-      let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-      displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-      displayMaxHitsTable(maxHits);
-      // Export the combined CSV (Frequency Dist + Max Counts + Max Hits).
-      exportCombinedCSV(differences, groupSums, statsCollection, maxHits, "CombinedAnalysis.csv");
+    });
+
+    console.log("🟢 Density Values:", densityValues);
+    console.log("🟢 Variance Values:", varianceValues);
+
+    // 🔥 Ensure Density & Variance are valid arrays before proceeding
+    if (!Array.isArray(densityValues) || densityValues.length === 0) {
+        console.error("❌ ERROR: Density values array is still empty!");
+        densityValues = [0]; // Prevent undefined issue
     }
+    if (!Array.isArray(varianceValues) || varianceValues.length === 0) {
+        console.error("❌ ERROR: Variance values array is still empty!");
+        varianceValues = [0]; // Prevent undefined issue
+    }
+
+    // Compute descriptive stats for all differences and group sums
+    Object.keys(differences).forEach(category => {
+        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+    });
+
+    Object.keys(groupSums).forEach(group => {
+        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+    });
+
+    // 🔥 Compute statistics for Density & Variance and store them
+    statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
+    statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
+
+    // 🔥 Pass Density & Variance values to displayResults and getFreqDistCSV
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+
+    // 🔥 Ensure Density & Variance are properly passed to CSV export
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, "CombinedAnalysis.csv");
+}
+
 
     // =======================================================
     // FILE INPUT HANDLING

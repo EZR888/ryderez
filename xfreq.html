@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -270,21 +271,28 @@
       zzCluster: [13,1,37,27,10],
       zCluster: [9,28,0,2,14],
       left: [5,22,34,15,3,24,36,13,1,17,32,20,7,11,30,26,9,28],
-      right: [27,10,25,29,12,8,19,31,18,2,14,35,23,4,16,33,21,6]
+      right: [27,10,25,29,12,8,19,31,18,2,14,35,23,4,16,33,21,6],
+      towardEnds: [5,22,34,15,3,17,32,20,7,11,12,8,19,31,18,4,16,33,21,6],
+      towardCenter: [24,36,13,1,37,27,10,25,29,30,26,9,28,0,2,14,35,23],
+      zeroSums: [13,1,37,27,10,9,28,0,2,14]
     };
 
     function sumColumns(counts, indices) {
       return indices.reduce((sum, idx) => sum + counts[idx], 0);
     }
 
-    function calculateAllSums(counts) {
-      return {
-        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
-        leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
-        cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
-        zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster)
-      };	
-    }
+function calculateAllSums(counts) {
+  return {
+    topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
+    leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
+    cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
+    zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster),
+
+    // 🔥 New Group Differences
+    endsCenterDiff: sumColumns(counts, groupIndices.towardEnds) - sumColumns(counts, groupIndices.towardCenter),
+    zeroSumsTotal: sumColumns(counts, groupIndices.zeroSums)
+  };	
+}
 
     // =======================================================
     // Descriptive Statistics & Frequency Functions
@@ -395,7 +403,11 @@
       zzCluster: "00 Cluster",
       zCluster: "0 Cluster",
       left: "Left",
-      right: "Right"
+      right: "Right",
+      endsCenterDiff: "Center - Ends",
+      towardEnds: "Towards Ends",
+      towardCenter: "Towards Center",
+      zeroSumsTotal: "0 + 00"
     };
 
     function displayDescriptiveStatistics(stats) {
@@ -429,7 +441,7 @@ function getFreqDistCSV(differences, groupSums, stats) {
     return "";
   }
 
-  let csvContent = "Category,Metric,Value,,Value,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
+  let csvContent = "Category,Metric,Value,,Value,Observed Frequency,Expected Frequency,Adjusted P-Value,Cumulative Probability,Highlight\n";
   const allData = { ...differences, ...groupSums };
 
   Object.entries(stats).forEach(([category, values]) => {
@@ -446,32 +458,24 @@ function getFreqDistCSV(differences, groupSums, stats) {
       const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
       const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-      // Default calculations
-      let expectedFrequency = (totalRuns > 0 && observedFrequency !== "") ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
+      let expectedFrequency = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
       let adjustedPValue = "";
       let cumulativeProbability = "";
       let highlight = "No";
 
       if (difference !== "" && cumulativeData[difference]) {
         adjustedPValue = cumulativeData[difference].cumulativeFrequency;
-        cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
-          ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
-          : "0.000000";
-
+        cumulativeProbability = Number(cumulativeData[difference].cumulativeP).toFixed(6);
         if (parseFloat(cumulativeProbability) < 0.05) { highlight = "Yes"; }
       }
 
-      // 🔥 Overwrite expected frequency and cumulative probability using reference data 🔥
-      let expectedFrequencyLookup = referenceData[categoryLabel]?.[difference]?.pValue;
-      let cumulativeProbabilityLookup = referenceData[categoryLabel]?.[difference]?.cumulativePValue;
-      if (expectedFrequencyLookup !== undefined) {
-        expectedFrequency = expectedFrequencyLookup;
-      }
-      if (cumulativeProbabilityLookup !== undefined) {
-        cumulativeProbability = cumulativeProbabilityLookup;
+      // 🔥 Overwrite using reference data
+      if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+        expectedFrequency = referenceData[categoryLabel][difference].pValue;
+        cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
       }
 
-      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedFrequency},${observedFrequency},${cumulativeProbability},,${highlight}\n`;
+      csvContent += `${categoryLabel},${metric},${value},,${difference},${observedFrequency},${expectedFrequency},${adjustedPValue},${cumulativeProbability},${highlight}\n`;
     }
   });
 
@@ -521,7 +525,7 @@ function displayResults(differences, groupSums, stats) {
 
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        const totalSpins = totalRuns * 38; // Calculate total spins dynamically
+        const totalSpins = totalRuns * 38;
 
         let imageLineHTML = `
             <center>
@@ -543,10 +547,10 @@ function displayResults(differences, groupSums, stats) {
                 <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Value</th>
                 <th></th>
                 <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-                <th style="padding: 8px; color: salmon; text-align: center;">Expected Probability</th>
-                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
                 <th style="padding: 8px; color: salmon; text-align: center;">Observed Frequency</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Expected Frequency</th>
                 <th style="padding: 8px; color: salmon; text-align: center;">Adjusted P-Value</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
             </tr>`;
 
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
@@ -558,41 +562,32 @@ function displayResults(differences, groupSums, stats) {
             const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
             const value = metric ? stats[category][metric] : "";
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
-            
-            // Default calculation
-            let pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
-            let cumulativeFrequency = "";
-            let cumulativePValue = "";
+            const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
+            let expectedFrequency = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
+            let adjustedPValue = "";
+            let cumulativeProbability = "";
 
-            let differenceKey = difference.toString();
-            if (difference !== "" && cumulativeData[differenceKey]) {
-                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
-                cumulativePValue = Number(cumulativeData[differenceKey].cumulativeP).toFixed(6);
+            if (difference !== "" && cumulativeData[difference]) {
+                adjustedPValue = cumulativeData[difference].cumulativeFrequency;
+                cumulativeProbability = Number(cumulativeData[difference].cumulativeP).toFixed(6);
             }
 
-            // 🔥 Overwrite pValue and cumulativePValue using the reference data 🔥
-            if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
-                pValue = referenceData[categoryLabel][differenceKey].pValue;
-                cumulativePValue = referenceData[categoryLabel][differenceKey].cumulativePValue;
+            // 🔥 Overwrite using reference data
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+                expectedFrequency = referenceData[categoryLabel][difference].pValue;
+                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
             }
-
-            let metricStyle = "color: orange; font-weight: bold;";
-            let valueStyle = "color: lightblue; font-weight: bold;";
-            let dataStyle = "color: lightgray;";
-            let highlightStyle = "color: yellow; font-weight: bold;";
-            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
 
             tableHTML += `
             <tr>
-                <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
-                <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+                <td style="padding: 8px; text-align: center; font-weight: bold;">${formattedMetric}</td>
+                <td style="padding: 8px; text-align: center; font-weight: bold;">${value}</td>
                 <td style="padding: 8px;"></td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
-                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}"></td>
+                <td style="padding: 8px; text-align: center;">${difference}</td>
+                <td style="padding: 8px; text-align: center;">${observedFrequency}</td>
+                <td style="padding: 8px; text-align: center;">${expectedFrequency}</td>
+                <td style="padding: 8px; text-align: center;">${adjustedPValue}</td>
+                <td style="padding: 8px; text-align: center;">${cumulativeProbability}</td>
             </tr>`;
         }
 
@@ -600,6 +595,7 @@ function displayResults(differences, groupSums, stats) {
         explanationElement.innerHTML += tableHTML;
     });
 }
+
 
 function getMaxHitsCSV(maxHits) {
     let csvContent = "Max Hits per Number (Binomial p-values)\n";
@@ -620,7 +616,6 @@ function getMaxHitsCSV(maxHits) {
 
     return csvContent;
 }
-
 
 
 function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {

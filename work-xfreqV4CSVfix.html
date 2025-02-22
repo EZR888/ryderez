@@ -429,7 +429,7 @@ function getFreqDistCSV(differences, groupSums, stats) {
     return "";
   }
 
-  let csvContent = "Category,Metric,Value,,Value,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
+  let csvContent = "Category,Metric,Value,,Value,Frequency,P-Value,Cumulative Frequency,Cumulative Probability,Highlight\n";
   const allData = { ...differences, ...groupSums };
 
   Object.entries(stats).forEach(([category, values]) => {
@@ -444,40 +444,37 @@ function getFreqDistCSV(differences, groupSums, stats) {
       const metric = metricKeys[i] || "";
       const value = metric ? values[metric] : "";
       const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-      const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
+      const frequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-      // Default calculations
-      let expectedFrequency = (totalRuns > 0 && observedFrequency !== "") ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
-      let adjustedPValue = "";
-      let cumulativeProbability = "";
+      // Default pValue calculations
+      let pValue = (totalRuns > 0 && frequency !== "") ? (frequency / totalRuns).toFixed(6) : "0.000000";
+      let cumulativeFrequency = "";
+      let cumulativePValue = "";
       let highlight = "No";
 
       if (difference !== "" && cumulativeData[difference]) {
-        adjustedPValue = cumulativeData[difference].cumulativeFrequency;
-        cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
+        cumulativeFrequency = cumulativeData[difference].cumulativeFrequency;
+        cumulativePValue = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
           ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
           : "0.000000";
 
-        if (parseFloat(cumulativeProbability) < 0.05) { highlight = "Yes"; }
+        if (parseFloat(cumulativePValue) < 0.05) { highlight = "Yes"; }
       }
 
-      // 🔥 Overwrite expected frequency and cumulative probability using reference data 🔥
-      let expectedFrequencyLookup = referenceData[categoryLabel]?.[difference]?.pValue;
-      let cumulativeProbabilityLookup = referenceData[categoryLabel]?.[difference]?.cumulativePValue;
-      if (expectedFrequencyLookup !== undefined) {
-        expectedFrequency = expectedFrequencyLookup;
-      }
-      if (cumulativeProbabilityLookup !== undefined) {
-        cumulativeProbability = cumulativeProbabilityLookup;
+      // 🔥 Overwrite pValue and cumulativePValue using the reference data 🔥
+      let differenceKey = difference.toString();
+      if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
+        pValue = referenceData[categoryLabel][differenceKey].pValue;
+        cumulativePValue = referenceData[categoryLabel][differenceKey].cumulativePValue;
       }
 
-      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedFrequency},${observedFrequency},${cumulativeProbability},,${highlight}\n`;
+      csvContent += `${categoryLabel},${metric},${value},,${difference},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue},${highlight}\n`;
     }
   });
 
   return csvContent;
 }
-
+    
 
 // Global object to store reference data from 10mcols.csv
 let referenceData = {};
@@ -601,32 +598,22 @@ function displayResults(differences, groupSums, stats) {
     });
 }
 
-function getMaxHitsCSV(maxHits) {
-    let csvContent = "Max Hits per Number (Binomial p-values)\n";
-    csvContent += "Number,Max Hits Observed,P-Value\n";
-
-    for (let num = 0; num < 38; num++) {
+    function getMaxHitsCSV(maxHits) {
+      let csvContent = "Max Hits per Number (Binomial p-values)\n";
+      csvContent += "Number,Max Hits Observed,P-Value\n";
+      for (let num = 0; num < 38; num++) {
         let k = maxHits[num];
-        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)) : 1;
-
-        // 🔥 Overwrite pValue using reference data (if available)
-        let pValueLookup = referenceData["MaxHits"]?.[num.toString()]?.pValue;
-        if (pValueLookup !== undefined) {
-            pValue = pValueLookup;
-        }
-
+        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
         csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
+      }
+      return csvContent;
     }
-
-    return csvContent;
-}
-
 
 
 function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
     let csvContent = "";
 
-    // Add frequency distribution data
+    // Add statistical data
     csvContent += getFreqDistCSV(differences, groupSums, stats);
     csvContent += "\n\n";
 
@@ -636,15 +623,13 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, fileName) {
     let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
     csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
     csvContent += "\n\n";
-
-    // Add max hits data
     csvContent += getMaxHitsCSV(maxHits);
 
     // 🟢 Append selected filenames at the bottom
     if (selectedFileNames.length > 0) {
         csvContent += "\n\nSelected Files:\n";
         selectedFileNames.forEach(fileName => {
-            csvContent += `${fileName}\n`;
+            csvContent += `${fileName}\n`;  // Adds each file name on a new line
         });
     }
 
@@ -746,44 +731,29 @@ function displayMaxHitsTable(maxHits) {
 
 
 function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
-    let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
-    csvContent += "Metric,Value,Count,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
-
-    let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
-    let metricKeys = Object.keys(maxHitsStats);
-    let maxRows = Math.max(metricKeys.length, sortedKeys.length);
-
-    for (let i = 0; i < maxRows; i++) {
+      let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
+      csvContent += "Metric,Value,Count,Frequency,P-Value,Cumulative Frequency,Cumulative P-Value\n";
+      let total = 38;
+      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+      let metricKeys = Object.keys(maxHitsStats);
+      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+      for (let i = 0; i < maxRows; i++) {
         const metric = metricKeys[i] || "";
         const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
         const value = metric ? maxHitsStats[metric] : "";
         const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
-        const observedFrequency = countValue !== "" ? maxHitsFreq[countValue] : "";
-        let expectedFrequency = observedFrequency ? (observedFrequency / 38).toFixed(6) : "0.000000";
-        let adjustedPValue = "";
-        let cumulativeProbability = "";
-
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / total).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
         if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
-            adjustedPValue = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
-            cumulativeProbability = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
         }
-
-        // 🔥 Overwrite expected frequency and cumulative probability using the reference data 🔥
-        let expectedFrequencyLookup = referenceData["MaxCounts"]?.[countValue]?.pValue;
-        let cumulativeProbabilityLookup = referenceData["MaxCounts"]?.[countValue]?.cumulativePValue;
-        if (expectedFrequencyLookup !== undefined) {
-            expectedFrequency = expectedFrequencyLookup;
-        }
-        if (cumulativeProbabilityLookup !== undefined) {
-            cumulativeProbability = cumulativeProbabilityLookup;
-        }
-
-        csvContent += `${formattedMetric},${value},${countValue},${expectedFrequency},${cumulativeProbability},${adjustedPValue}\n`;
+        csvContent += `${formattedMetric},${value},${countValue},${frequency},${pValue},${cumulativeFrequency},${cumulativePValue}\n`;
+      }
+      return csvContent;
     }
-
-    return csvContent;
-}
-
 
     // =======================================================
     // PROCESSING FUNCTIONS

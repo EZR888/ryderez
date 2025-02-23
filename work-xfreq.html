@@ -301,7 +301,7 @@ function calculateVariance(counts) {
 
 
 
-    function calculateAllSums(counts) {
+function calculateAllSums(counts) {
       return {
         topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
         leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
@@ -363,7 +363,7 @@ function calculateMedian(arr) {
         : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));  // Ensure number, 4 decimal places
 }
 
-    function calculateFrequencyDistribution(data) {
+function calculateFrequencyDistribution(data) {
       if (!data || !Array.isArray(data)) {
         console.error("Invalid data provided to calculateFrequencyDistribution");
         return {};
@@ -375,39 +375,46 @@ function calculateMedian(arr) {
       return frequency;
     }
 
-    function calculateCumulativeProbabilities(frequencyDistribution, totalValue) {
-      if (!totalValue || totalValue <= 0) {
+function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
+    if (!totalValue || totalValue <= 0) {
         console.error("Invalid total for cumulative probability calculation:", totalValue);
         return {};
-      }
-      const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-      let cumulativeProbabilities = {};
-      let cumulativeBelow = 0, cumulativeAbove = 0;
-      for (let i = 0; i < sortedKeys.length; i++) {
-        let key = sortedKeys[i];
-        if (key < 0) {
-          cumulativeBelow += frequencyDistribution[key];
-          cumulativeProbabilities[key] = {
+    }
+
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+    let cumulativeProbabilities = {};
+    let cumulativeBelow = 0, cumulativeAbove = 0;
+
+    // 🔥 Determine expected mean from reference data (if available)
+    let expectedMean = referenceData[category]?.mean ? parseFloat(referenceData[category].mean) : 0;
+    console.log(`🟢 Using expected mean for ${category}:`, expectedMean);
+
+    // Split values around expected mean
+    let belowMean = sortedKeys.filter(key => key < expectedMean);
+    let aboveMean = sortedKeys.filter(key => key > expectedMean);
+
+    // Accumulate probabilities separately
+    for (let i = belowMean.length - 1; i >= 0; i--) {
+        let key = belowMean[i];
+        cumulativeBelow += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
             cumulativeFrequency: cumulativeBelow,
             cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
-          };
-        }
-      }
-      for (let i = sortedKeys.length - 1; i >= 0; i--) {
-        let key = sortedKeys[i];
-        if (key > 0) {
-          cumulativeAbove += frequencyDistribution[key];
-          cumulativeProbabilities[key] = {
+        };
+    }
+
+    for (let i = 0; i < aboveMean.length; i++) {
+        let key = aboveMean[i];
+        cumulativeAbove += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
             cumulativeFrequency: cumulativeAbove,
             cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
-          };
-        }
-      }
-      if (sortedKeys.includes(0)) {
-        cumulativeProbabilities[0] = { cumulativeFrequency: totalValue, cumulativeP: "1.000000" };
-      }
-      return cumulativeProbabilities;
+        };
     }
+
+    return cumulativeProbabilities;
+}
+
 
     // =======================================================
     // Display Functions (Existing)
@@ -437,7 +444,7 @@ function calculateMedian(arr) {
       Variance: "Variance (Within-Run Spread)"
     };
 
-    function displayDescriptiveStatistics(stats) {
+function displayDescriptiveStatistics(stats) {
       if (!stats || typeof stats !== "object") {
         console.error("Invalid statistics data provided for display.");
         alert("An error occurred while displaying statistics.");
@@ -468,7 +475,7 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
     return "";
   }
 
-  let csvContent = "Category,Metric,Value,,Value,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
+  let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
 
   console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
 
@@ -489,7 +496,6 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
       category === "Variance" ? varianceFreqDist :
       calculateFrequencyDistribution(allData[category] || []);
 
-    const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
     const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
     const metricKeys = Object.keys(values);
     const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -504,19 +510,15 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 
       const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
       const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
-
-      let expectedFrequency = (totalRuns > 0 && observedFrequency !== "") 
-        ? (observedFrequency / totalRuns).toFixed(6) 
-        : "0.000000";
+      let expectedProbability = "";
       let cumulativeProbability = "";
 
-      if (difference !== "" && cumulativeData[difference]) {
-        cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
-          ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
-          : "0.000000";
+      if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+        expectedProbability = referenceData[categoryLabel][difference].pValue;
+        cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
       }
 
-      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedFrequency},${observedFrequency},${cumulativeProbability},,\n`;
+      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},,\n`;
     }
   });
 

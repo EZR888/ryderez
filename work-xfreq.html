@@ -482,7 +482,8 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       endsCenterDiff: "Towards Ends - Towards Center",
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
-      Variance: "Variance (Within-Run Spread)"
+      Variance: "Variance (Within-Run Spread)",
+      varianceDiff: "Variance Difference (Top - Bottom)"
     };
 
 function displayDescriptiveStatistics(stats) {
@@ -525,7 +526,14 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
     [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
     let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
-    const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+    
+const allData = { 
+    ...differences, 
+    ...groupSums, 
+    Density: densityValues, 
+    Variance: varianceValues, 
+    VarianceDiff: differences.varianceDiff // 🔥 Explicitly adding Variance Difference
+};
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
@@ -539,7 +547,7 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
             const metric = metricKeys[i] || "";
             let value = metric ? values[metric] : "";
 
-            if ((category === "Variance" || category === "Density") && value !== "") {
+            if ((category === "Variance" || category === "VarianceDiff" || category === "Density") && value !== "") {
                 value = parseFloat(value).toFixed(4);
             }
 
@@ -885,7 +893,7 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     let statsCollection = {};
-    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], varianceDiff: [] };
     const groupSums = {};
     let densityValues = [];  
     let varianceValues = []; 
@@ -906,6 +914,15 @@ function processData(rows, isGeneratingReferenceData = false) {
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
+        
+            // 🔥 Compute variance for top and bottom categories
+    let topSum = groupSums["topIndices"].at(-1) || 0;
+    let bottomSum = groupSums["bottomIndices"].at(-1) || 0;
+    let topVariance = calculateVariance(groupIndices.topIndices.map(idx => counts[idx]));
+    let bottomVariance = calculateVariance(groupIndices.bottomIndices.map(idx => counts[idx]));
+    let varianceDifference = topVariance - bottomVariance;
+
+    differences.varianceDiff.push(parseFloat(varianceDifference.toFixed(4))); // ✅ Push computed value
 
         let sortedCounts = counts.slice().sort((a, b) => b - a);
         let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
@@ -1076,7 +1093,7 @@ document.getElementById("runButton").addEventListener("click", () => {
     const isGeneratingReferenceData = (numRuns >= 10000000);  // Set flag for large runs
 
     // ✅ Declare these variables at the higher scope
-    let differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    let differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], varianceDiff: [] };
     let groupSums = {};
     let densityValues = [];
     let varianceValues = [];
@@ -1105,7 +1122,7 @@ function processChunk(startIndex, chunkSize, isGeneratingReferenceData, differen
         differences.zzDiff.push(sums.zzDiff);
 
         for (const key in groupIndices) {
-            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+   	         groupSums[key].push(sumColumns(counts, groupIndices[key]));
         }
 
         let sortedCounts = counts.slice().sort((a, b) => b - a);

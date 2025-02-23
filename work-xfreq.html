@@ -353,6 +353,44 @@ function calculateDescriptiveStatistics(differences, isVariance = false) {
     };
 }
 
+// =======================================================
+// Ensure referenceData has correct means for categories
+// =======================================================
+function getExpectedMean(category, isGeneratingReferenceData = false) {
+    if (isGeneratingReferenceData) {
+        console.log(`🟢 Skipping expected mean lookup for ${category} since this is a reference data run.`);
+        return 0;
+    }
+
+    if (referenceData[category]) {
+        if (category === "Density" || category === "Variance") {
+            console.log(`🟢 Using expected mean for ${category}:`, referenceData[category]);
+            return parseFloat(referenceData[category]?.mean || 0);
+        } else if (referenceData[category]["mean"]) {
+            return parseFloat(referenceData[category]["mean"]);
+        }
+    }
+
+    console.warn(`⚠️ No mean found for category: ${category}`);
+    return 0;
+}
+
+
+// =======================================================
+// Validate Density and Variance values before processing
+// =======================================================
+function validateDensityAndVariance(densityValues, varianceValues) {
+    if (!Array.isArray(densityValues) || densityValues.length === 0) {
+        console.error("❌ ERROR: Density values array is empty or invalid!");
+        densityValues = [0]; // Provide default fallback
+    }
+    if (!Array.isArray(varianceValues) || varianceValues.length === 0) {
+        console.error("❌ ERROR: Variance values array is empty or invalid!");
+        varianceValues = [0]; // Provide default fallback
+    }
+    return [densityValues, varianceValues];
+}
+
 
 function calculateMedian(arr) {
     const sorted = arr.slice().sort((a, b) => a - b);
@@ -363,17 +401,20 @@ function calculateMedian(arr) {
         : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));  // Ensure number, 4 decimal places
 }
 
+// =======================================================
+// Fix calculateFrequencyDistribution crashing on undefined
+// =======================================================
 function calculateFrequencyDistribution(data) {
-      if (!data || !Array.isArray(data)) {
-        console.error("Invalid data provided to calculateFrequencyDistribution");
-        return {};
-      }
-      const frequency = {};
-      data.forEach(val => {
-        frequency[val] = (frequency[val] || 0) + 1;
-      });
-      return frequency;
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error("❌ ERROR: Invalid data provided to calculateFrequencyDistribution");
+        return {}; // Return empty object to prevent crash
     }
+    const frequency = {};
+    data.forEach(val => {
+        frequency[val] = (frequency[val] || 0) + 1;
+    });
+    return frequency;
+}
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
     if (!totalValue || totalValue <= 0) {
@@ -469,60 +510,62 @@ function displayDescriptiveStatistics(stats) {
     // =======================================================
     // CSV EXPORT FUNCTIONS
     // =======================================================
+// =======================================================
+// Fix getFreqDistCSV crashing on undefined Density/Variance
+// =======================================================
 function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
-  if (!totalRuns || totalRuns <= 0) {
-    console.error("Invalid totalRuns for CSV export:", totalRuns);
-    return "";
-  }
-
-  let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value,Highlight\n";
-
-  console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
-
-  const densityFreqDist = densityValues.length > 0 ? calculateFrequencyDistribution(densityValues) : {};
-  const varianceFreqDist = varianceValues.length > 0 ? calculateFrequencyDistribution(varianceValues) : {};
-
-  const allData = { 
-    ...differences, 
-    ...groupSums, 
-    Density: densityValues, 
-    Variance: varianceValues 
-  };
-
-  Object.entries(stats).forEach(([category, values]) => {
-    const categoryLabel = categoryLabels[category] || category;
-    let frequencyDistribution = 
-      category === "Density" ? densityFreqDist :
-      category === "Variance" ? varianceFreqDist :
-      calculateFrequencyDistribution(allData[category] || []);
-
-    const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-    const metricKeys = Object.keys(values);
-    const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
-
-    for (let i = 0; i < maxRows; i++) {
-      const metric = metricKeys[i] || "";
-      let value = metric ? values[metric] : "";
-
-      if ((category === "Variance" || category === "Density") && value !== "") {
-        value = parseFloat(value).toFixed(4);
-      }
-
-      const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-      const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
-      let expectedProbability = "";
-      let cumulativeProbability = "";
-
-      if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
-        expectedProbability = referenceData[categoryLabel][difference].pValue;
-        cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
-      }
-
-      csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},,\n`;
+    if (!totalRuns || totalRuns <= 0) {
+        console.error("Invalid totalRuns for CSV export:", totalRuns);
+        return "";
     }
-  });
 
-  return csvContent;
+    console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
+
+    // Validate and assign density and variance values
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
+
+    let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
+    const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    Object.entries(stats).forEach(([category, values]) => {
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? values[metric] : "";
+
+            if ((category === "Variance" || category === "Density") && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
+
+            let expectedProbability = "0.000000";
+            let cumulativeProbability = "";
+
+            if (difference !== "" && cumulativeData[difference]) {
+                cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
+                    ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
+                    : "0.000000";
+            }
+
+            // 🔥 Fix probability lookup from 10mcols.csv
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+                expectedProbability = referenceData[categoryLabel][difference].pValue;
+                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
+            }
+
+            csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
+        }
+    });
+
+    return csvContent;
 }
 
 
@@ -673,26 +716,24 @@ function getMaxHitsCSV(maxHits) {
 
 
 
+// =======================================================
+// Fix CSV Export to Include Correct Density & Variance
+// =======================================================
 function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues, varianceValues, fileName) {
     let csvContent = "";
 
     console.log("🟢 Exporting CSV... Checking Density & Variance:", { densityValues, varianceValues });
 
-    // Add frequency distribution data
     csvContent += getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
     csvContent += "\n\n";
 
-    // Compute max counts stats:
     let maxHitsStats = calculateDescriptiveStatistics(maxHits);
     let maxHitsFreq = calculateFrequencyDistribution(maxHits);
     let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
     csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
     csvContent += "\n\n";
-
-    // Add max hits data
     csvContent += getMaxHitsCSV(maxHits);
 
-    // 🟢 Append selected filenames at the bottom
     if (selectedFileNames.length > 0) {
         csvContent += "\n\nSelected Files:\n";
         selectedFileNames.forEach(fileName => {
@@ -700,7 +741,6 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
-    // Export the CSV file
     const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -837,45 +877,43 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
 }
 
 
-    // =======================================================
-    // PROCESSING FUNCTIONS
-    // =======================================================
-    // processData: Called after file input processing.
-function processData(rows) {
+function processData(rows, isGeneratingReferenceData = false) {
+    // 🔥 Ensure `rows` is an array before proceeding
+    if (!Array.isArray(rows)) {
+        console.error("❌ ERROR: `rows` is not an array! Received:", rows);
+        return;
+    }
+
     let statsCollection = {};
     const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
     const groupSums = {};
-    let densityValues = [];  // 🔥 Store density values for display
-    let varianceValues = []; // 🔥 Store variance values for display
+    let densityValues = [];  
+    let varianceValues = []; 
 
     for (const key in groupIndices) {
         groupSums[key] = [];
     }
 
-    let maxHits = Array(38).fill(0); // Track max hits
+    let maxHits = Array(38).fill(0); 
 
     rows.forEach(counts => {
         for (const key in groupIndices) {
             groupSums[key].push(sumColumns(counts, groupIndices[key]));
         }
 
-        // Compute existing sums (Top-Bottom, Left-Right, etc.)
         const sums = calculateAllSums(counts);
         differences.topBottomDiff.push(sums.topBottomDiff);
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
 
-        // 🔥 Compute Density (Sum of highest 5 values in counts)
-        let sortedCounts = counts.slice().sort((a, b) => b - a); // Sort descending
+        let sortedCounts = counts.slice().sort((a, b) => b - a);
         let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
-        densityValues.push(parseFloat(density.toFixed(4))); // Ensure 4 decimal places
+        densityValues.push(parseFloat(density.toFixed(4)));
 
-        // 🔥 Compute Variance for the run (spread of hits)
         let variance = calculateVariance(counts);
-        varianceValues.push(parseFloat(variance.toFixed(4))); // Ensure 4 decimal places
+        varianceValues.push(parseFloat(variance.toFixed(4)));
 
-        // Track max hits
         for (let i = 0; i < 38; i++) {
             if (counts[i] > maxHits[i]) {
                 maxHits[i] = counts[i];
@@ -886,17 +924,11 @@ function processData(rows) {
     console.log("🟢 Density Values:", densityValues);
     console.log("🟢 Variance Values:", varianceValues);
 
-    // 🔥 Ensure Density & Variance are valid arrays before proceeding
-    if (!Array.isArray(densityValues) || densityValues.length === 0) {
-        console.error("❌ ERROR: Density values array is still empty!");
-        densityValues = [0]; // Prevent undefined issue
-    }
-    if (!Array.isArray(varianceValues) || varianceValues.length === 0) {
-        console.error("❌ ERROR: Variance values array is still empty!");
-        varianceValues = [0]; // Prevent undefined issue
+    // If we're generating the reference data, skip the lookup
+    if (!isGeneratingReferenceData) {
+        [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
     }
 
-    // Compute descriptive stats for all differences and group sums
     Object.keys(differences).forEach(category => {
         statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
     });
@@ -905,14 +937,11 @@ function processData(rows) {
         statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
     });
 
-    // 🔥 Compute statistics for Density & Variance and store them
     statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
     statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
 
-    // 🔥 Pass Density & Variance values to displayResults and getFreqDistCSV
     displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
 
-    // 🔥 Ensure Density & Variance are properly passed to CSV export
     exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, "CombinedAnalysis.csv");
 }
 
@@ -1034,57 +1063,74 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
     const setAIndices = [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18];
     const setBIndices = [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6];
 
-    document.getElementById("runButton").addEventListener("click", () => {
-      const numRuns = parseInt(document.getElementById("numRuns").value, 10);
-      if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
+document.getElementById("runButton").addEventListener("click", () => {
+    const numRuns = parseInt(document.getElementById("numRuns").value, 10);
+    if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
         alert("Please enter a valid number of runs (1–10,000,000).");
         return;
-      }
-      totalRuns = numRuns;
-      console.log("Total Runs Set:", totalRuns);
-      const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
-      const groupSums = {};
-      for (const key in groupIndices) {
+    }
+
+    totalRuns = numRuns;
+    console.log("Total Runs Set:", totalRuns);
+
+    const isGeneratingReferenceData = (numRuns >= 10000000);  // Set flag for large runs
+
+    // ✅ Declare these variables at the higher scope
+    let differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    let groupSums = {};
+    let densityValues = [];
+    let varianceValues = [];
+    let maxHits = Array(38).fill(0);
+
+    for (const key in groupIndices) {
         groupSums[key] = [];
-      }
-      // Initialize maxHits for each number (0–37)
-      let maxHits = Array(38).fill(0);
-      function processChunk(startIndex, chunkSize) {
-        for (let i = startIndex; i < Math.min(numRuns, startIndex + chunkSize); i++) {
-          const counts = getRandomCounts(38);
-          const sums = calculateAllSums(counts);
-          differences.topBottomDiff.push(sums.topBottomDiff);
-          differences.leftRightDiff.push(sums.leftRightDiff);
-          differences.cDiff.push(sums.cDiff);
-          differences.zzDiff.push(sums.zzDiff);
-          for (const key in groupIndices) {
+    }
+
+    // ✅ Pass all required variables to `processChunk`
+    processChunk(0, 100000, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits);
+});
+
+// ✅ Update processChunk to accept all necessary variables
+function processChunk(startIndex, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits) {
+    let dataRows = [];  
+
+    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
+        const counts = getRandomCounts(38);
+        dataRows.push(counts);
+
+        const sums = calculateAllSums(counts);
+        differences.topBottomDiff.push(sums.topBottomDiff);
+        differences.leftRightDiff.push(sums.leftRightDiff);
+        differences.cDiff.push(sums.cDiff);
+        differences.zzDiff.push(sums.zzDiff);
+
+        for (const key in groupIndices) {
             groupSums[key].push(sumColumns(counts, groupIndices[key]));
-          }
-          for (let j = 0; j < 38; j++) {
+        }
+
+        let sortedCounts = counts.slice().sort((a, b) => b - a);
+        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+        densityValues.push(parseFloat(density.toFixed(4)));
+
+        let variance = calculateVariance(counts);
+        varianceValues.push(parseFloat(variance.toFixed(4)));
+
+        for (let j = 0; j < 38; j++) {
             if (counts[j] > maxHits[j]) { maxHits[j] = counts[j]; }
-          }
         }
-        if (startIndex + chunkSize < numRuns) {
-          setTimeout(() => processChunk(startIndex + chunkSize, chunkSize), 0);
-        } else {
-          const statsCollection = {};
-          Object.keys(differences).forEach(category => {
-            statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-          });
-          Object.keys(groupSums).forEach(group => {
-            statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-          });
-          displayResults(differences, groupSums, statsCollection);
-          let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-          let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-          let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-          displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-          displayMaxHitsTable(maxHits);
-          exportCombinedCSV(differences, groupSums, statsCollection, maxHits, `CombinedAnalysis_${numRuns}.csv`);
-        }
-      }
-      processChunk(0, 100000);
-    });
+    }
+
+    if (startIndex + chunkSize < totalRuns) {
+        // ✅ Pass all variables down to the next `processChunk` call
+        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits), 0);
+    } else {
+        console.log("🟢 Final dataRows length:", dataRows.length);
+        // ✅ Pass the variables to `processData`
+        processData(dataRows, isGeneratingReferenceData);
+    }
+}
+
+
 
 function getRandomCounts(numPicks) {
   const counts = Array(38).fill(0);

@@ -239,7 +239,8 @@
     <input type="file" id="fileInput" accept=".csv" multiple />
     <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
     <input type="number" id="numRuns" min="1" max="50000000" value="100" />
-    <button id="runButton">Run</button>
+    <button id="runButton">Run</button><br>
+    <label><input type="checkbox" id="generateReferenceToggle">Check this box if this run is for generating Reference Data only</label>
     <div id="statistics"></div>
     <div id="explanation"></div>
   </div>
@@ -395,23 +396,28 @@ function calculateMedian(arr) {
 // =======================================================
 // Fix calculateFrequencyDistribution crashing on undefined
 // =======================================================
-function calculateFrequencyDistribution(data) {
+function calculateFrequencyDistribution(data, category = "Unknown") {
     if (!Array.isArray(data) || data.length === 0) {
-        console.error("❌ ERROR: Invalid data provided to calculateFrequencyDistribution");
-        return {}; // Return empty object to prevent crash
+        console.error(`❌ ERROR: Invalid data for ${category} in calculateFrequencyDistribution`);
+        return {};
     }
+
     const frequency = {};
     data.forEach(val => {
         frequency[val] = (frequency[val] || 0) + 1;
     });
+
+    console.log(`🟢 Frequency distribution for ${category}:`, frequency);
     return frequency;
 }
 
-function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
+function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category = "Unknown") {
     if (!totalValue || totalValue <= 0) {
-        console.error("Invalid total for cumulative probability calculation:", totalValue);
+        console.error(`❌ ERROR: Invalid totalValue for ${category} in cumulative probability calculation:`, totalValue);
         return {};
     }
+
+    console.log(`✅ Processing cumulative probabilities for ${category} with totalValue:`, totalValue);
 
     const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
     let cumulativeProbabilities = {};
@@ -520,8 +526,8 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
-        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+		const frequencyDistribution = calculateFrequencyDistribution(allData[category], category);
+		const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -562,31 +568,37 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 
 // Global object to store reference data from 10mcols.csv
 let referenceData = {};
-// Call this function once at the beginning
-loadReferenceData("10mcols.csv");
+let isGeneratingReferenceData = false; // Define it globally
 
 // Function to load reference data from 10mcols.csv
 function loadReferenceData(csvFilePath) {
+    if (isGeneratingReferenceData) { // ✅ Uses the latest global value
+        console.log("✅ Skipping 10mcols.csv load since this is a reference data run.");
+        return;
+    }
+
     fetch(csvFilePath)
         .then(response => response.text())
         .then(text => {
+            console.log("✅ Loading 10mcols.csv...");
             const rows = text.split("\n");
             rows.forEach(row => {
                 const cols = row.split(",");
-                if (cols.length < 4) return; // Ensure row has enough columns
+                if (cols.length < 4) return;
 
-                const category = cols[0].trim();  // Category (index key)
-                const difference = cols[1].trim(); // Difference value
-                const pValue = cols[2].trim();  // p-Value from 10mcols.csv
-                const cumulativePValue = cols[3].trim(); // Cumulative P-Value
+                const category = cols[0].trim();
+                const difference = cols[1].trim();
+                const pValue = cols[2].trim();
+                const cumulativePValue = cols[3].trim();
 
                 if (!referenceData[category]) {
                     referenceData[category] = {};
                 }
                 referenceData[category][difference] = { pValue, cumulativePValue };
             });
+            console.log("✅ Reference Data Loaded:", referenceData);
         })
-        .catch(error => console.error("Error loading reference data:", error));
+        .catch(error => console.error("❌ Error loading reference data:", error));
 }
 
 function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
@@ -599,9 +611,17 @@ function displayResults(differences, groupSums, stats, densityValues, varianceVa
         const categoryLabel = categoryLabels[category] || category;
 
         let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
+        
+let frequencyDistribution = {};
 
-        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
-        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
+if (allCategories[category]) {
+    frequencyDistribution = calculateFrequencyDistribution(allCategories[category], category); // ✅ Correctly assigns the value
+} else {
+    console.warn(`⚠️ Skipping frequency calculation for undefined category: ${category}`);
+    return;
+}
+
+		const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
         const totalSpins = totalRuns * 38;
         
         let imageLineHTML = `
@@ -798,8 +818,6 @@ function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
       document.getElementById("explanation").innerHTML += tableHTML;
     }
 
-loadReferenceData("10mcols.csv");
-
 function displayMaxHitsTable(maxHits) {
       let tableHTML = `
         <h3><center><span style="color: orange;">Max Hits per Number</span>
@@ -893,8 +911,8 @@ function processChunk(startIndex, chunkSize, isGeneratingReferenceData) {
 
 
 
-function processData(rows, isGeneratingReferenceData = false) {
-    console.log("🟢 Processing Final Data...");
+function processData(rows, isGeneratingReferenceData) {
+    console.log("🟢 Processing Final Data... isGeneratingReferenceData =", isGeneratingReferenceData);
 
     // ✅ Ensure `rows` is valid
     if (!Array.isArray(rows) || rows.length === 0) {
@@ -1089,6 +1107,11 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
 
 const worker = new Worker("worker.js");
 
+document.getElementById("generateReferenceToggle").addEventListener("change", function() {
+    isGeneratingReferenceData = this.checked;
+    console.log("🟢 isGeneratingReferenceData updated to:", isGeneratingReferenceData);
+});
+
 document.getElementById("runButton").addEventListener("click", () => {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
     if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
@@ -1096,11 +1119,20 @@ document.getElementById("runButton").addEventListener("click", () => {
         return;
     }
 
+    console.log("🟢 isGeneratingReferenceData =", isGeneratingReferenceData);
+
+    if (!isGeneratingReferenceData) { // ✅ Load reference data only if NOT generating reference
+        console.log("🟢 Loading reference data before starting the run...");
+        loadReferenceData("10mcols.csv");
+    } else {
+        console.log("✅ Skipping reference data load since this is a reference data run.");
+    }
+
     const chunkSize = 100000;
     let allResults = [];
 
     console.log("Total Runs Set:", numRuns);
-    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
+    totalRuns = numRuns;  
 
     worker.postMessage({ numRuns, chunkSize });
 
@@ -1109,9 +1141,9 @@ document.getElementById("runButton").addEventListener("click", () => {
             allResults.push(...e.data.data);
             console.log(`✅ Received ${e.data.data.length} results, total: ${allResults.length}`);
         } else if (e.data.type === "done") {
-            totalRuns = e.data.totalRuns;  // ✅ Ensure totalRuns is set when processing starts
+            totalRuns = e.data.totalRuns;
             console.log("✅ All data processed, starting analysis...");
-            processData(allResults);
+            processData(allResults, isGeneratingReferenceData);
         }
     };
 
@@ -1119,6 +1151,7 @@ document.getElementById("runButton").addEventListener("click", () => {
         console.error("❌ Worker error:", error);
     };
 });
+
 
 
 // ✅ Function to Detect Incognito Mode

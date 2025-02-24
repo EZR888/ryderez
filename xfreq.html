@@ -741,7 +741,7 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
-    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+ 	const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent) + `#${new Date().getTime()}`;
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", fileName);
@@ -749,6 +749,9 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
     link.click();
     document.body.removeChild(link);
 }
+
+
+    
 
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
@@ -876,25 +879,51 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
     return csvContent;
 }
 
+let dataRows = []; // Global storage to accumulate all generated data
+
+function processChunk(startIndex, chunkSize, isGeneratingReferenceData) {
+    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
+        const counts = getRandomCounts(38);
+        dataRows.push(counts);
+    }
+
+    console.log(`🟢 Processed chunk: ${startIndex} - ${Math.min(totalRuns, startIndex + chunkSize)}`);
+
+    if (startIndex + chunkSize < totalRuns) {
+        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData), 0);
+    } else {
+        // ✅ Ensure dataRows has valid content before processing
+        if (!Array.isArray(dataRows) || dataRows.length === 0) {
+            console.error("❌ ERROR: `dataRows` is empty before processing!");
+            return;
+        }
+
+        console.log("🟢 All chunks processed successfully.");
+        processData(dataRows, isGeneratingReferenceData);  // Call processData only when all chunks are collected
+    }
+}
+
 
 function processData(rows, isGeneratingReferenceData = false) {
-    // 🔥 Ensure `rows` is an array before proceeding
-    if (!Array.isArray(rows)) {
-        console.error("❌ ERROR: `rows` is not an array! Received:", rows);
+    console.log("🟢 Processing Final Data...");
+
+    // ✅ Ensure `rows` is valid
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.error("❌ ERROR: `rows` is missing or invalid! Aborting processing.");
         return;
     }
 
     let statsCollection = {};
     const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
     const groupSums = {};
-    let densityValues = [];  
-    let varianceValues = []; 
+    let densityValues = [];
+    let varianceValues = [];
 
     for (const key in groupIndices) {
         groupSums[key] = [];
     }
 
-    let maxHits = Array(38).fill(0); 
+    let maxHits = Array(38).fill(0);
 
     rows.forEach(counts => {
         for (const key in groupIndices) {
@@ -924,10 +953,8 @@ function processData(rows, isGeneratingReferenceData = false) {
     console.log("🟢 Density Values:", densityValues);
     console.log("🟢 Variance Values:", varianceValues);
 
-    // If we're generating the reference data, skip the lookup
-    if (!isGeneratingReferenceData) {
-        [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
-    }
+    // ✅ Prevent undefined `densityValues` or `varianceValues`
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
     Object.keys(differences).forEach(category => {
         statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
@@ -940,8 +967,15 @@ function processData(rows, isGeneratingReferenceData = false) {
     statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
     statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
 
-    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+    console.log("✅ Data Processed, Displaying Results...");
+    
+    // ✅ Ensure `statsCollection` is valid before calling `displayResults`
+    if (!statsCollection || Object.keys(statsCollection).length === 0) {
+        console.error("❌ ERROR: `statsCollection` is empty or invalid!");
+        return;
+    }
 
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
     exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, "CombinedAnalysis.csv");
 }
 
@@ -1089,47 +1123,6 @@ document.getElementById("runButton").addEventListener("click", () => {
     // ✅ Pass all required variables to `processChunk`
     processChunk(0, 100000, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits);
 });
-
-// ✅ Update processChunk to accept all necessary variables
-function processChunk(startIndex, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits) {
-    let dataRows = [];  
-
-    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
-        const counts = getRandomCounts(38);
-        dataRows.push(counts);
-
-        const sums = calculateAllSums(counts);
-        differences.topBottomDiff.push(sums.topBottomDiff);
-        differences.leftRightDiff.push(sums.leftRightDiff);
-        differences.cDiff.push(sums.cDiff);
-        differences.zzDiff.push(sums.zzDiff);
-
-        for (const key in groupIndices) {
-            groupSums[key].push(sumColumns(counts, groupIndices[key]));
-        }
-
-        let sortedCounts = counts.slice().sort((a, b) => b - a);
-        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
-        densityValues.push(parseFloat(density.toFixed(4)));
-
-        let variance = calculateVariance(counts);
-        varianceValues.push(parseFloat(variance.toFixed(4)));
-
-        for (let j = 0; j < 38; j++) {
-            if (counts[j] > maxHits[j]) { maxHits[j] = counts[j]; }
-        }
-    }
-
-    if (startIndex + chunkSize < totalRuns) {
-        // ✅ Pass all variables down to the next `processChunk` call
-        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits), 0);
-    } else {
-        console.log("🟢 Final dataRows length:", dataRows.length);
-        // ✅ Pass the variables to `processData`
-        processData(dataRows, isGeneratingReferenceData);
-    }
-}
-
 
 
 function getRandomCounts(numPicks) {

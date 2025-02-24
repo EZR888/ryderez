@@ -431,23 +431,26 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
     let belowMean = sortedKeys.filter(key => key < expectedMean);
     let aboveMean = sortedKeys.filter(key => key > expectedMean);
 
-    // Accumulate probabilities separately
-    for (let i = belowMean.length - 1; i >= 0; i--) {
+    // 🔄 Reverse accumulation for correct probability calculation
+    let totalBelow = belowMean.reduce((sum, key) => sum + frequencyDistribution[key], 0);
+    let totalAbove = aboveMean.reduce((sum, key) => sum + frequencyDistribution[key], 0);
+
+    for (let i = 0; i < belowMean.length; i++) {
         let key = belowMean[i];
-        cumulativeBelow += frequencyDistribution[key];
         cumulativeProbabilities[key] = {
-            cumulativeFrequency: cumulativeBelow,
-            cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            cumulativeFrequency: totalBelow,
+            cumulativeP: (totalBelow / totalValue).toFixed(6)
         };
+        totalBelow -= frequencyDistribution[key];
     }
 
-    for (let i = 0; i < aboveMean.length; i++) {
+    for (let i = aboveMean.length - 1; i >= 0; i--) {
         let key = aboveMean[i];
-        cumulativeAbove += frequencyDistribution[key];
         cumulativeProbabilities[key] = {
-            cumulativeFrequency: cumulativeAbove,
-            cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+            cumulativeFrequency: totalAbove,
+            cumulativeP: (totalAbove / totalValue).toFixed(6)
         };
+        totalAbove -= frequencyDistribution[key];
     }
 
     return cumulativeProbabilities;

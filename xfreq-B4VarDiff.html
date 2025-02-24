@@ -307,6 +307,7 @@ function calculateAllSums(counts) {
         leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
         cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
         zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster),
+        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
         endsCenterDiff: sumColumns(counts, groupIndices.towardEnds) - sumColumns(counts, groupIndices.towardCenter)
       };	
     }
@@ -456,7 +457,6 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       leftRightDiff: "Left - Right",
       cDiff: "Center 9 Top - Bottom",
       zzDiff: "00 - 0",
-      endsCenterDiff: "Towards Ends - Towards Center",
       topIndices: "Top",
       bottomIndices: "Bottom",
       leftTop: "Left Top",
@@ -471,6 +471,7 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       right: "Right",
       towardEnds: "Towards Ends",
       towardCenter: "Towards Center",
+      endsCenterDiff: "Towards Ends - Towards Center",
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
       Variance: "Variance (Within-Run Spread)"
@@ -903,7 +904,7 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     let statsCollection = {};
-    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], endsCenterDiff: [] };
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
     const groupSums = {};
     let densityValues = [];
     let varianceValues = [];
@@ -924,7 +925,6 @@ function processData(rows, isGeneratingReferenceData = false) {
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
-        differences.endsCenterDiff.push(sums.endsCenterDiff);
 
         let sortedCounts = counts.slice().sort((a, b) => b - a);
         let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);

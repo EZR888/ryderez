@@ -789,10 +789,16 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
- 	const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent) + `#${new Date().getTime()}`;
+    // 🟢 Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0];
+
+    // 🟢 Append date to the filename before exporting
+    const updatedFileName = `${fileName.replace(".csv", "")}_${today}.csv`;
+
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName);
+    link.setAttribute("download", updatedFileName); // ✅ Use updated filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -767,7 +767,7 @@ function getMaxHitsCSV(maxHits) {
 // =======================================================
 // Fix CSV Export to Include Correct Density & Variance
 // =======================================================
-function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues, varianceValues, fileName) {
+function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues, varianceValues, updatedFileName) {
     let csvContent = "";
 
     console.log("🟢 Exporting CSV... Checking Density & Variance:", { densityValues, varianceValues });
@@ -789,10 +789,13 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
- 	const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent) + `#${new Date().getTime()}`;
+    // 🟢 Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0];
+
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName);
+    link.setAttribute("download",updatedFileName); // ✅ Use updated filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1018,7 +1021,12 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
-    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, "CombinedAnalysis.csv");
+// 🟢 Generate dynamic filename
+const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format
+const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
+
+exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
+
 
     // 🔥 Export reference data for future use
     exportReferenceDataCSV();

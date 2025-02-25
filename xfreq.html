@@ -591,8 +591,12 @@ function exportReferenceDataCSV() {
         });
     });
 
-    const today = new Date().toISOString().split("T")[0]; 
-    const fileName = `ReferenceData_${totalRuns}_${today}.csv`; 
+const now = new Date();
+const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+const time = now.toTimeString().slice(0, 5).replace(":", ""); // HHMM (removes colon)
+
+const fileName = `RefData_${totalRuns}_${date}_${time}.csv`;
+
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
@@ -721,9 +725,9 @@ if (difference !== null) {  // ✅ Only populate if there is a valid difference
 }
 
 
-            if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
-                pValue = referenceData[categoryLabel][differenceKey].pValue;
-                cumulativePValue = referenceData[categoryLabel][differenceKey].cumulativePValue;
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+                pValue = referenceData[categoryLabel][difference].pValue;
+                cumulativePValue = referenceData[categoryLabel][difference].cumulativePValue;
             }
 
             let metricStyle = "color: orange; font-weight: bold;";
@@ -797,13 +801,19 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
-    // 🟢 Get today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split("T")[0];
+// Get current date and time
+const now = new Date();
+const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+const time = now.toTimeString().slice(0, 5).replace(":", ""); // HHMM format (removes colon)
+
+// Update filename with date and time
+const filename = `Analysis_${totalRuns}_${date}_${time}.csv`;
+
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download",updatedFileName); // ✅ Use updated filename
+    link.setAttribute("download",filename); // ✅ Use updated filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

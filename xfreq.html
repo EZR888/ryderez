@@ -1206,7 +1206,7 @@ document.getElementById("runButton").addEventListener("click", () => {
             totalRuns = e.data.totalRuns;
             console.log("✅ All data processed, starting analysis...");
             
-            processData(allResults, !useReferenceData);  // ✅ Now it correctly passes true/false
+            processData(allResults, useReferenceData);  // ✅ Now it correctly passes true/false
         }
     };
 

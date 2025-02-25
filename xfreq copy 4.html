@@ -537,17 +537,16 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
-            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-        	const frequency = difference !== "" ? frequencyDistribution[difference] : "";
             let value = metric ? values[metric] : "";
 
             if ((category === "Variance" || category === "Density") && value !== "") {
                 value = parseFloat(value).toFixed(4);
             }
 
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
             const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-            let expectedProbability = frequency ? (frequency / totalRuns).toFixed(6) : "";
+            let expectedProbability = "0.000000";
             let cumulativeProbability = "";
 
             if (difference !== "" && cumulativeData[difference]) {

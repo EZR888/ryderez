@@ -307,7 +307,6 @@ function calculateAllSums(counts) {
         leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
         cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
         zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster),
-        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
         endsCenterDiff: sumColumns(counts, groupIndices.towardEnds) - sumColumns(counts, groupIndices.towardCenter)
       };	
     }
@@ -320,36 +319,28 @@ function calculateDescriptiveStatistics(differences, isVariance = false) {
         throw new TypeError("The 'differences' argument must be a non-empty array.");
     }
 
-    let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
+    let n = 0, mean = 0, M2 = 0;
     let min = Infinity, max = -Infinity;
     differences.forEach(x => {
         n++;
         const delta = x - mean;
         const deltaN = delta / n;
-        const deltaNSquared = deltaN * deltaN;
-        const term1 = delta * deltaN * (n - 1);
         mean += deltaN;
-        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
-        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
-        M2 += term1;
+        M2 += delta * (x - mean);
         if (x < min) min = x;
         if (x > max) max = x;
     });
 
     const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
-    const skewness = (M3 / n) / Math.pow(stdDev, 3);
-    const kurtosis = (M4 / n) / (variance * variance) - 3;
 
     return {
-        mean: parseFloat(mean.toFixed(4)),  // 🔥 Always 4 decimal places
-        variance: parseFloat(variance.toFixed(4)),  // 🔥 Always 4 decimal places
-        stdDev: parseFloat(stdDev.toFixed(4)),  // 🔥 Always 4 decimal places
-        median: parseFloat(calculateMedian(differences).toFixed(4)),  // 🔥 Always 4 decimal places
-        min: parseFloat(min.toFixed(4)),  // 🔥 Always 4 decimal places
-        max: parseFloat(max.toFixed(4)),  // 🔥 Always 4 decimal places
-        skewness: parseFloat(skewness.toFixed(4)),  // 🔥 Always 4 decimal places
-        kurtosis: parseFloat(kurtosis.toFixed(4))  // 🔥 Always 4 decimal places
+        mean: parseFloat(mean.toFixed(4)),  
+        variance: parseFloat(variance.toFixed(4)),  
+        stdDev: parseFloat(stdDev.toFixed(4)),  
+        median: parseFloat(calculateMedian(differences).toFixed(4)),  
+        min: parseFloat(min.toFixed(4)),  
+        max: parseFloat(max.toFixed(4))
     };
 }
 
@@ -465,6 +456,7 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       leftRightDiff: "Left - Right",
       cDiff: "Center 9 Top - Bottom",
       zzDiff: "00 - 0",
+      endsCenterDiff: "Towards Ends - Towards Center",
       topIndices: "Top",
       bottomIndices: "Bottom",
       leftTop: "Left Top",
@@ -479,7 +471,6 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       right: "Right",
       towardEnds: "Towards Ends",
       towardCenter: "Towards Center",
-      endsCenterDiff: "Towards Ends - Towards Center",
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
       Variance: "Variance (Within-Run Spread)"
@@ -518,6 +509,8 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         console.error("Invalid totalRuns for CSV export:", totalRuns);
         return "";
     }
+    const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+    frequencyDistribution = calculateFrequencyDistribution(allCategories[category], category); // ✅ Correctly assigns the value
 
     console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
 
@@ -529,38 +522,36 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
-        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
-        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-        const metricKeys = Object.keys(values);
+        const metricKeys = Object.keys(stats[category]);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
 
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
-            let value = metric ? values[metric] : "";
+            let value = metric ? stats[category][metric] : "";
 
-            if ((category === "Variance" || category === "Density") && value !== "") {
+            // 🔥 Ensure Variance is displayed with exactly 6 decimal places
+            if (category === "Variance" && value !== "") {
                 value = parseFloat(value).toFixed(4);
             }
 
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            const observedFrequency = difference !== "" ? frequencyDistribution[difference] : "";
+            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-            let expectedProbability = "0.000000";
-            let cumulativeProbability = "";
+            let pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+            let cumulativeFrequency = "";
+            let cumulativePValue = "";
 
-            if (difference !== "" && cumulativeData[difference]) {
-                cumulativeProbability = (totalRuns > 0 && cumulativeData[difference].cumulativeP)
-                    ? Number(cumulativeData[difference].cumulativeP).toFixed(6)
-                    : "0.000000";
+            let differenceKey = difference.toString();
+            if (difference !== "" && cumulativeData[differenceKey]) {
+                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
+                cumulativePValue = Number(cumulativeData[differenceKey].cumulativeP).toFixed(6);
             }
 
-            // 🔥 Fix probability lookup from 10mcols.csv
-            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
-                expectedProbability = referenceData[categoryLabel][difference].pValue;
-                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
+                pValue = referenceData[categoryLabel][differenceKey].pValue;
+                cumulativePValue = referenceData[categoryLabel][differenceKey].cumulativePValue;
             }
-
             csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
         }
     });
@@ -741,7 +732,7 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         });
     }
 
-    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+ 	const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent) + `#${new Date().getTime()}`;
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", fileName);
@@ -749,6 +740,9 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
     link.click();
     document.body.removeChild(link);
 }
+
+
+    
 
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
@@ -876,25 +870,49 @@ function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
     return csvContent;
 }
 
+let dataRows = []; // Global storage to accumulate all generated data
+
+function processChunk(startIndex, chunkSize, isGeneratingReferenceData) {
+    let localData = [];  // Use a local array to prevent memory growth
+
+    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
+        const counts = getRandomCounts(38);
+        localData.push(counts);
+    }
+
+    console.log(`🟢 Processed chunk: ${startIndex} - ${Math.min(totalRuns, startIndex + chunkSize)}`);
+
+    // Process and discard data from memory
+    processData(localData, isGeneratingReferenceData);
+    localData = null;  // Free memory
+
+    if (startIndex + chunkSize < totalRuns) {
+        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData), 0);
+    }
+}
+
+
 
 function processData(rows, isGeneratingReferenceData = false) {
-    // 🔥 Ensure `rows` is an array before proceeding
-    if (!Array.isArray(rows)) {
-        console.error("❌ ERROR: `rows` is not an array! Received:", rows);
+    console.log("🟢 Processing Final Data...");
+
+    // ✅ Ensure `rows` is valid
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.error("❌ ERROR: `rows` is missing or invalid! Aborting processing.");
         return;
     }
 
     let statsCollection = {};
-    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], endsCenterDiff: [] };
     const groupSums = {};
-    let densityValues = [];  
-    let varianceValues = []; 
+    let densityValues = [];
+    let varianceValues = [];
 
     for (const key in groupIndices) {
         groupSums[key] = [];
     }
 
-    let maxHits = Array(38).fill(0); 
+    let maxHits = Array(38).fill(0);
 
     rows.forEach(counts => {
         for (const key in groupIndices) {
@@ -906,6 +924,7 @@ function processData(rows, isGeneratingReferenceData = false) {
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
+        differences.endsCenterDiff.push(sums.endsCenterDiff);
 
         let sortedCounts = counts.slice().sort((a, b) => b - a);
         let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
@@ -924,10 +943,8 @@ function processData(rows, isGeneratingReferenceData = false) {
     console.log("🟢 Density Values:", densityValues);
     console.log("🟢 Variance Values:", varianceValues);
 
-    // If we're generating the reference data, skip the lookup
-    if (!isGeneratingReferenceData) {
-        [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
-    }
+    // ✅ Prevent undefined `densityValues` or `varianceValues`
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
     Object.keys(differences).forEach(category => {
         statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
@@ -940,8 +957,15 @@ function processData(rows, isGeneratingReferenceData = false) {
     statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
     statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
 
-    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+    console.log("✅ Data Processed, Displaying Results...");
+    
+    // ✅ Ensure `statsCollection` is valid before calling `displayResults`
+    if (!statsCollection || Object.keys(statsCollection).length === 0) {
+        console.error("❌ ERROR: `statsCollection` is empty or invalid!");
+        return;
+    }
 
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
     exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, "CombinedAnalysis.csv");
 }
 
@@ -1063,6 +1087,8 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
     const setAIndices = [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18];
     const setBIndices = [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6];
 
+const worker = new Worker("worker.js");
+
 document.getElementById("runButton").addEventListener("click", () => {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
     if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
@@ -1070,66 +1096,59 @@ document.getElementById("runButton").addEventListener("click", () => {
         return;
     }
 
-    totalRuns = numRuns;
-    console.log("Total Runs Set:", totalRuns);
+    const chunkSize = 100000;
+    let allResults = [];
 
-    const isGeneratingReferenceData = (numRuns >= 10000000);  // Set flag for large runs
+    console.log("Total Runs Set:", numRuns);
+    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
 
-    // ✅ Declare these variables at the higher scope
-    let differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
-    let groupSums = {};
-    let densityValues = [];
-    let varianceValues = [];
-    let maxHits = Array(38).fill(0);
+    worker.postMessage({ numRuns, chunkSize });
 
-    for (const key in groupIndices) {
-        groupSums[key] = [];
-    }
+    worker.onmessage = function (e) {
+        if (e.data.type === "chunk") {
+            allResults.push(...e.data.data);
+            console.log(`✅ Received ${e.data.data.length} results, total: ${allResults.length}`);
+        } else if (e.data.type === "done") {
+            totalRuns = e.data.totalRuns;  // ✅ Ensure totalRuns is set when processing starts
+            console.log("✅ All data processed, starting analysis...");
+            processData(allResults);
+        }
+    };
 
-    // ✅ Pass all required variables to `processChunk`
-    processChunk(0, 100000, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits);
+    worker.onerror = function (error) {
+        console.error("❌ Worker error:", error);
+    };
 });
 
-// ✅ Update processChunk to accept all necessary variables
-function processChunk(startIndex, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits) {
-    let dataRows = [];  
 
-    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
-        const counts = getRandomCounts(38);
-        dataRows.push(counts);
-
-        const sums = calculateAllSums(counts);
-        differences.topBottomDiff.push(sums.topBottomDiff);
-        differences.leftRightDiff.push(sums.leftRightDiff);
-        differences.cDiff.push(sums.cDiff);
-        differences.zzDiff.push(sums.zzDiff);
-
-        for (const key in groupIndices) {
-            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+// ✅ Function to Detect Incognito Mode
+async function detectIncognito() {
+    return new Promise(resolve => {
+        if (navigator.storage && navigator.storage.estimate) {
+            navigator.storage.estimate().then(estimate => {
+                resolve(estimate.quota < 120000000); // Quota under 120MB suggests Incognito Mode
+            });
+        } else {
+            resolve(false); // Assume non-incognito if storage API is unavailable
         }
-
-        let sortedCounts = counts.slice().sort((a, b) => b - a);
-        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
-        densityValues.push(parseFloat(density.toFixed(4)));
-
-        let variance = calculateVariance(counts);
-        varianceValues.push(parseFloat(variance.toFixed(4)));
-
-        for (let j = 0; j < 38; j++) {
-            if (counts[j] > maxHits[j]) { maxHits[j] = counts[j]; }
-        }
-    }
-
-    if (startIndex + chunkSize < totalRuns) {
-        // ✅ Pass all variables down to the next `processChunk` call
-        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData, differences, groupSums, densityValues, varianceValues, maxHits), 0);
-    } else {
-        console.log("🟢 Final dataRows length:", dataRows.length);
-        // ✅ Pass the variables to `processData`
-        processData(dataRows, isGeneratingReferenceData);
-    }
+    });
 }
 
+// ✅ Function to Run Simulations in a Web Worker
+function runSimulationWithWorker(numRuns) {
+    const worker = new Worker("worker.js");
+
+    worker.postMessage({ numRuns });
+
+    worker.onmessage = function (e) {
+        processData(e.data);
+    };
+
+    worker.onerror = function (error) {
+        console.error("Worker error:", error);
+        alert("Error occurred in Web Worker. Try reducing the number of runs.");
+    };
+}
 
 
 function getRandomCounts(numPicks) {

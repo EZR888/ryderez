@@ -304,7 +304,9 @@ function calculateVariance(counts) {
     return parseFloat(variance.toFixed(6)); // 🔥 Ensure it's a number with 6 decimal places
 }
 
-
+function calculateVarianceDifference(topVariance, bottomVariance) {
+      return parseFloat((topVariance - bottomVariance).toFixed(6));
+}
 
 function calculateAllSums(counts) {
       return {
@@ -481,7 +483,8 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       endsCenterDiff: "Towards Ends - Towards Center",
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
-      Variance: "Variance (Within-Run Spread)"
+      Variance: "Variance (Within-Run Spread)",
+      varianceDifference: "Variance Difference (Top - Bottom)"
     };
 
 function displayDescriptiveStatistics(stats) {
@@ -979,7 +982,7 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     let statsCollection = {};
-    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], varianceDifference: [] };
     const groupSums = {};
     let densityValues = [];
     let varianceValues = [];
@@ -990,29 +993,36 @@ function processData(rows, isGeneratingReferenceData = false) {
 
     let maxHits = Array(38).fill(0);
 
-    rows.forEach(counts => {
-        for (const key in groupIndices) {
-            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+rows.forEach(counts => {
+    for (const key in groupIndices) {
+        groupSums[key].push(sumColumns(counts, groupIndices[key]));
+    }
+
+    const sums = calculateAllSums(counts);
+    differences.topBottomDiff.push(sums.topBottomDiff);
+    differences.leftRightDiff.push(sums.leftRightDiff);
+    differences.cDiff.push(sums.cDiff);
+    differences.zzDiff.push(sums.zzDiff);
+
+    let sortedCounts = counts.slice().sort((a, b) => b - a);
+    let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+    densityValues.push(parseFloat(density.toFixed(4)));
+
+    let variance = calculateVariance(counts);
+    varianceValues.push(parseFloat(variance.toFixed(4)));
+
+    // ✅ Variance Difference Calculation Inside Main Loop
+    let topVariance = calculateVariance(counts.filter((_, index) => groupIndices.topIndices.includes(index)));
+    let bottomVariance = calculateVariance(counts.filter((_, index) => groupIndices.bottomIndices.includes(index)));
+    let varianceDiff = calculateVarianceDifference(topVariance, bottomVariance);
+    differences.varianceDifference.push(varianceDiff);
+
+    for (let i = 0; i < 38; i++) {
+        if (counts[i] > maxHits[i]) {
+            maxHits[i] = counts[i];
         }
+    }
 
-        const sums = calculateAllSums(counts);
-        differences.topBottomDiff.push(sums.topBottomDiff);
-        differences.leftRightDiff.push(sums.leftRightDiff);
-        differences.cDiff.push(sums.cDiff);
-        differences.zzDiff.push(sums.zzDiff);
-
-        let sortedCounts = counts.slice().sort((a, b) => b - a);
-        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
-        densityValues.push(parseFloat(density.toFixed(4)));
-
-        let variance = calculateVariance(counts);
-        varianceValues.push(parseFloat(variance.toFixed(4)));
-
-        for (let i = 0; i < 38; i++) {
-            if (counts[i] > maxHits[i]) {
-                maxHits[i] = counts[i];
-            }
-        }
     });
 
     console.log("🟢 Density Values:", densityValues);
@@ -1028,6 +1038,7 @@ function processData(rows, isGeneratingReferenceData = false) {
         statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
     });
 
+    statsCollection["varianceDifference"] = calculateDescriptiveStatistics(differences.varianceDifference);
     statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
     statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
 

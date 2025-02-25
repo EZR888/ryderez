@@ -541,24 +541,18 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
                 value = parseFloat(value).toFixed(4);
             }
 
-			const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-			let observedFrequency = "";
-			let expectedProbability = "";
-			let cumulativeProbability = "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const observedFrequency = difference !== "" ? frequencyDistribution[difference] : 0;
 
-			if (difference !== null) {  // ✅ Only populate if there is a valid difference
-    			observedFrequency = frequencyDistribution[difference] || "";
-    			expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
-                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
-    			cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
-			}
+            let expectedProbability = "0.000000";
+            let cumulativeProbability = cumulativeData[difference] ? cumulativeData[difference].cumulativeP : "0.000000";
 
             if (!referenceData[categoryLabel]) {
                 referenceData[categoryLabel] = {};
             }
 
             if (!referenceData[categoryLabel][difference]) {
-                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
+                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "0.000000";
                 referenceData[categoryLabel][difference] = {
                     pValue: expectedProbability,
                     cumulativePValue: cumulativeProbability,
@@ -578,11 +572,6 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
 }
 
 function exportReferenceDataCSV() {
-    if (Object.keys(referenceData).length === 0) {
-        console.log("🟡 Skipping Reference Data CSV export (No reference data generated).");
-        return;
-    }
-
     let csvContent = "Category,Difference,pValue,Cumulative P-Value,Observed Frequency\n";
 
     Object.entries(referenceData).forEach(([category, differences]) => {
@@ -591,8 +580,8 @@ function exportReferenceDataCSV() {
         });
     });
 
-    const today = new Date().toISOString().split("T")[0]; 
-    const fileName = `ReferenceData_${totalRuns}_${today}.csv`; 
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+    const fileName = `ReferenceData_${totalRuns}_${today}.csv`; // ✅ Updated filename
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
@@ -708,18 +697,18 @@ function displayResults(differences, groupSums, stats, densityValues, varianceVa
                 value = parseFloat(value).toFixed(4);
             }
 
-const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-let frequency = "";
-let pValue = "";
-let cumulativePValue = "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            const frequency = difference !== "" ? frequencyDistribution[difference] : "";
 
-if (difference !== null) {  // ✅ Only populate if there is a valid difference
-    frequency = frequencyDistribution[difference] || "";
-    pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
-             (frequency ? (frequency / totalRuns).toFixed(6) : "");
-    cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
-}
+            let pValue = frequency ? (frequency / totalRuns).toFixed(6) : "";
+            let cumulativeFrequency = "";
+            let cumulativePValue = "";
 
+            let differenceKey = difference.toString();
+            if (difference !== "" && cumulativeData[differenceKey]) {
+                cumulativeFrequency = cumulativeData[differenceKey].cumulativeFrequency;
+                cumulativePValue = Number(cumulativeData[differenceKey].cumulativeP).toFixed(6);
+            }
 
             if (referenceData[categoryLabel] && referenceData[categoryLabel][differenceKey]) {
                 pValue = referenceData[categoryLabel][differenceKey].pValue;
@@ -1036,11 +1025,10 @@ const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
 exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
 
 
-// 🔥 Only export reference data when generating it (not during user tests)
-    if (isGeneratingReferenceData) {
-        exportReferenceDataCSV();
+    // 🔥 Export reference data for future use
+    exportReferenceDataCSV();
 }
-}
+
 
     // =======================================================
     // FILE INPUT HANDLING
@@ -1168,24 +1156,22 @@ document.getElementById("runButton").addEventListener("click", () => {
         return;
     }
 
-    const useReferenceData = document.getElementById("useReferenceData").checked;  // ✅ Get checkbox state
-    console.log(`🟢 Use Reference Data: ${useReferenceData}`);  // Debugging info
-
-    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
-
     const chunkSize = 100000;
     let allResults = [];
+
+    console.log("Total Runs Set:", numRuns);
+    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
 
     worker.postMessage({ numRuns, chunkSize });
 
     worker.onmessage = function (e) {
         if (e.data.type === "chunk") {
             allResults.push(...e.data.data);
+            console.log(`✅ Received ${e.data.data.length} results, total: ${allResults.length}`);
         } else if (e.data.type === "done") {
-            totalRuns = e.data.totalRuns;
+            totalRuns = e.data.totalRuns;  // ✅ Ensure totalRuns is set when processing starts
             console.log("✅ All data processed, starting analysis...");
-            
-            processData(allResults, useReferenceData);  // ✅ Now it correctly passes true/false
+            processData(allResults);
         }
     };
 

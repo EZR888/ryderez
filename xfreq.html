@@ -7,6 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roulette P-Values</title>
   <style>
+  .category-dropdown-container {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+.category-dropdown-container select {
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid lightgreen;
+    background-color: black;
+    color: lightgreen;
+}
+
     .framed-buttons {
       border: 2px solid lightblue;
       padding: 15px;
@@ -197,10 +212,11 @@
   }
   .category-label {
   color: lightgreen !important;
-  font-size: 24px !important;
-  font-weight: bold !important;
+  font-size: 42px !important;
+  font-weight: normal !important;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   display: block;
 }
 
@@ -664,29 +680,57 @@ function loadReferenceData(csvFilePath) {
 function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
+
     const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    // Create options for the dropdown
+    let categoryOptions = `<option value="">Select a Category...</option>`;
+    Object.keys(allCategories).forEach(category => {
+        if (!stats[category]) return;
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+        categoryOptions += `<option value="${anchorId}">${categoryLabel}</option>`;
+    });
 
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) return;
         const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
 
-        let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
+        // Dropdown inside each category (fixes scope issue)
+        let categoryDropdownHTML = `
+            <div style="text-align: left; margin-bottom: 2px;">
+                <label for="categoryDropdown-${anchorId}" style="font-size: 14px; color: lightgreen;"></label>
+                <select class="categoryDropdown" id="categoryDropdown-${anchorId}" onchange="jumpToCategory(this)" style="padding: 5px; font-size: 14px; width: 220px;">
+                    ${categoryOptions}
+                </select>
+            </div>
+        `;
+
+        let categoryHTML = `
+            <div id="${anchorId}" class="category-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
+                ${categoryDropdownHTML}
+                <h2 class="category-label" style="margin-top: 20px; text-align: center;">
+                    <a href="#${anchorId}" style="color: lightgreen; text-decoration: none;">${categoryLabel}</a>
+                </h2>
+            </div>
+        `;
 
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         const totalSpins = totalRuns * 38;
-        
+
         let imageLineHTML = `
-            <center>
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalRuns}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Runs</span>
+            <center style="margin-bottom: 5px;">
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalRuns}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Runs</span>
                 &nbsp;&nbsp;
-                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 10px auto;">
+                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 5px auto;">
                 &nbsp;&nbsp;
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalSpins}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Spins</span>
-            </center><br>`;
-            
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalSpins}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Spins</span>
+            </center>`;
+
         let tableHTML = `
             ${categoryHTML}
             ${imageLineHTML}
@@ -710,23 +754,21 @@ function displayResults(differences, groupSums, stats, densityValues, varianceVa
             const metric = metricKeys[i] || "";
             let value = metric ? stats[category][metric] : "";
 
-            // 🔥 Ensure Variance is displayed with exactly 6 decimal places
             if (category === "Variance" && value !== "") {
                 value = parseFloat(value).toFixed(4);
             }
 
-const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-let frequency = "";
-let pValue = "";
-let cumulativePValue = "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let frequency = "";
+            let pValue = "";
+            let cumulativePValue = "";
 
-if (difference !== null) {  // ✅ Only populate if there is a valid difference
-    frequency = frequencyDistribution[difference] || "";
-    pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
-             (frequency ? (frequency / totalRuns).toFixed(6) : "");
-    cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
-}
-
+            if (difference !== null) {  
+                frequency = frequencyDistribution[difference] || "";
+                pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
+                        (frequency ? (frequency / totalRuns).toFixed(6) : "");
+                cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
+            }
 
             if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
                 pValue = referenceData[categoryLabel][difference].pValue;
@@ -756,6 +798,15 @@ if (difference !== null) {  // ✅ Only populate if there is a valid difference
         explanationElement.innerHTML += tableHTML;
     });
 }
+
+// Fix for navigation issue
+function jumpToCategory(dropdown) {
+    const selectedCategory = dropdown.value;
+    if (selectedCategory) {
+        document.getElementById(selectedCategory).scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
 
 function getMaxHitsCSV(maxHits) {
     let csvContent = "Max Hits per Number (Binomial p-values)\n";

@@ -7,6 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roulette P-Values</title>
   <style>
+  .category-dropdown-container {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+.category-dropdown-container select {
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid lightgreen;
+    background-color: black;
+    color: lightgreen;
+}
+
     .framed-buttons {
       border: 2px solid lightblue;
       padding: 15px;
@@ -197,10 +212,11 @@
   }
   .category-label {
   color: lightgreen !important;
-  font-size: 24px !important;
-  font-weight: bold !important;
+  font-size: 42px !important;
+  font-weight: normal !important;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   display: block;
 }
 
@@ -304,7 +320,9 @@ function calculateVariance(counts) {
     return parseFloat(variance.toFixed(6)); // 🔥 Ensure it's a number with 6 decimal places
 }
 
-
+function calculateVarianceDifference(topVariance, bottomVariance) {
+      return parseFloat((topVariance - bottomVariance).toFixed(6));
+}
 
 function calculateAllSums(counts) {
       return {
@@ -320,33 +338,41 @@ function calculateAllSums(counts) {
     // =======================================================
     // Descriptive Statistics & Frequency Functions
     // =======================================================
-function calculateDescriptiveStatistics(differences, isVariance = false) {
+function calculateDescriptiveStatistics(differences) {
     if (!Array.isArray(differences) || differences.length === 0) {
         throw new TypeError("The 'differences' argument must be a non-empty array.");
     }
 
-    let n = 0, mean = 0, M2 = 0;
+    let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
     let min = Infinity, max = -Infinity;
     differences.forEach(x => {
         n++;
         const delta = x - mean;
         const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
         mean += deltaN;
-        M2 += delta * (x - mean);
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
         if (x < min) min = x;
         if (x > max) max = x;
     });
 
     const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
 
     return {
-        mean: parseFloat(mean.toFixed(4)),  
-        variance: parseFloat(variance.toFixed(4)),  
-        stdDev: parseFloat(stdDev.toFixed(4)),  
-        median: parseFloat(calculateMedian(differences).toFixed(4)),  
-        min: parseFloat(min.toFixed(4)),  
-        max: parseFloat(max.toFixed(4))
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        median: calculateMedian(differences),
+        min,
+        max,
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4)
     };
 }
 
@@ -414,8 +440,12 @@ function calculateFrequencyDistribution(data) {
 }
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
+    console.log(`🔵 Starting cumulative probability calculation for category: ${category}`);
+    console.log(`📊 Frequency Distribution for ${category}:`, frequencyDistribution);
+    console.log(`📈 Total Value for ${category}:`, totalValue);
+
     if (!totalValue || totalValue <= 0) {
-        console.error("Invalid total for cumulative probability calculation:", totalValue);
+        console.error("❌ Invalid total for cumulative probability calculation:", totalValue);
         return {};
     }
 
@@ -424,34 +454,54 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
     let cumulativeBelow = 0, cumulativeAbove = 0;
 
     // 🔥 Determine expected mean from reference data (if available)
-	let expectedMean = (referenceData && referenceData[category]?.mean) 
-    	? parseFloat(referenceData[category].mean) 
-    	: 0;
-    	console.log(`🟢 Using expected mean for ${category}:`, expectedMean);
+    let expectedMean = (referenceData && referenceData[category]?.mean) 
+        ? parseFloat(referenceData[category].mean) 
+        : 0;
 
-    // Split values around expected mean
-    let belowMean = sortedKeys.filter(key => key < expectedMean);
-    let aboveMean = sortedKeys.filter(key => key > expectedMean);
+    console.log(`🟢 Expected Mean for ${category}:`, expectedMean);
 
-    // Accumulate probabilities separately
-    for (let i = belowMean.length - 1; i >= 0; i--) {
+    // 🔄 Split values into two groups: below and above the mean
+    let belowMean = sortedKeys.filter(key => key < expectedMean).sort((a, b) => b - a); // Reverse order
+    let aboveMean = sortedKeys.filter(key => key > expectedMean).sort((a, b) => a - b); // Normal order
+
+    console.log(`🟢 Below Mean (${category}):`, belowMean);
+    console.log(`🟢 Above Mean (${category}):`, aboveMean);
+
+    // ✅ Accumulate probabilities for values **below** the mean
+    console.log(`⬇️ Starting accumulation for values BELOW the mean (${category})...`);
+    for (let i = 0; i < belowMean.length; i++) {
         let key = belowMean[i];
-        cumulativeBelow += frequencyDistribution[key];
+        cumulativeBelow += frequencyDistribution[key]; // Increment cumulative frequency
+        let cumulativeP = (cumulativeBelow / totalValue).toFixed(6);
+        
+        // 🔥 Store cumulative probability
         cumulativeProbabilities[key] = {
             cumulativeFrequency: cumulativeBelow,
-            cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            cumulativeP: cumulativeP
         };
-    }
 
+        console.log(`➡️ Cumulative Below: ${key} | ${cumulativeP}`);
+    }
+    console.log(`✅ Completed accumulation for values BELOW the mean (${category}).`);
+
+    // ✅ Accumulate probabilities for values **above** the mean
+    console.log(`⬆️ Starting accumulation for values ABOVE the mean (${category})...`);
     for (let i = 0; i < aboveMean.length; i++) {
         let key = aboveMean[i];
-        cumulativeAbove += frequencyDistribution[key];
+        cumulativeAbove += frequencyDistribution[key]; // Increment cumulative frequency
+        let cumulativeP = (cumulativeAbove / totalValue).toFixed(6);
+
+        // 🔥 Store cumulative probability
         cumulativeProbabilities[key] = {
             cumulativeFrequency: cumulativeAbove,
-            cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+            cumulativeP: cumulativeP
         };
-    }
 
+        console.log(`➡️ Cumulative Above: ${key} | ${cumulativeP}`);
+    }
+    console.log(`✅ Completed accumulation for values ABOVE the mean (${category}).`);
+
+    console.log(`🔵 Finished cumulative probability calculation for category: ${category}`);
     return cumulativeProbabilities;
 }
 
@@ -481,30 +531,30 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
       endsCenterDiff: "Towards Ends - Towards Center",
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
-      Variance: "Variance (Within-Run Spread)"
+      Variance: "Variance (Within-Run Spread)",
+      varianceDifference: "Variance Difference (Top - Bottom)"
     };
 
 function displayDescriptiveStatistics(stats) {
-      if (!stats || typeof stats !== "object") {
+    if (!stats || typeof stats !== "object") {
         console.error("Invalid statistics data provided for display.");
         alert("An error occurred while displaying statistics.");
         return;
-      }
-      const statsElement = document.getElementById("statistics");
-      statsElement.innerHTML = `
-        <ul>
-          <li><strong><span style="color: salmon;"> Mean:</span></strong><strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
-          <li><strong><span style="color: salmon;">Variance:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.variance}</span></li>
-          <li><strong><span style="color: salmon;">Standard Deviation:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
-          <li><strong><span style="color: salmon;">Median:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
-          <li><strong><span style="color: salmon;">Minimum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
-          <li><strong><span style="color: salmon;">Maximum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
-          <li><strong><span style="color: salmon;">Skewness:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
-          <li><strong><span style="color: salmon;">Kurtosis:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
-        </ul>
-      `;
     }
-
+    const statsElement = document.getElementById("statistics");
+    statsElement.innerHTML = `
+        <ul>
+            <li><strong><span style="color: salmon;"> Mean:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
+            <li><strong><span style="color: salmon;">Variance:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.variance}</span></li>
+            <li><strong><span style="color: salmon;">Standard Deviation:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
+            <li><strong><span style="color: salmon;">Median:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
+            <li><strong><span style="color: salmon;">Minimum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
+            <li><strong><span style="color: salmon;">Maximum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
+            <li><strong><span style="color: salmon;">Skewness:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
+            <li><strong><span style="color: salmon;">Kurtosis:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
+        </ul>
+    `;
+}
 
     // =======================================================
     // CSV EXPORT FUNCTIONS
@@ -518,11 +568,7 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         return "";
     }
 
-    console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
-
-    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
-
-    let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
+    let csvContent = "Category,Metric,Value,Skewness,Kurtosis,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
     const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
 
     Object.entries(stats).forEach(([category, values]) => {
@@ -536,47 +582,19 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
             let value = metric ? values[metric] : "";
+            let skewness = metric === "Skewness" ? values.skewness || "" : "";
+            let kurtosis = metric === "Kurtosis" ? values.kurtosis || "" : "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let observedFrequency = frequencyDistribution[difference] || "";
+            let expectedProbability = (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
+            let cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
 
-            if ((category === "Variance" || category === "Density") && value !== "") {
-                value = parseFloat(value).toFixed(4);
-            }
-
-			const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-			let observedFrequency = "";
-			let expectedProbability = "";
-			let cumulativeProbability = "";
-
-			if (difference !== null) {  // ✅ Only populate if there is a valid difference
-    			observedFrequency = frequencyDistribution[difference] || "";
-    			expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
-                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
-    			cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
-			}
-
-            if (!referenceData[categoryLabel]) {
-                referenceData[categoryLabel] = {};
-            }
-
-            if (!referenceData[categoryLabel][difference]) {
-                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
-                referenceData[categoryLabel][difference] = {
-                    pValue: expectedProbability,
-                    cumulativePValue: cumulativeProbability,
-                    observedFrequency: observedFrequency // ✅ Added Observed Frequency
-                };
-            } else {
-                expectedProbability = referenceData[categoryLabel][difference].pValue;
-                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
-                referenceData[categoryLabel][difference].observedFrequency = observedFrequency; // ✅ Updated
-            }
-
-            csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
+            csvContent += `${categoryLabel},${metric},${value},${skewness},${kurtosis},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
         }
     });
 
     return csvContent;
 }
-
 function exportReferenceDataCSV() {
     if (Object.keys(referenceData).length === 0) {
         console.log("🟡 Skipping Reference Data CSV export (No reference data generated).");
@@ -661,29 +679,57 @@ function loadReferenceData(csvFilePath) {
 function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
     const explanationElement = document.getElementById("explanation");
     explanationElement.innerHTML = "";
+
     const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    // Create options for the dropdown
+    let categoryOptions = `<option value="">Select a Category...</option>`;
+    Object.keys(allCategories).forEach(category => {
+        if (!stats[category]) return;
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+        categoryOptions += `<option value="${anchorId}">${categoryLabel}</option>`;
+    });
 
     Object.keys(allCategories).forEach(category => {
         if (!stats[category]) return;
         const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
 
-        let categoryHTML = `<h2 class="category-label">${categoryLabel}</h2>`;
+        // Dropdown inside each category (fixes scope issue)
+        let categoryDropdownHTML = `
+            <div style="text-align: left; margin-bottom: 2px;">
+                <label for="categoryDropdown-${anchorId}" style="font-size: 14px; color: lightgreen;"></label>
+                <select class="categoryDropdown" id="categoryDropdown-${anchorId}" onchange="jumpToCategory(this)" style="padding: 5px; font-size: 14px; width: 220px;">
+                    ${categoryOptions}
+                </select>
+            </div>
+        `;
+
+        let categoryHTML = `
+            <div id="${anchorId}" class="category-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
+                ${categoryDropdownHTML}
+                <h2 class="category-label" style="margin-top: 20px; text-align: center;">
+                    <a href="#${anchorId}" style="color: lightgreen; text-decoration: none;">${categoryLabel}</a>
+                </h2>
+            </div>
+        `;
 
         const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         const totalSpins = totalRuns * 38;
-        
+
         let imageLineHTML = `
-            <center>
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalRuns}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Runs</span>
+            <center style="margin-bottom: 5px;">
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalRuns}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Runs</span>
                 &nbsp;&nbsp;
-                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 10px auto;">
+                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 5px auto;">
                 &nbsp;&nbsp;
-                <span style="color: orange; font-size: 20px; font-weight: bold;">${totalSpins}</span>
-                <span style="color: DarkKhaki; font-size: 18px; font-weight: bold;">Spins</span>
-            </center><br>`;
-            
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalSpins}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Spins</span>
+            </center>`;
+
         let tableHTML = `
             ${categoryHTML}
             ${imageLineHTML}
@@ -707,23 +753,21 @@ function displayResults(differences, groupSums, stats, densityValues, varianceVa
             const metric = metricKeys[i] || "";
             let value = metric ? stats[category][metric] : "";
 
-            // 🔥 Ensure Variance is displayed with exactly 6 decimal places
             if (category === "Variance" && value !== "") {
                 value = parseFloat(value).toFixed(4);
             }
 
-const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-let frequency = "";
-let pValue = "";
-let cumulativePValue = "";
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let frequency = "";
+            let pValue = "";
+            let cumulativePValue = "";
 
-if (difference !== null) {  // ✅ Only populate if there is a valid difference
-    frequency = frequencyDistribution[difference] || "";
-    pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
-             (frequency ? (frequency / totalRuns).toFixed(6) : "");
-    cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
-}
-
+            if (difference !== null) {  
+                frequency = frequencyDistribution[difference] || "";
+                pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
+                        (frequency ? (frequency / totalRuns).toFixed(6) : "");
+                cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
+            }
 
             if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
                 pValue = referenceData[categoryLabel][difference].pValue;
@@ -753,6 +797,15 @@ if (difference !== null) {  // ✅ Only populate if there is a valid difference
         explanationElement.innerHTML += tableHTML;
     });
 }
+
+// Fix for navigation issue
+function jumpToCategory(dropdown) {
+    const selectedCategory = dropdown.value;
+    if (selectedCategory) {
+        document.getElementById(selectedCategory).scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
 
 function getMaxHitsCSV(maxHits) {
     let csvContent = "Max Hits per Number (Binomial p-values)\n";
@@ -979,7 +1032,7 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     let statsCollection = {};
-    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [] };
+    const differences = { topBottomDiff: [], leftRightDiff: [], cDiff: [], zzDiff: [], varianceDifference: [] };
     const groupSums = {};
     let densityValues = [];
     let varianceValues = [];
@@ -1008,6 +1061,12 @@ function processData(rows, isGeneratingReferenceData = false) {
         let variance = calculateVariance(counts);
         varianceValues.push(parseFloat(variance.toFixed(4)));
 
+        // ✅ Variance Difference Calculation Inside Main Loop
+        let topVariance = calculateVariance(counts.filter((_, index) => groupIndices.topIndices.includes(index)));
+        let bottomVariance = calculateVariance(counts.filter((_, index) => groupIndices.bottomIndices.includes(index)));
+        let varianceDiff = calculateVarianceDifference(topVariance, bottomVariance);
+        differences.varianceDifference.push(varianceDiff);
+
         for (let i = 0; i < 38; i++) {
             if (counts[i] > maxHits[i]) {
                 maxHits[i] = counts[i];
@@ -1020,16 +1079,35 @@ function processData(rows, isGeneratingReferenceData = false) {
 
     [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
-    Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+    // ✅ Fix: Use the correct variable instead of `category`
+    Object.keys(differences).forEach(difference => {
+        let stats = calculateDescriptiveStatistics(differences[difference]);
+        statsCollection[difference] = stats;
+        statsCollection[difference].skewness = stats.skewness;
+        statsCollection[difference].kurtosis = stats.kurtosis;
     });
 
     Object.keys(groupSums).forEach(group => {
-        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+        let stats = calculateDescriptiveStatistics(groupSums[group]);
+        statsCollection[group] = stats;
+        statsCollection[group].skewness = stats.skewness;
+        statsCollection[group].kurtosis = stats.kurtosis;
     });
 
-    statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
-    statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
+    let varianceDiffStats = calculateDescriptiveStatistics(differences.varianceDifference);
+    statsCollection["varianceDifference"] = varianceDiffStats;
+    statsCollection["varianceDifference"].skewness = varianceDiffStats.skewness;
+    statsCollection["varianceDifference"].kurtosis = varianceDiffStats.kurtosis;
+
+    let densityStats = calculateDescriptiveStatistics(densityValues);
+    statsCollection["Density"] = densityStats;
+    statsCollection["Density"].skewness = densityStats.skewness;
+    statsCollection["Density"].kurtosis = densityStats.kurtosis;
+
+    let varianceStats = calculateDescriptiveStatistics(varianceValues);
+    statsCollection["Variance"] = varianceStats;
+    statsCollection["Variance"].skewness = varianceStats.skewness;
+    statsCollection["Variance"].kurtosis = varianceStats.kurtosis;
 
     console.log("✅ Data Processed, Displaying Results...");
     
@@ -1039,18 +1117,19 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
-// 🟢 Generate dynamic filename
-const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format
-const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
 
-exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
+    // 🟢 Generate dynamic filename
+    const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format
+    const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
 
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
 
-// 🔥 Only export reference data when generating it (not during user tests)
-    if (isGeneratingReferenceData) {
+    // 🔥 Only export reference data when generating it (not during user tests)
+    if (!isGeneratingReferenceData) {
         exportReferenceDataCSV();
+    }
 }
-}
+
 
     // =======================================================
     // FILE INPUT HANDLING

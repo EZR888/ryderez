@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -343,10 +342,9 @@ function calculateDescriptiveStatistics(differences) {
     if (!Array.isArray(differences) || differences.length === 0) {
         throw new TypeError("The 'differences' argument must be a non-empty array.");
     }
-  
+
     let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
     let min = Infinity, max = -Infinity;
-    
     differences.forEach(x => {
         n++;
         const delta = x - mean;
@@ -363,23 +361,8 @@ function calculateDescriptiveStatistics(differences) {
 
     const variance = M2 / n;
     const stdDev = Math.sqrt(variance);
-
-    // **🔥 Prevent NaN issue when variance = 0**
-    if (variance === 0) {
-        return {
-            mean: mean.toFixed(4),
-            variance: variance.toFixed(4),
-            stdDev: stdDev.toFixed(4),
-            median: calculateMedian(differences),
-            min,
-            max,
-            skewness: "0.0000",  // No skewness if all values are the same
-            kurtosis: "0.0000"   // No excess kurtosis if variance = 0
-        };
-    }
-
     const skewness = (M3 / n) / Math.pow(stdDev, 3);
-    const kurtosis = (M4 / n) / (variance * variance) - 3;  
+    const kurtosis = (M4 / n) / (variance * variance) - 3;
 
     return {
         mean: mean.toFixed(4),
@@ -548,7 +531,6 @@ function displayDescriptiveStatistics(stats) {
     `;
 }
 
-
     // =======================================================
     // CSV EXPORT FUNCTIONS
     // =======================================================
@@ -561,19 +543,13 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         return "";
     }
 
-    console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
-
-    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
-
-    let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
+    let csvContent = "Category,Metric,Value,Skewness,Kurtosis,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
     const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
 
     Object.entries(stats).forEach(([category, values]) => {
         const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
         const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
-        console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
-
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -581,41 +557,14 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         for (let i = 0; i < maxRows; i++) {
             const metric = metricKeys[i] || "";
             let value = metric ? values[metric] : "";
-
-            if ((category === "Variance" || category === "Density") && value !== "") {
-                value = parseFloat(value).toFixed(4);
-            }
-
+            let skewness = metric === "Skewness" ? values.skewness || "" : "";
+            let kurtosis = metric === "Kurtosis" ? values.kurtosis || "" : "";
             const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-            let observedFrequency = "";
-            let expectedProbability = "";
-            let cumulativeProbability = "";
+            let observedFrequency = frequencyDistribution[difference] || "";
+            let expectedProbability = (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
+            let cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
 
-            if (difference !== null) {
-                observedFrequency = frequencyDistribution[difference] || "";
-                expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
-                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
-                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
-            }
-
-            if (!referenceData[categoryLabel]) {
-                referenceData[categoryLabel] = {};
-            }
-
-            if (!referenceData[categoryLabel][difference]) {
-                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
-                referenceData[categoryLabel][difference] = {
-                    pValue: expectedProbability,
-                    cumulativePValue: cumulativeProbability,
-                    observedFrequency: observedFrequency
-                };
-            } else {
-                expectedProbability = referenceData[categoryLabel][difference].pValue;
-                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
-                referenceData[categoryLabel][difference].observedFrequency = observedFrequency;
-            }
-
-            csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
+            csvContent += `${categoryLabel},${metric},${value},${skewness},${kurtosis},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
         }
     });
 
@@ -653,7 +602,6 @@ const fileName = `RefData_${totalRuns}_${date}_${time}.csv`;
 
     console.log(`✅ Reference Data Exported as ${fileName}`);
 }
-
 
 // Global object to store reference data from 10mcols.csv
 let referenceData = {};
@@ -1134,7 +1082,9 @@ function processData(rows, isGeneratingReferenceData = false) {
     [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
     Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+		statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+		statsCollection[category].skewness = calculateDescriptiveStatistics(differences[category]).skewness;
+		statsCollection[category].kurtosis = calculateDescriptiveStatistics(differences[category]).kurtosis;
     });
 
     Object.keys(groupSums).forEach(group => {

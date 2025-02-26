@@ -138,14 +138,130 @@ Group sums
 Density
 Variance
 Max Hits
-✅ Final Check: Verify in the UI
-Run the script.
-Check if Skewness & Kurtosis appear in the displayed stats.
-Export a CSV and verify they are included in the output.
-🎯 Final Notes
-✔ Skewness & Kurtosis now appear in:
+function processData(rows, isGeneratingReferenceData = false) {
+    console.log("🟢 Processing Final Data...");
 
-UI stats display 📊
-CSV output 📁
-Processed stats calculations ✅
-This fully restores them to your newest version of the script. 🚀
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.error("❌ ERROR: rows is missing or invalid! Aborting processing.");
+        return;
+    }
+
+    // ✅ Declare 'differences' FIRST before using it
+    let statsCollection = {};
+    const differences = { 
+        topBottomDiff: [], 
+        leftRightDiff: [], 
+        cDiff: [], 
+        zzDiff: [], 
+        varianceDifference: [] 
+    };
+    const groupSums = {};
+    let densityValues = [];
+    let varianceValues = [];
+
+    console.log("🟢 Verifying category assignments in processData...");
+
+    // ✅ Initialize all groups before using them
+    for (const key in groupIndices) {
+        groupSums[key] = [];
+    }
+
+    let maxHits = Array(38).fill(0);
+
+    rows.forEach(counts => {
+        for (const key in groupIndices) {
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+        }
+
+        const sums = calculateAllSums(counts);
+        differences.topBottomDiff.push(sums.topBottomDiff);
+        differences.leftRightDiff.push(sums.leftRightDiff);
+        differences.cDiff.push(sums.cDiff);
+        differences.zzDiff.push(sums.zzDiff);
+
+        let sortedCounts = counts.slice().sort((a, b) => b - a);
+        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+        densityValues.push(parseFloat(density.toFixed(4)));
+
+        let variance = calculateVariance(counts);
+        varianceValues.push(parseFloat(variance.toFixed(4)));
+
+        // ✅ Variance Difference Calculation Inside Main Loop
+        let topVariance = calculateVariance(counts.filter((_, index) => groupIndices.topIndices.includes(index)));
+        let bottomVariance = calculateVariance(counts.filter((_, index) => groupIndices.bottomIndices.includes(index)));
+        let varianceDiff = calculateVarianceDifference(topVariance, bottomVariance);
+        differences.varianceDifference.push(varianceDiff);
+
+        for (let i = 0; i < 38; i++) {
+            if (counts[i] > maxHits[i]) {
+                maxHits[i] = counts[i];
+            }
+        }
+    });
+
+    console.log("🟢 Density Values:", densityValues);
+    console.log("🟢 Variance Values:", varianceValues);
+
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
+
+    // ✅ Compute statistics for differences (including skewness & kurtosis)
+ Object.keys(differences).forEach(category => {
+    let stats = calculateDescriptiveStatistics(differences[category]);
+    statsCollection[category] = stats;
+    statsCollection[category].skewness = stats.skewness;
+    statsCollection[category].kurtosis = stats.kurtosis;
+});
+
+
+    // ✅ Compute statistics for group sums (including skewness & kurtosis)
+Object.keys(groupSums).forEach(group => {
+    let stats = calculateDescriptiveStatistics(groupSums[group]);
+    statsCollection[group] = stats;
+    statsCollection[group].skewness = stats.skewness;
+    statsCollection[group].kurtosis = stats.kurtosis;
+});
+
+    // ✅ Compute statistics for variance difference (including skewness & kurtosis)
+let varianceDiffStats = calculateDescriptiveStatistics(differences.varianceDifference);
+statsCollection["varianceDifference"] = varianceDiffStats;
+statsCollection["varianceDifference"].skewness = varianceDiffStats.skewness;
+statsCollection["varianceDifference"].kurtosis = varianceDiffStats.kurtosis;
+
+    // ✅ Compute statistics for density (including skewness & kurtosis)
+let densityStats = calculateDescriptiveStatistics(densityValues);
+statsCollection["Density"] = densityStats;
+statsCollection["Density"].skewness = densityStats.skewness;
+statsCollection["Density"].kurtosis = densityStats.kurtosis;
+
+    // ✅ Compute statistics for variance (including skewness & kurtosis)
+let varianceStats = calculateDescriptiveStatistics(varianceValues);
+statsCollection["Variance"] = varianceStats;
+statsCollection["Variance"].skewness = varianceStats.skewness;
+statsCollection["Variance"].kurtosis = varianceStats.kurtosis;
+
+    // ✅ Compute statistics for max hits (including skewness & kurtosis)
+let maxHitsStats = calculateDescriptiveStatistics(maxHits);
+statsCollection["MaxHits"] = maxHitsStats;
+statsCollection["MaxHits"].skewness = maxHitsStats.skewness;
+statsCollection["MaxHits"].kurtosis = maxHitsStats.kurtosis;
+
+    console.log("✅ Data Processed, Displaying Results...");
+    
+    if (!statsCollection || Object.keys(statsCollection).length === 0) {
+        console.error("❌ ERROR: statsCollection is empty or invalid!");
+        return;
+    }
+
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+
+    // 🟢 Generate dynamic filename
+    const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format
+    const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
+
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
+
+    // 🔥 Only export reference data when generating it (not during user tests)
+    if (!isGeneratingReferenceData) {
+        exportReferenceDataCSV();
+    }
+}

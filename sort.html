@@ -377,7 +377,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 
-    <script>
+<script>
     
         document.addEventListener('DOMContentLoaded', function() {
     // Check if elements exist before adding event listeners
@@ -529,6 +529,7 @@
     tableContainer.innerHTML = tableHtml;
 }
 
+        
 function generateFrequencyTable() {
     let frequencyContainer = document.getElementById('frequencyContainer');
     if (!frequencyContainer) {
@@ -596,6 +597,94 @@ function generateFrequencyTable() {
                 generateFrequencyTable();
             });
         });
+        
+// Function to extract all uploaded file names
+function getUploadedFileNames() {
+    let fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length > 0) {
+        let fileNames = Array.from(fileInput.files).map(file => file.name); // Get all file names
+        return fileNames.join(", "); // Join names with commas
+    }
+    return "Unknown_Files"; // Default name if no file is selected
+}
+
+// Function to generate a formatted timestamp
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
+}
+
+// Event listener for Save to PDF button
+document.getElementById("savePdfButton").addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    // Get all selected file names
+    const fileNames = getUploadedFileNames();
+    const timestamp = getFormattedTimestamp();
+
+    // Create a shorter filename for saving (avoid excessive length)
+    let shortFileName = fileNames.length > 50 ? "Sorted" : fileNames.replace(/\.[^/.]+$/, "").replace(/[, ]+/g, "_");
+
+    const pdfFileName = `${shortFileName}_${timestamp}.pdf`;
+
+    // Add title
+    doc.setFontSize(20);
+    doc.setTextColor(50, 205, 50); // Light green
+    doc.text("Sorted Table & Frequency Distribution", 14, 15);
+
+    // Add file names as a header in the PDF
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 255); // Blue text
+    doc.text(`Source Files: ${fileNames}`, 14, 25, { maxWidth: 260 }); // Wrap long file names
+
+    // Add explanation text (if exists)
+    let explanationElement = document.getElementById("explanation");
+    if (explanationElement) {
+        let explanationText = explanationElement.innerText.trim();
+        if (explanationText.length > 0) {
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0); // Black
+            doc.text(explanationText, 14, 35, { maxWidth: 260 });
+        }
+    }
+
+    // Capture frequency table
+    let freqTable = document.getElementById("frequencyTable");
+    if (freqTable) {
+        doc.autoTable({
+            html: "#frequencyTable",
+            startY: 50,
+            theme: "grid",
+            styles: { fontSize: 10, cellPadding: 3 },
+            headStyles: { fillColor: [0, 100, 0] }, // Green header
+            alternateRowStyles: { fillColor: [240, 240, 240] },
+        });
+    }
+
+    // Capture sorted table
+    let csvTable = document.getElementById("csvTable");
+    if (csvTable) { 
+        doc.autoTable({
+            html: "#csvTable",
+            startY: doc.autoTable.previous.finalY + 10, // Place after the previous table
+            theme: "grid",
+            styles: { fontSize: 8, cellPadding: 2 },
+            headStyles: { fillColor: [139, 0, 0] }, // Dark red header
+            alternateRowStyles: { fillColor: [245, 245, 245] },
+        });
+    }
+
+    // Save the PDF with file names in the filename
+    doc.save(pdfFileName);
+});
+
     </script>
 
 </body>

@@ -616,7 +616,7 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        return `${year}${month}${day}_${hours}${minutes}`;
+        return `${year}${month}${day}_${hours}_${minutes}`;
     }
 
     function hexToRGBArray(hex) {

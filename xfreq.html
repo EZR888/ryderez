@@ -331,7 +331,6 @@ function calculateAllSums(counts) {
         leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
         cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
         zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster),
-        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
         endsCenterDiff: sumColumns(counts, groupIndices.towardEnds) - sumColumns(counts, groupIndices.towardCenter)
       };	
     }
@@ -1082,7 +1081,8 @@ function processData(rows, isGeneratingReferenceData = false) {
         leftRightDiff: [], 
         cDiff: [], 
         zzDiff: [], 
-        varianceDifference: [] 
+        varianceDifference: [],
+        endsCenterDiff: [] 
     };
     const groupSums = {};
     let densityValues = [];
@@ -1107,6 +1107,7 @@ function processData(rows, isGeneratingReferenceData = false) {
         differences.leftRightDiff.push(sums.leftRightDiff);
         differences.cDiff.push(sums.cDiff);
         differences.zzDiff.push(sums.zzDiff);
+        differences.endsCenterDiff.push(sums.endsCenterDiff);
 
         let sortedCounts = counts.slice().sort((a, b) => b - a);
         let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);

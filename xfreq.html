@@ -710,6 +710,18 @@ if (!category) {
     return csvContent;
 }
 
+           // Function to generate a formatted timestamp // 
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
+        }
+
 function exportReferenceDataCSV() {
     if (Object.keys(referenceData).length === 0) {
         console.log("🟡 Skipping Reference Data CSV export (No reference data generated).");
@@ -724,12 +736,9 @@ function exportReferenceDataCSV() {
         });
     });
 
-const now = new Date();
-const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
-const time = now.toTimeString().slice(0, 5).replace(":", ""); // HHMM (removes colon)
-
-const fileName = `RefData_${totalRuns}_${date}_${time}.csv`;
-
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `RefData_${totalRuns}_${timestamp}.csv`;
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
@@ -988,19 +997,14 @@ Object.keys(stats).forEach(category => {
         });
     }
 
-// Get current date and time
-const now = new Date();
-const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
-const time = now.toTimeString().slice(0, 5).replace(":", ""); // HHMM format (removes colon)
-
-// Update filename with date and time
-const filename = `Analysis_${totalRuns}_${date}_${time}.csv`;
-
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download",filename); // ✅ Use updated filename
+    link.setAttribute("download",fileName); // ✅ Use updated filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1251,10 +1255,11 @@ setTimeout(() => {
 }, 100);  // 🔥 Delay execution slightly to allow all assignments to complete
 
     // 🟢 Generate dynamic filename
-    const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format
-    const updatedFileName = `Analysis_${totalRuns}_${today}.csv`;
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
 
-    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, updatedFileName);
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, fileName);
 
     // 🔥 Only export reference data when generating it (not during user tests)
     if (!isGeneratingReferenceData) {

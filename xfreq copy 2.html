@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -276,7 +278,6 @@
     // =======================================================
     let totalRuns = 0;
     let selectedFileNames = []; // Store selected filenames globally
-    let statsCollection = {}; // Declare at the top of the script
 
     
     // Group indices for various distributions
@@ -455,113 +456,42 @@ function calculateFrequencyDistribution(data) {
 }
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
-    if (!category || typeof category !== "string") {
-        console.error("❌ ERROR: Invalid category passed to calculateCumulativeProbabilities!", category);
-        return {};
-    }
-
-    if (!statsCollection[category]) {
-        console.error(`❌ ERROR: ${category} is missing from statsCollection!`);
-        return {};
-    }
-
-    console.log(`🟢 Processing category: ${category}`);
-
     if (!totalValue || totalValue <= 0) {
         console.error("Invalid total for cumulative probability calculation:", totalValue);
         return {};
     }
 
-    if (!statsCollection || Object.keys(statsCollection).length === 0) {
-        console.error("❌ ERROR: statsCollection is empty or not initialized! Skipping cumulative probability calculation.");
-        return {};
-    }
-
-if (!statsCollection[category]) {
-    console.error(`❌ ERROR: ${category} is missing from statsCollection!`);
-    return {};
-}
-
-if (!category || typeof category !== "string") {
-    console.error("❌ ERROR: Invalid category passed to calculateCumulativeProbabilities!", category);
-    return {};
-}
-    let isDifferenceCategory = category.includes("Diff"); // 🔴 Possible issue here
-
-    // ✅ Explicitly list sum-based categories (group totals)
-    const sumCategories = [
-        "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
-        "cTop", "cBottom", "zzCluster", "zCluster", "left", "right", "towardEnds", 
-        "towardCenter", "zeroSums", "Density", "Variance"
-    ];
-    let isSumCategory = sumCategories.includes(category);
-
-    const sortedKeys = Object.keys(frequencyDistribution).map(Number);
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => b - a);
     let cumulativeProbabilities = {};
     let cumulativeBelow = 0, cumulativeAbove = 0;
 
-    // ✅ Correctly fetch the MEAN, ensuring it's not undefined
-    let centerValue = isDifferenceCategory ? 0 : 
-                      (referenceData?.[category]?.mean ?? statsCollection?.[category]?.mean ?? null);
+    // 🔥 Determine expected mean from reference data (if available)
+	let expectedMean = (referenceData && referenceData[category]?.mean) 
+    	? parseFloat(referenceData[category].mean) 
+    	: 0;
+    	console.log(`🟢 Using expected mean for ${category}:`, expectedMean);
 
-    if (centerValue === null) {
-        console.warn(`⚠️ No mean found for ${category}, defaulting to 0.`);
-        centerValue = 0;
+    // Split values around expected mean
+    let belowMean = sortedKeys.filter(key => key < expectedMean);
+    let aboveMean = sortedKeys.filter(key => key > expectedMean);
+
+    // Accumulate probabilities separately
+    for (let i = belowMean.length - 1; i >= 0; i--) {
+        let key = belowMean[i];
+        cumulativeBelow += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeBelow,
+            cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+        };
     }
 
-    console.log(`🟢 Using ${isDifferenceCategory ? "0" : `MEAN (${centerValue})`} as center for cumulative probabilities in: ${category}`);
-
-    if (isDifferenceCategory) {
-        // ✅ Keep the existing logic for differences (DO NOT CHANGE)
-        let belowCenter = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
-        let aboveCenter = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
-
-        for (let key of belowCenter) {
-            cumulativeBelow += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeBelow,
-                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
-            };
-        }
-
-        for (let key of aboveCenter) {
-            cumulativeAbove += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeAbove,
-                cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
-            };
-        }
-    } else if (isSumCategory) {
-        // ✅ Use the SAME above/below logic, but for sum categories, using MEAN instead of 0
-        let belowMean = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
-        let aboveMean = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
-
-        for (let key of belowMean) {
-            cumulativeBelow += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeBelow,
-                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
-            };
-        }
-
-        for (let key of aboveMean) {
-            cumulativeAbove += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeAbove,
-                cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
-            };
-        }
-    } else {
-        // ✅ Fallback case to prevent undefined errors
-        console.warn(`⚠️ Category "${category}" is neither a sum nor difference category. Using default sorting.`);
-        sortedKeys.sort((a, b) => a - b);
-        for (let key of sortedKeys) {
-            cumulativeBelow += frequencyDistribution[key];
-            cumulativeProbabilities[key] = {
-                cumulativeFrequency: cumulativeBelow,
-                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
-            };
-        }
+    for (let i = 0; i < aboveMean.length; i++) {
+        let key = aboveMean[i];
+        cumulativeAbove += frequencyDistribution[key];
+        cumulativeProbabilities[key] = {
+            cumulativeFrequency: cumulativeAbove,
+            cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+        };
     }
 
     return cumulativeProbabilities;
@@ -629,7 +559,6 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
         console.error("Invalid totalRuns for CSV export:", totalRuns);
         return "";
     }
-    console.log("🟢 Checking statsCollection before calling calculateCumulativeProbabilities:", statsCollection);
 
     console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
 
@@ -639,29 +568,11 @@ function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceVa
     const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
 
     Object.entries(stats).forEach(([category, values]) => {
-    
-    if (!category || typeof category !== "string") {
-        console.error("🚨 ERROR: Invalid category found in getFreqDistCSV:", category);
-        return; // Skip this iteration
-    }
-    	console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
-    	const categoryLabel = categoryLabels[category] || category;
+        const categoryLabel = categoryLabels[category] || category;
         const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
-
-    if (!frequencyDistribution || Object.keys(frequencyDistribution).length === 0) {
-        console.warn(`⚠️ Skipping cumulative probability calculation for ${category} (Empty distribution).`);
-        return;
-    }
-if (!category) {
-    console.error("🚨 ERROR: Undefined category detected before calling calculateCumulativeProbabilities!");
-    return;
-}
-const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
-
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns);
         console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
-if (!category) {
-    console.error("🚨 ERROR: Undefined category detected in getFreqDistCSV!");
-}getFreqDistCSV
+
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
@@ -796,8 +707,6 @@ function displayResults(differences, groupSums, stats, densityValues, varianceVa
     explanationElement.innerHTML = "";
 
     const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
-
-	console.log("🟢 Checking statsCollection before calling calculateCumulativeProbabilities:", statsCollection);
 
     // Create options for the dropdown
     let categoryOptions = `<option value="">Select a Category...</option>`;
@@ -1166,7 +1075,7 @@ function processData(rows, isGeneratingReferenceData = false) {
     }
 
     // ✅ Declare 'differences' FIRST before using it
-    statsCollection = {};
+    let statsCollection = {};
     const differences = { 
         topBottomDiff: [], 
         leftRightDiff: [], 
@@ -1243,12 +1152,8 @@ function processData(rows, isGeneratingReferenceData = false) {
         console.error("❌ ERROR: statsCollection is empty or invalid!");
         return;
     }
-console.log("🟢 Checking if statsCollection is populated before calling displayResults...");
-console.log(statsCollection);
-setTimeout(() => {
-    console.log("🟢 Running displayResults AFTER processData to ensure statsCollection is populated...");
+
     displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
-}, 100);  // 🔥 Delay execution slightly to allow all assignments to complete
 
     // 🟢 Generate dynamic filename
     const today = new Date().toISOString().split("T")[0];  // YYYY-MM-DD format

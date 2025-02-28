@@ -38,29 +38,43 @@
   </div>
   
   <script>
-    document.getElementById("startButton").addEventListener("click", () => {
-      const worker = new Worker("csvWorker.js");
-      const progressDiv = document.getElementById("progress");
-      
-      progressDiv.innerHTML = "Starting...";
-      worker.postMessage({ totalRows: 30000000, chunkSize: 100000 });
+document.getElementById("startButton").addEventListener("click", () => {
+    const worker = new Worker("csvWorker.js");
+    const progressDiv = document.getElementById("progress");
 
-      worker.onmessage = function (e) {
+    progressDiv.innerHTML = "Starting...";
+    worker.postMessage({ totalRows: 10000000, chunkSize: 100000 });
+
+    worker.onmessage = function (e) {
         if (e.data.type === "progress") {
-          progressDiv.innerHTML = `Generated: ${e.data.generatedRows.toLocaleString()} rows`;
+            progressDiv.innerHTML = `Generated: ${e.data.generatedRows.toLocaleString()} rows`;
         } else if (e.data.type === "done") {
-          progressDiv.innerHTML = "✅ 10M rows generated and ready to download!";
-          
-          // Save CSV File
-          saveAs(e.data.csvBlob, "10M_Rows.csv");
-        }
-      };
+            progressDiv.innerHTML = "✅ 10M rows generated and downloading...";
 
-      worker.onerror = function (error) {
-        progressDiv.innerHTML = "❌ Worker Error! Check console.";
-        console.error("❌ Worker Error:", error);
-      };
-    });
+            // Download Top CSV
+            const linkTop = document.createElement("a");
+            linkTop.href = URL.createObjectURL(e.data.csvBlobTop);
+            linkTop.download = "10m_top.csv";
+            document.body.appendChild(linkTop);
+            linkTop.click();
+            document.body.removeChild(linkTop);
+
+            // Download Bottom CSV
+            const linkBottom = document.createElement("a");
+            linkBottom.href = URL.createObjectURL(e.data.csvBlobBottom);
+            linkBottom.download = "10m_bottom.csv";
+            document.body.appendChild(linkBottom);
+            linkBottom.click();
+            document.body.removeChild(linkBottom);
+        }
+    };
+
+    worker.onerror = function (error) {
+        progressDiv.innerHTML = "❌ Error occurred! Check console.";
+        console.error("Worker Error:", error);
+    };
+});
+
   </script>
 </body>
 </html>

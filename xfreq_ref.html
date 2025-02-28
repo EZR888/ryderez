@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -253,7 +252,9 @@
   </div>
   <div class="results-container">
     <input type="file" id="fileInput" accept=".csv" multiple />
-    <br>
+    <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
+    <input type="number" id="numRuns" min="1" max="50000000" value="100" />
+    <button id="runButton">Run</button><br>
     <label>
   		<input type="checkbox" id="useReferenceData" checked />
   		Use 10m Reference Data
@@ -1386,6 +1387,92 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
 const worker = new Worker("worker.js");
 
 
+// =======================================================
+// UI Enhancements: Add Toggle for Raw CSV Export
+// =======================================================
+const exportRawDataCheckbox = document.createElement("input");
+exportRawDataCheckbox.type = "checkbox";
+exportRawDataCheckbox.id = "exportRawData";
+exportRawDataCheckbox.style.marginLeft = "10px";
+
+const exportLabel = document.createElement("label");
+exportLabel.htmlFor = "exportRawData";
+exportLabel.innerHTML = " Save Raw Data to CSV";
+exportLabel.style.color = "lightgreen";
+exportLabel.style.fontSize = "14px";
+
+const runButtonContainer = document.getElementById("runButton").parentElement;
+runButtonContainer.appendChild(exportRawDataCheckbox);
+runButtonContainer.appendChild(exportLabel);
+
+// =======================================================
+// Function to Save Raw Data to CSV
+// =======================================================
+function saveRawDataToCSV(rawData) {
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+        console.error("❌ ERROR: No raw data available to save.");
+        return;
+    }
+
+    // Convert data to a Blob (Efficient for large data)
+    const csvContent = rawData.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+
+    // Create a temporary link for download
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `RawData_${totalRuns}_${getFormattedTimestamp()}.csv`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`✅ Raw Data Saved as CSV using Blob streaming.`);
+}
+
+
+// =======================================================
+// Modify Run Button to Include Raw CSV Option
+// =======================================================
+let rawDataStorage = [];
+
+document.getElementById("runButton").addEventListener("click", () => {
+    const numRuns = parseInt(document.getElementById("numRuns").value, 10);
+    if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
+        alert("Please enter a valid number of runs (1–10,000,000).");
+        return;
+    }
+
+    const saveRawData = exportRawDataCheckbox.checked;
+    console.log(`🟢 Save Raw Data to CSV: ${saveRawData}`);
+
+    totalRuns = numRuns;
+    let chunkIndex = 1; // Track how many chunk files have been created
+
+    const chunkSize = 100000;  // 🔥 Process in 100K row chunks
+    let allResults = [];
+
+    worker.postMessage({ numRuns, chunkSize });
+
+    worker.onmessage = function (e) {
+        if (e.data.type === "chunk") {
+            if (saveRawData) {
+                saveRawDataChunk(e.data.data, chunkIndex);  // ✅ Save each chunk immediately
+                chunkIndex++;
+            }
+        } else if (e.data.type === "done") {
+            totalRuns = e.data.totalRuns;
+            console.log("✅ All data processed. Total chunks saved:", chunkIndex - 1);
+            processData(allResults);
+        }
+    };
+
+    worker.onerror = function (error) {
+        console.error("❌ Worker error:", error);
+    };
+});
+
+
 // ✅ Function to Detect Incognito Mode
 async function detectIncognito() {
     return new Promise(resolve => {
@@ -1398,6 +1485,31 @@ async function detectIncognito() {
         }
     });
 }
+
+function saveRawDataChunk(chunkData, chunkIndex) {
+    if (!Array.isArray(chunkData) || chunkData.length === 0) {
+        console.error("❌ ERROR: No data available to save.");
+        return;
+    }
+
+    // Convert chunk to CSV format
+    const csvContent = chunkData.map(row => row.join(",")).join("\n");
+
+    // Create a downloadable Blob for each chunk
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+
+    // Name each chunk file sequentially
+    link.download = `RawData_Part${chunkIndex}_${getFormattedTimestamp()}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`✅ Saved chunk ${chunkIndex} as CSV`);
+}
+
 
 // ✅ Function to Run Simulations in a Web Worker
 function runSimulationWithWorker(numRuns) {

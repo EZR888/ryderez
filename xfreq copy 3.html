@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -253,7 +252,9 @@
   </div>
   <div class="results-container">
     <input type="file" id="fileInput" accept=".csv" multiple />
-    <br>
+    <label for="numRuns">&nbsp;&nbsp;&nbsp;-OR-&nbsp;&nbsp;Enter # of Runs of 38:&nbsp;</label>
+    <input type="number" id="numRuns" min="1" max="50000000" value="100" />
+    <button id="runButton">Run</button><br>
     <label>
   		<input type="checkbox" id="useReferenceData" checked />
   		Use 10m Reference Data
@@ -1384,6 +1385,39 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
     const setBIndices = [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6];
 
 const worker = new Worker("worker.js");
+
+document.getElementById("runButton").addEventListener("click", () => {
+    const numRuns = parseInt(document.getElementById("numRuns").value, 10);
+    if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
+        alert("Please enter a valid number of runs (1–10,000,000).");
+        return;
+    }
+
+    const useReferenceData = document.getElementById("useReferenceData").checked;  // ✅ Get checkbox state
+    console.log(`🟢 Use Reference Data: ${useReferenceData}`);  // Debugging info
+
+    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
+
+    const chunkSize = 100000;
+    let allResults = [];
+
+    worker.postMessage({ numRuns, chunkSize });
+
+    worker.onmessage = function (e) {
+        if (e.data.type === "chunk") {
+            allResults.push(...e.data.data);
+        } else if (e.data.type === "done") {
+            totalRuns = e.data.totalRuns;
+            console.log("✅ All data processed, starting analysis...");
+            
+            processData(allResults, useReferenceData);  // ✅ Now it correctly passes true/false
+        }
+    };
+
+    worker.onerror = function (error) {
+        console.error("❌ Worker error:", error);
+    };
+});
 
 
 // ✅ Function to Detect Incognito Mode

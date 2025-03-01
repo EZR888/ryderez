@@ -1,816 +1,921 @@
 Category,Difference,pValue,Cumulative P-Value,Observed Frequency
-Top - Bottom,0,0.128484,,1284842
-Top - Bottom,2,0.122125,0.435723,1221253
-Top - Bottom,4,0.104845,0.313598,1048451
-Top - Bottom,6,0.080819,0.208753,808190
-Top - Bottom,8,0.056308,0.127934,563076
-Top - Bottom,10,0.035158,0.071626,351581
-Top - Bottom,12,0.019693,0.036468,196925
-Top - Bottom,14,0.009872,0.016776,98723
-Top - Bottom,16,0.004345,0.006904,43453
-Top - Bottom,18,0.001729,0.002558,17292
-Top - Bottom,20,0.000593,0.000829,5930
-Top - Bottom,22,0.000179,0.000236,1786
-Top - Bottom,24,0.000046,0.000058,459
-Top - Bottom,26,0.000010,0.000012,98
+Top - Bottom,0,0.128559,,1285591
+Top - Bottom,2,0.122116,0.435693,1221156
+Top - Bottom,4,0.104662,0.313578,1046618
+Top - Bottom,6,0.080935,0.208916,809353
+Top - Bottom,8,0.056409,0.127981,564088
+Top - Bottom,10,0.035165,0.071572,351645
+Top - Bottom,12,0.019612,0.036407,196118
+Top - Bottom,14,0.009841,0.016796,98410
+Top - Bottom,16,0.004398,0.006955,43985
+Top - Bottom,18,0.001718,0.002556,17182
+Top - Bottom,20,0.000603,0.000838,6030
+Top - Bottom,22,0.000178,0.000235,1784
+Top - Bottom,24,0.000044,0.000056,439
+Top - Bottom,26,0.000010,0.000013,105
 Top - Bottom,28,0.000002,0.000002,18
-Top - Bottom,-32,0.000000,0.000000,2
-Top - Bottom,-30,0.000000,0.000001,4
-Top - Bottom,-28,0.000002,0.000003,21
-Top - Bottom,-26,0.000010,0.000013,98
-Top - Bottom,-24,0.000045,0.000058,452
-Top - Bottom,-22,0.000188,0.000245,1876
-Top - Bottom,-20,0.000598,0.000844,5983
-Top - Bottom,-18,0.001724,0.002568,17240
-Top - Bottom,-16,0.004386,0.006953,43858
-Top - Bottom,-14,0.009822,0.016775,98217
-Top - Bottom,-12,0.019735,0.036510,197349
-Top - Bottom,-10,0.035021,0.071531,350210
-Top - Bottom,-8,0.056294,0.127825,562939
-Top - Bottom,-6,0.080862,0.208687,808624
-Top - Bottom,-4,0.104891,0.313578,1048907
-Top - Bottom,-2,0.122214,0.435792,1222143
-Left - Right,0,0.067010,,670097
-Left - Right,1,0.064192,0.466740,641923
-Left - Right,2,0.063376,0.402548,633755
-Left - Right,3,0.057768,0.339172,577678
-Left - Right,4,0.053986,0.281404,539864
-Left - Right,5,0.046426,0.227418,464256
-Left - Right,6,0.041050,0.180992,410495
-Left - Right,7,0.033464,0.139943,334637
-Left - Right,8,0.028055,0.106479,280553
-Left - Right,9,0.021503,0.078424,215028
-Left - Right,10,0.017095,0.056921,170950
-Left - Right,11,0.012360,0.039826,123603
-Left - Right,12,0.009220,0.027466,92204
-Left - Right,13,0.006308,0.018245,63076
-Left - Right,14,0.004461,0.011938,44608
-Left - Right,15,0.002871,0.007477,28711
-Left - Right,16,0.001893,0.004606,18930
-Left - Right,17,0.001130,0.002713,11299
-Left - Right,18,0.000717,0.001583,7170
-Left - Right,19,0.000400,0.000866,3999
-Left - Right,20,0.000228,0.000466,2279
-Left - Right,21,0.000115,0.000238,1154
-Left - Right,22,0.000064,0.000123,640
-Left - Right,23,0.000032,0.000059,318
-Left - Right,24,0.000015,0.000027,153
-Left - Right,25,0.000006,0.000012,59
-Left - Right,26,0.000003,0.000006,34
-Left - Right,27,0.000002,0.000002,16
-Left - Right,28,0.000000,0.000001,5
-Left - Right,29,0.000000,0.000000,2
-Left - Right,30,0.000000,0.000000,1
+Top - Bottom,30,0.000000,0.000000,3
+Top - Bottom,-28,0.000003,0.000003,26
+Top - Bottom,-26,0.000011,0.000013,106
+Top - Bottom,-24,0.000048,0.000061,479
+Top - Bottom,-22,0.000170,0.000231,1696
+Top - Bottom,-20,0.000584,0.000814,5837
+Top - Bottom,-18,0.001728,0.002542,17277
+Top - Bottom,-16,0.004356,0.006898,43561
+Top - Bottom,-14,0.009882,0.016780,98822
+Top - Bottom,-12,0.019624,0.036405,196243
+Top - Bottom,-10,0.035153,0.071558,351535
+Top - Bottom,-8,0.056278,0.127837,562784
+Top - Bottom,-6,0.080938,0.208775,809380
+Top - Bottom,-4,0.104865,0.313639,1048647
+Top - Bottom,-2,0.122108,0.435748,1221082
+Left - Right,0,0.066937,,669373
+Left - Right,1,0.064417,0.466584,644165
+Left - Right,2,0.063493,0.402167,634932
+Left - Right,3,0.057687,0.338674,576873
+Left - Right,4,0.053932,0.280987,539324
+Left - Right,5,0.046316,0.227054,463165
+Left - Right,6,0.041056,0.180738,410559
+Left - Right,7,0.033370,0.139682,333696
+Left - Right,8,0.028053,0.106313,280529
+Left - Right,9,0.021471,0.078260,214714
+Left - Right,10,0.017129,0.056788,171289
+Left - Right,11,0.012321,0.039659,123210
+Left - Right,12,0.009249,0.027338,92491
+Left - Right,13,0.006253,0.018089,62525
+Left - Right,14,0.004458,0.011837,44584
+Left - Right,15,0.002843,0.007378,28428
+Left - Right,16,0.001860,0.004535,18605
+Left - Right,17,0.001122,0.002675,11218
+Left - Right,18,0.000700,0.001553,7004
+Left - Right,19,0.000392,0.000853,3916
+Left - Right,20,0.000223,0.000461,2229
+Left - Right,21,0.000116,0.000238,1163
+Left - Right,22,0.000064,0.000122,644
+Left - Right,23,0.000030,0.000058,299
+Left - Right,24,0.000017,0.000028,167
+Left - Right,25,0.000008,0.000011,75
+Left - Right,26,0.000002,0.000003,22
+Left - Right,27,0.000001,0.000001,6
+Left - Right,28,0.000000,0.000001,4
+Left - Right,29,0.000000,0.000000,3
+Left - Right,-32,0.000000,0.000000,1
 Left - Right,-30,0.000000,0.000000,2
 Left - Right,-29,0.000000,0.000000,2
-Left - Right,-28,0.000001,0.000001,6
-Left - Right,-27,0.000001,0.000002,12
-Left - Right,-26,0.000003,0.000005,28
-Left - Right,-25,0.000006,0.000011,60
-Left - Right,-24,0.000017,0.000028,166
-Left - Right,-23,0.000032,0.000060,325
-Left - Right,-22,0.000066,0.000126,661
-Left - Right,-21,0.000116,0.000242,1157
-Left - Right,-20,0.000226,0.000468,2263
-Left - Right,-19,0.000392,0.000860,3918
-Left - Right,-18,0.000690,0.001550,6901
-Left - Right,-17,0.001137,0.002687,11367
-Left - Right,-16,0.001892,0.004579,18924
-Left - Right,-15,0.002831,0.007410,28311
-Left - Right,-14,0.004447,0.011857,44469
-Left - Right,-13,0.006291,0.018148,62912
-Left - Right,-12,0.009220,0.027369,92202
-Left - Right,-11,0.012314,0.039683,123141
-Left - Right,-10,0.017078,0.056760,170776
-Left - Right,-9,0.021498,0.078258,214976
-Left - Right,-8,0.028014,0.106271,280135
-Left - Right,-7,0.033384,0.139655,333836
-Left - Right,-6,0.041090,0.180745,410898
-Left - Right,-5,0.046368,0.227113,463678
-Left - Right,-4,0.053930,0.281043,539303
-Left - Right,-3,0.057567,0.338610,575672
-Left - Right,-2,0.063489,0.402099,634890
-Left - Right,-1,0.064151,0.466250,641512
-Center 9 Top - Bottom,0,0.093609,,936087
-Center 9 Top - Bottom,1,0.091244,0.453150,912441
-Center 9 Top - Bottom,2,0.084027,0.361906,840267
-Center 9 Top - Bottom,3,0.073246,0.277880,732461
-Center 9 Top - Bottom,4,0.060403,0.204633,604035
-Center 9 Top - Bottom,5,0.047130,0.144230,471305
-Center 9 Top - Bottom,6,0.034706,0.097100,347055
-Center 9 Top - Bottom,7,0.024300,0.062394,243005
-Center 9 Top - Bottom,8,0.015913,0.038094,159134
-Center 9 Top - Bottom,9,0.009954,0.022180,99536
-Center 9 Top - Bottom,10,0.005810,0.012226,58099
-Center 9 Top - Bottom,11,0.003240,0.006417,32403
-Center 9 Top - Bottom,12,0.001688,0.003176,16877
-Center 9 Top - Bottom,13,0.000824,0.001489,8238
-Center 9 Top - Bottom,14,0.000385,0.000665,3846
-Center 9 Top - Bottom,15,0.000169,0.000280,1689
-Center 9 Top - Bottom,16,0.000073,0.000111,730
-Center 9 Top - Bottom,17,0.000027,0.000038,272
-Center 9 Top - Bottom,18,0.000008,0.000011,81
-Center 9 Top - Bottom,19,0.000002,0.000003,24
-Center 9 Top - Bottom,20,0.000001,0.000001,6
-Center 9 Top - Bottom,-22,0.000000,0.000000,2
-Center 9 Top - Bottom,-21,0.000000,0.000001,4
+Left - Right,-28,0.000001,0.000001,7
+Left - Right,-27,0.000002,0.000003,17
+Left - Right,-26,0.000003,0.000006,32
+Left - Right,-25,0.000006,0.000012,56
+Left - Right,-24,0.000017,0.000028,165
+Left - Right,-23,0.000027,0.000056,274
+Left - Right,-22,0.000060,0.000116,601
+Left - Right,-21,0.000116,0.000232,1164
+Left - Right,-20,0.000234,0.000466,2336
+Left - Right,-19,0.000387,0.000853,3873
+Left - Right,-18,0.000720,0.001573,7198
+Left - Right,-17,0.001131,0.002704,11310
+Left - Right,-16,0.001874,0.004578,18739
+Left - Right,-15,0.002846,0.007423,28457
+Left - Right,-14,0.004443,0.011867,44432
+Left - Right,-13,0.006263,0.018129,62629
+Left - Right,-12,0.009260,0.027390,92600
+Left - Right,-11,0.012358,0.039747,123579
+Left - Right,-10,0.017066,0.056814,170662
+Left - Right,-9,0.021540,0.078353,215398
+Left - Right,-8,0.027869,0.106223,278694
+Left - Right,-7,0.033453,0.139676,334532
+Left - Right,-6,0.040971,0.180647,409709
+Left - Right,-5,0.046475,0.227122,464753
+Left - Right,-4,0.053911,0.281033,539105
+Left - Right,-3,0.057651,0.338684,576511
+Left - Right,-2,0.063565,0.402248,635646
+Left - Right,-1,0.064230,0.466479,642304
+Center 9 Top - Bottom,0,0.093853,,938527
+Center 9 Top - Bottom,1,0.091214,0.453072,912138
+Center 9 Top - Bottom,2,0.084085,0.361858,840853
+Center 9 Top - Bottom,3,0.073148,0.277773,731481
+Center 9 Top - Bottom,4,0.060364,0.204625,603637
+Center 9 Top - Bottom,5,0.047197,0.144261,471974
+Center 9 Top - Bottom,6,0.034693,0.097064,346929
+Center 9 Top - Bottom,7,0.024266,0.062371,242656
+Center 9 Top - Bottom,8,0.015951,0.038105,159512
+Center 9 Top - Bottom,9,0.009919,0.022154,99191
+Center 9 Top - Bottom,10,0.005838,0.012235,58379
+Center 9 Top - Bottom,11,0.003219,0.006397,32192
+Center 9 Top - Bottom,12,0.001686,0.003178,16861
+Center 9 Top - Bottom,13,0.000832,0.001492,8320
+Center 9 Top - Bottom,14,0.000382,0.000660,3823
+Center 9 Top - Bottom,15,0.000166,0.000278,1662
+Center 9 Top - Bottom,16,0.000071,0.000111,712
+Center 9 Top - Bottom,17,0.000027,0.000040,273
+Center 9 Top - Bottom,18,0.000009,0.000013,86
+Center 9 Top - Bottom,19,0.000003,0.000004,30
+Center 9 Top - Bottom,20,0.000001,0.000001,9
+Center 9 Top - Bottom,21,0.000000,0.000000,3
+Center 9 Top - Bottom,22,0.000000,0.000000,1
+Center 9 Top - Bottom,-24,0.000000,0.000000,1
+Center 9 Top - Bottom,-23,0.000000,0.000000,1
+Center 9 Top - Bottom,-22,0.000000,0.000000,1
+Center 9 Top - Bottom,-21,0.000000,0.000001,5
 Center 9 Top - Bottom,-20,0.000001,0.000002,11
-Center 9 Top - Bottom,-19,0.000003,0.000004,26
-Center 9 Top - Bottom,-18,0.000010,0.000015,103
-Center 9 Top - Bottom,-17,0.000028,0.000043,282
-Center 9 Top - Bottom,-16,0.000066,0.000109,662
-Center 9 Top - Bottom,-15,0.000172,0.000281,1720
-Center 9 Top - Bottom,-14,0.000383,0.000664,3833
-Center 9 Top - Bottom,-13,0.000847,0.001512,8472
-Center 9 Top - Bottom,-12,0.001683,0.003194,16827
-Center 9 Top - Bottom,-11,0.003213,0.006407,32127
-Center 9 Top - Bottom,-10,0.005844,0.012251,58440
-Center 9 Top - Bottom,-9,0.009953,0.022204,99529
-Center 9 Top - Bottom,-8,0.015967,0.038171,159669
-Center 9 Top - Bottom,-7,0.024212,0.062383,242120
-Center 9 Top - Bottom,-6,0.034739,0.097122,347390
-Center 9 Top - Bottom,-5,0.047127,0.144248,471267
-Center 9 Top - Bottom,-4,0.060305,0.204554,603054
-Center 9 Top - Bottom,-3,0.073292,0.277846,732919
-Center 9 Top - Bottom,-2,0.084054,0.361900,840542
-Center 9 Top - Bottom,-1,0.091341,0.453241,913410
-00 - 0,0,0.126559,,1265588
-00 - 0,1,0.120150,0.436675,1201498
-00 - 0,2,0.103394,0.316525,1033944
-00 - 0,3,0.080408,0.213130,804076
-00 - 0,4,0.056396,0.132723,563957
-00 - 0,5,0.035991,0.076327,359914
-00 - 0,6,0.020713,0.040336,207134
-00 - 0,7,0.010882,0.019622,108815
-00 - 0,8,0.005140,0.008741,51400
-00 - 0,9,0.002276,0.003601,22762
-00 - 0,10,0.000866,0.001325,8660
-00 - 0,11,0.000320,0.000459,3198
-00 - 0,12,0.000100,0.000139,999
-00 - 0,13,0.000028,0.000039,282
-00 - 0,14,0.000008,0.000011,78
-00 - 0,15,0.000002,0.000003,23
+Center 9 Top - Bottom,-19,0.000003,0.000005,34
+Center 9 Top - Bottom,-18,0.000010,0.000015,101
+Center 9 Top - Bottom,-17,0.000026,0.000042,262
+Center 9 Top - Bottom,-16,0.000063,0.000105,634
+Center 9 Top - Bottom,-15,0.000164,0.000269,1645
+Center 9 Top - Bottom,-14,0.000382,0.000652,3823
+Center 9 Top - Bottom,-13,0.000825,0.001477,8254
+Center 9 Top - Bottom,-12,0.001698,0.003175,16981
+Center 9 Top - Bottom,-11,0.003232,0.006407,32321
+Center 9 Top - Bottom,-10,0.005810,0.012217,58096
+Center 9 Top - Bottom,-9,0.009979,0.022196,99790
+Center 9 Top - Bottom,-8,0.015978,0.038174,159781
+Center 9 Top - Bottom,-7,0.024286,0.062460,242862
+Center 9 Top - Bottom,-6,0.034674,0.097134,346742
+Center 9 Top - Bottom,-5,0.047061,0.144196,470613
+Center 9 Top - Bottom,-4,0.060428,0.204623,604276
+Center 9 Top - Bottom,-3,0.073186,0.277810,731862
+Center 9 Top - Bottom,-2,0.084068,0.361878,840682
+Center 9 Top - Bottom,-1,0.091197,0.453075,911973
+00 - 0,0,0.126616,,1266156
+00 - 0,1,0.120478,0.436626,1204781
+00 - 0,2,0.103280,0.316148,1032802
+00 - 0,3,0.080090,0.212868,800897
+00 - 0,4,0.056383,0.132778,563834
+00 - 0,5,0.035998,0.076395,359981
+00 - 0,6,0.020768,0.040396,207681
+00 - 0,7,0.010869,0.019628,108694
+00 - 0,8,0.005172,0.008759,51723
+00 - 0,9,0.002211,0.003587,22107
+00 - 0,10,0.000897,0.001376,8967
+00 - 0,11,0.000328,0.000479,3281
+00 - 0,12,0.000109,0.000151,1094
+00 - 0,13,0.000030,0.000042,304
+00 - 0,14,0.000008,0.000011,82
+00 - 0,15,0.000003,0.000003,25
 00 - 0,16,0.000000,0.000001,5
-00 - 0,18,0.000000,0.000000,1
-00 - 0,-17,0.000000,0.000000,1
-00 - 0,-16,0.000001,0.000001,12
-00 - 0,-15,0.000002,0.000003,21
-00 - 0,-14,0.000009,0.000013,93
-00 - 0,-13,0.000034,0.000046,336
-00 - 0,-12,0.000102,0.000148,1018
-00 - 0,-11,0.000323,0.000471,3228
-00 - 0,-10,0.000882,0.001353,8817
-00 - 0,-9,0.002230,0.003583,22302
-00 - 0,-8,0.005184,0.008767,51843
-00 - 0,-7,0.010880,0.019647,108802
-00 - 0,-6,0.020758,0.040405,207576
-00 - 0,-5,0.036064,0.076469,360642
-00 - 0,-4,0.056305,0.132774,563047
-00 - 0,-3,0.080282,0.213055,802816
-00 - 0,-2,0.103312,0.316367,1033115
-00 - 0,-1,0.120400,0.436767,1203997
-Variance Difference (Top - Bottom),0,0.085556,,855558
-Variance Difference (Top - Bottom),2,0.000326,0.001010,3258
+00 - 0,17,0.000000,0.000000,1
+00 - 0,-17,0.000000,0.000000,3
+00 - 0,-16,0.000000,0.000001,4
+00 - 0,-15,0.000002,0.000003,20
+00 - 0,-14,0.000008,0.000011,81
+00 - 0,-13,0.000032,0.000042,316
+00 - 0,-12,0.000105,0.000148,1053
+00 - 0,-11,0.000315,0.000462,3145
+00 - 0,-10,0.000877,0.001339,8767
+00 - 0,-9,0.002246,0.003585,22457
+00 - 0,-8,0.005202,0.008787,52021
+00 - 0,-7,0.010858,0.019645,108580
+00 - 0,-6,0.020739,0.040384,207394
+00 - 0,-5,0.035965,0.076349,359647
+00 - 0,-4,0.056498,0.132847,564984
+00 - 0,-3,0.080295,0.213142,802945
+00 - 0,-2,0.103406,0.316548,1034063
+00 - 0,-1,0.120210,0.436758,1202105
+Variance Difference (Top - Bottom),0,0.085474,,854738
+Variance Difference (Top - Bottom),2,0.000335,0.001032,3350
 Variance Difference (Top - Bottom),4,0.000000,0.000001,2
-Variance Difference (Top - Bottom),-5.157895,0.000000,0.000000,1
+Variance Difference (Top - Bottom),-5.263158,0.000000,0.000000,1
+Variance Difference (Top - Bottom),-4.736842,0.000000,0.000000,1
 Variance Difference (Top - Bottom),-4.631579,0.000000,0.000000,1
-Variance Difference (Top - Bottom),-4.526316,0.000000,0.000000,1
-Variance Difference (Top - Bottom),-4.526315,0.000000,0.000000,1
-Variance Difference (Top - Bottom),-4.421052,0.000000,0.000000,1
-Variance Difference (Top - Bottom),-4.31579,0.000000,0.000001,2
-Variance Difference (Top - Bottom),-4.315789,0.000000,0.000001,2
+Variance Difference (Top - Bottom),-4.526316,0.000000,0.000000,2
+Variance Difference (Top - Bottom),-4.421053,0.000000,0.000001,1
+Variance Difference (Top - Bottom),-4.210526,0.000000,0.000001,2
 Variance Difference (Top - Bottom),-4.105263,0.000000,0.000001,3
 Variance Difference (Top - Bottom),-4,0.000000,0.000001,2
-Variance Difference (Top - Bottom),-3.894737,0.000000,0.000002,4
-Variance Difference (Top - Bottom),-3.789474,0.000000,0.000002,4
-Variance Difference (Top - Bottom),-3.789473,0.000000,0.000002,1
-Variance Difference (Top - Bottom),-3.684211,0.000000,0.000003,2
-Variance Difference (Top - Bottom),-3.68421,0.000001,0.000003,6
-Variance Difference (Top - Bottom),-3.578948,0.000001,0.000004,7
-Variance Difference (Top - Bottom),-3.578947,0.000001,0.000005,9
-Variance Difference (Top - Bottom),-3.473685,0.000000,0.000005,3
-Variance Difference (Top - Bottom),-3.473684,0.000002,0.000007,21
-Variance Difference (Top - Bottom),-3.368422,0.000000,0.000008,4
+Variance Difference (Top - Bottom),-3.894737,0.000000,0.000002,2
+Variance Difference (Top - Bottom),-3.789474,0.000001,0.000002,7
+Variance Difference (Top - Bottom),-3.684211,0.000000,0.000003,4
+Variance Difference (Top - Bottom),-3.68421,0.000000,0.000003,5
+Variance Difference (Top - Bottom),-3.578948,0.000001,0.000004,8
+Variance Difference (Top - Bottom),-3.578947,0.000001,0.000005,6
+Variance Difference (Top - Bottom),-3.473685,0.000000,0.000005,4
+Variance Difference (Top - Bottom),-3.473684,0.000001,0.000006,13
+Variance Difference (Top - Bottom),-3.368422,0.000001,0.000007,6
 Variance Difference (Top - Bottom),-3.368421,0.000002,0.000009,18
-Variance Difference (Top - Bottom),-3.263158,0.000003,0.000012,28
-Variance Difference (Top - Bottom),-3.263157,0.000000,0.000012,1
-Variance Difference (Top - Bottom),-3.157895,0.000003,0.000015,30
-Variance Difference (Top - Bottom),-3.157894,0.000001,0.000016,8
-Variance Difference (Top - Bottom),-3.052632,0.000005,0.000021,48
-Variance Difference (Top - Bottom),-3.052631,0.000003,0.000023,25
-Variance Difference (Top - Bottom),-2.947369,0.000006,0.000029,59
-Variance Difference (Top - Bottom),-2.947368,0.000007,0.000036,66
-Variance Difference (Top - Bottom),-2.842106,0.000006,0.000042,62
-Variance Difference (Top - Bottom),-2.842105,0.000010,0.000052,99
-Variance Difference (Top - Bottom),-2.736843,0.000003,0.000055,34
-Variance Difference (Top - Bottom),-2.736842,0.000018,0.000073,180
-Variance Difference (Top - Bottom),-2.631579,0.000032,0.000105,321
-Variance Difference (Top - Bottom),-2.526316,0.000037,0.000143,375
-Variance Difference (Top - Bottom),-2.526315,0.000009,0.000152,89
-Variance Difference (Top - Bottom),-2.421053,0.000044,0.000196,438
-Variance Difference (Top - Bottom),-2.421052,0.000025,0.000220,247
-Variance Difference (Top - Bottom),-2.31579,0.000051,0.000271,505
-Variance Difference (Top - Bottom),-2.315789,0.000054,0.000325,541
-Variance Difference (Top - Bottom),-2.210527,0.000057,0.000382,567
-Variance Difference (Top - Bottom),-2.210526,0.000090,0.000472,903
-Variance Difference (Top - Bottom),-2.105264,0.000044,0.000516,441
-Variance Difference (Top - Bottom),-2.105263,0.000183,0.000700,1835
-Variance Difference (Top - Bottom),-2,0.000328,0.001028,3282
-Variance Difference (Top - Bottom),-1.894737,0.000388,0.001415,3876
-Variance Difference (Top - Bottom),-1.894736,0.000098,0.001513,980
-Variance Difference (Top - Bottom),-1.789474,0.000437,0.001950,4371
-Variance Difference (Top - Bottom),-1.789473,0.000256,0.002206,2556
-Variance Difference (Top - Bottom),-1.684211,0.000540,0.002746,5395
-Variance Difference (Top - Bottom),-1.68421,0.000516,0.003261,5155
-Variance Difference (Top - Bottom),-1.578948,0.000668,0.003929,6682
-Variance Difference (Top - Bottom),-1.578947,0.000882,0.004811,8815
-Variance Difference (Top - Bottom),-1.473685,0.000717,0.005527,7165
-Variance Difference (Top - Bottom),-1.473684,0.001543,0.007070,15428
-Variance Difference (Top - Bottom),-1.368422,0.000547,0.007617,5474
-Variance Difference (Top - Bottom),-1.368421,0.002800,0.010418,28002
-Variance Difference (Top - Bottom),-1.263158,0.004736,0.015154,47363
-Variance Difference (Top - Bottom),-1.263157,0.000115,0.015269,1147
-Variance Difference (Top - Bottom),-1.157895,0.005546,0.020814,55455
-Variance Difference (Top - Bottom),-1.157894,0.001487,0.022301,14867
-Variance Difference (Top - Bottom),-1.052632,0.006249,0.028550,62492
-Variance Difference (Top - Bottom),-1.052631,0.003802,0.032352,38023
-Variance Difference (Top - Bottom),-0.947369,0.006906,0.039258,69057
-Variance Difference (Top - Bottom),-0.947368,0.007275,0.046533,72748
-Variance Difference (Top - Bottom),-0.842106,0.006884,0.053417,68845
-Variance Difference (Top - Bottom),-0.842105,0.012664,0.066081,126641
-Variance Difference (Top - Bottom),-0.736843,0.004997,0.071078,49967
-Variance Difference (Top - Bottom),-0.736842,0.021673,0.092752,216734
-Variance Difference (Top - Bottom),-0.631579,0.035279,0.128031,352792
-Variance Difference (Top - Bottom),-0.631578,0.000020,0.128051,200
-Variance Difference (Top - Bottom),-0.526316,0.036373,0.164424,363728
-Variance Difference (Top - Bottom),-0.526315,0.008956,0.173380,89562
-Variance Difference (Top - Bottom),-0.421053,0.034718,0.208098,347182
-Variance Difference (Top - Bottom),-0.421052,0.021642,0.229740,216416
-Variance Difference (Top - Bottom),-0.31579,0.030485,0.260225,304852
-Variance Difference (Top - Bottom),-0.315789,0.036937,0.297162,369375
-Variance Difference (Top - Bottom),-0.210527,0.023006,0.320168,230058
-Variance Difference (Top - Bottom),-0.210526,0.053742,0.373910,537422
-Variance Difference (Top - Bottom),-0.105264,0.012473,0.386383,124732
-Variance Difference (Top - Bottom),-0.105263,0.070668,0.457051,706681
-Variance Difference (Top - Bottom),0.105263,0.070690,0.457393,706895
-Variance Difference (Top - Bottom),0.105264,0.012457,0.386703,124574
-Variance Difference (Top - Bottom),0.210526,0.053773,0.374246,537725
-Variance Difference (Top - Bottom),0.210527,0.022942,0.320473,229424
-Variance Difference (Top - Bottom),0.315789,0.036876,0.297531,368760
-Variance Difference (Top - Bottom),0.31579,0.030393,0.260655,303926
-Variance Difference (Top - Bottom),0.421052,0.021731,0.230262,217311
-Variance Difference (Top - Bottom),0.421053,0.034877,0.208531,348771
-Variance Difference (Top - Bottom),0.526315,0.008956,0.173654,89560
-Variance Difference (Top - Bottom),0.526316,0.036453,0.164698,364530
-Variance Difference (Top - Bottom),0.631578,0.000017,0.128245,171
-Variance Difference (Top - Bottom),0.631579,0.035336,0.128228,353361
-Variance Difference (Top - Bottom),0.736842,0.021653,0.092892,216531
-Variance Difference (Top - Bottom),0.736843,0.005040,0.071239,50401
-Variance Difference (Top - Bottom),0.842105,0.012729,0.066199,127289
-Variance Difference (Top - Bottom),0.842106,0.006880,0.053470,68800
-Variance Difference (Top - Bottom),0.947368,0.007262,0.046590,72619
-Variance Difference (Top - Bottom),0.947369,0.006943,0.039328,69426
-Variance Difference (Top - Bottom),1.052631,0.003791,0.032385,37907
-Variance Difference (Top - Bottom),1.052632,0.006206,0.028595,62060
-Variance Difference (Top - Bottom),1.157894,0.001479,0.022389,14787
-Variance Difference (Top - Bottom),1.157895,0.005570,0.020910,55699
-Variance Difference (Top - Bottom),1.263157,0.000118,0.015340,1182
-Variance Difference (Top - Bottom),1.263158,0.004736,0.015222,47359
-Variance Difference (Top - Bottom),1.368421,0.002827,0.010486,28273
-Variance Difference (Top - Bottom),1.368422,0.000542,0.007659,5424
-Variance Difference (Top - Bottom),1.473684,0.001568,0.007116,15681
-Variance Difference (Top - Bottom),1.473685,0.000730,0.005548,7300
-Variance Difference (Top - Bottom),1.578947,0.000884,0.004818,8842
-Variance Difference (Top - Bottom),1.578948,0.000670,0.003934,6698
-Variance Difference (Top - Bottom),1.68421,0.000510,0.003264,5100
-Variance Difference (Top - Bottom),1.684211,0.000550,0.002754,5497
-Variance Difference (Top - Bottom),1.789473,0.000255,0.002204,2555
-Variance Difference (Top - Bottom),1.789474,0.000460,0.001949,4600
-Variance Difference (Top - Bottom),1.894736,0.000098,0.001489,984
-Variance Difference (Top - Bottom),1.894737,0.000380,0.001391,3804
-Variance Difference (Top - Bottom),2.105263,0.000178,0.000684,1781
-Variance Difference (Top - Bottom),2.105264,0.000047,0.000506,466
-Variance Difference (Top - Bottom),2.210526,0.000093,0.000460,929
-Variance Difference (Top - Bottom),2.210527,0.000054,0.000367,542
-Variance Difference (Top - Bottom),2.315789,0.000048,0.000313,477
-Variance Difference (Top - Bottom),2.31579,0.000047,0.000265,470
-Variance Difference (Top - Bottom),2.421052,0.000025,0.000218,251
-Variance Difference (Top - Bottom),2.421053,0.000046,0.000193,457
-Variance Difference (Top - Bottom),2.526315,0.000008,0.000147,75
-Variance Difference (Top - Bottom),2.526316,0.000036,0.000140,358
-Variance Difference (Top - Bottom),2.631579,0.000033,0.000104,327
-Variance Difference (Top - Bottom),2.736842,0.000018,0.000071,180
-Variance Difference (Top - Bottom),2.736843,0.000004,0.000053,41
-Variance Difference (Top - Bottom),2.842105,0.000010,0.000049,97
-Variance Difference (Top - Bottom),2.842106,0.000007,0.000039,74
-Variance Difference (Top - Bottom),2.947368,0.000005,0.000032,46
-Variance Difference (Top - Bottom),2.947369,0.000005,0.000027,51
-Variance Difference (Top - Bottom),3.052631,0.000003,0.000022,33
-Variance Difference (Top - Bottom),3.052632,0.000003,0.000019,34
-Variance Difference (Top - Bottom),3.157894,0.000002,0.000015,16
-Variance Difference (Top - Bottom),3.157895,0.000004,0.000014,43
-Variance Difference (Top - Bottom),3.263158,0.000003,0.000010,30
-Variance Difference (Top - Bottom),3.368421,0.000002,0.000006,15
-Variance Difference (Top - Bottom),3.368422,0.000001,0.000005,6
-Variance Difference (Top - Bottom),3.473684,0.000001,0.000004,7
-Variance Difference (Top - Bottom),3.473685,0.000000,0.000004,5
-Variance Difference (Top - Bottom),3.578947,0.000000,0.000003,5
-Variance Difference (Top - Bottom),3.578948,0.000000,0.000003,3
-Variance Difference (Top - Bottom),3.684211,0.000001,0.000002,7
-Variance Difference (Top - Bottom),3.789473,0.000000,0.000002,3
-Variance Difference (Top - Bottom),3.789474,0.000000,0.000001,1
-Variance Difference (Top - Bottom),3.894736,0.000000,0.000001,1
-Variance Difference (Top - Bottom),3.894737,0.000000,0.000001,3
-Variance Difference (Top - Bottom),4.105263,0.000000,0.000001,5
-Variance Difference (Top - Bottom),4.210527,0.000000,0.000000,1
-Variance Difference (Top - Bottom),4.315789,0.000000,0.000000,1
-Towards Ends - Towards Center,0,0.121933,,1219331
-Towards Ends - Towards Center,2,0.128703,0.565470,1287029
-Towards Ends - Towards Center,4,0.122808,0.436768,1228083
-Towards Ends - Towards Center,6,0.105087,0.313959,1050872
-Towards Ends - Towards Center,8,0.081451,0.208872,814515
-Towards Ends - Towards Center,10,0.056463,0.127421,564631
-Towards Ends - Towards Center,12,0.035194,0.070958,351944
-Towards Ends - Towards Center,14,0.019510,0.035763,195098
-Towards Ends - Towards Center,16,0.009665,0.016253,96652
-Towards Ends - Towards Center,18,0.004228,0.006588,42277
-Towards Ends - Towards Center,20,0.001619,0.002360,16194
-Towards Ends - Towards Center,22,0.000540,0.000741,5399
-Towards Ends - Towards Center,24,0.000156,0.000201,1562
-Towards Ends - Towards Center,26,0.000036,0.000045,362
-Towards Ends - Towards Center,28,0.000007,0.000009,73
-Towards Ends - Towards Center,30,0.000001,0.000001,12
-Towards Ends - Towards Center,32,0.000000,0.000000,2
-Towards Ends - Towards Center,-30,0.000000,0.000000,1
-Towards Ends - Towards Center,-28,0.000000,0.000000,1
-Towards Ends - Towards Center,-26,0.000002,0.000002,19
-Towards Ends - Towards Center,-24,0.000013,0.000015,131
-Towards Ends - Towards Center,-22,0.000052,0.000067,518
-Towards Ends - Towards Center,-20,0.000190,0.000257,1903
-Towards Ends - Towards Center,-18,0.000629,0.000886,6286
-Towards Ends - Towards Center,-16,0.001793,0.002678,17925
-Towards Ends - Towards Center,-14,0.004519,0.007198,45194
-Towards Ends - Towards Center,-12,0.009939,0.017137,99389
-Towards Ends - Towards Center,-10,0.019686,0.036822,196855
-Towards Ends - Towards Center,-8,0.034935,0.071757,349345
-Towards Ends - Towards Center,-6,0.055936,0.127693,559360
-Towards Ends - Towards Center,-4,0.080620,0.208313,806200
-Towards Ends - Towards Center,-2,0.104284,0.312596,1042837
-Top,3,0.000000,0.000000,2
-Top,4,0.000000,0.000001,4
-Top,5,0.000002,0.000003,21
-Top,6,0.000010,0.000013,98
-Top,7,0.000045,0.000058,452
-Top,8,0.000188,0.000245,1876
-Top,9,0.000598,0.000844,5983
-Top,10,0.001724,0.002568,17240
-Top,11,0.004386,0.006953,43858
-Top,12,0.009822,0.016775,98217
-Top,13,0.019735,0.036510,197349
-Top,14,0.035021,0.071531,350210
-Top,15,0.056294,0.127825,562939
-Top,16,0.080862,0.208687,808624
-Top,17,0.104891,0.313578,1048907
-Top,18,0.122214,0.435792,1222143
-Top,19,0.128484,,1284842
-Top,20,0.122125,0.435723,1221253
-Top,21,0.104845,0.313598,1048451
-Top,22,0.080819,0.208753,808190
-Top,23,0.056308,0.127934,563076
-Top,24,0.035158,0.071626,351581
-Top,25,0.019693,0.036468,196925
-Top,26,0.009872,0.016776,98723
-Top,27,0.004345,0.006904,43453
-Top,28,0.001729,0.002558,17292
-Top,29,0.000593,0.000829,5930
-Top,30,0.000179,0.000236,1786
-Top,31,0.000046,0.000058,459
-Top,32,0.000010,0.000012,98
+Variance Difference (Top - Bottom),-3.263158,0.000004,0.000012,38
+Variance Difference (Top - Bottom),-3.263157,0.000000,0.000013,1
+Variance Difference (Top - Bottom),-3.157895,0.000004,0.000017,41
+Variance Difference (Top - Bottom),-3.157894,0.000001,0.000017,6
+Variance Difference (Top - Bottom),-3.052632,0.000004,0.000021,38
+Variance Difference (Top - Bottom),-3.052631,0.000003,0.000024,30
+Variance Difference (Top - Bottom),-2.947369,0.000005,0.000029,50
+Variance Difference (Top - Bottom),-2.947368,0.000005,0.000034,49
+Variance Difference (Top - Bottom),-2.842106,0.000005,0.000039,53
+Variance Difference (Top - Bottom),-2.842105,0.000012,0.000051,119
+Variance Difference (Top - Bottom),-2.736843,0.000005,0.000056,51
+Variance Difference (Top - Bottom),-2.736842,0.000018,0.000074,179
+Variance Difference (Top - Bottom),-2.631579,0.000034,0.000109,345
+Variance Difference (Top - Bottom),-2.526316,0.000038,0.000147,383
+Variance Difference (Top - Bottom),-2.526315,0.000010,0.000157,97
+Variance Difference (Top - Bottom),-2.421053,0.000043,0.000199,428
+Variance Difference (Top - Bottom),-2.421052,0.000022,0.000222,223
+Variance Difference (Top - Bottom),-2.31579,0.000048,0.000270,485
+Variance Difference (Top - Bottom),-2.315789,0.000050,0.000320,496
+Variance Difference (Top - Bottom),-2.210527,0.000055,0.000375,550
+Variance Difference (Top - Bottom),-2.210526,0.000093,0.000468,928
+Variance Difference (Top - Bottom),-2.105264,0.000047,0.000515,472
+Variance Difference (Top - Bottom),-2.105263,0.000179,0.000694,1790
+Variance Difference (Top - Bottom),-2,0.000321,0.001014,3206
+Variance Difference (Top - Bottom),-1.894737,0.000381,0.001395,3807
+Variance Difference (Top - Bottom),-1.894736,0.000098,0.001494,984
+Variance Difference (Top - Bottom),-1.789474,0.000446,0.001940,4461
+Variance Difference (Top - Bottom),-1.789473,0.000264,0.002203,2638
+Variance Difference (Top - Bottom),-1.684211,0.000545,0.002749,5453
+Variance Difference (Top - Bottom),-1.68421,0.000512,0.003260,5117
+Variance Difference (Top - Bottom),-1.578948,0.000674,0.003934,6736
+Variance Difference (Top - Bottom),-1.578947,0.000884,0.004818,8845
+Variance Difference (Top - Bottom),-1.473685,0.000736,0.005554,7356
+Variance Difference (Top - Bottom),-1.473684,0.001564,0.007118,15642
+Variance Difference (Top - Bottom),-1.368422,0.000541,0.007660,5413
+Variance Difference (Top - Bottom),-1.368421,0.002811,0.010470,28107
+Variance Difference (Top - Bottom),-1.263158,0.004716,0.015187,47163
+Variance Difference (Top - Bottom),-1.263157,0.000116,0.015302,1158
+Variance Difference (Top - Bottom),-1.157895,0.005538,0.020840,55376
+Variance Difference (Top - Bottom),-1.157894,0.001491,0.022331,14913
+Variance Difference (Top - Bottom),-1.052632,0.006240,0.028571,62395
+Variance Difference (Top - Bottom),-1.052631,0.003795,0.032366,37952
+Variance Difference (Top - Bottom),-0.947369,0.006907,0.039273,69068
+Variance Difference (Top - Bottom),-0.947368,0.007270,0.046543,72698
+Variance Difference (Top - Bottom),-0.842106,0.006904,0.053447,69039
+Variance Difference (Top - Bottom),-0.842105,0.012682,0.066128,126815
+Variance Difference (Top - Bottom),-0.736843,0.004992,0.071120,49922
+Variance Difference (Top - Bottom),-0.736842,0.021673,0.092793,216725
+Variance Difference (Top - Bottom),-0.631579,0.035267,0.128060,352673
+Variance Difference (Top - Bottom),-0.631578,0.000016,0.128076,163
+Variance Difference (Top - Bottom),-0.526316,0.036603,0.164679,366028
+Variance Difference (Top - Bottom),-0.526315,0.008903,0.173582,89028
+Variance Difference (Top - Bottom),-0.421053,0.034753,0.208335,347534
+Variance Difference (Top - Bottom),-0.421052,0.021594,0.229929,215936
+Variance Difference (Top - Bottom),-0.31579,0.030393,0.260322,303934
+Variance Difference (Top - Bottom),-0.315789,0.036980,0.297302,369798
+Variance Difference (Top - Bottom),-0.210527,0.022986,0.320288,229860
+Variance Difference (Top - Bottom),-0.210526,0.053733,0.374021,537332
+Variance Difference (Top - Bottom),-0.105264,0.012474,0.386495,124740
+Variance Difference (Top - Bottom),-0.105263,0.070648,0.457143,706482
+Variance Difference (Top - Bottom),0.105263,0.070836,0.457383,708362
+Variance Difference (Top - Bottom),0.105264,0.012614,0.386547,126142
+Variance Difference (Top - Bottom),0.210526,0.053784,0.373932,537837
+Variance Difference (Top - Bottom),0.210527,0.022964,0.320149,229644
+Variance Difference (Top - Bottom),0.315789,0.036899,0.297184,368988
+Variance Difference (Top - Bottom),0.31579,0.030391,0.260285,303912
+Variance Difference (Top - Bottom),0.421052,0.021669,0.229894,216694
+Variance Difference (Top - Bottom),0.421053,0.034840,0.208225,348401
+Variance Difference (Top - Bottom),0.526315,0.008899,0.173385,88994
+Variance Difference (Top - Bottom),0.526316,0.036432,0.164485,364321
+Variance Difference (Top - Bottom),0.631578,0.000020,0.128053,203
+Variance Difference (Top - Bottom),0.631579,0.035327,0.128033,353267
+Variance Difference (Top - Bottom),0.736842,0.021589,0.092706,215891
+Variance Difference (Top - Bottom),0.736843,0.004988,0.071117,49882
+Variance Difference (Top - Bottom),0.842105,0.012728,0.066129,127278
+Variance Difference (Top - Bottom),0.842106,0.006881,0.053401,68808
+Variance Difference (Top - Bottom),0.947368,0.007246,0.046520,72464
+Variance Difference (Top - Bottom),0.947369,0.006900,0.039274,68996
+Variance Difference (Top - Bottom),1.052631,0.003823,0.032374,38233
+Variance Difference (Top - Bottom),1.052632,0.006215,0.028551,62145
+Variance Difference (Top - Bottom),1.157894,0.001475,0.022336,14746
+Variance Difference (Top - Bottom),1.157895,0.005552,0.020862,55524
+Variance Difference (Top - Bottom),1.263157,0.000121,0.015310,1209
+Variance Difference (Top - Bottom),1.263158,0.004764,0.015189,47643
+Variance Difference (Top - Bottom),1.368421,0.002798,0.010424,27981
+Variance Difference (Top - Bottom),1.368422,0.000555,0.007626,5547
+Variance Difference (Top - Bottom),1.473684,0.001543,0.007071,15431
+Variance Difference (Top - Bottom),1.473685,0.000733,0.005528,7331
+Variance Difference (Top - Bottom),1.578947,0.000874,0.004795,8742
+Variance Difference (Top - Bottom),1.578948,0.000655,0.003921,6548
+Variance Difference (Top - Bottom),1.68421,0.000499,0.003266,4986
+Variance Difference (Top - Bottom),1.684211,0.000543,0.002768,5431
+Variance Difference (Top - Bottom),1.789473,0.000263,0.002225,2630
+Variance Difference (Top - Bottom),1.789474,0.000446,0.001962,4463
+Variance Difference (Top - Bottom),1.894736,0.000093,0.001515,934
+Variance Difference (Top - Bottom),1.894737,0.000389,0.001422,3894
+Variance Difference (Top - Bottom),2.105263,0.000178,0.000697,1776
+Variance Difference (Top - Bottom),2.105264,0.000043,0.000520,425
+Variance Difference (Top - Bottom),2.210526,0.000096,0.000477,961
+Variance Difference (Top - Bottom),2.210527,0.000054,0.000381,541
+Variance Difference (Top - Bottom),2.315789,0.000047,0.000327,470
+Variance Difference (Top - Bottom),2.31579,0.000052,0.000280,522
+Variance Difference (Top - Bottom),2.421052,0.000028,0.000228,282
+Variance Difference (Top - Bottom),2.421053,0.000045,0.000200,451
+Variance Difference (Top - Bottom),2.526315,0.000009,0.000155,93
+Variance Difference (Top - Bottom),2.526316,0.000040,0.000145,402
+Variance Difference (Top - Bottom),2.631579,0.000031,0.000105,314
+Variance Difference (Top - Bottom),2.736842,0.000017,0.000074,172
+Variance Difference (Top - Bottom),2.736843,0.000005,0.000057,46
+Variance Difference (Top - Bottom),2.842105,0.000009,0.000052,94
+Variance Difference (Top - Bottom),2.842106,0.000007,0.000043,68
+Variance Difference (Top - Bottom),2.947368,0.000005,0.000036,52
+Variance Difference (Top - Bottom),2.947369,0.000005,0.000031,55
+Variance Difference (Top - Bottom),3.052631,0.000003,0.000025,28
+Variance Difference (Top - Bottom),3.052632,0.000004,0.000022,43
+Variance Difference (Top - Bottom),3.157894,0.000001,0.000018,11
+Variance Difference (Top - Bottom),3.157895,0.000004,0.000017,38
+Variance Difference (Top - Bottom),3.263157,0.000000,0.000013,1
+Variance Difference (Top - Bottom),3.263158,0.000004,0.000013,37
+Variance Difference (Top - Bottom),3.368421,0.000003,0.000009,25
+Variance Difference (Top - Bottom),3.368422,0.000000,0.000007,4
+Variance Difference (Top - Bottom),3.473684,0.000002,0.000006,15
+Variance Difference (Top - Bottom),3.473685,0.000001,0.000005,6
+Variance Difference (Top - Bottom),3.578947,0.000001,0.000004,9
+Variance Difference (Top - Bottom),3.578948,0.000000,0.000003,4
+Variance Difference (Top - Bottom),3.68421,0.000000,0.000003,3
+Variance Difference (Top - Bottom),3.684211,0.000000,0.000003,4
+Variance Difference (Top - Bottom),3.789473,0.000000,0.000002,2
+Variance Difference (Top - Bottom),3.789474,0.000000,0.000002,4
+Variance Difference (Top - Bottom),3.894737,0.000000,0.000002,3
+Variance Difference (Top - Bottom),4.105263,0.000000,0.000001,2
+Variance Difference (Top - Bottom),4.105264,0.000000,0.000001,1
+Variance Difference (Top - Bottom),4.210526,0.000000,0.000001,2
+Variance Difference (Top - Bottom),4.210527,0.000000,0.000001,2
+Variance Difference (Top - Bottom),4.526316,0.000000,0.000000,1
+Variance Difference (Top - Bottom),4.631579,0.000000,0.000000,1
+Variance Difference (Top - Bottom),4.842105,0.000000,0.000000,1
+Variance Difference (Top - Bottom),4.947369,0.000000,0.000000,1
+Variance Difference (Top - Bottom),5.684211,0.000000,0.000000,1
+Top Ends - Center,0,0.088988,,889878
+Top Ends - Center,1,0.091409,0.545892,914085
+Top Ends - Center,2,0.088901,0.454483,889009
+Top Ends - Center,3,0.082212,0.365583,822117
+Top Ends - Center,4,0.072333,0.283371,723330
+Top Ends - Center,5,0.060235,0.211038,602355
+Top Ends - Center,6,0.047746,0.150802,477461
+Top Ends - Center,7,0.035708,0.103056,357084
+Top Ends - Center,8,0.025357,0.067348,253574
+Top Ends - Center,9,0.017025,0.041991,170248
+Top Ends - Center,10,0.010880,0.024966,108799
+Top Ends - Center,11,0.006534,0.014086,65342
+Top Ends - Center,12,0.003712,0.007552,37118
+Top Ends - Center,13,0.001995,0.003840,19945
+Top Ends - Center,14,0.000999,0.001845,9993
+Top Ends - Center,15,0.000483,0.000846,4828
+Top Ends - Center,16,0.000212,0.000363,2120
+Top Ends - Center,17,0.000089,0.000151,888
+Top Ends - Center,18,0.000038,0.000062,384
+Top Ends - Center,19,0.000017,0.000024,166
+Top Ends - Center,20,0.000005,0.000007,45
+Top Ends - Center,21,0.000002,0.000003,19
+Top Ends - Center,22,0.000001,0.000001,8
+Top Ends - Center,23,0.000000,0.000000,1
+Top Ends - Center,25,0.000000,0.000000,1
+Top Ends - Center,-21,0.000001,0.000001,6
+Top Ends - Center,-20,0.000000,0.000001,5
+Top Ends - Center,-19,0.000002,0.000003,18
+Top Ends - Center,-18,0.000004,0.000007,39
+Top Ends - Center,-17,0.000014,0.000021,137
+Top Ends - Center,-16,0.000043,0.000063,430
+Top Ends - Center,-15,0.000101,0.000165,1013
+Top Ends - Center,-14,0.000238,0.000403,2381
+Top Ends - Center,-13,0.000513,0.000916,5130
+Top Ends - Center,-12,0.001060,0.001976,10598
+Top Ends - Center,-11,0.002028,0.004004,20279
+Top Ends - Center,-10,0.003789,0.007792,37885
+Top Ends - Center,-9,0.006619,0.014412,66194
+Top Ends - Center,-8,0.010926,0.025338,109263
+Top Ends - Center,-7,0.017018,0.042356,170183
+Top Ends - Center,-6,0.025282,0.067638,252816
+Top Ends - Center,-5,0.035698,0.103335,356978
+Top Ends - Center,-4,0.047456,0.150791,474556
+Top Ends - Center,-3,0.060043,0.210835,600435
+Top Ends - Center,-2,0.071984,0.282819,719844
+Top Ends - Center,-1,0.082301,0.365120,823012
+Bottom Ends - Center,0,0.088985,,889854
+Bottom Ends - Center,1,0.091218,0.545814,912185
+Bottom Ends - Center,2,0.089009,0.454596,890092
+Bottom Ends - Center,3,0.082338,0.365587,823381
+Bottom Ends - Center,4,0.072370,0.283249,723697
+Bottom Ends - Center,5,0.060218,0.210879,602177
+Bottom Ends - Center,6,0.047551,0.150661,475511
+Bottom Ends - Center,7,0.035736,0.103110,357359
+Bottom Ends - Center,8,0.025383,0.067374,253835
+Bottom Ends - Center,9,0.017088,0.041991,170884
+Bottom Ends - Center,10,0.010835,0.024902,108348
+Bottom Ends - Center,11,0.006489,0.014068,64885
+Bottom Ends - Center,12,0.003728,0.007579,37283
+Bottom Ends - Center,13,0.001994,0.003851,19944
+Bottom Ends - Center,14,0.001019,0.001856,10193
+Bottom Ends - Center,15,0.000478,0.000837,4776
+Bottom Ends - Center,16,0.000218,0.000360,2184
+Bottom Ends - Center,17,0.000088,0.000141,877
+Bottom Ends - Center,18,0.000033,0.000053,334
+Bottom Ends - Center,19,0.000014,0.000020,138
+Bottom Ends - Center,20,0.000004,0.000006,43
+Bottom Ends - Center,21,0.000002,0.000002,17
+Bottom Ends - Center,22,0.000000,0.000000,1
+Bottom Ends - Center,23,0.000000,0.000000,1
+Bottom Ends - Center,-22,0.000000,0.000000,1
+Bottom Ends - Center,-21,0.000000,0.000001,5
+Bottom Ends - Center,-20,0.000001,0.000001,8
+Bottom Ends - Center,-19,0.000002,0.000003,19
+Bottom Ends - Center,-18,0.000005,0.000008,46
+Bottom Ends - Center,-17,0.000016,0.000024,158
+Bottom Ends - Center,-16,0.000040,0.000063,398
+Bottom Ends - Center,-15,0.000101,0.000165,1014
+Bottom Ends - Center,-14,0.000232,0.000397,2319
+Bottom Ends - Center,-13,0.000517,0.000914,5170
+Bottom Ends - Center,-12,0.001035,0.001948,10345
+Bottom Ends - Center,-11,0.002060,0.004008,20602
+Bottom Ends - Center,-10,0.003777,0.007785,37768
+Bottom Ends - Center,-9,0.006594,0.014379,65942
+Bottom Ends - Center,-8,0.010939,0.025318,109388
+Bottom Ends - Center,-7,0.017094,0.042412,170939
+Bottom Ends - Center,-6,0.025319,0.067731,253187
+Bottom Ends - Center,-5,0.035604,0.103335,356042
+Bottom Ends - Center,-4,0.047485,0.150820,474854
+Bottom Ends - Center,-3,0.060085,0.210906,600852
+Bottom Ends - Center,-2,0.072092,0.282997,720916
+Bottom Ends - Center,-1,0.082203,0.365200,822028
+Top,5,0.000003,0.000003,26
+Top,6,0.000011,0.000013,106
+Top,7,0.000048,0.000061,479
+Top,8,0.000170,0.000231,1696
+Top,9,0.000584,0.000814,5837
+Top,10,0.001728,0.002542,17277
+Top,11,0.004356,0.006898,43561
+Top,12,0.009882,0.016780,98822
+Top,13,0.019624,0.036405,196243
+Top,14,0.035153,0.071558,351535
+Top,15,0.056278,0.127837,562784
+Top,16,0.080938,0.208775,809380
+Top,17,0.104865,0.313639,1048647
+Top,18,0.122108,0.435748,1221082
+Top,19,0.128559,,1285591
+Top,20,0.122116,0.435693,1221156
+Top,21,0.104662,0.313578,1046618
+Top,22,0.080935,0.208916,809353
+Top,23,0.056409,0.127981,564088
+Top,24,0.035165,0.071572,351645
+Top,25,0.019612,0.036407,196118
+Top,26,0.009841,0.016796,98410
+Top,27,0.004398,0.006955,43985
+Top,28,0.001718,0.002556,17182
+Top,29,0.000603,0.000838,6030
+Top,30,0.000178,0.000235,1784
+Top,31,0.000044,0.000056,439
+Top,32,0.000010,0.000013,105
 Top,33,0.000002,0.000002,18
+Top,34,0.000000,0.000000,3
+Bottom,4,0.000000,0.000000,3
 Bottom,5,0.000002,0.000002,18
-Bottom,6,0.000010,0.000012,98
-Bottom,7,0.000046,0.000058,459
-Bottom,8,0.000179,0.000236,1786
-Bottom,9,0.000593,0.000829,5930
-Bottom,10,0.001729,0.002558,17292
-Bottom,11,0.004345,0.006904,43453
-Bottom,12,0.009872,0.016776,98723
-Bottom,13,0.019693,0.036468,196925
-Bottom,14,0.035158,0.071626,351581
-Bottom,15,0.056308,0.127934,563076
-Bottom,16,0.080819,0.208753,808190
-Bottom,17,0.104845,0.313598,1048451
-Bottom,18,0.122125,0.435723,1221253
-Bottom,19,0.128484,,1284842
-Bottom,20,0.122214,0.435792,1222143
-Bottom,21,0.104891,0.313578,1048907
-Bottom,22,0.080862,0.208687,808624
-Bottom,23,0.056294,0.127825,562939
-Bottom,24,0.035021,0.071531,350210
-Bottom,25,0.019735,0.036510,197349
-Bottom,26,0.009822,0.016775,98217
-Bottom,27,0.004386,0.006953,43858
-Bottom,28,0.001724,0.002568,17240
-Bottom,29,0.000598,0.000844,5983
-Bottom,30,0.000188,0.000245,1876
-Bottom,31,0.000045,0.000058,452
-Bottom,32,0.000010,0.000013,98
-Bottom,33,0.000002,0.000003,21
-Bottom,34,0.000000,0.000001,4
-Bottom,35,0.000000,0.000000,2
-Left Top,0,0.004728,0.004728,47279
-Left Top,1,0.027047,0.031775,270475
-Left Top,2,0.075766,0.107541,757661
-Left Top,3,0.137743,0.245285,1377434
-Left Top,4,0.182637,0.427922,1826370
-Left Top,5,0.188385,,1883846
-Left Top,6,0.156732,0.383694,1567317
-Left Top,7,0.108512,0.226962,1085120
-Left Top,8,0.063867,0.118450,638673
-Left Top,9,0.032318,0.054582,323181
-Left Top,10,0.014166,0.022264,141663
-Left Top,11,0.005456,0.008098,54558
-Left Top,12,0.001863,0.002642,18633
-Left Top,13,0.000579,0.000779,5791
-Left Top,14,0.000152,0.000200,1522
-Left Top,15,0.000039,0.000048,388
-Left Top,16,0.000007,0.000009,68
-Left Top,17,0.000002,0.000002,20
-Left Top,19,0.000000,0.000000,1
-Left Bottom,0,0.004712,0.004712,47115
-Left Bottom,1,0.027044,0.031756,270442
-Left Bottom,2,0.075820,0.107576,758198
-Left Bottom,3,0.137616,0.245191,1376155
-Left Bottom,4,0.182782,0.427973,1827823
-Left Bottom,5,0.188083,,1880829
-Left Bottom,6,0.156978,0.383944,1569784
-Left Bottom,7,0.108676,0.226965,1086764
-Left Bottom,8,0.063825,0.118289,638254
-Left Bottom,9,0.032218,0.054464,322179
-Left Bottom,10,0.014146,0.022246,141461
-Left Bottom,11,0.005465,0.008100,54650
-Left Bottom,12,0.001861,0.002635,18610
-Left Bottom,13,0.000568,0.000774,5683
-Left Bottom,14,0.000157,0.000205,1568
-Left Bottom,15,0.000039,0.000048,393
-Left Bottom,16,0.000008,0.000009,75
-Left Bottom,17,0.000001,0.000002,12
-Left Bottom,18,0.000000,0.000000,3
-Left Bottom,19,0.000000,0.000000,2
-Right Top,0,0.004701,0.004701,47015
-Right Top,1,0.027006,0.031708,270064
-Right Top,2,0.075845,0.107552,758446
-Right Top,3,0.138032,0.245584,1380319
-Right Top,4,0.182676,0.428261,1826762
-Right Top,5,0.188020,,1880195
-Right Top,6,0.156578,0.383720,1565776
-Right Top,7,0.108952,0.227142,1089518
-Right Top,8,0.063815,0.118191,638155
-Right Top,9,0.032121,0.054375,321215
-Right Top,10,0.014129,0.022253,141290
-Right Top,11,0.005477,0.008124,54767
-Right Top,12,0.001862,0.002648,18620
-Right Top,13,0.000584,0.000786,5844
-Right Top,14,0.000154,0.000201,1544
-Right Top,15,0.000036,0.000047,361
-Right Top,16,0.000009,0.000011,89
-Right Top,17,0.000002,0.000002,19
+Bottom,6,0.000010,0.000013,105
+Bottom,7,0.000044,0.000056,439
+Bottom,8,0.000178,0.000235,1784
+Bottom,9,0.000603,0.000838,6030
+Bottom,10,0.001718,0.002556,17182
+Bottom,11,0.004398,0.006955,43985
+Bottom,12,0.009841,0.016796,98410
+Bottom,13,0.019612,0.036407,196118
+Bottom,14,0.035165,0.071572,351645
+Bottom,15,0.056409,0.127981,564088
+Bottom,16,0.080935,0.208916,809353
+Bottom,17,0.104662,0.313578,1046618
+Bottom,18,0.122116,0.435693,1221156
+Bottom,19,0.128559,,1285591
+Bottom,20,0.122108,0.435748,1221082
+Bottom,21,0.104865,0.313639,1048647
+Bottom,22,0.080938,0.208775,809380
+Bottom,23,0.056278,0.127837,562784
+Bottom,24,0.035153,0.071558,351535
+Bottom,25,0.019624,0.036405,196243
+Bottom,26,0.009882,0.016780,98822
+Bottom,27,0.004356,0.006898,43561
+Bottom,28,0.001728,0.002542,17277
+Bottom,29,0.000584,0.000814,5837
+Bottom,30,0.000170,0.000231,1696
+Bottom,31,0.000048,0.000061,479
+Bottom,32,0.000011,0.000013,106
+Bottom,33,0.000003,0.000003,26
+Left Top,0,0.004739,0.004739,47391
+Left Top,1,0.027052,0.031791,270523
+Left Top,2,0.075782,0.107574,757821
+Left Top,3,0.137574,0.245147,1375736
+Left Top,4,0.182987,0.428134,1829873
+Left Top,5,0.188262,,1882623
+Left Top,6,0.156674,0.383603,1566740
+Left Top,7,0.108754,0.226929,1087540
+Left Top,8,0.063790,0.118175,637899
+Left Top,9,0.032180,0.054385,321799
+Left Top,10,0.014175,0.022205,141748
+Left Top,11,0.005430,0.008031,54299
+Left Top,12,0.001844,0.002601,18435
+Left Top,13,0.000561,0.000757,5611
+Left Top,14,0.000150,0.000196,1505
+Left Top,15,0.000036,0.000046,360
+Left Top,16,0.000008,0.000010,77
+Left Top,17,0.000001,0.000002,14
+Left Top,18,0.000000,0.000001,3
+Left Top,19,0.000000,0.000000,3
+Left Bottom,0,0.004707,0.004707,47073
+Left Bottom,1,0.027043,0.031750,270430
+Left Bottom,2,0.075744,0.107495,757444
+Left Bottom,3,0.137786,0.245281,1377859
+Left Bottom,4,0.182897,0.428177,1828968
+Left Bottom,5,0.188203,,1882031
+Left Bottom,6,0.156864,0.383620,1568644
+Left Bottom,7,0.108479,0.226755,1084794
+Left Bottom,8,0.063887,0.118276,638869
+Left Bottom,9,0.032205,0.054389,322055
+Left Bottom,10,0.014109,0.022183,141087
+Left Bottom,11,0.005453,0.008075,54529
+Left Bottom,12,0.001848,0.002622,18479
+Left Bottom,13,0.000569,0.000774,5692
+Left Bottom,14,0.000152,0.000205,1525
+Left Bottom,15,0.000041,0.000052,408
+Left Bottom,16,0.000009,0.000011,94
+Left Bottom,17,0.000001,0.000002,14
+Left Bottom,18,0.000000,0.000000,5
+Right Top,0,0.004707,0.004707,47075
+Right Top,1,0.026977,0.031684,269766
+Right Top,2,0.075617,0.107301,756173
+Right Top,3,0.137969,0.245270,1379690
+Right Top,4,0.182748,0.428019,1827482
+Right Top,5,0.188275,,1882752
+Right Top,6,0.156835,0.383706,1568354
+Right Top,7,0.108709,0.226871,1087090
+Right Top,8,0.063655,0.118162,636554
+Right Top,9,0.032267,0.054506,322667
+Right Top,10,0.014138,0.022240,141379
+Right Top,11,0.005471,0.008102,54713
+Right Top,12,0.001873,0.002631,18728
+Right Top,13,0.000559,0.000758,5590
+Right Top,14,0.000151,0.000199,1514
+Right Top,15,0.000038,0.000047,381
+Right Top,16,0.000008,0.000009,85
+Right Top,17,0.000001,0.000001,6
 Right Top,18,0.000000,0.000000,1
-Right Bottom,0,0.004704,0.004704,47037
-Right Bottom,1,0.027057,0.031761,270571
-Right Bottom,2,0.075776,0.107537,757759
-Right Bottom,3,0.137780,0.245317,1377800
-Right Bottom,4,0.182741,0.428058,1827414
-Right Bottom,5,0.188340,,1883396
-Right Bottom,6,0.156829,0.383602,1568287
-Right Bottom,7,0.108701,0.226774,1087012
-Right Bottom,8,0.063708,0.118072,637083
-Right Bottom,9,0.032206,0.054364,322063
-Right Bottom,10,0.014087,0.022158,140866
-Right Bottom,11,0.005435,0.008071,54349
-Right Bottom,12,0.001865,0.002636,18651
-Right Bottom,13,0.000565,0.000771,5647
-Right Bottom,14,0.000158,0.000207,1579
-Right Bottom,15,0.000037,0.000049,370
-Right Bottom,16,0.000009,0.000012,92
-Right Bottom,17,0.000002,0.000002,22
-Right Bottom,18,0.000000,0.000000,1
-Right Bottom,19,0.000000,0.000000,1
-Center Top,0,0.000037,0.000037,367
-Center Top,1,0.000411,0.000448,4113
-Center Top,2,0.002317,0.002765,23171
-Center Top,3,0.008726,0.011491,87256
-Center Top,4,0.023764,0.035255,237639
-Center Top,5,0.049951,0.085205,499505
-Center Top,6,0.085550,0.170755,855499
-Center Top,7,0.121054,0.291809,1210542
-Center Top,8,0.145831,0.437640,1458309
-Center Top,9,0.150598,,1505985
-Center Top,10,0.135419,0.411761,1354194
-Center Top,11,0.107350,0.276342,1073502
-Center Top,12,0.074823,0.168992,748231
-Center Top,13,0.046479,0.094169,464786
-Center Top,14,0.025741,0.047690,257406
-Center Top,15,0.012748,0.021950,127479
-Center Top,16,0.005707,0.009202,57066
-Center Top,17,0.002294,0.003495,22942
-Center Top,18,0.000820,0.001201,8203
-Center Top,19,0.000268,0.000380,2680
-Center Top,20,0.000085,0.000112,848
-Center Top,21,0.000023,0.000028,225
-Center Top,22,0.000005,0.000005,45
-Center Top,23,0.000001,0.000001,6
-Center Top,24,0.000000,0.000000,1
-Center Bottom,0,0.000033,0.000033,330
-Center Bottom,1,0.000406,0.000439,4061
-Center Bottom,2,0.002347,0.002786,23468
-Center Bottom,3,0.008710,0.011496,87096
-Center Bottom,4,0.023674,0.035169,236737
-Center Bottom,5,0.050027,0.085196,500269
-Center Bottom,6,0.085413,0.170609,854127
-Center Bottom,7,0.121112,0.291721,1211118
-Center Bottom,8,0.145759,0.437480,1457595
-Center Bottom,9,0.150795,,1507946
-Center Bottom,10,0.135571,0.411725,1355713
-Center Bottom,11,0.107258,0.276154,1072577
-Center Bottom,12,0.074719,0.168896,747195
-Center Bottom,13,0.046510,0.094177,465103
-Center Bottom,14,0.025684,0.047667,256843
-Center Bottom,15,0.012772,0.021982,127718
-Center Bottom,16,0.005716,0.009210,57159
-Center Bottom,17,0.002293,0.003495,22935
-Center Bottom,18,0.000828,0.001201,8276
-Center Bottom,19,0.000270,0.000373,2697
-Center Bottom,20,0.000079,0.000104,787
-Center Bottom,21,0.000019,0.000025,195
-Center Bottom,22,0.000004,0.000005,40
-Center Bottom,23,0.000001,0.000002,9
-Center Bottom,24,0.000000,0.000001,5
-Center Bottom,25,0.000000,0.000000,1
-00 Cluster,0,0.004736,0.004736,47363
-00 Cluster,1,0.027038,0.031774,270382
-00 Cluster,2,0.075736,0.107510,757359
-00 Cluster,3,0.137807,0.245317,1378071
-00 Cluster,4,0.182807,0.428124,1828065
-00 Cluster,5,0.188078,,1880776
-00 Cluster,6,0.156786,0.383798,1567862
-00 Cluster,7,0.108770,0.227012,1087698
-00 Cluster,8,0.063773,0.118242,637733
-00 Cluster,9,0.032270,0.054469,322699
-00 Cluster,10,0.014150,0.022199,141499
-00 Cluster,11,0.005439,0.008049,54393
-00 Cluster,12,0.001863,0.002610,18627
-00 Cluster,13,0.000549,0.000747,5489
-00 Cluster,14,0.000150,0.000198,1501
-00 Cluster,15,0.000036,0.000048,365
-00 Cluster,16,0.000009,0.000012,92
-00 Cluster,17,0.000002,0.000003,22
-00 Cluster,18,0.000000,0.000000,4
-0 Cluster,0,0.004682,0.004682,46822
-0 Cluster,1,0.027110,0.031792,271097
-0 Cluster,2,0.075821,0.107613,758208
-0 Cluster,3,0.137561,0.245173,1375606
-0 Cluster,4,0.182896,0.428070,1828964
-0 Cluster,5,0.188115,,1881150
-0 Cluster,6,0.156919,0.383815,1569186
-0 Cluster,7,0.108637,0.226897,1086366
-0 Cluster,8,0.063736,0.118260,637362
-0 Cluster,9,0.032284,0.054524,322838
-0 Cluster,10,0.014170,0.022240,141698
-0 Cluster,11,0.005429,0.008070,54293
-0 Cluster,12,0.001876,0.002641,18757
-0 Cluster,13,0.000567,0.000765,5672
-0 Cluster,14,0.000150,0.000198,1497
-0 Cluster,15,0.000038,0.000048,384
-0 Cluster,16,0.000008,0.000010,81
-0 Cluster,17,0.000002,0.000002,18
-0 Cluster,18,0.000000,0.000000,1
-Left,2,0.000000,0.000000,1
-Left,3,0.000000,0.000000,1
-Left,4,0.000001,0.000001,12
-Left,5,0.000009,0.000010,86
-Left,6,0.000040,0.000050,397
-Left,7,0.000156,0.000206,1558
-Left,8,0.000547,0.000752,5467
-Left,9,0.001569,0.002322,15693
-Left,10,0.004244,0.006566,42443
-Left,11,0.009623,0.016189,96233
-Left,12,0.019521,0.035710,195209
-Left,13,0.035243,0.070953,352432
-Left,14,0.056437,0.127391,564374
-Left,15,0.081477,0.208867,814767
-Left,16,0.105150,0.314017,1051497
-Left,17,0.122581,0.436599,1225815
-Left,18,0.128656,,1286560
-Left,19,0.121942,0.434746,1219416
-Left,20,0.104359,0.312804,1043594
-Left,21,0.080549,0.208445,805489
-Left,22,0.055979,0.127896,559785
-Left,23,0.035071,0.071917,350710
-Left,24,0.019707,0.036846,197071
-Left,25,0.009914,0.017139,99141
-Left,26,0.004509,0.007225,45092
-Left,27,0.001813,0.002716,18125
-Left,28,0.000634,0.000903,6339
-Left,29,0.000199,0.000269,1986
-Left,30,0.000056,0.000071,556
-Left,31,0.000012,0.000015,122
-Left,32,0.000002,0.000003,23
-Left,33,0.000001,0.000001,6
-Right,3,0.000000,0.000000,4
-Right,4,0.000001,0.000002,12
-Right,5,0.000008,0.000010,83
-Right,6,0.000037,0.000047,368
-Right,7,0.000155,0.000201,1548
-Right,8,0.000543,0.000745,5432
-Right,9,0.001628,0.002373,16278
-Right,10,0.004220,0.006592,42197
-Right,11,0.009712,0.016304,97121
-Right,12,0.019561,0.035866,195615
-Right,13,0.035132,0.070998,351319
-Right,14,0.056681,0.127679,566813
-Right,15,0.081408,0.209087,814078
-Right,16,0.105303,0.314390,1053028
-Right,17,0.122740,0.437130,1227403
-Right,18,0.128544,,1285444
-Right,19,0.122044,0.434326,1220440
-Right,20,0.104182,0.312282,1041825
-Right,21,0.080494,0.208099,804943
-Right,22,0.055879,0.127605,558787
-Right,23,0.034966,0.071726,349661
-Right,24,0.019683,0.036760,196828
-Right,25,0.009908,0.017077,99082
-Right,26,0.004479,0.007169,44790
-Right,27,0.001795,0.002690,17945
-Right,28,0.000634,0.000896,6337
-Right,29,0.000192,0.000262,1917
-Right,30,0.000055,0.000070,553
-Right,31,0.000012,0.000015,119
-Right,32,0.000003,0.000003,25
-Right,33,0.000000,0.000000,5
-Towards Ends,4,0.000000,0.000000,1
-Towards Ends,5,0.000000,0.000000,1
-Towards Ends,6,0.000002,0.000002,19
-Towards Ends,7,0.000013,0.000015,131
-Towards Ends,8,0.000052,0.000067,518
-Towards Ends,9,0.000190,0.000257,1903
-Towards Ends,10,0.000629,0.000886,6286
-Towards Ends,11,0.001793,0.002678,17925
-Towards Ends,12,0.004519,0.007198,45194
-Towards Ends,13,0.009939,0.017137,99389
-Towards Ends,14,0.019686,0.036822,196855
-Towards Ends,15,0.034935,0.071757,349345
-Towards Ends,16,0.055936,0.127693,559360
-Towards Ends,17,0.080620,0.208313,806200
-Towards Ends,18,0.104284,0.312596,1042837
-Towards Ends,19,0.121933,0.434530,1219331
-Towards Ends,20,0.128703,,1287029
-Towards Ends,21,0.122808,0.436768,1228083
-Towards Ends,22,0.105087,0.313959,1050872
-Towards Ends,23,0.081451,0.208872,814515
-Towards Ends,24,0.056463,0.127421,564631
-Towards Ends,25,0.035194,0.070958,351944
-Towards Ends,26,0.019510,0.035763,195098
-Towards Ends,27,0.009665,0.016253,96652
-Towards Ends,28,0.004228,0.006588,42277
-Towards Ends,29,0.001619,0.002360,16194
-Towards Ends,30,0.000540,0.000741,5399
-Towards Ends,31,0.000156,0.000201,1562
-Towards Ends,32,0.000036,0.000045,362
-Towards Ends,33,0.000007,0.000009,73
-Towards Ends,34,0.000001,0.000001,12
-Towards Ends,35,0.000000,0.000000,2
-Towards Center,3,0.000000,0.000000,2
-Towards Center,4,0.000001,0.000001,12
-Towards Center,5,0.000007,0.000009,73
-Towards Center,6,0.000036,0.000045,362
-Towards Center,7,0.000156,0.000201,1562
-Towards Center,8,0.000540,0.000741,5399
-Towards Center,9,0.001619,0.002360,16194
-Towards Center,10,0.004228,0.006588,42277
-Towards Center,11,0.009665,0.016253,96652
-Towards Center,12,0.019510,0.035763,195098
-Towards Center,13,0.035194,0.070958,351944
-Towards Center,14,0.056463,0.127421,564631
-Towards Center,15,0.081451,0.208872,814515
-Towards Center,16,0.105087,0.313959,1050872
-Towards Center,17,0.122808,0.436768,1228083
-Towards Center,18,0.128703,,1287029
-Towards Center,19,0.121933,0.434530,1219331
-Towards Center,20,0.104284,0.312596,1042837
-Towards Center,21,0.080620,0.208313,806200
-Towards Center,22,0.055936,0.127693,559360
-Towards Center,23,0.034935,0.071757,349345
-Towards Center,24,0.019686,0.036822,196855
-Towards Center,25,0.009939,0.017137,99389
-Towards Center,26,0.004519,0.007198,45194
-Towards Center,27,0.001793,0.002678,17925
-Towards Center,28,0.000629,0.000886,6286
-Towards Center,29,0.000190,0.000257,1903
-Towards Center,30,0.000052,0.000067,518
-Towards Center,31,0.000013,0.000015,131
-Towards Center,32,0.000002,0.000002,19
-Towards Center,33,0.000000,0.000000,1
-Towards Center,34,0.000000,0.000000,1
-Zero Sums Total,0,0.000009,0.000009,86
-Zero Sums Total,1,0.000124,0.000133,1245
-Zero Sums Total,2,0.000812,0.000945,8122
-Zero Sums Total,3,0.003465,0.004411,34653
-Zero Sums Total,4,0.011009,0.015419,110086
-Zero Sums Total,5,0.026583,0.042002,265827
-Zero Sums Total,6,0.052341,0.094343,523411
-Zero Sums Total,7,0.085454,0.179797,854536
-Zero Sums Total,8,0.118080,0.297877,1180802
-Zero Sums Total,9,0.140492,0.438369,1404919
-Zero Sums Total,10,0.145492,,1454917
-Zero Sums Total,11,0.132542,0.416140,1325418
-Zero Sums Total,12,0.106393,0.283598,1063932
-Zero Sums Total,13,0.076073,0.177205,760726
-Zero Sums Total,14,0.048243,0.101132,482426
-Zero Sums Total,15,0.027799,0.052889,277985
-Zero Sums Total,16,0.014244,0.025091,142443
-Zero Sums Total,17,0.006599,0.010847,65988
-Zero Sums Total,18,0.002722,0.004248,27219
-Zero Sums Total,19,0.001028,0.001526,10282
-Zero Sums Total,20,0.000354,0.000498,3536
-Zero Sums Total,21,0.000104,0.000144,1041
-Zero Sums Total,22,0.000029,0.000040,285
-Zero Sums Total,23,0.000008,0.000012,85
+Right Bottom,0,0.004660,0.004660,46602
+Right Bottom,1,0.027066,0.031727,270664
+Right Bottom,2,0.075772,0.107499,757720
+Right Bottom,3,0.137799,0.245297,1377988
+Right Bottom,4,0.182951,0.428249,1829514
+Right Bottom,5,0.188222,,1882224
+Right Bottom,6,0.156817,0.383529,1568173
+Right Bottom,7,0.108534,0.226712,1085341
+Right Bottom,8,0.063712,0.118177,637117
+Right Bottom,9,0.032202,0.054466,322015
+Right Bottom,10,0.014192,0.022264,141920
+Right Bottom,11,0.005449,0.008072,54486
+Right Bottom,12,0.001849,0.002624,18490
+Right Bottom,13,0.000573,0.000775,5726
+Right Bottom,14,0.000159,0.000202,1587
+Right Bottom,15,0.000033,0.000043,333
+Right Bottom,16,0.000008,0.000010,81
+Right Bottom,17,0.000002,0.000002,16
+Right Bottom,18,0.000000,0.000000,3
+Center Top,0,0.000035,0.000035,347
+Center Top,1,0.000401,0.000436,4008
+Center Top,2,0.002327,0.002762,23266
+Center Top,3,0.008715,0.011478,87155
+Center Top,4,0.023734,0.035212,237345
+Center Top,5,0.049951,0.085163,499508
+Center Top,6,0.085495,0.170658,854950
+Center Top,7,0.121107,0.291764,1211066
+Center Top,8,0.145484,0.437248,1454836
+Center Top,9,0.150824,,1508237
+Center Top,10,0.135702,0.411928,1357016
+Center Top,11,0.107284,0.276227,1072837
+Center Top,12,0.074904,0.168943,749036
+Center Top,13,0.046372,0.094039,463715
+Center Top,14,0.025714,0.047668,257139
+Center Top,15,0.012742,0.021954,127419
+Center Top,16,0.005693,0.009212,56933
+Center Top,17,0.002292,0.003519,22917
+Center Top,18,0.000844,0.001227,8440
+Center Top,19,0.000277,0.000383,2771
+Center Top,20,0.000077,0.000106,765
+Center Top,21,0.000023,0.000029,225
+Center Top,22,0.000005,0.000007,46
+Center Top,23,0.000002,0.000002,21
+Center Top,24,0.000000,0.000000,2
+Center Bottom,0,0.000037,0.000037,371
+Center Bottom,1,0.000411,0.000448,4107
+Center Bottom,2,0.002325,0.002772,23245
+Center Bottom,3,0.008719,0.011491,87190
+Center Bottom,4,0.023733,0.035224,237331
+Center Bottom,5,0.049918,0.085143,499183
+Center Bottom,6,0.085334,0.170476,853336
+Center Bottom,7,0.121171,0.291647,1211707
+Center Bottom,8,0.145797,0.437444,1457971
+Center Bottom,9,0.150743,,1507430
+Center Bottom,10,0.135587,0.411813,1355869
+Center Bottom,11,0.107180,0.276226,1071797
+Center Bottom,12,0.074859,0.169046,748594
+Center Bottom,13,0.046496,0.094187,464964
+Center Bottom,14,0.025712,0.047690,257116
+Center Bottom,15,0.012736,0.021979,127356
+Center Bottom,16,0.005749,0.009243,57489
+Center Bottom,17,0.002299,0.003494,22985
+Center Bottom,18,0.000824,0.001196,8236
+Center Bottom,19,0.000264,0.000372,2635
+Center Bottom,20,0.000081,0.000109,811
+Center Bottom,21,0.000021,0.000028,213
+Center Bottom,22,0.000005,0.000006,50
+Center Bottom,23,0.000001,0.000001,10
+Center Bottom,24,0.000000,0.000000,2
+Center Bottom,25,0.000000,0.000000,2
+00 Cluster,0,0.004716,0.004716,47156
+00 Cluster,1,0.027062,0.031778,270622
+00 Cluster,2,0.075760,0.107538,757598
+00 Cluster,3,0.137730,0.245268,1377300
+00 Cluster,4,0.182692,0.427959,1826915
+00 Cluster,5,0.188387,,1883873
+00 Cluster,6,0.156839,0.383654,1568394
+00 Cluster,7,0.108504,0.226814,1085041
+00 Cluster,8,0.063812,0.118310,638117
+00 Cluster,9,0.032176,0.054498,321755
+00 Cluster,10,0.014172,0.022323,141721
+00 Cluster,11,0.005485,0.008151,54849
+00 Cluster,12,0.001888,0.002666,18884
+00 Cluster,13,0.000571,0.000777,5713
+00 Cluster,14,0.000159,0.000206,1594
+00 Cluster,15,0.000037,0.000047,373
+00 Cluster,16,0.000008,0.000010,75
+00 Cluster,17,0.000002,0.000002,16
+00 Cluster,18,0.000000,0.000000,2
+00 Cluster,19,0.000000,0.000000,2
+0 Cluster,0,0.004715,0.004715,47148
+0 Cluster,1,0.027030,0.031744,270296
+0 Cluster,2,0.075824,0.107568,758236
+0 Cluster,3,0.137543,0.245111,1375430
+0 Cluster,4,0.182566,0.427677,1825658
+0 Cluster,5,0.188274,,1882738
+0 Cluster,6,0.156979,0.384049,1569786
+0 Cluster,7,0.108781,0.227071,1087810
+0 Cluster,8,0.063840,0.118290,638402
+0 Cluster,9,0.032205,0.054450,322047
+0 Cluster,10,0.014175,0.022245,141749
+0 Cluster,11,0.005448,0.008070,54482
+0 Cluster,12,0.001864,0.002622,18644
+0 Cluster,13,0.000552,0.000757,5522
+0 Cluster,14,0.000158,0.000205,1577
+0 Cluster,15,0.000037,0.000048,370
+0 Cluster,16,0.000009,0.000010,89
+0 Cluster,17,0.000001,0.000002,13
+0 Cluster,18,0.000000,0.000000,2
+0 Cluster,19,0.000000,0.000000,1
+Left,3,0.000000,0.000000,4
+Left,4,0.000002,0.000002,15
+Left,5,0.000007,0.000009,72
+Left,6,0.000035,0.000044,347
+Left,7,0.000152,0.000196,1517
+Left,8,0.000544,0.000739,5435
+Left,9,0.001630,0.002369,16297
+Left,10,0.004208,0.006577,42084
+Left,11,0.009646,0.016223,96464
+Left,12,0.019533,0.035756,195328
+Left,13,0.035181,0.070938,351815
+Left,14,0.056398,0.127335,563977
+Left,15,0.081353,0.208689,813535
+Left,16,0.105455,0.314144,1054549
+Left,17,0.122670,0.436814,1226699
+Left,18,0.128790,,1287896
+Left,19,0.121999,0.434397,1219995
+Left,20,0.104281,0.312397,1042813
+Left,21,0.080347,0.208116,803466
+Left,22,0.055947,0.127769,559465
+Left,23,0.035135,0.071823,351353
+Left,24,0.019621,0.036687,196214
+Left,25,0.009961,0.017066,99607
+Left,26,0.004452,0.007105,44525
+Left,27,0.001762,0.002653,17622
+Left,28,0.000622,0.000891,6217
+Left,29,0.000200,0.000269,1997
+Left,30,0.000055,0.000069,545
+Left,31,0.000013,0.000015,126
+Left,32,0.000002,0.000002,17
+Left,33,0.000000,0.000000,4
+Right,2,0.000000,0.000000,1
+Right,4,0.000001,0.000001,11
+Right,5,0.000006,0.000008,64
+Right,6,0.000038,0.000046,383
+Right,7,0.000151,0.000197,1510
+Right,8,0.000535,0.000732,5346
+Right,9,0.001611,0.002342,16107
+Right,10,0.004219,0.006561,42188
+Right,11,0.009565,0.016126,95654
+Right,12,0.019573,0.035699,195728
+Right,13,0.035147,0.070846,351468
+Right,14,0.056570,0.127416,565696
+Right,15,0.081303,0.208718,813028
+Right,16,0.105308,0.314026,1053078
+Right,17,0.122719,0.436745,1227189
+Right,18,0.128992,,1289921
+Right,19,0.121783,0.434263,1217833
+Right,20,0.104318,0.312480,1043177
+Right,21,0.080459,0.208162,804586
+Right,22,0.055937,0.127703,559370
+Right,23,0.035007,0.071766,350065
+Right,24,0.019693,0.036760,196935
+Right,25,0.009943,0.017066,99432
+Right,26,0.004441,0.007123,44411
+Right,27,0.001780,0.002682,17801
+Right,28,0.000636,0.000902,6360
+Right,29,0.000199,0.000266,1995
+Right,30,0.000049,0.000066,492
+Right,31,0.000013,0.000017,133
+Right,32,0.000003,0.000004,30
+Right,33,0.000001,0.000001,6
+Right,34,0.000000,0.000000,1
+Right,35,0.000000,0.000000,1
+Top Ends,0,0.000007,0.000007,73
+Top Ends,1,0.000126,0.000133,1256
+Top Ends,2,0.000830,0.000963,8303
+Top Ends,3,0.003498,0.004462,34983
+Top Ends,4,0.010971,0.015433,109711
+Top Ends,5,0.026604,0.042037,266044
+Top Ends,6,0.052239,0.094276,522391
+Top Ends,7,0.085345,0.179621,853449
+Top Ends,8,0.118105,0.297726,1181049
+Top Ends,9,0.140725,0.438451,1407253
+Top Ends,10,0.145675,,1456754
+Top Ends,11,0.132287,0.415873,1322866
+Top Ends,12,0.106384,0.283587,1063835
+Top Ends,13,0.076007,0.177203,760072
+Top Ends,14,0.048462,0.101196,484623
+Top Ends,15,0.027670,0.052734,276702
+Top Ends,16,0.014263,0.025064,142632
+Top Ends,17,0.006565,0.010800,65650
+Top Ends,18,0.002717,0.004235,27165
+Top Ends,19,0.001019,0.001519,10189
+Top Ends,20,0.000352,0.000500,3521
+Top Ends,21,0.000107,0.000148,1067
+Top Ends,22,0.000031,0.000041,310
+Top Ends,23,0.000008,0.000010,77
+Top Ends,24,0.000002,0.000003,18
+Top Ends,25,0.000001,0.000001,7
+Bottom Ends,0,0.000008,0.000008,80
+Bottom Ends,1,0.000123,0.000131,1235
+Bottom Ends,2,0.000829,0.000960,8289
+Bottom Ends,3,0.003512,0.004472,35117
+Bottom Ends,4,0.010921,0.015393,109208
+Bottom Ends,5,0.026643,0.042036,266433
+Bottom Ends,6,0.052261,0.094297,522606
+Bottom Ends,7,0.085397,0.179694,853971
+Bottom Ends,8,0.118321,0.298015,1183214
+Bottom Ends,9,0.140547,0.438563,1405473
+Bottom Ends,10,0.145604,,1456037
+Bottom Ends,11,0.132358,0.415834,1323578
+Bottom Ends,12,0.106310,0.283476,1063096
+Bottom Ends,13,0.075967,0.177166,759675
+Bottom Ends,14,0.048433,0.101199,484326
+Bottom Ends,15,0.027721,0.052766,277206
+Bottom Ends,16,0.014223,0.025046,142232
+Bottom Ends,17,0.006544,0.010822,65438
+Bottom Ends,18,0.002760,0.004279,27599
+Bottom Ends,19,0.001025,0.001519,10255
+Bottom Ends,20,0.000345,0.000493,3454
+Bottom Ends,21,0.000108,0.000148,1079
+Bottom Ends,22,0.000030,0.000040,301
+Bottom Ends,23,0.000008,0.000010,85
+Bottom Ends,24,0.000001,0.000001,8
+Bottom Ends,25,0.000000,0.000000,5
+Top Center,0,0.000035,0.000035,347
+Top Center,1,0.000401,0.000436,4008
+Top Center,2,0.002327,0.002762,23266
+Top Center,3,0.008715,0.011478,87155
+Top Center,4,0.023734,0.035212,237345
+Top Center,5,0.049951,0.085163,499508
+Top Center,6,0.085495,0.170658,854950
+Top Center,7,0.121107,0.291764,1211066
+Top Center,8,0.145484,0.437248,1454836
+Top Center,9,0.150824,,1508237
+Top Center,10,0.135702,0.411928,1357016
+Top Center,11,0.107284,0.276227,1072837
+Top Center,12,0.074904,0.168943,749036
+Top Center,13,0.046372,0.094039,463715
+Top Center,14,0.025714,0.047668,257139
+Top Center,15,0.012742,0.021954,127419
+Top Center,16,0.005693,0.009212,56933
+Top Center,17,0.002292,0.003519,22917
+Top Center,18,0.000844,0.001227,8440
+Top Center,19,0.000277,0.000383,2771
+Top Center,20,0.000077,0.000106,765
+Top Center,21,0.000023,0.000029,225
+Top Center,22,0.000005,0.000007,46
+Top Center,23,0.000002,0.000002,21
+Top Center,24,0.000000,0.000000,2
+Bottom Center,0,0.000037,0.000037,371
+Bottom Center,1,0.000411,0.000448,4107
+Bottom Center,2,0.002325,0.002772,23245
+Bottom Center,3,0.008719,0.011491,87190
+Bottom Center,4,0.023733,0.035224,237331
+Bottom Center,5,0.049918,0.085143,499183
+Bottom Center,6,0.085334,0.170476,853336
+Bottom Center,7,0.121171,0.291647,1211707
+Bottom Center,8,0.145797,0.437444,1457971
+Bottom Center,9,0.150743,,1507430
+Bottom Center,10,0.135587,0.411813,1355869
+Bottom Center,11,0.107180,0.276226,1071797
+Bottom Center,12,0.074859,0.169046,748594
+Bottom Center,13,0.046496,0.094187,464964
+Bottom Center,14,0.025712,0.047690,257116
+Bottom Center,15,0.012736,0.021979,127356
+Bottom Center,16,0.005749,0.009243,57489
+Bottom Center,17,0.002299,0.003494,22985
+Bottom Center,18,0.000824,0.001196,8236
+Bottom Center,19,0.000264,0.000372,2635
+Bottom Center,20,0.000081,0.000109,811
+Bottom Center,21,0.000021,0.000028,213
+Bottom Center,22,0.000005,0.000006,50
+Bottom Center,23,0.000001,0.000001,10
+Bottom Center,24,0.000000,0.000000,2
+Bottom Center,25,0.000000,0.000000,2
+Zero Sums Total,0,0.000010,0.000010,95
+Zero Sums Total,1,0.000126,0.000136,1262
+Zero Sums Total,2,0.000835,0.000971,8348
+Zero Sums Total,3,0.003507,0.004478,35074
+Zero Sums Total,4,0.010960,0.015438,109605
+Zero Sums Total,5,0.026667,0.042105,266667
+Zero Sums Total,6,0.052183,0.094288,521827
+Zero Sums Total,7,0.085433,0.179720,854326
+Zero Sums Total,8,0.118004,0.297724,1180038
+Zero Sums Total,9,0.140249,0.437974,1402495
+Zero Sums Total,10,0.145732,,1457322
+Zero Sums Total,11,0.132459,0.416294,1324586
+Zero Sums Total,12,0.106530,0.283836,1065300
+Zero Sums Total,13,0.075968,0.177306,759678
+Zero Sums Total,14,0.048497,0.101338,484970
+Zero Sums Total,15,0.027783,0.052841,277827
+Zero Sums Total,16,0.014185,0.025058,141850
+Zero Sums Total,17,0.006588,0.010873,65882
+Zero Sums Total,18,0.002754,0.004285,27539
+Zero Sums Total,19,0.001038,0.001531,10375
+Zero Sums Total,20,0.000351,0.000493,3505
+Zero Sums Total,21,0.000104,0.000143,1041
+Zero Sums Total,22,0.000029,0.000039,291
+Zero Sums Total,23,0.000007,0.000010,72
 Zero Sums Total,24,0.000002,0.000003,21
-Zero Sums Total,25,0.000001,0.000001,8
-Zero Sums Total,26,0.000000,0.000000,1
-Density (Top 5 Sum),9,0.000000,0.000000,2
-Density (Top 5 Sum),10,0.014384,0.014384,143839
-Density (Top 5 Sum),11,0.069796,0.084180,697959
-Density (Top 5 Sum),12,0.158216,0.242396,1582158
-Density (Top 5 Sum),13,0.223167,0.465563,2231669
-Density (Top 5 Sum),14,0.219528,,2195280
-Density (Top 5 Sum),15,0.168233,0.314909,1682328
-Density (Top 5 Sum),16,0.092854,0.146676,928544
-Density (Top 5 Sum),17,0.037949,0.053822,379493
-Density (Top 5 Sum),18,0.012044,0.015873,120440
-Density (Top 5 Sum),19,0.003055,0.003829,30551
-Density (Top 5 Sum),20,0.000641,0.000774,6408
-Density (Top 5 Sum),21,0.000111,0.000133,1110
-Density (Top 5 Sum),22,0.000018,0.000022,180
-Density (Top 5 Sum),23,0.000003,0.000004,34
-Density (Top 5 Sum),24,0.000000,0.000000,4
-Density (Top 5 Sum),25,0.000000,0.000000,1
-Variance (Within-Run Spread),1,0.091398,0.458063,913985
-Variance (Within-Run Spread),2,0.000207,0.000648,2074
+Zero Sums Total,25,0.000000,0.000000,4
+Density (Top 5 Sum),9,0.000000,0.000000,1
+Density (Top 5 Sum),10,0.014392,0.014392,143916
+Density (Top 5 Sum),11,0.069827,0.084219,698268
+Density (Top 5 Sum),12,0.158551,0.242769,1585506
+Density (Top 5 Sum),13,0.222962,0.465731,2229619
+Density (Top 5 Sum),14,0.219501,,2195008
+Density (Top 5 Sum),15,0.168164,0.314768,1681642
+Density (Top 5 Sum),16,0.092774,0.146604,927742
+Density (Top 5 Sum),17,0.037953,0.053830,379532
+Density (Top 5 Sum),18,0.011989,0.015877,119894
+Density (Top 5 Sum),19,0.003089,0.003887,30889
+Density (Top 5 Sum),20,0.000658,0.000798,6577
+Density (Top 5 Sum),21,0.000120,0.000141,1204
+Density (Top 5 Sum),22,0.000018,0.000020,176
+Density (Top 5 Sum),23,0.000003,0.000003,25
+Density (Top 5 Sum),24,0.000000,0.000000,1
+Variance (Within-Run Spread),1,0.091332,0.457820,913316
+Variance (Within-Run Spread),2,0.000213,0.000665,2133
 Variance (Within-Run Spread),3,0.000000,0.000001,3
-Variance (Within-Run Spread),0.2105,0.000000,0.000000,2
-Variance (Within-Run Spread),0.2632,0.000003,0.000003,26
-Variance (Within-Run Spread),0.3158,0.000020,0.000023,202
-Variance (Within-Run Spread),0.3684,0.000135,0.000158,1353
-Variance (Within-Run Spread),0.4211,0.000689,0.000848,6894
-Variance (Within-Run Spread),0.4737,0.002468,0.003316,24680
-Variance (Within-Run Spread),0.5263,0.006903,0.010218,69027
-Variance (Within-Run Spread),0.5789,0.015398,0.025617,153982
-Variance (Within-Run Spread),0.6316,0.028898,0.054515,288981
-Variance (Within-Run Spread),0.6842,0.046382,0.100897,463820
-Variance (Within-Run Spread),0.7368,0.065423,0.166320,654229
-Variance (Within-Run Spread),0.7895,0.082553,0.248872,825526
-Variance (Within-Run Spread),0.8421,0.094673,0.343546,946733
-Variance (Within-Run Spread),0.8947,0.100016,0.443561,1000158
-Variance (Within-Run Spread),0.9474,0.098376,,983757
-Variance (Within-Run Spread),1.0526,0.080471,0.366665,804709
-Variance (Within-Run Spread),1.1053,0.067978,0.286194,679777
-Variance (Within-Run Spread),1.1579,0.055223,0.218216,552231
-Variance (Within-Run Spread),1.2105,0.043438,0.162993,434378
-Variance (Within-Run Spread),1.2632,0.033317,0.119555,333170
-Variance (Within-Run Spread),1.3158,0.024841,0.086238,248415
-Variance (Within-Run Spread),1.3684,0.018203,0.061396,182026
-Variance (Within-Run Spread),1.4211,0.013132,0.043194,131320
-Variance (Within-Run Spread),1.4737,0.009315,0.030062,93150
-Variance (Within-Run Spread),1.5263,0.006474,0.020747,64741
-Variance (Within-Run Spread),1.5789,0.004486,0.014273,44863
-Variance (Within-Run Spread),1.6316,0.003135,0.009787,31345
-Variance (Within-Run Spread),1.6842,0.002133,0.006652,21331
-Variance (Within-Run Spread),1.7368,0.001447,0.004519,14467
-Variance (Within-Run Spread),1.7895,0.001003,0.003072,10029
-Variance (Within-Run Spread),1.8421,0.000660,0.002069,6605
-Variance (Within-Run Spread),1.8947,0.000455,0.001409,4551
-Variance (Within-Run Spread),1.9474,0.000305,0.000954,3052
-Variance (Within-Run Spread),2.0526,0.000137,0.000441,1368
-Variance (Within-Run Spread),2.1053,0.000098,0.000304,979
-Variance (Within-Run Spread),2.1579,0.000065,0.000206,652
-Variance (Within-Run Spread),2.2105,0.000042,0.000141,424
-Variance (Within-Run Spread),2.2632,0.000030,0.000099,296
-Variance (Within-Run Spread),2.3158,0.000023,0.000069,235
-Variance (Within-Run Spread),2.3684,0.000015,0.000046,145
-Variance (Within-Run Spread),2.4211,0.000008,0.000031,82
-Variance (Within-Run Spread),2.4737,0.000007,0.000023,69
-Variance (Within-Run Spread),2.5263,0.000005,0.000016,45
-Variance (Within-Run Spread),2.5789,0.000004,0.000012,39
-Variance (Within-Run Spread),2.6316,0.000002,0.000008,23
-Variance (Within-Run Spread),2.6842,0.000002,0.000005,15
-Variance (Within-Run Spread),2.7368,0.000001,0.000004,7
-Variance (Within-Run Spread),2.7895,0.000001,0.000003,8
+Variance (Within-Run Spread),0.2105,0.000000,0.000000,1
+Variance (Within-Run Spread),0.2632,0.000003,0.000003,25
+Variance (Within-Run Spread),0.3158,0.000019,0.000022,189
+Variance (Within-Run Spread),0.3684,0.000141,0.000163,1414
+Variance (Within-Run Spread),0.4211,0.000705,0.000868,7052
+Variance (Within-Run Spread),0.4737,0.002464,0.003332,24641
+Variance (Within-Run Spread),0.5263,0.006862,0.010194,68622
+Variance (Within-Run Spread),0.5789,0.015476,0.025670,154756
+Variance (Within-Run Spread),0.6316,0.028971,0.054641,289712
+Variance (Within-Run Spread),0.6842,0.046398,0.101039,463977
+Variance (Within-Run Spread),0.7368,0.065560,0.166599,655605
+Variance (Within-Run Spread),0.7895,0.082512,0.249112,825123
+Variance (Within-Run Spread),0.8421,0.094582,0.343694,945820
+Variance (Within-Run Spread),0.8947,0.099862,0.443556,998623
+Variance (Within-Run Spread),0.9474,0.098624,,986240
+Variance (Within-Run Spread),1.0526,0.080513,0.366488,805133
+Variance (Within-Run Spread),1.1053,0.067917,0.285975,679169
+Variance (Within-Run Spread),1.1579,0.055217,0.218058,552174
+Variance (Within-Run Spread),1.2105,0.043454,0.162841,434538
+Variance (Within-Run Spread),1.2632,0.033188,0.119387,331879
+Variance (Within-Run Spread),1.3158,0.024844,0.086199,248436
+Variance (Within-Run Spread),1.3684,0.018169,0.061356,181685
+Variance (Within-Run Spread),1.4211,0.013018,0.043187,130176
+Variance (Within-Run Spread),1.4737,0.009313,0.030169,93130
+Variance (Within-Run Spread),1.5263,0.006527,0.020856,65272
+Variance (Within-Run Spread),1.5789,0.004536,0.014329,45357
+Variance (Within-Run Spread),1.6316,0.003096,0.009794,30959
+Variance (Within-Run Spread),1.6842,0.002140,0.006698,21402
+Variance (Within-Run Spread),1.7368,0.001467,0.004557,14669
+Variance (Within-Run Spread),1.7895,0.000981,0.003090,9809
+Variance (Within-Run Spread),1.8421,0.000676,0.002110,6757
+Variance (Within-Run Spread),1.8947,0.000459,0.001434,4586
+Variance (Within-Run Spread),1.9474,0.000310,0.000975,3103
+Variance (Within-Run Spread),2.0526,0.000143,0.000452,1435
+Variance (Within-Run Spread),2.1053,0.000097,0.000308,967
+Variance (Within-Run Spread),2.1579,0.000066,0.000211,659
+Variance (Within-Run Spread),2.2105,0.000045,0.000146,454
+Variance (Within-Run Spread),2.2632,0.000034,0.000100,337
+Variance (Within-Run Spread),2.3158,0.000020,0.000067,204
+Variance (Within-Run Spread),2.3684,0.000013,0.000046,134
+Variance (Within-Run Spread),2.4211,0.000009,0.000033,94
+Variance (Within-Run Spread),2.4737,0.000008,0.000023,76
+Variance (Within-Run Spread),2.5263,0.000004,0.000016,42
+Variance (Within-Run Spread),2.5789,0.000004,0.000012,36
+Variance (Within-Run Spread),2.6316,0.000002,0.000008,19
+Variance (Within-Run Spread),2.6842,0.000002,0.000006,18
+Variance (Within-Run Spread),2.7368,0.000002,0.000004,16
+Variance (Within-Run Spread),2.7895,0.000000,0.000003,4
 Variance (Within-Run Spread),2.8421,0.000001,0.000002,9
-Variance (Within-Run Spread),2.8947,0.000000,0.000002,2
+Variance (Within-Run Spread),2.8947,0.000000,0.000001,2
 Variance (Within-Run Spread),2.9474,0.000000,0.000001,3
-Variance (Within-Run Spread),3.0526,0.000000,0.000001,2
-Variance (Within-Run Spread),3.1053,0.000000,0.000000,3
+Variance (Within-Run Spread),3.0526,0.000000,0.000000,1
+Variance (Within-Run Spread),3.1053,0.000000,0.000000,2
 Variance (Within-Run Spread),3.2105,0.000000,0.000000,1
-Variance (Within-Run Spread),3.2632,0.000000,0.000000,1
+Variance (Within-Run Spread),3.4211,0.000000,0.000000,1

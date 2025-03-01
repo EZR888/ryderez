@@ -208,8 +208,8 @@
       background-color: white;
       padding: 20px;
       border-radius: 5px;
-      max-width: 500px;
-      text-align: center;
+      max-width: 1500px;
+      text-align: left;
       color: black;
     }
 
@@ -357,12 +357,26 @@
             <div class="modal-content">
                 <button class="close-button" id="closeModalButton">&times;</button>
                 <h2>Instructions</h2>
-                <p>One Set = 38 Spins<br><br>
+                <p>One Set = 38 Spins<br>
                     Each spin randomly picks a number from 1 to 38<br><br>
-                    Run Simulator ignores settings for Multi-Spin<br><br>
-                    Multi-Spin uses the Number of Runs setting<br><br>
-                    Run Simulator always uses 38 spins for 1 set<br><br>
-                    Spin Delay can be set to less than 1. Ex: .05<br><br>
+                    Run Simulator ignores settings for Multi-Spin<br>
+                    Multi-Spin uses the Number of Runs setting<br>
+                    Run Simulator always uses 38 spins for 1 set<br>
+                    Spin Delay can be set to less than 1. Ex: .01<br>
+                    <h2>Tasks</h2>
+
+					<i>Directional Differences</i>:  Measures directional bias (a classic, strong metric).<br><br>
+  						<u>Top - Bottom</u>: Measures directional bias (a classic, strong metric).<br>
+  						<u>Right - Left</u>: Tests for lateral bias (complements top-bottom).<br>
+  						<u>Ends - Center</u>: Checks for attraction to middle or outward spread.<br><br>
+
+					<i>Variance & Distribution</i>:  (Variance, Density, Clustering) - Captures overall variability in distributions.<br><br>
+  						<u>Variance</u><br>
+  						<u>Density</u><br><br>
+  
+					<i>Specific Targets</i>: (00, 0):  A specific, targeted metric for unique clustering.<br><br>
+  						<u>Sum of 00 Hits</u>: A specific, targeted metric for unique clustering.<br>
+  						<u>Sum of 0 Hits</u>: Another specific metric that pairs with 00 for additional analysis.<br><br>
                 </p>
             </div>
         </div>

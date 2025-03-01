@@ -1,0 +1,22 @@
+
+
+3). Do some file maintenance - get rid of old runs, output files, backup code files, and what-not.
+4)  Clean up Save to PDF for Totals and Density pages.
+
+Heat map.
+
+Tasks:
+
+Directional Differences:  Measures directional bias (a classic, strong metric).
+  Top Minus Bottom (T - B) – Measures directional bias (a classic, strong metric).
+  Right Minus Left (R - L) – Tests for lateral bias (complements top-bottom).
+  Center Minus Ends (C - E) – Checks for attraction to middle or outward spread.
+
+Variance & Distribution:  (σ², Density, Clustering) - Captures overall variability in distributions.
+  Variance
+  Density
+  
+Specific Targets: (00, 0):  A specific, targeted metric for unique clustering.
+  Sum of 00 Hits – A specific, targeted metric for unique clustering.
+  Sum of 0 Hits – Another specific metric that pairs with 00 for additional analysis.
+  00 + 0 Combined

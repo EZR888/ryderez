@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -467,7 +468,7 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
     console.log(`🟢 Processing category: ${category}`);
 
     if (!totalValue || totalValue <= 0) {
-        console.error("Invalid total for cumulative probability calculation:", totalValue);
+        console.error("❌ ERROR: totalValue is invalid for cumulative probability calculation:", totalValue);
         return {};
     }
 
@@ -476,30 +477,21 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
         return {};
     }
 
-if (!statsCollection[category]) {
-    console.error(`❌ ERROR: ${category} is missing from statsCollection!`);
-    return {};
-}
-
-if (!category || typeof category !== "string") {
-    console.error("❌ ERROR: Invalid category passed to calculateCumulativeProbabilities!", category);
-    return {};
-}
-    let isDifferenceCategory = category.includes("Diff"); // 🔴 Possible issue here
-
-    // ✅ Explicitly list sum-based categories (group totals)
+    // ✅ List of sum-based categories (these will use MEAN)
     const sumCategories = [
         "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
         "cTop", "cBottom", "zzCluster", "zCluster", "left", "right", "towardEnds", 
         "towardCenter", "zeroSums", "Density", "Variance"
     ];
-    let isSumCategory = sumCategories.includes(category);
 
-    const sortedKeys = Object.keys(frequencyDistribution).map(Number);
+    const isSumCategory = sumCategories.includes(category);
+    const isDifferenceCategory = category.includes("Diff");
+
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
     let cumulativeProbabilities = {};
     let cumulativeBelow = 0, cumulativeAbove = 0;
 
-    // ✅ Correctly fetch the MEAN, ensuring it's not undefined
+    // ✅ Get center value (Mean for sum-based categories, 0 for difference categories)
     let centerValue = isDifferenceCategory ? 0 : 
                       (referenceData?.[category]?.mean ?? statsCollection?.[category]?.mean ?? null);
 
@@ -509,6 +501,13 @@ if (!category || typeof category !== "string") {
     }
 
     console.log(`🟢 Using ${isDifferenceCategory ? "0" : `MEAN (${centerValue})`} as center for cumulative probabilities in: ${category}`);
+
+    // ✅ Find the closest value to the mean in the dataset
+    let closestValue = sortedKeys.reduce((prev, curr) => 
+        Math.abs(curr - centerValue) < Math.abs(prev - centerValue) ? curr : prev, sortedKeys[0]
+    );
+
+    console.log(`🟢 Closest value to mean (${centerValue}) is: ${closestValue}`);
 
     if (isDifferenceCategory) {
         // ✅ Keep the existing logic for differences (DO NOT CHANGE)
@@ -531,7 +530,7 @@ if (!category || typeof category !== "string") {
             };
         }
     } else if (isSumCategory) {
-        // ✅ Use the SAME above/below logic, but for sum categories, using MEAN instead of 0
+        // ✅ New Fix: Ensure cumulative probability is blank when closest Value to Mean is found
         let belowMean = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
         let aboveMean = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
 
@@ -550,9 +549,16 @@ if (!category || typeof category !== "string") {
                 cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
             };
         }
+
+        // ✅ If the closest value exists in frequency distribution, set its cumulative probability to ""
+        if (cumulativeProbabilities.hasOwnProperty(closestValue)) {
+            console.log(`🟡 Setting cumulative probability to "" for closest value to mean: ${closestValue}`);
+            cumulativeProbabilities[closestValue].cumulativeP = "";
+        } else {
+            console.warn(`⚠️ Closest value ${closestValue} not found in frequency distribution.`);
+        }
     } else {
-        // ✅ Fallback case to prevent undefined errors
-        console.warn(`⚠️ Category "${category}" is neither a sum nor difference category. Using default sorting.`);
+        // ✅ Default behavior for other categories
         sortedKeys.sort((a, b) => a - b);
         for (let key of sortedKeys) {
             cumulativeBelow += frequencyDistribution[key];
@@ -563,6 +569,7 @@ if (!category || typeof category !== "string") {
         }
     }
 
+    console.log(`✅ Final Cumulative Probabilities for ${category}:`, cumulativeProbabilities);
     return cumulativeProbabilities;
 }
 

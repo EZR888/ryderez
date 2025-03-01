@@ -468,7 +468,7 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
     console.log(`🟢 Processing category: ${category}`);
 
     if (!totalValue || totalValue <= 0) {
-        console.error("Invalid total for cumulative probability calculation:", totalValue);
+        console.error("❌ ERROR: totalValue is invalid for cumulative probability calculation:", totalValue);
         return {};
     }
 
@@ -477,30 +477,21 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
         return {};
     }
 
-if (!statsCollection[category]) {
-    console.error(`❌ ERROR: ${category} is missing from statsCollection!`);
-    return {};
-}
-
-if (!category || typeof category !== "string") {
-    console.error("❌ ERROR: Invalid category passed to calculateCumulativeProbabilities!", category);
-    return {};
-}
-    let isDifferenceCategory = category.includes("Diff"); // 🔴 Possible issue here
-
-    // ✅ Explicitly list sum-based categories (group totals)
+    // ✅ List of sum-based categories (these will use MEAN)
     const sumCategories = [
         "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
         "cTop", "cBottom", "zzCluster", "zCluster", "left", "right", "towardEnds", 
         "towardCenter", "zeroSums", "Density", "Variance"
     ];
-    let isSumCategory = sumCategories.includes(category);
 
-    const sortedKeys = Object.keys(frequencyDistribution).map(Number);
+    const isSumCategory = sumCategories.includes(category);
+    const isDifferenceCategory = category.includes("Diff");
+
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
     let cumulativeProbabilities = {};
     let cumulativeBelow = 0, cumulativeAbove = 0;
 
-    // ✅ Correctly fetch the MEAN, ensuring it's not undefined
+    // ✅ Get center value (Mean for sum-based categories, 0 for difference categories)
     let centerValue = isDifferenceCategory ? 0 : 
                       (referenceData?.[category]?.mean ?? statsCollection?.[category]?.mean ?? null);
 
@@ -510,6 +501,13 @@ if (!category || typeof category !== "string") {
     }
 
     console.log(`🟢 Using ${isDifferenceCategory ? "0" : `MEAN (${centerValue})`} as center for cumulative probabilities in: ${category}`);
+
+    // ✅ Find the closest value to the mean in the dataset
+    let closestValue = sortedKeys.reduce((prev, curr) => 
+        Math.abs(curr - centerValue) < Math.abs(prev - centerValue) ? curr : prev, sortedKeys[0]
+    );
+
+    console.log(`🟢 Closest value to mean (${centerValue}) is: ${closestValue}`);
 
     if (isDifferenceCategory) {
         // ✅ Keep the existing logic for differences (DO NOT CHANGE)
@@ -532,7 +530,7 @@ if (!category || typeof category !== "string") {
             };
         }
     } else if (isSumCategory) {
-        // ✅ Use the SAME above/below logic, but for sum categories, using MEAN instead of 0
+        // ✅ New Fix: Ensure cumulative probability is blank when closest Value to Mean is found
         let belowMean = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
         let aboveMean = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
 
@@ -551,9 +549,16 @@ if (!category || typeof category !== "string") {
                 cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
             };
         }
+
+        // ✅ If the closest value exists in frequency distribution, set its cumulative probability to ""
+        if (cumulativeProbabilities.hasOwnProperty(closestValue)) {
+            console.log(`🟡 Setting cumulative probability to "" for closest value to mean: ${closestValue}`);
+            cumulativeProbabilities[closestValue].cumulativeP = "";
+        } else {
+            console.warn(`⚠️ Closest value ${closestValue} not found in frequency distribution.`);
+        }
     } else {
-        // ✅ Fallback case to prevent undefined errors
-        console.warn(`⚠️ Category "${category}" is neither a sum nor difference category. Using default sorting.`);
+        // ✅ Default behavior for other categories
         sortedKeys.sort((a, b) => a - b);
         for (let key of sortedKeys) {
             cumulativeBelow += frequencyDistribution[key];
@@ -564,6 +569,7 @@ if (!category || typeof category !== "string") {
         }
     }
 
+    console.log(`✅ Final Cumulative Probabilities for ${category}:`, cumulativeProbabilities);
     return cumulativeProbabilities;
 }
 
@@ -1386,56 +1392,6 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
 
 const worker = new Worker("worker.js");
 
-
-// =======================================================
-// UI Enhancements: Add Toggle for Raw CSV Export
-// =======================================================
-const exportRawDataCheckbox = document.createElement("input");
-exportRawDataCheckbox.type = "checkbox";
-exportRawDataCheckbox.id = "exportRawData";
-exportRawDataCheckbox.style.marginLeft = "10px";
-
-const exportLabel = document.createElement("label");
-exportLabel.htmlFor = "exportRawData";
-exportLabel.innerHTML = " Save Raw Data to CSV";
-exportLabel.style.color = "lightgreen";
-exportLabel.style.fontSize = "14px";
-
-const runButtonContainer = document.getElementById("runButton").parentElement;
-runButtonContainer.appendChild(exportRawDataCheckbox);
-runButtonContainer.appendChild(exportLabel);
-
-// =======================================================
-// Function to Save Raw Data to CSV
-// =======================================================
-function saveRawDataToCSV(rawData) {
-    if (!Array.isArray(rawData) || rawData.length === 0) {
-        console.error("❌ ERROR: No raw data available to save.");
-        return;
-    }
-
-    // Convert data to a Blob (Efficient for large data)
-    const csvContent = rawData.map(row => row.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-
-    // Create a temporary link for download
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `RawData_${totalRuns}_${getFormattedTimestamp()}.csv`;
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    console.log(`✅ Raw Data Saved as CSV using Blob streaming.`);
-}
-
-
-// =======================================================
-// Modify Run Button to Include Raw CSV Option
-// =======================================================
-let rawDataStorage = [];
-
 document.getElementById("runButton").addEventListener("click", () => {
     const numRuns = parseInt(document.getElementById("numRuns").value, 10);
     if (isNaN(numRuns) || numRuns < 1 || numRuns > 10000000) {
@@ -1443,27 +1399,24 @@ document.getElementById("runButton").addEventListener("click", () => {
         return;
     }
 
-    const saveRawData = exportRawDataCheckbox.checked;
-    console.log(`🟢 Save Raw Data to CSV: ${saveRawData}`);
+    const useReferenceData = document.getElementById("useReferenceData").checked;  // ✅ Get checkbox state
+    console.log(`🟢 Use Reference Data: ${useReferenceData}`);  // Debugging info
 
-    totalRuns = numRuns;
-    let chunkIndex = 1; // Track how many chunk files have been created
+    totalRuns = numRuns;  // ✅ Ensure totalRuns is set
 
-    const chunkSize = 100000;  // 🔥 Process in 100K row chunks
+    const chunkSize = 100000;
     let allResults = [];
 
     worker.postMessage({ numRuns, chunkSize });
 
     worker.onmessage = function (e) {
         if (e.data.type === "chunk") {
-            if (saveRawData) {
-                saveRawDataChunk(e.data.data, chunkIndex);  // ✅ Save each chunk immediately
-                chunkIndex++;
-            }
+            allResults.push(...e.data.data);
         } else if (e.data.type === "done") {
             totalRuns = e.data.totalRuns;
-            console.log("✅ All data processed. Total chunks saved:", chunkIndex - 1);
-            processData(allResults);
+            console.log("✅ All data processed, starting analysis...");
+            
+            processData(allResults, useReferenceData);  // ✅ Now it correctly passes true/false
         }
     };
 
@@ -1485,31 +1438,6 @@ async function detectIncognito() {
         }
     });
 }
-
-function saveRawDataChunk(chunkData, chunkIndex) {
-    if (!Array.isArray(chunkData) || chunkData.length === 0) {
-        console.error("❌ ERROR: No data available to save.");
-        return;
-    }
-
-    // Convert chunk to CSV format
-    const csvContent = chunkData.map(row => row.join(",")).join("\n");
-
-    // Create a downloadable Blob for each chunk
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-
-    // Name each chunk file sequentially
-    link.download = `RawData_Part${chunkIndex}_${getFormattedTimestamp()}.csv`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    console.log(`✅ Saved chunk ${chunkIndex} as CSV`);
-}
-
 
 // ✅ Function to Run Simulations in a Web Worker
 function runSimulationWithWorker(numRuns) {

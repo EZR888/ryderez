@@ -311,6 +311,88 @@
     color: yellow; /* Change this color as needed */
     font-weight: bold; /* Optional: Make it stand out more */
 	}
+	
+	/* Style for toggle buttons */
+	.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 10px;
+    margin: 5px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+	}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: lightgreen !important;
+}
+
+/* Ensure all sections have the same width and height */
+.framed-section {
+    border: 2px solid lightgreen;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 8px;
+    width: 26%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+}
+
+.framed-section-tasks {
+    border: 2px solid lightgreen;
+    background-color: #222;
+    border-radius: 8px;
+    width: 37%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+    box-sizing: border-box;
+}
+
+/* Ensure the button container evenly distributes sections */
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1060px;
+    justify-items: center;
+}
+
+/* Make toggle button container a grid */
+.toggle-button-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 5px;
+    width: 100%;
+    justify-items: center;
+}
+
+/* Style for toggle buttons */
+.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 8px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: purple !important;
+    color: white;
+}
 
   </style>
 </head>
@@ -331,24 +413,45 @@
         <br>
         <h1 class="lgreen-text">Roulette Wheel Simulator</h1>
         Please click the How To Use button above for instructions!
-        <div>
-            <div class="button-container">
-                <div class="framed-section">
-                    <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
-                    <label style="color:salmon; display: inline-block; width: 300px;" for="x">NUMBER OF RUNS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="number" id="x" name="x" value="1" style="width: 10ch"><br>
-                    <label style="color:salmon; display: inline-block; width: 300px;" for="y">NUMBER OF SETS PER RUN:&nbsp;</label>
-                    <input type="number" id="y" name="y" value="1" style="width: 10ch"><br><br>
-                </div>
-                <div class="framed-section">
-                    <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
-                    <label style="color:lightgreen; display: inline-block; width: 300px;" for="numSpins">NUMBER OF SPINS:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="number" id="numSpins" name="numSpins" value="38" style="width: 10ch"><br>
-                    <label style="color:lightgreen; display: inline-block; width: 300px;" for="spinDelay">SPIN DELAY (seconds):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="number" id="spinDelay" name="spinDelay" value="1" style="width: 10ch"><br><br>
-                </div>
-            </div>
+    <div>
+ 
+<div class="container">                  
+<div class="button-container">
+    <!-- Run Simulation Section -->
+    <div class="framed-section">  
+        <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
+        <label style="color:salmon; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
+        <input type="number" id="x" value="1" style="width: 10ch"><br><br>
+        <label style="color:salmon; display: inline-block; width: 110px;">NUMBER OF SETS / RUN</label>
+        <input type="number" id="y" value="1" style="width: 10ch"><br><br>
+    </div>
+
+    <!-- New Toggle Button Section (Options for CSV Export) -->
+    <div class="framed-section-tasks">
+        <h3 style="color: violet; text-align: center;">Select Tasks</h3>
+        <div class="toggle-button-container">
+            <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Right - Left</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Variance</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Density</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
+            <br>
         </div>
+    </div>
+
+    <!-- Multi-Spin Section -->
+    <div class="framed-section">
+        <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
+        <label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF SPINS</label>
+        <input type="number" id="numSpins" value="38" style="width: 10ch"><br><br>
+        <label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
+        <input type="number" id="spinDelay" value="1" style="width: 10ch"><br><br>
+    </div>
+</div>
+</div>
         <center>
             <span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
             <span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br><br>
@@ -367,18 +470,7 @@
                     <h2>Tasks</h2>
 
 					<i>Directional Differences</i>: Measures shifts in distribution of hits within runs.<br><br>
-  						<u>Top - Bottom</u>: Measures shifts in the balance of hits between the top and bottom halves of the wheel.<br>
-  						<u>Right - Left</u>: Tests for lateral bias (complements top-bottom).<br>
-                        <u>Top Ends - Center</u>: Measures shifts from the center of the top row towards or away from the 5 spaces at the left and the right.<br> 						
-  						<u>Bottom Ends - Center</u>: Measures shifts from the center of the bottom row towards or away from the 5 spaces at the left and the right. <br><br>
-
-					<i>Variance & Distribution</i>:  (Variance, Density, Clustering) Measures key characteristics from sets of data.<br><br>
-  						<u>Variance</u>:  Within-run variance, showing distribution of 38 spins.<br>
-  						<u>Density</u>:  Highest frequency for five spaces on the wheel for each run.<br><br>
-  
-					<i>Specific Targets</i>: (00 cluster and 0 cluster).<br><br>
-  						<u>Sum of 00</u>: Consisting of five spaces on the wheel. Identified as the "00 cluster", (double zero and the two numbers on each side: 13, 1, 00, 27, 10).<br>
-  						<u>Sum of 0</u>: Consisting of five spaces on the wheel. Identified as the "0 cluster", (double zero and the two numbers on each side: 9, 28, 0, 2, 14).<br><br>
+  							</u>: Consisting of five spaces on the wheel. Identified as the "0 cluster", (double zero and the two numbers on each side: 9, 28, 0, 2, 14).<br><br>
                 </p>
             </div>
         </div>
@@ -398,9 +490,24 @@
     function clearArrays() {
       Totals = new Array(38).fill(0);
     }
+    
+    let selectedOptions = []; // Stores selected options
+
+// Function to toggle button selection
+function toggleOption(button) {
+    const optionName = button.textContent.trim();
+    if (selectedOptions.includes(optionName)) {
+        selectedOptions = selectedOptions.filter(item => item !== optionName);
+        button.classList.remove("active");
+    } else {
+        selectedOptions.push(optionName);
+        button.classList.add("active");
+    }
+    console.log("Selected Options:", selectedOptions); // Debugging log
+}
 
            // Function to generate a formatted timestamp // 
-        function getFormattedTimestamp() {
+function getFormattedTimestamp() {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -409,7 +516,7 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
-        }
+}
 
 // Function to export Totals array data to CSV format
 // Updated exportTotalsToCSV function with prefix parameter
@@ -425,6 +532,14 @@ function exportTotalsToCSV(array, rowCount, prefix) {
         csvContent += row.join(",") + "\n";
     });
 
+    // ✅ Add a blank row before listing selected options
+    csvContent += "\n";
+
+    // ✅ Add selected options to CSV
+    selectedOptions.forEach(option => {
+        csvContent += option + "\n";
+    });
+
     // Encode and create a download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -433,8 +548,8 @@ function exportTotalsToCSV(array, rowCount, prefix) {
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `${prefix}${rowCount}_${getFormattedTimestamp()}.csv`);
 
-    document.body.appendChild(link); // Required for Firefox
-    link.click(); // Trigger the download
+    document.body.appendChild(link);
+    link.click();
 }
     
        	// Event listener for the Simulator button

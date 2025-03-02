@@ -21,7 +21,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 50px;
+  padding: 20px;
   box-sizing: border-box;
   margin-top: 10px; /* ⬅ Ensures proper vertical spacing */
 }
@@ -271,7 +271,7 @@
       background-color: darkred;
     }
     .button-multi {
-      background-color: red;
+      background-color: green;
       color: white;
     }
     .button-multi:hover {
@@ -362,7 +362,7 @@
     display: flex;
     justify-content: space-around;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1060px;
     justify-items: center;
 }
 
@@ -417,7 +417,14 @@
  
 <div class="container">                  
 <div class="button-container">
-
+    <!-- Multi-Spin Section -->
+    <div class="framed-section">
+        <button class="button button-multi" onclick="multiSpin()">Multi-Spin</button><br><br>
+        <label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF SPINS</label>
+        <input type="number" id="numSpins" value="38" style="width: 10ch"><br><br>
+        <label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
+        <input type="number" id="spinDelay" value="1" style="width: 10ch"><br><br>
+    </div>
 
     <!-- New Toggle Button Section (Options for CSV Export) -->
     <div class="framed-section-tasks">
@@ -435,15 +442,15 @@
         </div>
     </div>
 
-    <!-- Multi-Spin Section -->
-    <div class="framed-section">
-        <button class="button button-multi" onclick="multiSpin()">Run Simulation</button><br><br>
-        <label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
+    <!-- Run Simulation Section -->
+    <div class="framed-section">  
+        <button class="button button-run" onclick="runSimulation()">Run Simulation</button><br><br>
+        <label style="color:salmon; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
         <input type="number" id="x" value="1" style="width: 10ch"><br><br>
-        <label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
-        <input type="number" id="spinDelay" value=".05" style="width: 10ch"><br><br>
+        <!-- <label style="color:salmon; display: inline-block; width: 110px;">NUMBER OF SETS / RUN</label>
+        <input type="number" id="y" value="1" style="width: 10ch"><br><br> -->
     </div>
-
+        
 </div>
 </div>
         <center>
@@ -456,9 +463,11 @@
                 <button class="close-button" id="closeModalButton">&times;</button>
                 <h2>Instructions</h2>
                 <p>One Set = 38 Spins<br>
-                    Each spin randomly picks a number from 1 to 38<br>                   
-                    Spin Delay can be set to less than 1. Ex: .05 for very fast<br>
-                    Please choose 1 or more Tasks to focus your Intention<br>
+                    Each spin randomly picks a number from 1 to 38<br><br>
+                    Run Simulator ignores settings for Multi-Spin<br>
+                    Multi-Spin uses the Number of Runs setting<br>
+                    Run Simulator always uses 38 spins for 1 set<br>
+                    Spin Delay can be set to less than 1. Ex: .01<br>
                     <h2>Tasks</h2>
 
 					<i>Directional Differences</i>: Measures shifts in distribution of hits within runs.<br><br>
@@ -478,7 +487,7 @@
             </div>
         </div>
         <div class="table-container">
-            <p class="caption">TOTAL TIMES PICKED</p>
+            <p class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS</p>
             <div id="TotalsTableContainer"></div>
         </div>
     </div>
@@ -538,14 +547,10 @@ function exportTotalsToCSV(array, rowCount, prefix) {
     // ✅ Add a blank row before listing selected options
     csvContent += "\n";
 
-    // ✅ Add selected options to CSV, or "No Tasks" if none are selected
-    if (selectedOptions.length === 0) {
-        csvContent += "No Tasks\n";
-    } else {
-        selectedOptions.forEach(option => {
-            csvContent += option + "\n";
-        });
-    }
+    // ✅ Add selected options to CSV
+    selectedOptions.forEach(option => {
+        csvContent += option + "\n";
+    });
 
     // Encode and create a download link
     const encodedUri = encodeURI(csvContent);
@@ -558,7 +563,7 @@ function exportTotalsToCSV(array, rowCount, prefix) {
     document.body.appendChild(link);
     link.click();
 }
-
+    
        	// Event listener for the Simulator button
     	document.getElementById('simButton').addEventListener('click', () => {
         window.open('roulette.html', '_blank');
@@ -595,9 +600,34 @@ function getRandomInt(max) {
   return array[0] % max;
 }
 
+// Run Simulation function
+function runSimulation() {
+    clearArrays(); // Clear arrays before simulation
+    document.getElementById('TotalsTableContainer').innerHTML = ''; // Clear Totals table container
+
+    let allTotals = []; // Initialize array to store all Totals data
+
+    for (let x = 1; x <= parseInt(document.getElementById('x').value); x++) {
+        for (let y = 1; y <= parseInt(document.getElementById('y').value); y++) {
+            for (let n = 1; n <= 38; n++) {
+                let c1 = getRandomInt(38); // Use secure random number generator
+                Totals[c1] += 1; // Increment corresponding index in Totals array
+            }
+        }
+        // After each run, store a copy of the Totals array
+        allTotals.push([...Totals]);
+    }
+
+    populateTotalsTable(); // Populate Totals table
+
+    // Export to CSV with the "RunSim_" prefix
+    const rowCount = allTotals.length;
+    exportTotalsToCSV(allTotals, rowCount, "RunSim_");
+}
+
 function multiSpin() {
     let numRuns = parseInt(document.getElementById('x').value);
-    let numSpins = 38;
+    let numSpins = parseInt(document.getElementById('numSpins').value);
     let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
     let allTotals = [];
 

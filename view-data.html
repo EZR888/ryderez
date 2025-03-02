@@ -670,7 +670,7 @@ function createHeaderRow(headerRow) {
     }
 }
 
-        function createDataCell(cellValue) {
+function createDataCell(cellValue) {
             const td = document.createElement('td');
             td.textContent = cellValue === '0' ? '' : cellValue;
             const numValue = Number(cellValue);

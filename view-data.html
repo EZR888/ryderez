@@ -670,8 +670,6 @@ function createHeaderRow(headerRow) {
     }
 }
 
-
-
         function createDataCell(cellValue) {
             const td = document.createElement('td');
             td.textContent = cellValue === '0' ? '' : cellValue;
@@ -682,107 +680,150 @@ function createHeaderRow(headerRow) {
             return td;
         }
 
+let extractedStrings = []; // Stores extracted strings with row numbers
+let allDataRows = []; // Stores all table data for CSV/PDF export
+let isNewBatch = true; // Flag to reset tasks only once per new import
+
 function displayCSVData(csvText, isFirstFile) {
-    const lines = csvText.split('\n').map(line => line.split(','));
+    if (isNewBatch) {
+        extractedStrings = []; // ✅ **Clear tasks at the beginning of a new batch**
+        isNewBatch = false;
+    }
+
+    let isTableData = true;
+    const lines = csvText.split('\n').map(line => line.trim());
     const tbody = document.querySelector('#csvTable tbody');
+    let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
+
     const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6'];    
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
 
-    // Create header row only for the first file
+    const headerRow = lines[0].split(',');
+    const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+
     if (isFirstFile && !headerAdded) {
-        createHeaderRow(lines[0]); // Pass the header row to `createHeaderRow`
+        createHeaderRow(headerRow);
     }
 
-    const headerIndices = columnOrder.map(col => lines[0].indexOf(col));
-
-    // Process each row, skipping the header row if it's not the first file
     for (let i = 1; i < lines.length; i++) {
-        if (lines[i].some(cell => cell.trim())) {
+        let row = lines[i].split(',');
+
+        if (isTableData) {
+            if (row.length === 1 || row.every(cell => cell.trim() === "")) {
+                isTableData = false;
+                continue;
+            }
+
             const tr = document.createElement('tr');
 
-            // Add Line Number
             const tdLineNumber = document.createElement('td');
-            tdLineNumber.textContent = rowCounter++;
+            tdLineNumber.textContent = currentRowNumber;
             tdLineNumber.style.backgroundColor = 'slategray';
             tdLineNumber.style.color = 'white';
             tr.appendChild(tdLineNumber);
 
+            let rowData = [currentRowNumber]; // Store row for export
+            let hasNumericData = false;
             let group1Sum = 0;
             let group2Sum = 0;
             let group1Cells = [];
             let group2Cells = [];
 
-            // Populate row cells
             headerIndices.forEach((index, j) => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 ? lines[i][index] : '';
+                let cellValue = index >= 0 && row.length > index ? row[index].trim() : '';
+
+                if (!isNaN(cellValue) && cellValue !== '') {
+                    hasNumericData = true;
+                }
+
                 if (cellValue === '0') {
                     cellValue = '';
                 }
+
                 td.textContent = cellValue;
 
-                // Apply background color based on value
-                if (!isNaN(cellValue)) {
+                if (!isNaN(cellValue) && cellValue !== '') {
                     const numValue = Number(cellValue);
                     if (numValue === 3) td.classList.add('DarkSeaGreen');
                     else if (numValue === 4) td.classList.add('Gold');
                     else if (numValue >= 5) td.classList.add('light-green');
                 }
 
-                // Apply light-yellow background to group columns
-                if (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j])) {
-                    td.classList.add('default-light-yellow');
-                }
-
-                // Collect cells for group sums
                 if (group1Columns.includes(columnOrder[j])) {
+                    td.classList.add('default-light-yellow');
                     group1Cells.push(td);
                     group1Sum += parseInt(cellValue) || 0;
                 } else if (group2Columns.includes(columnOrder[j])) {
+                    td.classList.add('default-light-yellow');
                     group2Cells.push(td);
                     group2Sum += parseInt(cellValue) || 0;
                 }
 
                 tr.appendChild(td);
+                rowData.push(cellValue);
             });
 
-            // Apply group-based coloring for group sums
             applyGroupColoring(group1Cells, group1Sum);
             applyGroupColoring(group2Cells, group2Sum);
 
-            tbody.appendChild(tr);
+            if (hasNumericData) {
+                tbody.appendChild(tr);
+                allDataRows.push(rowData);
+                currentRowNumber++;
+            }
+        } else {
+            const taskText = lines[i].trim();
+            if (taskText) {
+                extractedStrings.push([taskText, currentRowNumber - 1]);
+            }
         }
     }
 
-    // Update row count after processing all rows
-	let rowCount = document.querySelectorAll('#csvTable tbody tr').length;
+    let rowCount = tbody.querySelectorAll('tr').length;
     document.getElementById('rowCount').innerHTML = `Runs: <span class="zero-highlight">${rowCount}</span>`;
+
+    displayExtractedStrings();
 }
 
+function displayExtractedStrings() {
+    let outputDiv = document.getElementById('extractedStringsOutput');
 
+    if (!outputDiv) {
+        outputDiv = document.createElement('div');
+        outputDiv.id = 'extractedStringsOutput';
+        outputDiv.style.border = '2px solid white';
+        outputDiv.style.padding = '10px';
+        outputDiv.style.marginTop = '20px';
+        outputDiv.style.backgroundColor = '#333';
+        outputDiv.style.color = 'lightgreen';
+        outputDiv.style.fontFamily = 'Arial, sans-serif';
+        outputDiv.style.fontSize = '16px';
+        document.body.appendChild(outputDiv);
+    }
 
-function applyGroupColoring(cells, sum) {
-    const colorClasses = {
-        8: 'lightcoral',
-        9: 'light-blue',
-        10: 'light-orange',
-        11: 'violet',
-        12: 'DarkKhaki',
-        13: 'DarkSeaGreen',
-        14: 'LightSteelBlue',
-        15: 'Thistle',
-        16: 'GreenYellow',
-        17: 'Gold'
-    };
-    const colorClass = colorClasses[sum];
-    if (colorClass) cells.forEach(td => td.classList.add(colorClass));
+    outputDiv.innerHTML = `<h2>Tasks:</h2>`;
+    
+    if (extractedStrings.length === 0) {
+        outputDiv.innerHTML += `<p>No extracted strings found.</p>`;
+    } else {
+        const ul = document.createElement('ul');
+        extractedStrings.forEach(([text, rowNum]) => {
+            const li = document.createElement('li');
+            li.textContent = `Row ${rowNum}: ${text}`;
+            ul.appendChild(li);
+        });
+        outputDiv.appendChild(ul);
+    }
 }
 
+// ✅ **Ensure we reset tasks when new batch starts**
 document.getElementById('fileInput').addEventListener('change', function(event) {
+    isNewBatch = true; // Reset task list when new files are chosen
+
     clearTable();
 
-    // Get the files as an array and sort by filename
     const files = Array.from(event.target.files)
         .filter(file => file.name.endsWith('.csv'))
         .sort((a, b) => a.name.localeCompare(b.name));
@@ -801,7 +842,23 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     });
 });
 
-        
+
+function applyGroupColoring(cells, sum) {
+    const colorClasses = {
+        8: 'lightcoral',
+        9: 'light-blue',
+        10: 'light-orange',
+        11: 'violet',
+        12: 'DarkKhaki',
+        13: 'DarkSeaGreen',
+        14: 'LightSteelBlue',
+        15: 'Thistle',
+        16: 'GreenYellow',
+        17: 'Gold'
+    };
+    const colorClass = colorClasses[sum];
+    if (colorClass) cells.forEach(td => td.classList.add(colorClass));
+}
 
 
 
@@ -1023,6 +1080,23 @@ function savePDFSplit() {
             doc.text(filename.replace('.pdf', ''), 14, 10);  // Moved closer to top
         }
     });
+
+   // **TASKS SECTION**
+    if (extractedStrings.length > 0) {
+        let finalY = doc.autoTable.previous.finalY + 10; // Start after the table
+
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Tasks:", 14, finalY);
+
+        finalY += 6;
+
+        extractedStrings.forEach(([text, rowNum]) => {
+            doc.setFontSize(10);
+            doc.text(`${text}: ${rowNum}`, 14, finalY);
+            finalY += 5; // Space out the task items
+        });
+    }
 
     doc.save(filename);
 }
@@ -1285,9 +1359,25 @@ didParseCell: function (data) {
         }
     });
 
+   // **TASKS SECTION**
+    if (extractedStrings.length > 0) {
+        let finalY = doc.autoTable.previous.finalY + 10; // Start after the table
+
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Tasks:", 14, finalY);
+
+        finalY += 6;
+
+        extractedStrings.forEach(([text, rowNum]) => {
+            doc.setFontSize(10);
+            doc.text(`${text}: ${rowNum}`, 14, finalY);
+            finalY += 5; // Space out the task items
+        });
+    }
+
     doc.save(filename);
 }
-
 
         // Event listener for 'showStatsButton'
         document.getElementById('viewStatsButton').addEventListener('click', function() {

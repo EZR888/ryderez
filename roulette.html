@@ -523,22 +523,30 @@ function getFormattedTimestamp() {
 
 // Function to export Totals array data to CSV format
 // Updated exportTotalsToCSV function with prefix parameter
-function exportTotalsToCSV(array, rowCount, prefix) {
-    let csvContent = "data:text/csv;charset=utf-8,";
+async function exportTotalsToCSV(array, rowCount, prefix) {
+    let timestamp = getFormattedTimestamp(); // Get the current timestamp
 
-    // Add headers to CSV
+    // ✅ Header warning message
+    let csvContent = "data:text/csv;charset=utf-8,";
+    // ✅ Add a header warning message
+    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
+    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
+    // ✅ Placeholder for checksum (will replace later)
+    csvContent += "CHECKSUM: PENDING...\n\n";
+
+    // ✅ Add headers to CSV
     let headers = [...Array(38).keys()];
     csvContent += headers.join(",") + "\n";
 
-    // Loop through Totals array to append values
+    // ✅ Append data rows
     array.forEach(row => {
         csvContent += row.join(",") + "\n";
     });
 
-    // ✅ Add a blank row before listing selected options
+    // ✅ Add a blank line after the table
     csvContent += "\n";
 
-    // ✅ Add selected options to CSV, or "No Tasks" if none are selected
+    // ✅ Move selected tasks below the table
     if (selectedOptions.length === 0) {
         csvContent += "No Tasks\n";
     } else {
@@ -547,16 +555,28 @@ function exportTotalsToCSV(array, rowCount, prefix) {
         });
     }
 
-    // Encode and create a download link
+    // ✅ Generate SHA-256 checksum (after all content is added)
+    const checksum = await generateChecksum(csvContent);
+
+    // ✅ Replace the "PENDING..." placeholder with the actual checksum
+    csvContent = csvContent.replace("CHECKSUM: PENDING...", `CHECKSUM: ${checksum}`);
+
+    // ✅ Encode and create a download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
 
-    // Use the prefix for the filename along with row count and timestamp
+    // ✅ Use the prefix for the filename along with row count and timestamp
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${prefix}${rowCount}_${getFormattedTimestamp()}.csv`);
+    link.setAttribute("download", `${prefix}${rowCount}_${timestamp}.csv`);
 
     document.body.appendChild(link);
     link.click();
+}
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
        	// Event listener for the Simulator button

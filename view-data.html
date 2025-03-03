@@ -694,6 +694,15 @@ function displayCSVData(csvText, isFirstFile) {
 
     let isTableData = true;
     const lines = csvText.split('\n').map(line => line.trim());
+
+    if (lines.length <= 3) {
+        console.warn("CSV file contains insufficient data.");
+        return;
+    }
+
+    // ✅ **Skip the first four lines (including header row)**
+    const dataLines = lines.slice(4); // Removes the first 4 lines
+
     const tbody = document.querySelector('#csvTable tbody');
     let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
 
@@ -701,15 +710,16 @@ function displayCSVData(csvText, isFirstFile) {
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
 
-    const headerRow = lines[0].split(',');
+    // ✅ The header row is now taken from the modified data (after skipping lines)
+    const headerRow = dataLines[0].split(',');
     const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
 
     if (isFirstFile && !headerAdded) {
         createHeaderRow(headerRow);
     }
 
-    for (let i = 1; i < lines.length; i++) {
-        let row = lines[i].split(',');
+    for (let i = 1; i < dataLines.length; i++) { // ✅ Start from index 1 since header row is now in `dataLines[0]`
+        let row = dataLines[i].split(',');
 
         if (isTableData) {
             if (row.length === 1 || row.every(cell => cell.trim() === "")) {
@@ -776,7 +786,7 @@ function displayCSVData(csvText, isFirstFile) {
                 currentRowNumber++;
             }
         } else {
-            const taskText = lines[i].trim();
+            const taskText = dataLines[i].trim();
             if (taskText) {
                 extractedStrings.push([taskText, currentRowNumber - 1]);
             }
@@ -881,14 +891,15 @@ function applyGroupColoring(cells, sum) {
             });
         });
 
-document.getElementById('saveButton').addEventListener('click', function() {
+document.getElementById('saveButton').addEventListener('click', async function() { // ✅ Add "async"
     const table = document.getElementById('csvTable');
     let csvContent = '';
+
     const rows = table.querySelectorAll('tr');
     const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
 
     // Define the correct column order (0 to 37)
-    const columnOrder = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37'];
+    const columnOrder = [...Array(38).keys()].map(String);
 
     // Get the header row and determine correct indices
     let headerRow = Array.from(rows[0].querySelectorAll('th')).map(th => th.textContent.trim());
@@ -901,6 +912,15 @@ document.getElementById('saveButton').addEventListener('click', function() {
 
     console.log("Column Order: ", columnOrder);
     console.log("Header Indices: ", headerIndices);
+
+    // ✅ Add a header warning message
+    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
+    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
+
+    // ✅ Placeholder for checksum (to be replaced later)
+    csvContent += `"CHECKSUM: PENDING..."`;
+
+    csvContent += `\n\n`;
 
     // **Step 1: Process the table data**
     rows.forEach((row, rowIndex) => {
@@ -918,21 +938,26 @@ document.getElementById('saveButton').addEventListener('click', function() {
         csvContent += rowData.join(',') + '\n';
     });
 
-    // **Step 2: Append the Tasks Section**
-    if (extractedStrings.length > 0) {
-        csvContent += '\nTasks:\n'; // Add a blank line, then "Tasks" section header
+    // ✅ Add blank lines before appending tasks
+    csvContent += `\n`;
 
+    // **Step 2: Append the Tasks Section**
+    if (extractedStrings.length === 0) {
+        csvContent += `"No Tasks"\n`;
+    } else {
         extractedStrings.forEach(([text, rowNum]) => {
-            csvContent += `${text},${rowNum}\n`; // Each task and its row number
+            csvContent += `Row ${rowNum}: ${text}\n`;
         });
     }
-    
-    if (selectedFileNames.length > 0) {
-        csvContent += "\n\nSelected Files:\n";
-        selectedFileNames.forEach(fileName => {
-            csvContent += `${fileName}\n`;
-        });
-    }
+
+    // ✅ Add blank lines before checksum
+    csvContent += `\n\n`;
+
+    // ✅ Generate SHA-256 checksum (after all content is added)
+    const checksum = await generateChecksum(csvContent); // ✅ Now works inside async function
+
+    // ✅ Replace the "PENDING..." placeholder with the actual checksum
+    csvContent = csvContent.replace(`"CHECKSUM: PENDING..."`, `"CHECKSUM: ${checksum}"`);
 
     // **Step 3: Create the CSV file**
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -952,6 +977,11 @@ document.getElementById('saveButton').addEventListener('click', function() {
     document.body.removeChild(link);
 });
 
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
     // Show the modal
@@ -1115,7 +1145,7 @@ function savePDFSplit() {
 
         extractedStrings.forEach(([text, rowNum]) => {
             doc.setFontSize(10);
-            doc.text(`${text}: ${rowNum}`, 14, finalY);
+            doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
             finalY += 5; // Space out the task items
         });
     }
@@ -1393,7 +1423,7 @@ didParseCell: function (data) {
 
         extractedStrings.forEach(([text, rowNum]) => {
             doc.setFontSize(10);
-            doc.text(`${text}: ${rowNum}`, 14, finalY);
+            doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
             finalY += 5; // Space out the task items
         });
     }

@@ -491,7 +491,7 @@ th:nth-child(20), td:nth-child(20) {
             <div class="modal-content">
                 <button class="close-button" id="closeModalButton">&times;</button>
                 <h3>Instructions</h3>
-                <p>Select a .csv file that starts with "Multi" or "SaveCSV"<br><br>
+                <p>Select a .csv file that starts with "Sim_" or "SimX_"<br><br>
                    Clicking a colored box will load a run of whatever the number is in parens, times 1,000.<br><br>
                    Currently, the 8 (1) box will actually load a 10,000 row run.<br><br>
                 </p>
@@ -700,8 +700,9 @@ function displayCSVData(csvText, isFirstFile) {
         return;
     }
 
-    // ✅ **Skip the first four lines (including header row)**
-    const dataLines = lines.slice(4); // Removes the first 4 lines
+// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
+const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
+const dataLines = shouldSlice ? lines.slice(4) : lines;
 
     const tbody = document.querySelector('#csvTable tbody');
     let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
@@ -823,7 +824,7 @@ function displayExtractedStrings() {
         const ul = document.createElement('ul');
         extractedStrings.forEach(([text, rowNum]) => {
             const li = document.createElement('li');
-            li.textContent = `Row ${rowNum}: ${text}`;
+            li.textContent = `${text}`;
             ul.appendChild(li);
         });
         outputDiv.appendChild(ul);
@@ -998,7 +999,7 @@ document.getElementById('saveButton').addEventListener('click', async function()
     const timestamp = getFormattedTimestamp();
 
     // Set the download attribute with a filename including the row count and timestamp
-    link.setAttribute("download", `Multi_${rowCount}_${timestamp}.csv`);
+    link.setAttribute("download", `SimX_${rowCount}_${timestamp}.csv`);
     link.style.display = 'none';
 
     // Append the link to the body, click it and remove it

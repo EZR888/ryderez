@@ -531,6 +531,8 @@ th:nth-child(20), td:nth-child(20) {
   </div>
 
   <script>
+  
+let selectedFileNames = []; // Store selected filenames globally
     
        	// Event listener for the Simulator button
     	document.getElementById('simButton').addEventListener('click', () => {
@@ -827,6 +829,9 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     const files = Array.from(event.target.files)
         .filter(file => file.name.endsWith('.csv'))
         .sort((a, b) => a.name.localeCompare(b.name));
+        
+    // 🟢 Reset the global array before storing new filenames
+    selectedFileNames = [];
 
     if (files.length === 0) {
         alert("Please select .csv files only.");
@@ -839,6 +844,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             displayCSVData(e.target.result, index === 0);
         };
         reader.readAsText(file);
+        selectedFileNames.push(file.name);
     });
 });
 
@@ -920,6 +926,13 @@ document.getElementById('saveButton').addEventListener('click', function() {
             csvContent += `${text},${rowNum}\n`; // Each task and its row number
         });
     }
+    
+    if (selectedFileNames.length > 0) {
+        csvContent += "\n\nSelected Files:\n";
+        selectedFileNames.forEach(fileName => {
+            csvContent += `${fileName}\n`;
+        });
+    }
 
     // **Step 3: Create the CSV file**
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -930,7 +943,7 @@ document.getElementById('saveButton').addEventListener('click', function() {
     const timestamp = getFormattedTimestamp();
 
     // Set the download attribute with a filename including the row count and timestamp
-    link.setAttribute("download", `SaveCSV_${rowCount}_${timestamp}.csv`);
+    link.setAttribute("download", `Multi_${rowCount}_${timestamp}.csv`);
     link.style.display = 'none';
 
     // Append the link to the body, click it and remove it
@@ -1006,7 +1019,7 @@ function savePDFSplit() {
     });
 
     const timestamp = getFormattedTimestamp();
-    const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
+    const filename = `Split_${data.length}_${timestamp}.pdf`;
 
     doc.autoTable({
         body: processedData,
@@ -1142,7 +1155,7 @@ function savePDFSingle() {
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `SavePDF_${rowCount}_${timestamp}.pdf`;
+    const filename = `Single_${rowCount}_${timestamp}.pdf`;
 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;

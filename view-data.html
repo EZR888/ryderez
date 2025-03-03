@@ -816,7 +816,7 @@ function displayExtractedStrings() {
     }
 
     outputDiv.innerHTML = `<h2>Tasks:</h2>`;
-    
+
     if (extractedStrings.length === 0) {
         outputDiv.innerHTML += `<p>No extracted strings found.</p>`;
     } else {
@@ -827,6 +827,36 @@ function displayExtractedStrings() {
             ul.appendChild(li);
         });
         outputDiv.appendChild(ul);
+    }
+
+    // ✅ Create & Update Selected Files Section Below Tasks
+    let fileOutputDiv = document.getElementById('selectedFilesOutput');
+    
+    if (!fileOutputDiv) {
+        fileOutputDiv = document.createElement('div');
+        fileOutputDiv.id = 'selectedFilesOutput';
+        fileOutputDiv.style.border = '2px solid white';
+        fileOutputDiv.style.padding = '10px';
+        fileOutputDiv.style.marginTop = '20px';
+        fileOutputDiv.style.backgroundColor = '#333';
+        fileOutputDiv.style.color = 'lightgreen';
+        fileOutputDiv.style.fontFamily = 'Arial, sans-serif';
+        fileOutputDiv.style.fontSize = '16px';
+        document.body.appendChild(fileOutputDiv);
+    }
+
+    fileOutputDiv.innerHTML = `<h2>Selected Files:</h2>`;
+
+    if (selectedFileNames.length === 0) {
+        fileOutputDiv.innerHTML += `<p>No files selected.</p>`;
+    } else {
+        const ul = document.createElement('ul');
+        selectedFileNames.forEach(fileName => {
+            const li = document.createElement('li');
+            li.textContent = fileName;
+            ul.appendChild(li);
+        });
+        fileOutputDiv.appendChild(ul);
     }
 }
 
@@ -1133,22 +1163,31 @@ function savePDFSplit() {
         }
     });
 
-   // **TASKS SECTION**
-   if (extractedStrings.length > 0) {
-        doc.addPage(); // ✅ **Force a new page for "Tasks"**
-        doc.setFontSize(14);
-        doc.text("Tasks:", 14, 20);
 
-        let finalY = 30;
-        doc.setFontSize(12);
-        
-        extractedStrings.forEach(([text, rowNum]) => {
-            doc.setFontSize(10);
-            doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
-            finalY += 5; // Space out the task items
-        });
-    }
 
+    // ✅ New Page for Tasks and Selected Files
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text("Tasks:", 14, 20);
+
+    let finalY = 30;
+    doc.setFontSize(12);
+    extractedStrings.forEach(([text, rowNum]) => {
+        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
+        finalY += 6;
+    });
+
+    // ✅ Add Selected Files List
+    doc.setFontSize(14);
+    doc.text("Selected Files:", 14, finalY + 10);
+
+    finalY += 20;
+    doc.setFontSize(12);
+    selectedFileNames.forEach(fileName => {
+        doc.text(fileName, 14, finalY);
+        finalY += 6;
+    }); 
+    
     doc.save(filename);
 }
 
@@ -1410,21 +1449,28 @@ didParseCell: function (data) {
         }
     });
 
-   // **TASKS SECTION**
-   if (extractedStrings.length > 0) {
-        doc.addPage(); // ✅ **Force a new page for "Tasks"**
-        doc.setFontSize(14);
-        doc.text("Tasks:", 14, 20);
+    // ✅ New Page for Tasks and Selected Files
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text("Tasks:", 14, 20);
 
-        let finalY = 30;
-        doc.setFontSize(12);
-        
-        extractedStrings.forEach(([text, rowNum]) => {
-            doc.setFontSize(10);
-            doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
-            finalY += 5; // Space out the task items
-        });
-    }
+    let finalY = 30;
+    doc.setFontSize(12);
+    extractedStrings.forEach(([text, rowNum]) => {
+        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
+        finalY += 6;
+    });
+
+    // ✅ Add Selected Files List
+    doc.setFontSize(14);
+    doc.text("Selected Files:", 14, finalY + 10);
+
+    finalY += 20;
+    doc.setFontSize(12);
+    selectedFileNames.forEach(fileName => {
+        doc.text(fileName, 14, finalY);
+        finalY += 6;
+    });
     
     doc.save(filename);
 }

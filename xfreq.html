@@ -277,7 +277,6 @@
     let totalRuns = 0;
     let selectedFileNames = []; // Store selected filenames globally
     let statsCollection = {}; // Declare at the top of the script
-
     
     // Group indices for various distributions
     const groupIndices = {
@@ -1275,8 +1274,9 @@ setTimeout(() => {
 
     exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, fileName);
 
+	isGeneratingReferenceData = true;
     // 🔥 Only export reference data when generating it (not during user tests)
-    if (!isGeneratingReferenceData) {
+    if (!isGeneratingReferenceData == true) {
         exportReferenceDataCSV();
     }
 }

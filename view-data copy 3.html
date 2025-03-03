@@ -1134,14 +1134,15 @@ function savePDFSplit() {
     });
 
    // **TASKS SECTION**
-   if (extractedStrings.length > 0) {
-        doc.addPage(); // ✅ **Force a new page for "Tasks"**
-        doc.setFontSize(14);
-        doc.text("Tasks:", 14, 20);
+    if (extractedStrings.length > 0) {
+        let finalY = doc.autoTable.previous.finalY + 10; // Start after the table
 
-        let finalY = 30;
         doc.setFontSize(12);
-        
+        doc.setTextColor(0, 0, 0);
+        doc.text("Tasks:", 14, finalY);
+
+        finalY += 6;
+
         extractedStrings.forEach(([text, rowNum]) => {
             doc.setFontSize(10);
             doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
@@ -1411,21 +1412,22 @@ didParseCell: function (data) {
     });
 
    // **TASKS SECTION**
-   if (extractedStrings.length > 0) {
-        doc.addPage(); // ✅ **Force a new page for "Tasks"**
-        doc.setFontSize(14);
-        doc.text("Tasks:", 14, 20);
+    if (extractedStrings.length > 0) {
+        let finalY = doc.autoTable.previous.finalY + 10; // Start after the table
 
-        let finalY = 30;
         doc.setFontSize(12);
-        
+        doc.setTextColor(0, 0, 0);
+        doc.text("Tasks:", 14, finalY);
+
+        finalY += 6;
+
         extractedStrings.forEach(([text, rowNum]) => {
             doc.setFontSize(10);
             doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
             finalY += 5; // Space out the task items
         });
     }
-    
+
     doc.save(filename);
 }
 

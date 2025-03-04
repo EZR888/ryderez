@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -703,7 +702,7 @@ function displayCSVData(csvText, isFirstFile) {
 
 // Only remove first 4 lines if the filename starts with "Sim" or "XSim"
 const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
-const dataLines = shouldSlice ? lines.slice(4) : lines;
+const dataLines = shouldSlice ? lines.slice(3) : lines;
 
     const tbody = document.querySelector('#csvTable tbody');
     let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
@@ -865,13 +864,12 @@ function displayExtractedStrings() {
 // ✅ **Ensure we reset tasks when new batch starts**
 document.getElementById('fileInput').addEventListener('change', function(event) {
     isNewBatch = true; // Reset task list when new files are chosen
-
     clearTable();
 
     const files = Array.from(event.target.files)
         .filter(file => file.name.endsWith('.csv'))
         .sort((a, b) => a.name.localeCompare(b.name));
-        
+
     // 🟢 Reset the global array before storing new filenames
     selectedFileNames = [];
 
@@ -885,21 +883,27 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         reader.onload = async function(e) {
             const fileContent = e.target.result;
             displayCSVData(fileContent, index === 0);
-            
-            // Compute checksum
+
+            // ✅ Compute checksum of file content
             const computedChecksum = await generateChecksum(fileContent);
-            const last5Computed = computedChecksum.slice(-5);
 
-            // Extract last 5 characters from filename (before .csv)
-            const fileNameWithoutExtension = file.name.replace(".csv", "");
-            const last5FromFile = fileNameWithoutExtension.slice(-5);
+            // ✅ Extract the last 5-character hash from the second half of computed checksum
+            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
 
-            if (last5FromFile === last5Computed) {
-                console.log(`✅ Checksum match for ${file.name}`);
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            if (last5FromFile === obfuscatedComputedChecksum) {
+                console.log(`✅ Filename hash match for ${file.name}`);
             } else {
-                console.log(`❌ Checksum mismatch for ${file.name}`);
-                console.log(`Expected (from filename): ${last5FromFile}`);
-                console.log(`Computed: ${last5Computed}`);
+                console.log(`❌ Filename hash mismatch for ${file.name}`);
+                console.log(`Expected: ${last5FromFile}`);
+                console.log(`Computed: ${obfuscatedComputedChecksum}`);
+
+                // 🔴 Alert the user and abort execution
+                alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                location.reload(); // Refresh page to reset state
+                return;
             }
         };
         reader.readAsText(file);
@@ -908,26 +912,42 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 });
 
 // ✅ Function to generate SHA-256 checksum
-    async function generateChecksum(content) {
-      const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
-      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
-    }
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
-    async function validateChecksum(file) {
-      const reader = new FileReader();
-      reader.onload = async function(event) {
+// ✅ Extracts obfuscated checksum using same logic as in `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
+
+// ✅ Validate checksum logic
+async function validateChecksum(file) {
+    const reader = new FileReader();
+    reader.onload = async function(event) {
         const fileContent = event.target.result;
         const computedChecksum = await generateChecksum(fileContent);
+        const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
         const filename = file.name;
-        const extractedChecksum = filename.slice(-9, -4);
-        if (computedChecksum.slice(-5) === extractedChecksum) {
-          console.log("✅ Checksum matches for", filename);
+        const extractedChecksum = filename.slice(-5);
+
+        if (obfuscatedComputedChecksum === extractedChecksum) {
+            console.log("✅ Checksum matches for", filename);
         } else {
-          console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", computedChecksum.slice(-5));
+            console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", obfuscatedComputedChecksum);
+
+            // 🔴 Alert the user and abort execution
+            alert(`It appears that "${filename}" has been edited. Aborting.`);
+            location.reload(); // Refresh page to reset state
+            return;
         }
-      };
-      reader.readAsText(file);
-    }
+    };
+    reader.readAsText(file);
+}
 
 
 function applyGroupColoring(cells, sum) {

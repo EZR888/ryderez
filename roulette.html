@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -527,10 +528,8 @@ async function exportTotalsToCSV(array, rowCount, prefix) {
     let timestamp = getFormattedTimestamp(); // Get the current timestamp
 
     // ✅ Header warning message
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
-    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
-    csvContent += `"CHECKSUM: PENDING..."\n\n`; // ✅ Placeholder for checksum
+    let csvContent = `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
+    csvContent += `"LAST GENERATED ON: ${timestamp}"\n\n`;
 
     // ✅ Add headers to CSV
     let headers = [...Array(38).keys()];
@@ -553,47 +552,68 @@ async function exportTotalsToCSV(array, rowCount, prefix) {
         });
     }
 
-    // ✅ Generate SHA-256 checksum for file content
+    // ✅ Generate SHA-256 checksum **BEFORE SAVING**
     const checksum = await generateChecksum(csvContent);
-    const last5Checksum = checksum.slice(-5); // ✅ Extract last 5 characters
 
-    // ✅ Replace the placeholder with the actual checksum
-    csvContent = csvContent.replace("CHECKSUM: PENDING...", `CHECKSUM: ${checksum}`);
+    // ✅ Split checksum into two halves
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
 
-    // ✅ Encode and create a download link
-    const encodedUri = encodeURI(csvContent);
+    // ✅ Take the first 5 characters of the second half and reverse them
+    const obfuscatedChecksum = secondHalf.slice(0, 5).split("").reverse().join("");
+
+    // ✅ Set filename with the modified checksum part
+    const finalFilename = `${prefix}${rowCount}_${timestamp}_${obfuscatedChecksum}.csv`;
+
+    // ✅ Save the file directly with final name
+    saveFile(finalFilename, csvContent);
+}
+
+/**
+ * ✅ Save File to Disk (Download)
+ */
+function saveFile(filename, content) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-
-    // ✅ Append the last 5 checksum characters to the filename
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${prefix}${rowCount}_${timestamp}_${last5Checksum}.csv`);
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", filename);
 
     document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 }
 
-// ✅ Function to generate SHA-256 checksum
+/**
+ * ✅ Compute SHA-256 Checksum
+ */
 async function generateChecksum(content) {
     const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
     return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
 
-    async function validateChecksum(file) {
-      const reader = new FileReader();
-      reader.onload = async function(event) {
+// ✅ Updated checksum validation function
+async function validateChecksum(file) {
+    const reader = new FileReader();
+    reader.onload = async function(event) {
         const fileContent = event.target.result;
+        
+        // ✅ Compute checksum of the file content
         const computedChecksum = await generateChecksum(fileContent);
         const filename = file.name;
+        
+        // ✅ Extract last 5 characters from filename (before .csv)
         const extractedChecksum = filename.slice(-9, -4);
+
         if (computedChecksum.slice(-5) === extractedChecksum) {
-          console.log("✅ Checksum matches for", filename);
+            console.log("✅ Checksum matches for", filename);
         } else {
-          console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", computedChecksum.slice(-5));
+            console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", computedChecksum.slice(-5));
         }
-      };
-      reader.readAsText(file);
-    }
+    };
+    reader.readAsText(file);
+}
+
 
 
        	// Event listener for the Simulator button

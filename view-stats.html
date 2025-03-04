@@ -506,6 +506,18 @@ function updateStatsTable(csvData) {
     }
 }
 
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
+}
+
+
 // Function to update quadrant table
 function updateQuadrantTable(csvData) {
     let quadrantHits = { UpperLeft: 0, UpperRight: 0, LowerLeft: 0, LowerRight: 0 };

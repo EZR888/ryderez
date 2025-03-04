@@ -672,7 +672,7 @@ const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, t
         console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
 if (!category) {
     console.error("🚨 ERROR: Undefined category detected in getFreqDistCSV!");
-}getFreqDistCSV
+}
         const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
         const metricKeys = Object.keys(values);
         const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);

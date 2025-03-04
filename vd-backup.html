@@ -882,52 +882,13 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
     files.forEach((file, index) => {
         const reader = new FileReader();
-        reader.onload = async function(e) {
-            const fileContent = e.target.result;
-            displayCSVData(fileContent, index === 0);
-            
-            // Compute checksum
-            const computedChecksum = await generateChecksum(fileContent);
-            const last5Computed = computedChecksum.slice(-5);
-
-            // Extract last 5 characters from filename (before .csv)
-            const fileNameWithoutExtension = file.name.replace(".csv", "");
-            const last5FromFile = fileNameWithoutExtension.slice(-5);
-
-            if (last5FromFile === last5Computed) {
-                console.log(`✅ Checksum match for ${file.name}`);
-            } else {
-                console.log(`❌ Checksum mismatch for ${file.name}`);
-                console.log(`Expected (from filename): ${last5FromFile}`);
-                console.log(`Computed: ${last5Computed}`);
-            }
+        reader.onload = function(e) {
+            displayCSVData(e.target.result, index === 0);
         };
         reader.readAsText(file);
         selectedFileNames.push(file.name);
     });
 });
-
-// ✅ Function to generate SHA-256 checksum
-    async function generateChecksum(content) {
-      const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
-      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
-    }
-
-    async function validateChecksum(file) {
-      const reader = new FileReader();
-      reader.onload = async function(event) {
-        const fileContent = event.target.result;
-        const computedChecksum = await generateChecksum(fileContent);
-        const filename = file.name;
-        const extractedChecksum = filename.slice(-9, -4);
-        if (computedChecksum.slice(-5) === extractedChecksum) {
-          console.log("✅ Checksum matches for", filename);
-        } else {
-          console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", computedChecksum.slice(-5));
-        }
-      };
-      reader.readAsText(file);
-    }
 
 
 function applyGroupColoring(cells, sum) {
@@ -1047,6 +1008,12 @@ document.getElementById('saveButton').addEventListener('click', async function()
     link.click();
     document.body.removeChild(link);
 });
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
     // Show the modal

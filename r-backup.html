@@ -523,14 +523,17 @@ function getFormattedTimestamp() {
 }
 
 // Function to export Totals array data to CSV format
+// Updated exportTotalsToCSV function with prefix parameter
 async function exportTotalsToCSV(array, rowCount, prefix) {
     let timestamp = getFormattedTimestamp(); // Get the current timestamp
 
     // ✅ Header warning message
     let csvContent = "data:text/csv;charset=utf-8,";
+    // ✅ Add a header warning message
     csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
     csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
-    csvContent += `"CHECKSUM: PENDING..."\n\n`; // ✅ Placeholder for checksum
+    // ✅ Placeholder for checksum (will replace later)
+    csvContent += "CHECKSUM: PENDING...\n\n";
 
     // ✅ Add headers to CSV
     let headers = [...Array(38).keys()];
@@ -553,20 +556,19 @@ async function exportTotalsToCSV(array, rowCount, prefix) {
         });
     }
 
-    // ✅ Generate SHA-256 checksum for file content
+    // ✅ Generate SHA-256 checksum (after all content is added)
     const checksum = await generateChecksum(csvContent);
-    const last5Checksum = checksum.slice(-5); // ✅ Extract last 5 characters
 
-    // ✅ Replace the placeholder with the actual checksum
+    // ✅ Replace the "PENDING..." placeholder with the actual checksum
     csvContent = csvContent.replace("CHECKSUM: PENDING...", `CHECKSUM: ${checksum}`);
 
     // ✅ Encode and create a download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
 
-    // ✅ Append the last 5 checksum characters to the filename
+    // ✅ Use the prefix for the filename along with row count and timestamp
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${prefix}${rowCount}_${timestamp}_${last5Checksum}.csv`);
+    link.setAttribute("download", `${prefix}${rowCount}_${timestamp}.csv`);
 
     document.body.appendChild(link);
     link.click();
@@ -577,24 +579,6 @@ async function generateChecksum(content) {
     const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
     return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
-
-
-    async function validateChecksum(file) {
-      const reader = new FileReader();
-      reader.onload = async function(event) {
-        const fileContent = event.target.result;
-        const computedChecksum = await generateChecksum(fileContent);
-        const filename = file.name;
-        const extractedChecksum = filename.slice(-9, -4);
-        if (computedChecksum.slice(-5) === extractedChecksum) {
-          console.log("✅ Checksum matches for", filename);
-        } else {
-          console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", computedChecksum.slice(-5));
-        }
-      };
-      reader.readAsText(file);
-    }
-
 
        	// Event listener for the Simulator button
     	document.getElementById('simButton').addEventListener('click', () => {

@@ -525,7 +525,7 @@ function getFormattedTimestamp() {
 
 // Function to export Totals array data to CSV format
 async function exportTotalsToCSV(array, rowCount, prefix) {
-    let timestamp = getFormattedTimestamp(); // Get the current timestamp
+    let timestamp = getFormattedTimestamp();
 
     // ✅ Header warning message
     let csvContent = `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
@@ -535,32 +535,28 @@ async function exportTotalsToCSV(array, rowCount, prefix) {
     let headers = [...Array(38).keys()];
     csvContent += headers.join(",") + "\n";
 
-    // ✅ Append data rows
+    // ✅ Append data rows (always just one row)
     array.forEach(row => {
         csvContent += row.join(",") + "\n";
     });
 
     // ✅ Add a blank line after the table
-    csvContent += "\n";
+    csvContent += `\n`;
 
-    // ✅ Move selected tasks below the table
+    // ✅ Append each task on a separate line **WITH "Row 1:"**
     if (selectedOptions.length === 0) {
-        csvContent += "No Tasks\n";
+        csvContent += `Row 1: No Tasks\n`;
     } else {
-        selectedOptions.forEach(option => {
-            csvContent += option + "\n";
+        selectedOptions.forEach(task => {
+            csvContent += `Row 1: ${task}\n`; // ✅ Always include "Row 1:" for tasks
         });
     }
 
     // ✅ Generate SHA-256 checksum **BEFORE SAVING**
     const checksum = await generateChecksum(csvContent);
 
-    // ✅ Split checksum into two halves
-    const halfLength = Math.floor(checksum.length / 2);
-    const secondHalf = checksum.slice(halfLength); // Extract second half
-
-    // ✅ Take the first 5 characters of the second half and reverse them
-    const obfuscatedChecksum = secondHalf.slice(0, 5).split("").reverse().join("");
+    // ✅ Apply checksum obfuscation for filename
+    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
 
     // ✅ Set filename with the modified checksum part
     const finalFilename = `${prefix}${rowCount}_${timestamp}_${obfuscatedChecksum}.csv`;
@@ -589,6 +585,15 @@ function saveFile(filename, content) {
 async function generateChecksum(content) {
     const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
     return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * ✅ Obfuscate the checksum for filename use
+ */
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
 }
 
 

@@ -648,63 +648,85 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "landscape" });
 
-    // Get all selected file names
+    // ✅ Get all selected file names
     const fileNames = getUploadedFileNames();
     const timestamp = getFormattedTimestamp();
 
-    // Create a shorter filename for saving (avoid excessive length)
+    // ✅ Create a shorter filename for saving
     let shortFileName = fileNames.length > 50 ? "Sorted" : fileNames.replace(/\.[^/.]+$/, "").replace(/[, ]+/g, "_");
 
     const pdfFileName = `${shortFileName}_${timestamp}.pdf`;
 
-    // Add title
-    doc.setFontSize(20);
+    // ✅ Add Title
+    doc.setFontSize(18);
     doc.setTextColor(50, 205, 50); // Light green
-    doc.text("Sorted Table & Frequency Distribution", 14, 15);
+    doc.text("Sorted Table & Frequency Distribution", doc.internal.pageSize.width / 2, 15, { align: "center" });
 
-    // Add file names as a header in the PDF
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 255); // Blue text
-    doc.text(`Source Files: ${fileNames}`, 14, 25, { maxWidth: 260 }); // Wrap long file names
+    let startY = 30;
 
-    // Add explanation text (if exists)
+    // ✅ Add Explanation Text (if exists)
     let explanationElement = document.getElementById("explanation");
     if (explanationElement) {
         let explanationText = explanationElement.innerText.trim();
         if (explanationText.length > 0) {
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0); // Black
-            doc.text(explanationText, 14, 35, { maxWidth: 260 });
+            doc.text(explanationText, doc.internal.pageSize.width / 2, startY, { align: "center", maxWidth: 260 });
+            startY += 10; // Adjust start position
         }
     }
 
-    // Capture frequency table
+    // ✅ Capture Frequency Table (if available)
     let freqTable = document.getElementById("frequencyTable");
     if (freqTable) {
         doc.autoTable({
             html: "#frequencyTable",
-            startY: 50,
+            startY: startY,
             theme: "grid",
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [0, 100, 0] }, // Green header
-            alternateRowStyles: { fillColor: [240, 240, 240] },
+            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+            headStyles: { fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Green header
+            alternateRowStyles: { fillColor: [240, 240, 240] }
         });
+        startY = doc.autoTable.previous.finalY + 10; // Move down for next table
     }
 
-    // Capture sorted table
+    // ✅ Capture Sorted Table (if available)
     let csvTable = document.getElementById("csvTable");
-    if (csvTable) { 
+    if (csvTable) {
         doc.autoTable({
             html: "#csvTable",
-            startY: doc.autoTable.previous.finalY + 10, // Place after the previous table
+            startY: startY,
             theme: "grid",
-            styles: { fontSize: 8, cellPadding: 2 },
-            headStyles: { fillColor: [139, 0, 0] }, // Dark red header
-            alternateRowStyles: { fillColor: [245, 245, 245] },
+            styles: { fontSize: 8, cellPadding: 2, halign: "center", fontStyle: "bold" },
+            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Dark red header
+            alternateRowStyles: { fillColor: [245, 245, 245] }
         });
     }
 
-    // Save the PDF with file names in the filename
+    // ✅ ADD A NEW PAGE FOR SOURCE FILES
+    doc.addPage();
+
+    // ✅ Source Files Section
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 255);
+    doc.text("Source Files", doc.internal.pageSize.width / 2, 20, { align: "center" });
+
+    // ✅ File Names List
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    let fileLines = fileNames.split(", ");
+    let startYFiles = 30;
+    fileLines.forEach(file => {
+        if (startYFiles > doc.internal.pageSize.height - 20) {
+            doc.addPage(); // ✅ Add new page if needed
+            startYFiles = 20;
+        }
+        doc.text(file, 20, startYFiles);
+        startYFiles += 6;
+    });
+
+    // ✅ Save the PDF
     doc.save(pdfFileName);
 });
 

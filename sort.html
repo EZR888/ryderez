@@ -657,12 +657,17 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
 
     const pdfFileName = `${shortFileName}_${timestamp}.pdf`;
 
+    // ✅ Add Filename (displayed inside the PDF)
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 255); // Blue text for filename
+    doc.text(`Filename: ${pdfFileName}`, doc.internal.pageSize.width / 2, 10, { align: "center" });
+
     // ✅ Add Title
     doc.setFontSize(18);
     doc.setTextColor(50, 205, 50); // Light green
-    doc.text("Sorted Table & Frequency Distribution", doc.internal.pageSize.width / 2, 15, { align: "center" });
+    doc.text("Sorted Table & Frequency Distribution", doc.internal.pageSize.width / 2, 20, { align: "center" });
 
-    let startY = 30;
+    let startY = 35; // Adjust for filename spacing
 
     // ✅ Add Explanation Text (if exists)
     let explanationElement = document.getElementById("explanation");
@@ -676,21 +681,28 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
         }
     }
 
-    // ✅ Capture Frequency Table (if available)
+    // ✅ Capture Frequency Table (50% Thinner)
     let freqTable = document.getElementById("frequencyTable");
     if (freqTable) {
+        let pageWidth = doc.internal.pageSize.width;
+        let tableWidth = pageWidth * 0.25; // ✅ Reduce to 50% width
+        let marginX = (pageWidth - tableWidth) / 2; // ✅ Center it
+
         doc.autoTable({
             html: "#frequencyTable",
             startY: startY,
             theme: "grid",
+            margin: { left: marginX, right: marginX }, // ✅ Center & reduce width
+            tableWidth: tableWidth,
             styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
-            headStyles: { fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Green header
+            headStyles: { fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red header
             alternateRowStyles: { fillColor: [240, 240, 240] }
         });
+
         startY = doc.autoTable.previous.finalY + 10; // Move down for next table
     }
 
-    // ✅ Capture Sorted Table (if available)
+    // ✅ Capture Sorted Table (Full Width)
     let csvTable = document.getElementById("csvTable");
     if (csvTable) {
         doc.autoTable({
@@ -698,7 +710,7 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
             startY: startY,
             theme: "grid",
             styles: { fontSize: 8, cellPadding: 2, halign: "center", fontStyle: "bold" },
-            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Dark red header
+            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Blue header
             alternateRowStyles: { fillColor: [245, 245, 245] }
         });
     }
@@ -726,9 +738,10 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
         startYFiles += 6;
     });
 
-    // ✅ Save the PDF
+    // ✅ Save the PDF with the generated filename
     doc.save(pdfFileName);
 });
+
 
     </script>
 

@@ -437,39 +437,61 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            document.getElementById('fileInput').addEventListener('change', function (event) {
-                let files = event.target.files;
-                let allData = [];
-                let fileCount = files.length;
-                let filesProcessed = 0;
+document.getElementById('fileInput').addEventListener('change', function (event) {
+    let files = event.target.files;
+    let allData = [];
+    let fileCount = files.length;
+    let filesProcessed = 0;
 
-                function readFile(index) {
-                    if (index >= fileCount) {
-                        if (allData.length) {
-                            parseCSVAndGenerateTable(allData);
-                        }
-                        return;
-                    }
+    function readFile(index) {
+        if (index >= fileCount) {
+            if (allData.length) {
+                parseCSVAndGenerateTable(allData);
+            }
+            return;
+        }
 
-                    let file = files[index];
-                    let reader = new FileReader();
+        let file = files[index];
+        let reader = new FileReader();
 
-                    reader.onload = function (e) {
-                        let csvData = e.target.result;
-                        let rows = csvData.trim().split("\n").map(row => row.split(",").map(value => Number(value) || value));
-                        rows.shift(); // Remove header row from each file
-                        allData = allData.concat(rows);
-                        filesProcessed++;
-                        readFile(index + 1);
-                    };
+        reader.onload = function (e) {
+            let csvData = e.target.result;
+            let rows = csvData.split("\n").map(row => row.trim()); // Trim whitespace from each row
 
-                    reader.readAsText(file);
+            if (rows.length < 4) {
+                console.warn(`File "${file.name}" does not have enough data.`);
+                readFile(index + 1);
+                return;
+            }
+
+            let processedRows = [];
+            for (let i = 4; i < rows.length; i++) { // Start from the fourth row (index 3)
+                if (!rows[i].trim()) { // Stop at the first completely empty row
+                    break;
                 }
 
-                readFile(0);
-            });
+                let rowValues = rows[i].split(",").map(value => value.trim()); // Trim each cell value
 
-            function parseCSVAndGenerateTable(data) {
+                if (rowValues.every(cell => cell === "")) { // Stop if all cells are empty
+                    break;
+                }
+
+                processedRows.push(rowValues.map(value => (value === "" ? "" : Number(value) || value)));
+            }
+
+            allData = allData.concat(processedRows);
+            filesProcessed++;
+            readFile(index + 1);
+        };
+
+        reader.readAsText(file);
+    }
+
+    readFile(0);
+});
+
+
+function parseCSVAndGenerateTable(data) {
                 if (!data.length) return;
 
                 rowData = data.map((row, index) => ({ originalIndex: index + 1, data: row }));
@@ -489,7 +511,7 @@
                 generateFrequencyTable();
             }
 
-            function generateTable() {
+function generateTable() {
     let tableContainer = document.getElementById('tableContainer');
     if (!tableContainer) {
         console.error("Error: #tableContainer not found.");

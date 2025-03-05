@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -700,7 +701,7 @@ function hexToRGBArray(hex) {
 
 // Function to generate PDF with table colors preserved
 document.getElementById("saveStatsPdfButton").addEventListener("click", function () {
-    const doc = new window.jspdf.jsPDF({ orientation: "portrait" }); // ✅ Changed to portrait
+    const doc = new window.jspdf.jsPDF({ orientation: "portrait" });
 
     function getUploadedFileNames() {
         let fileInput = document.getElementById("fileInput");
@@ -713,12 +714,13 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
 
     function getFormattedTimestamp() {
         const now = new Date();
-        const year = now.getFullYear();
+        const year = String(now.getFullYear()).slice(-2);
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        return `${year}${month}${day}_${hours}${minutes}`;
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
     }
 
     function hexToRGBArray(hex) {
@@ -729,17 +731,16 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
 
     const fileNames = getUploadedFileNames();
     const timestamp = getFormattedTimestamp();
-    const pdfFileName = `Stats_View_${timestamp}.pdf`;
+    const pdfFileName = `Totals_${timestamp}.pdf`;
 
     // ✅ Title
     doc.setFontSize(18);
     doc.setTextColor(50, 205, 50);
-    doc.text("Aggregate Totals", 14, 15);
+    doc.text("Aggregate Totals", doc.internal.pageSize.width / 2, 15, { align: "center" });
 
-    // ✅ File Name Header
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 255);
-    doc.text(`Source Files: ${fileNames}`, 14, 22, { maxWidth: 180 });
+    let pageWidth = doc.internal.pageSize.width;
+    let tableWidth = pageWidth * 0.5; // ✅ Reduce table width to 50% of page width
+    let marginX = (pageWidth - tableWidth) / 2; // ✅ Centering calculation
 
     // ✅ Cluster Stats Table
     if (document.getElementById("clusterStatsTable")) {
@@ -747,10 +748,11 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
             html: "#clusterStatsTable",
             startY: 30,
             theme: "grid",
-            styles: { fontSize: 9, cellPadding: 2 },
+            margin: { left: marginX, right: marginX }, // ✅ Center table
+            tableWidth: tableWidth, // ✅ Set to 50% of page width
+            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
             headStyles: { fillColor: hexToRGBArray("#008000"), textColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [240, 240, 240] },
-            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
+            alternateRowStyles: { fillColor: [240, 240, 240] }
         });
     }
 
@@ -760,29 +762,66 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
             html: "#statsTable",
             startY: doc.autoTable.previous.finalY + 10,
             theme: "grid",
-            styles: { fontSize: 9, cellPadding: 2 },
+            margin: { left: marginX, right: marginX },
+            tableWidth: tableWidth,
+            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
             headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [245, 245, 245] },
-            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
+            alternateRowStyles: { fillColor: [245, 245, 245] }
         });
     }
 
-    // ✅ Quadrant Table (Just hit counts, not images)
-    if (document.getElementById("quadrantTable")) {
-        doc.autoTable({
-            html: "#quadrantTable",
-            startY: doc.autoTable.previous.finalY + 10,
-            theme: "grid",
-            styles: { fontSize: 9, cellPadding: 2 },
-            headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
-            alternateRowStyles: { fillColor: [245, 245, 245] },
-            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
-        });
-    }
+    // ✅ Quadrants Table Heading
+    let nextY = doc.autoTable.previous.finalY + 10;
+    doc.setFontSize(14);
+    doc.setTextColor(255, 165, 0); // Orange
+    doc.text("Quadrants", doc.internal.pageSize.width / 2, nextY, { align: "center" });
+
+    // ✅ Quadrants Table (Replacing Images with Text Labels)
+    let quadrantData = [
+        ["Upper Left", "Upper Right"],  // ✅ Labels replacing images
+        [document.getElementById("UpperLeftHits").textContent, document.getElementById("UpperRightHits").textContent],
+        ["Lower Left", "Lower Right"],  // ✅ Labels replacing images
+        [document.getElementById("LowerLeftHits").textContent, document.getElementById("LowerRightHits").textContent]
+    ];
+
+    doc.autoTable({
+        body: quadrantData,
+        startY: nextY + 5,
+        theme: "grid",
+        margin: { left: marginX, right: marginX },
+        tableWidth: tableWidth,
+        styles: { fontSize: 9, cellPadding: 4, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
+        headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
+        alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+
+    // ✅ ADD A NEW PAGE FOR SOURCE FILES
+    doc.addPage();
+
+    // ✅ Source Files Section
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 255);
+    doc.text("Source Files", doc.internal.pageSize.width / 2, 20, { align: "center" });
+
+    // ✅ File Names List
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    let fileLines = fileNames.split(", ");
+    let startY = 30;
+    fileLines.forEach(file => {
+        if (startY > doc.internal.pageSize.height - 20) {
+            doc.addPage(); // ✅ Add new page if needed
+            startY = 20;
+        }
+        doc.text(file, 20, startY);
+        startY += 6;
+    });
 
     // ✅ Save the PDF
     doc.save(pdfFileName);
 });
+
 
 
        	// Event listener for the Simulator button

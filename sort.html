@@ -454,8 +454,31 @@ document.getElementById('fileInput').addEventListener('change', function (event)
         let file = files[index];
         let reader = new FileReader();
 
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
             let csvData = e.target.result;
+
+            // ✅ Compute checksum of file content
+            const computedChecksum = await generateChecksum(csvData);
+
+            // ✅ Extract the last 5-character hash from the second half of computed checksum
+            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            if (last5FromFile === obfuscatedComputedChecksum) {
+                console.log(`✅ Filename hash match for ${file.name}`);
+            } else {
+                console.log(`❌ Filename hash mismatch for ${file.name}`);
+                console.log(`Expected: ${last5FromFile}`);
+                console.log(`Computed: ${obfuscatedComputedChecksum}`);
+
+                // 🔴 Alert the user and abort execution
+                alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                location.reload(); // Refresh page to reset state
+                return;
+            }
+
             let rows = csvData.split("\n").map(row => row.trim()); // Trim whitespace from each row
 
             if (rows.length < 4) {
@@ -489,6 +512,19 @@ document.getElementById('fileInput').addEventListener('change', function (event)
 
     readFile(0);
 });
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
 
 
 function parseCSVAndGenerateTable(data) {
@@ -640,6 +676,13 @@ function getFormattedTimestamp() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
+}
+
+// Function to convert RGB to an array (for jsPDF)
+function hexToRGBArray(hex) {
+    hex = hex.replace("#", "");
+    let bigint = parseInt(hex, 16);
+    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }
 
 

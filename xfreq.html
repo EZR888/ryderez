@@ -1324,7 +1324,7 @@ function processConcatenatedCSVData(csvData) {
 }
 
 
-document.getElementById("fileInput").addEventListener("change", function(event) {
+document.getElementById("fileInput").addEventListener("change", async function(event) {
     const files = event.target.files;
     let allCSVData = "";
     let filesRead = 0;
@@ -1362,8 +1362,32 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
         }
 
         const reader = new FileReader();
-        reader.onload = function(e) {
-            allCSVData += e.target.result + "\n";
+        reader.onload = async function(e) {
+            const fileContent = e.target.result;
+
+            // ✅ Compute checksum of file content
+            const computedChecksum = await generateChecksum(fileContent);
+
+            // ✅ Extract the last 5-character hash from the second half of computed checksum
+            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            if (last5FromFile === obfuscatedComputedChecksum) {
+                console.log(`✅ Filename hash match for ${file.name}`);
+            } else {
+                console.log(`❌ Filename hash mismatch for ${file.name}`);
+                console.log(`Expected: ${last5FromFile}`);
+                console.log(`Computed: ${obfuscatedComputedChecksum}`);
+
+                // 🔴 Alert the user and abort execution
+                alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                location.reload(); // Refresh page to reset state
+                return;
+            }
+
+            allCSVData += fileContent + "\n";
             filesRead++;
 
             if (filesRead === files.length) {
@@ -1377,6 +1401,7 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
                 csvProcessingStarted = false;
             }
         };
+
         reader.onerror = function() {
             alert(`Error reading file: ${file.name}`);
             filesRead++;
@@ -1388,9 +1413,23 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
                 csvProcessingStarted = false;
             }
         };
+
         reader.readAsText(file);
     }
 });
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
 
 
     // =======================================================

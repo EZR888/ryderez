@@ -1209,7 +1209,151 @@ function savePDFSingle() {
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `Single_${rowCount}_${timestamp}.pdf`;
+    const filename = `SavePDF_${rowCount}_${timestamp}.pdf`;
+
+    const pageWidth = doc.internal.pageSize.width - 20;
+
+    const group1Columns = [8, 9, 10, 11, 12];
+    const group2Columns = [28, 29, 30, 31, 32];
+
+    const sumConditions = {
+        8: 'light-red',
+        9: 'light-blue',
+        10: 'light-orange',
+        11: 'violet',
+        12: 'DarkKhaki',
+        13: 'DarkSeaGreen',
+        14: 'LightSteelBlue',
+        15: 'Thistle',
+        16: 'GreenYellow',
+        17: 'Gold'
+    };
+
+    function drawColorLegend(startX) {
+        const yStart = 10;
+        const boxSize = 10;
+        const spacing = 2;
+        const legendItems = [
+            { number: 8, color: 'light-red' },
+            { number: 9, color: 'light-blue' },
+            { number: 10, color: 'light-orange' },
+            { number: 11, color: 'violet' },
+            { number: 12, color: 'DarkKhaki' },
+            { number: 13, color: 'DarkSeaGreen' },
+            { number: 14, color: 'LightSteelBlue' },
+            { number: 15, color: 'Thistle' },
+            { number: 16, color: 'GreenYellow' },
+            { number: 17, color: 'Gold' }
+        ];
+
+        doc.setFontSize(10);
+        legendItems.forEach((item, index) => {
+            const x = startX + (index * (boxSize + spacing));
+            doc.setFillColor(...getColorForStyle(item.color));
+            doc.rect(x, yStart, boxSize, boxSize, 'F');
+            doc.setTextColor(0, 0, 0);
+            doc.text(item.number.toString(), x + (boxSize / 2), yStart + (boxSize / 2), { align: 'center', baseline: 'middle' });
+        });
+    }
+
+    function getColorForStyle(style) {
+        const colors = {
+            'light-red': [255, 182, 193],
+            'light-blue': [173, 216, 230],
+            'light-orange': [255, 165, 0],
+            'violet': [238, 130, 238],
+            'DarkKhaki': [189, 183, 107],
+            'DarkSeaGreen': [143, 188, 143],
+            'LightSteelBlue': [176, 196, 222],
+            'Thistle': [216, 191, 216],
+            'GreenYellow': [173, 255, 47],
+            'Gold': [255, 215, 0],
+            'light-green': [144, 238, 144],
+            'default-light-yellow': [255, 255, 224]
+        };
+        return colors[style] || [255, 255, 255];
+    }
+
+    function applyCellColors(data, isHeader) {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00'];
+        const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+
+        const row = data.row.raw;
+        const cellValue = data.cell.raw ? data.cell.raw.trim() : "";
+        let appliedColor = false;
+
+        if (data.row.raw.every(cell => cell === "")) {
+            data.cell.styles.fillColor = [255, 255, 255];
+            data.cell.styles.textColor = [0, 0, 0];
+            return;
+        }
+
+        if (isHeader) {
+            if (greenColumns.includes(cellValue)) {
+                data.cell.styles.fillColor = [0, 200, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (redColumns.includes(cellValue)) {
+                data.cell.styles.fillColor = [255, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            } else if (blackColumns.includes(cellValue)) {
+                data.cell.styles.fillColor = [0, 0, 0];
+                data.cell.styles.textColor = [255, 255, 255];
+            }
+            return;
+        }
+
+        data.cell.styles.fillColor = [211, 211, 211];
+
+        if (data.column.index === 0) {
+            data.cell.styles.fillColor = [112, 128, 144];
+            data.cell.styles.textColor = [255, 255, 255];
+            return;
+        }
+
+        let group1Sum = 0;
+        let group2Sum = 0;
+
+        group1Columns.forEach(index => {
+            const value = parseFloat(row[index]);
+            if (!isNaN(value)) group1Sum += value;
+        });
+
+        group2Columns.forEach(index => {
+            const value = parseFloat(row[index]);
+            if (!isNaN(value)) group2Sum += value;
+        });
+
+        if (group1Columns.includes(data.column.index)) {
+            const group1CellStyle = sumConditions[group1Sum];
+            if (group1CellStyle) {
+                data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                appliedColor = true;
+            }
+        }
+
+        if (group2Columns.includes(data.column.index)) {
+            const group2CellStyle = sumConditions[group2Sum];
+            if (group2CellStyle) {
+                data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                appliedColor = true;
+            }
+        }
+
+        const numValue = parseFloat(cellValue);
+        if (!isNaN(numValue)) {
+            if (numValue === 3) data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+            else if (numValue === 4) data.cell.styles.fillColor = getColorForStyle('Gold');
+            else if (numValue === 5) data.cell.styles.fillColor = getColorForStyle('light-green');
+            else if (numValue === 6) data.cell.styles.fillColor = getColorForStyle('light-orange');
+            else if (numValue >= 7) data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+        }
+
+        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+        }
+    }
 
     doc.autoTable({
         head: [headers],
@@ -1217,30 +1361,17 @@ function savePDFSingle() {
         startY: 25,
         theme: 'grid',
         margin: { top: 25, left: 10, right: 10, bottom: 10 },
-        tableWidth: 'auto',
-        styles: {
-            fontSize: 10,
-            cellPadding: 2,
-            overflow: 'linebreak',
-            fontStyle: 'bold',
-            halign: 'center',
-        },
-        headStyles: {
-            fontSize: 8,
-            textColor: [255, 255, 255], // White text for contrast
-            fillColor: [0, 51, 102], // Default dark blue (overridden for specific headers)
-            halign: 'center',
-        },
+        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak', fontStyle: 'bold', halign: 'center' },
         didParseCell: function (data) {
-            if (data.row.section === 'head') {
-                applyCellColors(data, true); // ✅ Apply header colors correctly
-            } else {
-                applyCellColors(data, false); // ✅ Apply data row colors correctly
-            }
+            applyCellColors(data, data.row.section === 'head');
+        },
+        didDrawPage: function () {
+            doc.setFontSize(16);
+            doc.text(filename.replace('.pdf', ''), 14, 15);
+            drawColorLegend(pageWidth - 150);
         }
     });
 
-    // ✅ New Page for Tasks and Selected Files
     saveTasksAndFilesToPDF(doc, filename);
 }
 
@@ -1290,9 +1421,9 @@ function savePDFSplit() {
     // ✅ Generate the split table with correctly colored headers
     doc.autoTable({
         body: processedData.map(({ isHeader, row }) => row),
-        startY: 20,
+        startY: 25,
         theme: 'grid',
-        margin: { top: 20, left: 16, right: 16, bottom: 10 },
+        margin: { top: 25, left: 16, right: 16, bottom: 10 },
         styles: {
             fontSize: 10,
             cellPadding: 1.5,
@@ -1308,6 +1439,11 @@ function savePDFSplit() {
         },
         didParseCell: function (data) {
             applyCellColors(data, processedData[data.row.index].isHeader);
+        },
+        didDrawPage: function () {
+            doc.setFontSize(16);
+            const titleX = 14;
+            doc.text(filename.replace('.pdf', ''), titleX, 15);
         }
     });
 

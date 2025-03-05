@@ -1388,6 +1388,7 @@ function saveTasksAndFilesToPDF(doc, filename) {
     doc.text("Tasks:", 14, 20);
 
     let finalY = 30;
+    let pageHeight = doc.internal.pageSize.height - 20; // Account for margins
     doc.setFontSize(12);
 
     let groupedTasks = [];
@@ -1435,17 +1436,43 @@ function saveTasksAndFilesToPDF(doc, filename) {
             });
     });
 
+    // ✅ Write tasks, ensuring pagination when needed
     groupedTasks.forEach(({ screenRow, tasks }) => {
+        if (finalY + 10 > pageHeight) { 
+            doc.addPage(); // ✅ Add a new page if near bottom
+            finalY = 20;
+            doc.setFontSize(14);
+            doc.text("Tasks (continued):", 14, finalY);
+            finalY += 10;
+            doc.setFontSize(12);
+        }
+
         doc.text(`Row ${screenRow}: ${tasks}`, 14, finalY);
         finalY += 6;
     });
+
+    // ✅ Add a new page if needed before writing selected files
+    if (finalY + 20 > pageHeight) {
+        doc.addPage();
+        finalY = 20;
+    }
 
     doc.setFontSize(14);
     doc.text("Selected Files:", 14, finalY + 10);
     finalY += 20;
     doc.setFontSize(12);
 
+    // ✅ Write file names with pagination check
     selectedFileNames.forEach(fileName => {
+        if (finalY + 10 > pageHeight) {
+            doc.addPage();
+            finalY = 20;
+            doc.setFontSize(14);
+            doc.text("Selected Files (continued):", 14, finalY);
+            finalY += 10;
+            doc.setFontSize(12);
+        }
+
         doc.text(fileName, 14, finalY);
         finalY += 6;
     });

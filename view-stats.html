@@ -700,84 +700,87 @@ function hexToRGBArray(hex) {
 
 // Function to generate PDF with table colors preserved
 document.getElementById("saveStatsPdfButton").addEventListener("click", function () {
-    const doc = new window.jspdf.jsPDF({ orientation: "landscape" });
+    const doc = new window.jspdf.jsPDF({ orientation: "portrait" }); // ✅ Changed to portrait
 
     function getUploadedFileNames() {
         let fileInput = document.getElementById("fileInput");
         if (fileInput.files.length > 0) {
             let fileNames = Array.from(fileInput.files).map(file => file.name);
-            return fileNames.join(", "); // Join names with commas
+            return fileNames.join(", ");
         }
-        return "Unknown_Files"; // Default if no file is selected
+        return "Unknown_Files";
     }
 
-	function getFormattedTimestamp() {
+    function getFormattedTimestamp() {
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        return `${year}${month}${day}_${hours}_${minutes}`;
-	}
+        return `${year}${month}${day}_${hours}${minutes}`;
+    }
 
-	function hexToRGBArray(hex) {
+    function hexToRGBArray(hex) {
         hex = hex.replace("#", "");
         let bigint = parseInt(hex, 16);
         return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
-	}
+    }
 
     const fileNames = getUploadedFileNames();
     const timestamp = getFormattedTimestamp();
     const pdfFileName = `Stats_View_${timestamp}.pdf`;
 
-    // Add Title
-    doc.setFontSize(20);
-    doc.setTextColor(50, 205, 50); // Light green
+    // ✅ Title
+    doc.setFontSize(18);
+    doc.setTextColor(50, 205, 50);
     doc.text("Aggregate Totals", 14, 15);
 
-    // Add File Name Header
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 255); // Blue text
-    doc.text(`Source Files: ${fileNames}`, 14, 25, { maxWidth: 260 });
+    // ✅ File Name Header
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 255);
+    doc.text(`Source Files: ${fileNames}`, 14, 22, { maxWidth: 180 });
 
-    // Capture Cluster Stats Table
+    // ✅ Cluster Stats Table
     if (document.getElementById("clusterStatsTable")) {
         doc.autoTable({
             html: "#clusterStatsTable",
-            startY: 40,
+            startY: 30,
             theme: "grid",
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: hexToRGBArray("#008000"), textColor: [255, 255, 255] }, // Green header
+            styles: { fontSize: 9, cellPadding: 2 },
+            headStyles: { fillColor: hexToRGBArray("#008000"), textColor: [255, 255, 255] },
             alternateRowStyles: { fillColor: [240, 240, 240] },
+            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
         });
     }
 
-    // Capture Stats Table
+    // ✅ Stats Table
     if (document.getElementById("statsTable")) {
         doc.autoTable({
             html: "#statsTable",
             startY: doc.autoTable.previous.finalY + 10,
             theme: "grid",
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Blue header
+            styles: { fontSize: 9, cellPadding: 2 },
+            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] },
             alternateRowStyles: { fillColor: [245, 245, 245] },
+            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
         });
     }
 
-    // Capture Quadrant Table (Just the hit counts, not images)
+    // ✅ Quadrant Table (Just hit counts, not images)
     if (document.getElementById("quadrantTable")) {
         doc.autoTable({
             html: "#quadrantTable",
             startY: doc.autoTable.previous.finalY + 10,
             theme: "grid",
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] }, // Orange header
+            styles: { fontSize: 9, cellPadding: 2 },
+            headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
             alternateRowStyles: { fillColor: [245, 245, 245] },
+            columnStyles: { 0: { cellWidth: "auto" } } // ✅ Adjust column width
         });
     }
 
-    // Save the PDF
+    // ✅ Save the PDF
     doc.save(pdfFileName);
 });
 

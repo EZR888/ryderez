@@ -1418,7 +1418,7 @@ function savePDFSplit() {
         processedData.push({ isHeader: false, row: Array(topHalf.length).fill('') });
     });
 
-    // ✅ Generate the split table with correctly colored headers
+    // ✅ Generate the split table with correctly colored headers and row numbers
     doc.autoTable({
         body: processedData.map(({ isHeader, row }) => row),
         startY: 25,
@@ -1438,7 +1438,13 @@ function savePDFSplit() {
             halign: 'center',
         },
         didParseCell: function (data) {
-            applyCellColors(data, processedData[data.row.index].isHeader);
+            if (data.column.index === 0) {
+                // ✅ Make row header background **slategray**
+                data.cell.styles.fillColor = [112, 128, 144]; // Slategray
+                data.cell.styles.textColor = [255, 255, 255]; // White text
+            } else {
+                applyCellColors(data, processedData[data.row.index].isHeader);
+            }
         },
         didDrawPage: function () {
             doc.setFontSize(16);

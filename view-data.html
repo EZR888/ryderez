@@ -1045,29 +1045,50 @@ document.getElementById('saveButton').addEventListener('click', async function()
     const rowCount = rows.length - 1; // Exclude header row
 
     // ✅ Add a header warning message
-    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
-    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n\n`;
+    csvContent += "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
+    csvContent += `LAST GENERATED ON: ${getFormattedTimestamp()}\n\n`;
 
-    // ✅ Step 1: Process the table data
-    rows.forEach((row) => {
-        const cols = row.querySelectorAll('th, td');
-        const rowData = Array.from(cols).map(col => col.textContent.trim());
-        csvContent += rowData.join(',') + '\n';
+    // ✅ Step 1: Ensure Headers Follow Index Order (0-37)
+    let headers = [...Array(38).keys()]; // Ensures headers 0-37
+    csvContent += headers.join(",") + "\n";
+
+    // ✅ Step 2: Append data rows in correct index order
+    let indexedRows = [];
+
+    rows.forEach((row, rowIndex) => {
+        if (rowIndex === 0) return; // Skip the displayed table header row
+
+        const cols = row.querySelectorAll('td');
+
+        // ✅ Ensure row data is indexed from `0-37`
+        let rowData = new Array(38).fill(""); // Create placeholder array for 38 columns
+
+        // ✅ Skip the first column (which is the row number) and map the actual data
+        cols.forEach((col, colIndex) => {
+            if (colIndex === 0) return; // ✅ Skip the row number column
+            rowData[colIndex - 1] = col.textContent.trim(); // ✅ Shift left by one index
+        });
+
+        indexedRows.push(rowData);
     });
 
-    // ✅ Add blank lines before appending tasks
+    // ✅ Ensure rows are written in correct index order
+    indexedRows.forEach(row => {
+        csvContent += row.join(",") + "\n";
+    });
+
+    // ✅ Add a blank line after the table
     csvContent += `\n`;
 
-    // ✅ Step 2: Append the Tasks Section **with correct renumbering**
+    // ✅ Step 3: Append the Tasks Section with Correct Row Numbering
     if (extractedStrings.length === 0) {
-        csvContent += `"No Tasks"\n`;
+        csvContent += `Row 1: No Tasks\n`;
     } else {
-        let fileTaskGroups = []; // ✅ Store each file’s row structure separately
+        let fileTaskGroups = []; 
         let groupedTasks = [];
         let lastFileProcessed = null;
-        let tempFileRows = {}; // Temporary per-file storage of row tasks
+        let tempFileRows = {}; 
 
-        /** ✅ STEP 1: Process tasks from each file separately **/
         extractedStrings.forEach(([taskWithRow, fileRowNumber]) => {
             let match = taskWithRow.match(/^Row (\d+): (.+)$/);
             if (!match) return;
@@ -1075,7 +1096,6 @@ document.getElementById('saveButton').addEventListener('click', async function()
             let originalRowNum = parseInt(match[1], 10);
             let taskText = match[2];
 
-            // ✅ If starting a new file, store and reset temporary row tracking
             if (fileRowNumber !== lastFileProcessed) {
                 if (Object.keys(tempFileRows).length > 0) {
                     fileTaskGroups.push(tempFileRows);
@@ -1083,7 +1103,6 @@ document.getElementById('saveButton').addEventListener('click', async function()
                 tempFileRows = {}; // Reset for new file
             }
 
-            // ✅ Group tasks only within the same original file row
             if (!tempFileRows[originalRowNum]) {
                 tempFileRows[originalRowNum] = new Set();
             }
@@ -1092,33 +1111,30 @@ document.getElementById('saveButton').addEventListener('click', async function()
             lastFileProcessed = fileRowNumber;
         });
 
-        // ✅ Push the last file’s grouped rows
         if (Object.keys(tempFileRows).length > 0) {
             fileTaskGroups.push(tempFileRows);
         }
 
-        /** ✅ STEP 2: Renumber file rows sequentially on screen **/
         let screenRowCounter = 1;
 
         fileTaskGroups.forEach(fileRows => {
             Object.keys(fileRows)
-                .sort((a, b) => a - b) // ✅ Sort rows within each file
+                .sort((a, b) => a - b) 
                 .forEach(originalRowNum => {
                     let tasks = Array.from(fileRows[originalRowNum]).join(" | ");
                     groupedTasks.push({
-                        screenRow: screenRowCounter++, // ✅ Assign new screen row number
+                        screenRow: screenRowCounter++, 
                         tasks: tasks
                     });
                 });
         });
 
-        /** ✅ STEP 3: Write grouped tasks to CSV (one per line) **/
         groupedTasks.forEach(({ screenRow, tasks }) => {
-            csvContent += `Row ${screenRow}: ${tasks}\n`; // ✅ Each row gets its own line
+            csvContent += `Row ${screenRow}: ${tasks}\n`;
         });
     }
 
-    // ✅ Step 3: Append the Selected Files Section
+    // ✅ Step 4: Append the Selected Files Section
     csvContent += `\n"Selected Files:"\n`;
 
     if (selectedFileNames.length === 0) {
@@ -1129,7 +1145,7 @@ document.getElementById('saveButton').addEventListener('click', async function()
         });
     }
 
-    // ✅ Generate SHA-256 checksum (after all content is added)
+    // ✅ Generate SHA-256 checksum
     const checksum = await generateChecksum(csvContent);
     const obfuscatedChecksum = getObfuscatedChecksum(checksum);
 

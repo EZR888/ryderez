@@ -529,25 +529,32 @@ function updateQuadrantTable(csvData) {
 
     csvData.forEach(row => {
         row.forEach((num, idx) => {
-            if (!isNaN(num) && num !== undefined) {
+            if (!isNaN(num) && num !== undefined && num !== "") {  // ✅ Ensure valid number
+                num = parseInt(num, 10); // Convert to integer for proper summing
+                
                 if (UpperLeft.has(idx)) {
                     quadrantHits.UpperLeft += num;
-                } else if (UpperRight.has(idx)) {
+                } 
+                if (UpperRight.has(idx)) {
                     quadrantHits.UpperRight += num;
-                } else if (LowerLeft.has(idx)) {
+                } 
+                if (LowerLeft.has(idx)) {
                     quadrantHits.LowerLeft += num;
-                } else if (LowerRight.has(idx)) {
+                } 
+                if (LowerRight.has(idx)) {
                     quadrantHits.LowerRight += num;
                 }
             }
         });
     });
 
-    document.getElementById('UpperLeftHits').textContent = quadrantHits.UpperLeft;
-    document.getElementById('UpperRightHits').textContent = quadrantHits.UpperRight;
-    document.getElementById('LowerLeftHits').textContent = quadrantHits.LowerLeft;
-    document.getElementById('LowerRightHits').textContent = quadrantHits.LowerRight;
+    // ✅ Update the table values
+    document.getElementById('UpperLeftHits').textContent = quadrantHits.UpperLeft > 0 ? quadrantHits.UpperLeft : "-";
+    document.getElementById('UpperRightHits').textContent = quadrantHits.UpperRight > 0 ? quadrantHits.UpperRight : "-";
+    document.getElementById('LowerLeftHits').textContent = quadrantHits.LowerLeft > 0 ? quadrantHits.LowerLeft : "-";
+    document.getElementById('LowerRightHits').textContent = quadrantHits.LowerRight > 0 ? quadrantHits.LowerRight : "-";
 }
+
 
 //let headerAdded = false;
 //et rowCounter = 1;

@@ -1361,7 +1361,14 @@ function savePDFSingle() {
         startY: 25,
         theme: 'grid',
         margin: { top: 25, left: 10, right: 10, bottom: 10 },
-        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak', fontStyle: 'bold', halign: 'center' },
+        styles: { 
+            fontSize: 10, 
+            cellPadding: 2, 
+            overflow: 'linebreak', 
+            fontStyle: 'bold', 
+            halign: 'center',
+            lineColor: [112, 128, 144], // ✅ Darker grid lines
+        },
         didParseCell: function (data) {
             applyCellColors(data, data.row.section === 'head');
         },

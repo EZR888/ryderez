@@ -529,8 +529,8 @@ async function exportTotalsToCSV(array, rowCount, prefix) {
     let timestamp = getFormattedTimestamp();
 
     // ✅ Header warning message
-    let csvContent = `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
-    csvContent += `"LAST GENERATED ON: ${timestamp}"\n\n`;
+    let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
+    csvContent += "LAST GENERATED ON: ${timestamp}\n\n"; // ✅ Corrected line
 
     // ✅ Add headers to CSV
     let headers = [...Array(38).keys()];

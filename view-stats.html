@@ -419,7 +419,7 @@ function updateClusterStats(csvData) {
 function processCSVData(csvData) {
     if (csvData.length === 0) return;
 
-    localStorage.setItem("csvData", JSON.stringify(csvData));
+    //localStorage.setItem("csvData", JSON.stringify(csvData));
 
     updateClusterStats(csvData);
     updateStatsTable(csvData);
@@ -549,26 +549,74 @@ function updateQuadrantTable(csvData) {
     document.getElementById('LowerRightHits').textContent = quadrantHits.LowerRight;
 }
 
+//let headerAdded = false;
+//et rowCounter = 1;
+
+//function clearTable() {
+//            document.querySelector('#csvTable thead').innerHTML = '';
+//            document.querySelector('#csvTable tbody').innerHTML = '';
+//            headerAdded = false;
+ //           rowCounter = 1;
+//        } 
+           
 // File input event listener
-document.getElementById("fileInput").addEventListener("change", function(event) {
-    const files = event.target.files;
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    isNewBatch = true; // Reset task list when new files are chosen
+
+    const files = Array.from(event.target.files)
+        .filter(file => file.name.endsWith('.csv'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    selectedFileNames = [];
+
+    if (files.length === 0) {
+        alert("Please select .csv files only.");
+        return;
+    }
+
     let allCSVData = [];
     let filesRead = 0;
 
-    if (files.length === 0) return;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (!file.name.endsWith(".csv")) continue;
-
+    files.forEach((file, index) => {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            let rows = e.target.result.trim().split("\n");
-            if (rows.length > 1) {
-                rows.slice(1).forEach(row => {
-                    const values = row.split(",").map(num => parseInt(num.trim(), 10));
+        reader.onload = async function(e) {
+            const fileContent = e.target.result;
+
+            // ✅ Compute checksum of file content
+            const computedChecksum = await generateChecksum(fileContent);
+
+            // ✅ Extract the last 5-character hash from the second half of computed checksum
+            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            if (last5FromFile === obfuscatedComputedChecksum) {
+                console.log(`✅ Filename hash match for ${file.name}`);
+            } else {
+                console.log(`❌ Filename hash mismatch for ${file.name}`);
+                console.log(`Expected: ${last5FromFile}`);
+                console.log(`Computed: ${obfuscatedComputedChecksum}`);
+
+                // 🔴 Alert the user and abort execution
+                alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                location.reload(); // Refresh page to reset state
+                return;
+            }
+
+            // ✅ Process the file contents, starting from line 5 (index 4)
+            let rows = fileContent.trim().split("\n");
+
+            if (rows.length >= 5) { // Ensure there are at least 5 lines to start from line 5
+                rows.slice(4).forEach(row => {  // Skip first 4 lines
+                    const values = row.split(",").map(num => {
+                        let trimmedNum = num.trim();
+                        return trimmedNum === "" ? "" : parseInt(trimmedNum, 10);
+                    });
                     allCSVData.push(values);
                 });
+            } else {
+                console.warn(`File "${file.name}" has less than 5 lines, skipping processing.`);
             }
 
             filesRead++;
@@ -576,9 +624,44 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
                 processCSVData(allCSVData);
             }
         };
+
         reader.readAsText(file);
-    }
+        selectedFileNames.push(file.name);
+    });
 });
+
+
+// ✅ Function to allow up to `allowedByteDiff` differences in checksum comparison
+function compareChecksumsAllowingDiff(checksum1, checksum2, allowedByteDiff = 2) {
+console.log("🔹 Expected Checksum: ", last5FromFile);
+console.log("🔹 Computed Checksum: ", obfuscatedComputedChecksum);
+
+// Compare character-by-character
+let diffCount = 0;
+for (let i = 0; i < 5; i++) {
+    if (last5FromFile[i] !== obfuscatedComputedChecksum[i]) {
+        console.log(`Mismatch at position ${i}: Expected '${last5FromFile[i]}', Got '${obfuscatedComputedChecksum[i]}'`);
+        diffCount++;
+    }
+}
+
+console.log(`🔹 Total Byte Mismatches: ${diffCount}`);
+}
+
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+
+// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
 
 // Function to get all uploaded file names
 function getUploadedFileNames() {
@@ -621,7 +704,7 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
         return "Unknown_Files"; // Default if no file is selected
     }
 
-    function getFormattedTimestamp() {
+	function getFormattedTimestamp() {
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -629,13 +712,13 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         return `${year}${month}${day}_${hours}_${minutes}`;
-    }
+	}
 
-    function hexToRGBArray(hex) {
+	function hexToRGBArray(hex) {
         hex = hex.replace("#", "");
         let bigint = parseInt(hex, 16);
         return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
-    }
+	}
 
     const fileNames = getUploadedFileNames();
     const timestamp = getFormattedTimestamp();

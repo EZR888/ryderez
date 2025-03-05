@@ -701,9 +701,9 @@ function displayCSVData(csvText, isFirstFile) {
         return;
     }
 
-// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
-const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
-const dataLines = shouldSlice ? lines.slice(3) : lines;
+	// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
+	const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
+	const dataLines = shouldSlice ? lines.slice(3) : lines;
 
     const tbody = document.querySelector('#csvTable tbody');
     let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
@@ -965,6 +965,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     });
 });
 
+
 // ✅ Function to generate SHA-256 checksum
 async function generateChecksum(content) {
     const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
@@ -1047,7 +1048,7 @@ document.getElementById('saveButton').addEventListener('click', async function()
     csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
     csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n\n`;
 
-    // **Step 1: Process the table data**
+    // ✅ Step 1: Process the table data
     rows.forEach((row) => {
         const cols = row.querySelectorAll('th, td');
         const rowData = Array.from(cols).map(col => col.textContent.trim());
@@ -1057,7 +1058,7 @@ document.getElementById('saveButton').addEventListener('click', async function()
     // ✅ Add blank lines before appending tasks
     csvContent += `\n`;
 
-    // **Step 2: Append the Tasks Section with Correct Row Numbering**
+    // ✅ Step 2: Append the Tasks Section **with correct renumbering**
     if (extractedStrings.length === 0) {
         csvContent += `"No Tasks"\n`;
     } else {
@@ -1111,9 +1112,20 @@ document.getElementById('saveButton').addEventListener('click', async function()
                 });
         });
 
-        /** ✅ STEP 3: Write grouped tasks to CSV **/
+        /** ✅ STEP 3: Write grouped tasks to CSV (one per line) **/
         groupedTasks.forEach(({ screenRow, tasks }) => {
-            csvContent += `Row ${screenRow}: ${tasks}\n`;
+            csvContent += `Row ${screenRow}: ${tasks}\n`; // ✅ Each row gets its own line
+        });
+    }
+
+    // ✅ Step 3: Append the Selected Files Section
+    csvContent += `\n"Selected Files:"\n`;
+
+    if (selectedFileNames.length === 0) {
+        csvContent += `"No files selected"\n`;
+    } else {
+        selectedFileNames.forEach(fileName => {
+            csvContent += `"${fileName}"\n`;
         });
     }
 
@@ -1126,10 +1138,10 @@ document.getElementById('saveButton').addEventListener('click', async function()
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
 
-    // Get the formatted timestamp
+    // ✅ Get the formatted timestamp
     const timestamp = getFormattedTimestamp();
 
-    // ✅ Set the download attribute with the **obfuscated checksum**
+    // ✅ Set the download attribute with the obfuscated checksum
     link.setAttribute("download", `SimX_${rowCount}_${timestamp}_${obfuscatedChecksum}.csv`);
     link.style.display = 'none';
 

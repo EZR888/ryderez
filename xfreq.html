@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -993,14 +994,6 @@ Object.keys(stats).forEach(category => {
 });
 
     csvContent += getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
-    csvContent += "\n\n";
-
-    let maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    let maxHitsFreq = calculateFrequencyDistribution(maxHits);
-    let maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38);
-    csvContent += getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative);
-    csvContent += "\n\n";
-    csvContent += getMaxHitsCSV(maxHits);
 
     if (selectedFileNames.length > 0) {
         csvContent += "\n\nSelected Files:\n";

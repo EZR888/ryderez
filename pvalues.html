@@ -133,10 +133,11 @@
             color: white;
         }
         input[type="file"] {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            margin-top: 5px;
             color: black;
             background-color: lightgreen;
-            padding: 5px;
+            padding: 7px;
             border: 1px solid white;
             border-radius: 5px;
         }
@@ -237,6 +238,31 @@
             background-color: black;
             color: DarkKhaki;
         }
+        
+        .button-container {
+    display: flex;
+    
+    gap: 25px; /* Adjust spacing between buttons */
+}
+
+#savePdfButton {
+    background-color: purple; /* Match button colors */
+    color: white;
+    font-size: 120%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+}
+
+#savePdfButton:hover {
+    background-color: darkgreen;
+    color: white;
+}
+
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -272,8 +298,12 @@
             <h1 class="header-text">Data Analysis</h1>
         </div>
         <div class="results-container">
-            <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="savePdfButton">Save to PDF</button>
+        
+<div class="button-container">
+    <input type="file" id="fileInput" accept=".csv" multiple>
+    <button id="savePdfButton" class="button">Save to PDF</button>
+</div>
+       
             <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies</span></h3>
             <canvas id="chiSquareChart"></canvas>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

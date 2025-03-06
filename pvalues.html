@@ -599,6 +599,10 @@ document.getElementById('savePdfButton').addEventListener('click', function () {
     doc.setFontSize(18);
     doc.setTextColor(50, 205, 50);
     doc.text("P-Value Analysis Report", doc.internal.pageSize.width / 2, 15, { align: "center" });
+    
+    let pageWidth = doc.internal.pageSize.width;
+    let tableWidth = pageWidth * 0.5; // ✅ Reduce table width to 50% of page width
+    let marginX = (pageWidth - tableWidth) / 2; // ✅ Centering calculation
 
     // ✅ Filename at the top
     doc.setFontSize(12);
@@ -614,7 +618,9 @@ document.getElementById('savePdfButton').addEventListener('click', function () {
             html: resultsTable,
             startY: startY,
             theme: "grid",
-            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+            tableWidth: tableWidth, // ✅ Set table width to 50% of the page width
+        	margin: { left: marginX }, // ✅ Center the table
+            styles: { fontSize: 11, cellPadding: 2, halign: "center", fontStyle: "normal" },
             headStyles: { fillColor: [0, 128, 0], textColor: [255, 255, 255] }, // Green headers
             alternateRowStyles: { fillColor: [245, 245, 245] }
         });

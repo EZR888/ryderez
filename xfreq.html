@@ -987,13 +987,13 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
     let csvContent = "";
 
     console.log("🟢 Exporting CSV... Checking Density & Variance:", { densityValues, varianceValues });
-console.log(`📤 Exporting CSV. Checking categories:`);
 
-Object.keys(stats).forEach(category => {
-    console.log(`📌 Category found: ${category}`);
-});
+    console.log(`📤 Exporting CSV. Checking categories:`);
+    Object.keys(stats).forEach(category => {
+        console.log(`📌 Category found: ${category}`);
+    });
 
-    csvContent += getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
+    csvContent += getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
 
     if (selectedFileNames.length > 0) {
         csvContent += "\n\nSelected Files:\n";
@@ -1004,15 +1004,75 @@ Object.keys(stats).forEach(category => {
 
     // Get the formatted timestamp
     const timestamp = getFormattedTimestamp();
-	const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
+    const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
 
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download",fileName); // ✅ Use updated filename
+    link.setAttribute("download", fileName); // ✅ Use updated filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+function getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
+    let csvContent = "Category,Metric,Value,Value,Expected Probability,Observed Frequency,Cumulative Probability\n";
+    const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    Object.entries(stats).forEach(([category, values]) => {
+        console.log(`🟢 Processing category: ${category}`);
+
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        csvContent += `\n${categoryLabel}\n`; // ✅ Print category only once before its rows
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? values[metric] : "";
+
+            if ((category === "Variance" || category === "Density") && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let observedFrequency = "";
+            let expectedProbability = "";
+            let cumulativeProbability = "";
+
+            if (difference !== null) {
+                observedFrequency = frequencyDistribution[difference] || "";
+                expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
+                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
+                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
+            }
+
+            if (!referenceData[categoryLabel]) {
+                referenceData[categoryLabel] = {};
+            }
+
+            if (!referenceData[categoryLabel][difference]) {
+                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
+                referenceData[categoryLabel][difference] = {
+                    pValue: expectedProbability,
+                    cumulativePValue: cumulativeProbability,
+                    observedFrequency: observedFrequency
+                };
+            } else {
+                expectedProbability = referenceData[categoryLabel][difference].pValue;
+                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
+                referenceData[categoryLabel][difference].observedFrequency = observedFrequency;
+            }
+
+            csvContent += `,${metric},${value},${difference},${expectedProbability},${observedFrequency},${cumulativeProbability}\n`;
+        }
+    });
+
+    return csvContent;
 }
 
 

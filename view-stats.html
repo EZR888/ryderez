@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -349,7 +348,7 @@
     <div class="header-container">
         <h2 class="header-text">Quadrant Hits</h2>
     </div>
-
+<br>
     <table id="quadrantTable" class="quadrant-table">
         <tbody>
             <tr>
@@ -687,19 +686,7 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
 
     function getFormattedTimestamp() {
         const now = new Date();
-        const year = String(now.getFullYear()).slice(-2);
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
-    }
-
-    function hexToRGBArray(hex) {
-        hex = hex.replace("#", "");
-        let bigint = parseInt(hex, 16);
-        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        return `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
     }
 
     const fileNames = getUploadedFileNames();
@@ -715,58 +702,185 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
     let tableWidth = pageWidth * 0.5; // ✅ Reduce table width to 50% of page width
     let marginX = (pageWidth - tableWidth) / 2; // ✅ Centering calculation
 
-    // ✅ Cluster Stats Table
-    if (document.getElementById("clusterStatsTable")) {
-        doc.autoTable({
-            html: "#clusterStatsTable",
-            startY: 30,
-            theme: "grid",
-            margin: { left: marginX, right: marginX }, // ✅ Center table
-            tableWidth: tableWidth, // ✅ Set to 50% of page width
-            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
-            headStyles: { fillColor: hexToRGBArray("#008000"), textColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [240, 240, 240] }
-        });
+function applyDataCellColors(data) {
+    if (data.row.section === "body") {  // ✅ Apply only to actual data rows, NOT headers
+        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
+    }
+}
+
+function applyStatsTableColors(data) {
+    data.tableId = data.tableId || "statsTable"; // Ensure it is defined
+
+    const cellText = (typeof data.cell.text === "string") ? data.cell.text.trim() : String(data.cell.text || "").trim();
+    
+    console.log(`[DEBUG] Checking Table ID: "${data.tableId}", Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}, Section: ${data.row.section}`);
+
+    // ✅ Column Headers - Custom Colors
+    if (data.row.index === 0 && data.row.section === "head") {
+        const colorMap = {
+            "Totals": { fillColor: [0, 0, 255], textColor: [255, 255, 255] },  // Blue
+            "Cluster 00": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },  // Green
+            "Cluster 0": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },  // Green
+            "Times Hit": { fillColor: [255, 0, 0], textColor: [255, 255, 255] }   // Red
+        };
+
+        if (colorMap[cellText]) {
+            console.log(`[DEBUG] Applying Color to Stats Table Header: ${cellText}`);
+            data.cell.styles.fillColor = colorMap[cellText].fillColor;
+            data.cell.styles.textColor = colorMap[cellText].textColor;
+        }
     }
 
-    // ✅ Stats Table
-    if (document.getElementById("statsTable")) {
-        doc.autoTable({
-            html: "#statsTable",
-            startY: doc.autoTable.previous.finalY + 10,
-            theme: "grid",
-            margin: { left: marginX, right: marginX },
-            tableWidth: tableWidth,
-            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
-            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] },
-            alternateRowStyles: { fillColor: [245, 245, 245] }
-        });
+    // ✅ Totals Column - Blue Background (Indexes **ALL ROWS** in column 0)
+    if (data.column.index === 0) {
+        console.log(`[DEBUG] Applying BLUE to Totals Column Cell: ${cellText}`);
+        data.cell.styles.fillColor = [0, 0, 255]; // Blue
+        data.cell.styles.textColor = [255, 255, 255]; // White Text
+        return; // Prevents overriding by general cell rules
     }
+
+    // ✅ General Data Cells - Light Yellow
+    if (data.row.section === "body") {
+        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
+    }
+}
+
+
+
+function applyClusterHeaderColors(data) {
+    const cellText = (typeof data.cell.text === "string") ? data.cell.text.trim() : String(data.cell.text || "").trim();
+
+    console.log(`[DEBUG] Checking Table ID: "${data.tableId}", Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}, Section: ${data.row.section}`);
+
+    if (data.tableId === "clusterStatsTable" && data.row.section === "head") {
+        const colorMap = {
+            "13": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+            "1": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
+            "37": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },
+            "27": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
+            "10": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+            "Total": { fillColor: [0, 0, 255], textColor: [255, 255, 255] },
+            "9": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
+            "28": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+            "0": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },
+            "2": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+            "14": { fillColor: [255, 0, 0], textColor: [255, 255, 255] }
+        };
+
+        // ✅ Apply specific column header colors
+        if (data.column.index === 1 || data.column.index === 2) {
+            data.cell.styles.fillColor = [0, 128, 0]; // Green background
+            data.cell.styles.textColor = [255, 255, 255];
+        } else if (data.column.index === 3) {
+            data.cell.styles.fillColor = [255, 0, 0]; // Red background
+            data.cell.styles.textColor = [255, 255, 255];
+        }
+
+        // Apply color mapping
+        if (colorMap[cellText]) {
+            data.cell.styles.fillColor = colorMap[cellText].fillColor;
+            data.cell.styles.textColor = colorMap[cellText].textColor;
+        }
+    }
+}
+
+function applyQuadrantTableColors(data) {
+    const cellText = data.cell.text ? String(data.cell.text).trim() : "";
+
+    console.log(`[DEBUG] Quadrant Table - Checking Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}`);
+
+    // ✅ Label Cells (Text like "Upper Left", "Lower Right", etc.) → Slate Gray
+    const slateCells = ["Upper Left", "Upper Right", "Lower Left", "Lower Right"];
+    if (slateCells.includes(cellText)) {
+        data.cell.styles.fillColor = [112, 128, 144]; // Slate Gray
+        data.cell.styles.textColor = [255, 255, 255]; // White text
+        return; // Exit early to prevent any override
+    }
+
+    // ✅ Data Cells (Numbers) → Light Yellow
+    if (!isNaN(cellText) && cellText !== "" && cellText !== "-") {
+        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
+        data.cell.styles.textColor = [0, 0, 0]; // Black text
+    }
+}
+
+
+    // ✅ Cluster Stats Table (Aggregate Table)
+    if (document.getElementById("clusterStatsTable")) {
+doc.autoTable({
+    html: "#clusterStatsTable",
+    startY: 30,
+    theme: "grid",
+    margin: { left: marginX, right: marginX },
+    tableWidth: tableWidth,
+    styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+    headStyles: { fillColor: [0, 128, 0], textColor: [245, 245, 245] },
+    didParseCell: function (data) {
+        data.tableId = "clusterStatsTable";  // ✅ Ensure correct table ID
+        applyClusterHeaderColors(data);
+        applyDataCellColors(data); // ✅ Apply light yellow to body cells
+    }
+});
+
+
+    }
+
+doc.autoTable({
+    html: "#statsTable",
+    startY: doc.autoTable.previous.finalY + 10,
+    theme: "grid",
+    margin: { left: marginX, right: marginX },
+    tableWidth: tableWidth,
+    styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+    headStyles: { fillColor: [0, 0, 255], textColor: [245, 245, 245] }, // Default blue, overridden per column
+    didParseCell: function (data) {
+        data.tableId = "statsTable";  // ✅ Ensure correct table ID
+        applyStatsTableColors(data);
+    }
+});
+
 
     // ✅ Quadrants Table Heading
-    let nextY = doc.autoTable.previous.finalY + 10;
+    let nextY = doc.autoTable.previous.finalY + 15;
     doc.setFontSize(14);
-    doc.setTextColor(255, 165, 0); // Orange
+    doc.setTextColor(255, 165, 0);
     doc.text("Quadrants", doc.internal.pageSize.width / 2, nextY, { align: "center" });
+    
+    // ✅ Add extra spacing before rendering the table
+nextY += 8;  // 🔹 Additional space before starting table
 
     // ✅ Quadrants Table (Replacing Images with Text Labels)
     let quadrantData = [
-        ["Upper Left", "Upper Right"],  // ✅ Labels replacing images
+        ["Upper Left", "Upper Right"],
         [document.getElementById("UpperLeftHits").textContent, document.getElementById("UpperRightHits").textContent],
-        ["Lower Left", "Lower Right"],  // ✅ Labels replacing images
+        ["Lower Left", "Lower Right"],
         [document.getElementById("LowerLeftHits").textContent, document.getElementById("LowerRightHits").textContent]
     ];
 
-    doc.autoTable({
-        body: quadrantData,
-        startY: nextY + 5,
-        theme: "grid",
-        margin: { left: marginX, right: marginX },
-        tableWidth: tableWidth,
-        styles: { fontSize: 9, cellPadding: 4, halign: "center", fontStyle: "bold" }, // ✅ Center text & bold data cells
-        headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
-        alternateRowStyles: { fillColor: [245, 245, 245] }
-    });
+doc.autoTable({
+    body: quadrantData,
+    startY: nextY,  // 🔹 Ensuring padding remains correct
+    theme: "grid",
+    margin: { left: marginX, right: marginX },
+    tableWidth: tableWidth,
+    styles: { fontSize: 9, cellPadding: 4, halign: "center", fontStyle: "bold" },
+    headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+    didParseCell: function (data) {
+        const cellText = data.cell.text ? String(data.cell.text).trim() : ""; // Ensure text is a string
+
+        // 🔹 Check if the cell is a label (row index is even: 0, 2)
+        if (data.row.index % 2 === 0) {
+            data.cell.styles.fillColor = [112, 128, 144]; // Slate background
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else {
+            // 🔹 Otherwise, it's a data cell -> Light Yellow
+            data.cell.styles.fillColor = [255, 255, 224]; // Light yellow
+        }
+    }
+});
+
+
 
     // ✅ ADD A NEW PAGE FOR SOURCE FILES
     doc.addPage();
@@ -784,7 +898,7 @@ document.getElementById("saveStatsPdfButton").addEventListener("click", function
     let startY = 30;
     fileLines.forEach(file => {
         if (startY > doc.internal.pageSize.height - 20) {
-            doc.addPage(); // ✅ Add new page if needed
+            doc.addPage();
             startY = 20;
         }
         doc.text(file, 20, startY);

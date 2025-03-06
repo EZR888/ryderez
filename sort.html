@@ -562,8 +562,8 @@ function generateTable() {
     let tableHtml = `<table id="csvTable" border="1" style="border-collapse: collapse; width: 100%; margin-top: 10px;">
     <thead>
         <tr>
-            <th class="original-number" style="background-color: slategray; color: white; padding: 8px;">Orig #</th>
-            <th class="sorted-number" style="background-color: red; color: white; padding: 8px;">Sort #</th>`;
+            <th class="original-number" style="background-color: slategray; color: white; padding: 8px;">Orig</th>
+            <th class="sorted-number" style="background-color: red; color: white; padding: 8px;">Sort</th>`;
 
     for (let i = 0; i < rowData[0].data.length; i++) {
         tableHtml += `<th class="other-number" style="background-color: green; color: white; padding: 8px;">${i + 1}</th>`;
@@ -738,7 +738,7 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
             margin: { left: marginX, right: marginX }, // ✅ Center & reduce width
             tableWidth: tableWidth,
             styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
-            headStyles: { fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red header
+            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Red header
             alternateRowStyles: { fillColor: [240, 240, 240] }
         });
 
@@ -748,14 +748,32 @@ document.getElementById("savePdfButton").addEventListener("click", function () {
     // ✅ Capture Sorted Table (Full Width)
     let csvTable = document.getElementById("csvTable");
     if (csvTable) {
-        doc.autoTable({
-            html: "#csvTable",
-            startY: startY,
-            theme: "grid",
-            styles: { fontSize: 8, cellPadding: 2, halign: "center", fontStyle: "bold" },
-            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Blue header
-            alternateRowStyles: { fillColor: [245, 245, 245] }
-        });
+doc.autoTable({
+    html: "#csvTable",
+    startY: startY,
+    theme: "grid",
+    margin: { left: 10, right: 10 }, // 🔹 Reduced margins (default is ~10-20)
+    styles: { fontSize: 8.7, cellPadding: 2, halign: "center", fontStyle: "bold" },
+    headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Default: Blue header
+    alternateRowStyles: { fillColor: [240, 240, 240] }, // Light gray alternating rows
+    didParseCell: function (data) {
+        if (data.row.section === "head" && data.column.index >= 2) {
+            data.cell.styles.fillColor = [0, 128, 0]; // Green background for data columns
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (data.row.section === "body") { // Apply only to data cells
+            if (data.column.index === 0) {
+                data.cell.styles.fillColor = [112, 128, 144]; // Slate background
+                data.cell.styles.textColor = [255, 255, 255]; // White text
+            } else if (data.column.index === 1) {
+                data.cell.styles.fillColor = [255, 0, 0]; // Red background
+                data.cell.styles.textColor = [255, 255, 255]; // White text
+            } else {
+                data.cell.styles.fillColor = [255, 255, 224]; // Light gray background for all other data cells
+            }
+        }
+    }
+});
+
     }
 
     // ✅ ADD A NEW PAGE FOR SOURCE FILES

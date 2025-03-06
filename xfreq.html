@@ -221,6 +221,71 @@
   margin-bottom: 5px;
   display: block;
 }
+/* Ensure all sections have the same width and height */
+.framed-section {
+    border: 2px solid lightgreen;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 8px;
+    width: 26%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+}
+
+.framed-section-tasks {
+    border: 2px solid lightgreen;
+    background-color: #222;
+    border-radius: 8px;
+    width: 100%; /* Equal width for all sections */
+    min-height: 140px; /* Ensures they are the same height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+    box-sizing: border-box;
+    font-size: 24px !important;
+  	font-weight: normal !important;
+}
+
+/* Ensure the button container evenly distributes sections */
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1100px;
+    justify-items: center;
+}
+
+/* Make toggle button container a grid */
+.toggle-button-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 2 columns */
+    gap: 5px;
+    width: 100%;
+    justify-items: center;
+}
+
+/* Style for toggle buttons */
+.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 8px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: purple !important;
+    color: white;
+}
+
 
   
   </style>
@@ -255,9 +320,24 @@
   </div>
   <div class="results-container">
     <input type="file" id="fileInput" accept=".csv" multiple />
+        <div class="framed-section-tasks">
+        <h3 style="color: violet; text-align: center;">Selected Tasks</h3>
+        <div class="toggle-button-container">
+            <button class="toggle-button active" id="noTasksButton" style="display: none;">No Tasks</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Right - Left</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Variance</button>
+             <button class="toggle-button" onclick="toggleOption(this)">Density</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
+            <br>
+        </div>
+    </div>
     <br>
-    <label>
-  		<input type="checkbox" id="useReferenceData" checked />
+    <label style="display: none;">
+        <input type="checkbox" id="useReferenceData" checked />
   		Use 10m Reference Data
 	</label>
 
@@ -272,6 +352,90 @@
 </div>
 
   <script>
+  
+function activateTaskButtons(tasksFromFile) {
+    console.log("🔎 Tasks found in file:", tasksFromFile);
+
+    // Check if "No Task" is present
+    const containsNoTasks = tasksFromFile.includes("No Tasks");
+    const filteredTasks = tasksFromFile.filter(task => task !== "No Tasks");
+
+    // Select all toggle buttons
+    const buttons = document.querySelectorAll(".toggle-button");
+
+    console.log("🔄 Resetting all buttons before applying new state...");
+    
+    // **Reset all buttons**
+    buttons.forEach(button => {
+        button.classList.remove("active"); // Ensure all are deactivated
+        button.disabled = false; // Enable buttons for manual selection
+    });
+
+    // Use a slight delay to ensure DOM is updated before activation
+    setTimeout(() => {
+        console.log("🔍 Checking each button for activation...");
+
+        buttons.forEach(button => {
+            const buttonText = button.textContent.trim();
+            console.log(`🟢 Checking button: ${buttonText}`);
+
+            if (filteredTasks.includes(buttonText)) {
+                console.log(`✅ Activating button: ${buttonText}`);
+                button.classList.add("active");
+            } else {
+                console.log(`❌ Button not in list: ${buttonText}`);
+            }
+
+            // Disable buttons to prevent manual selection
+            button.disabled = true;
+        });
+
+        // Handle "No Tasks" separately
+        const noTasksButton = document.getElementById("noTasksButton");
+        if (noTasksButton) {
+            if (containsNoTasks) {
+                console.log("🟡 'No Tasks' detected. Keeping it active.");
+                noTasksButton.classList.add("active");
+            } else {
+                noTasksButton.classList.remove("active"); // Reset if not in new selection
+            }
+        }
+
+        console.log("✅ Button activation complete.");
+
+    }, 50); // Small delay to ensure proper activation
+}
+
+
+
+// Function to extract tasks from CSV data
+function extractTasksFromCSV(csvData) {
+    console.log("📥 Extracting tasks from CSV...");
+    const lines = csvData.split("\n");
+    let extractedTasks = new Set();
+
+    lines.forEach(line => {
+        line = line.trim();
+        if (line.startsWith("Row ")) { // Only process rows that start with "Row "
+            console.log(`🔍 Processing line: ${line}`);
+            const parts = line.split(":"); // Split at the colon
+            if (parts.length > 1) {
+                const tasks = parts[1].split("|").map(task => task.trim()); // Extract tasks after the colon
+                tasks.forEach(task => {
+                    if (task) {
+                        console.log(`➕ Found task: ${task}`);
+                        extractedTasks.add(task);
+                    }
+                });
+            }
+        }
+    });
+
+    console.log("📝 Extracted tasks:", Array.from(extractedTasks));
+    return Array.from(extractedTasks);
+}
+
+
     // =======================================================
     // Helper Functions and Global Variables
     // =======================================================
@@ -1377,99 +1541,71 @@ function processConcatenatedCSVData(csvData) {
 }
 
 
-document.getElementById("fileInput").addEventListener("change", async function(event) {
+document.getElementById("fileInput").addEventListener("change", async function (event) {
     const files = event.target.files;
-    let allCSVData = "";
-    let filesRead = 0;
-
-    // 🟢 Reset the global array before storing new filenames
-    selectedFileNames = [];
-
-    // Get the file list container
-    const fileList = document.getElementById("fileList");
-    fileList.innerHTML = ""; // Clear the previous list
-
     if (files.length === 0) {
         alert("No files selected.");
         return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+    let allCSVData = "";
+    let allTasks = new Set();  // 🟢 Accumulate tasks across all files
+    selectedFileNames = [];
+    let filesRead = 0;
 
-        // 🟢 Store filenames globally for CSV export
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    for (let file of files) {
+        if (!file.name.endsWith(".csv")) {
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            continue;
+        }
+
         selectedFileNames.push(file.name);
-
-        // Display file name in the list
         const listItem = document.createElement("li");
         listItem.textContent = file.name;
         fileList.appendChild(listItem);
 
-        if (!file || !file.name.endsWith(".csv")) {
-            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
-            filesRead++;
-            if (filesRead === files.length) {
-                processConcatenatedCSVData(allCSVData);
-            }
-            continue;
-        }
-
         const reader = new FileReader();
-        reader.onload = async function(e) {
+        reader.onload = async function (e) {
             const fileContent = e.target.result;
 
-            // ✅ Compute checksum of file content
+            // ✅ Compute checksum & verify file integrity
             const computedChecksum = await generateChecksum(fileContent);
-
-            // ✅ Extract the last 5-character hash from the second half of computed checksum
             const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
-
-            // ✅ Extract last 5 characters from filename (before .csv)
             const last5FromFile = file.name.replace(".csv", "").slice(-5);
 
-            if (last5FromFile === obfuscatedComputedChecksum) {
-                console.log(`✅ Filename hash match for ${file.name}`);
-            } else {
-                console.log(`❌ Filename hash mismatch for ${file.name}`);
-                console.log(`Expected: ${last5FromFile}`);
-                console.log(`Computed: ${obfuscatedComputedChecksum}`);
-
-                // 🔴 Alert the user and abort execution
+            if (last5FromFile !== obfuscatedComputedChecksum) {
                 alert(`It appears that "${file.name}" has been edited. Aborting.`);
-                location.reload(); // Refresh page to reset state
+                location.reload();
                 return;
             }
 
             allCSVData += fileContent + "\n";
             filesRead++;
 
-            if (filesRead === files.length) {
-                console.log("🟢 Selected Files for CSV Export:", selectedFileNames);
-                processConcatenatedCSVData(allCSVData);
+            // ✅ Extract tasks from each file and accumulate them
+            const tasksFromFile = extractTasksFromCSV(fileContent);
+            tasksFromFile.forEach(task => allTasks.add(task));  // 🟢 Merge tasks into the Set
 
-                // 🟢 FIX: Reset the file input so it triggers again when re-selected
-                document.getElementById("fileInput").value = "";
-                
-                // 🟢 FIX: Allow new file selections by resetting flag
-                csvProcessingStarted = false;
+            // ✅ Once all files are processed, activate buttons correctly
+            if (filesRead === files.length) {
+                console.log("🟢 Accumulated Tasks:", Array.from(allTasks));
+                activateTaskButtons(Array.from(allTasks)); // Convert Set to Array before passing
+                processConcatenatedCSVData(allCSVData);
+                document.getElementById("fileInput").value = ""; // Reset input for re-selection
             }
         };
 
-        reader.onerror = function() {
+        reader.onerror = function () {
             alert(`Error reading file: ${file.name}`);
-            filesRead++;
-            if (filesRead === files.length) {
-                processConcatenatedCSVData(allCSVData);
-
-                // 🟢 Reset file input after error
-                document.getElementById("fileInput").value = "";
-                csvProcessingStarted = false;
-            }
         };
 
         reader.readAsText(file);
     }
 });
+
 
 // ✅ Function to generate SHA-256 checksum
 async function generateChecksum(content) {

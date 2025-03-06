@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roulette P-Values</title>
     <style>
+    
+    html, body {
+    background-color: #5A5A5A !important; /* Change to any color */
+    color: lightgreen; /* Text color */
+    height: 100%; /* Ensure it covers full height */
+    margin: 0; /* Remove default margins */
+    padding: 0; /* Remove default padding */
+}
             .framed-buttons {
             border: 2px solid lightblue;
             padding: 15px;
@@ -53,7 +61,7 @@
       box-sizing: border-box;
     }   
     body {
-            background-color: black;
+            background-color: #333;
             color: lightgreen;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -102,7 +110,7 @@
             margin: 20px auto;
             width: 80%;
             max-width: 800px;
-            background-color: #333;
+            background-color: black;
             border-radius: 10px;
         }
         .results-container h3 {
@@ -202,11 +210,38 @@
             margin: 20px auto;
             width: 80%;
             max-width: 800px;
-            background-color: #333;
+            background-color: black;
             border-radius: 10px;
+        }
+        button {
+            background-color: lightgreen;
+            color: black;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: darkgreen;
+            color: white;
+        }
+        table {
+            width: 100%;
+            color: black;
+            text-align: center;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid lightgray;
+            padding: 8px;
+        }
+        th {
+            background-color: black;
+            color: DarkKhaki;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -238,16 +273,17 @@
         </div>
         <div class="results-container">
             <input type="file" id="fileInput" accept=".csv" multiple>
+            <button id="savePdfButton">Save to PDF</button>
             <h3><span style="color: lightgreen;">Observed vs. Expected Frequencies</span></h3>
             <canvas id="chiSquareChart"></canvas>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <p><b><span style="color: salmon;">Total Rows: </span></b><span id="totalSpins"></span></p>
-            <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
+            <p><b><span style="color: orange;">Total Rows: </span></b><span id="totalSpins"></span></p>
+            <p><b><span style="color: orange;">Conclusion: </span></b><span id="conclusion"></span></b></p>
             <br>
             <div id="resultsTableContainer" style="margin-top: 20px;"></div>
         </div>
     </div>
-
+    
 <script>
 
        	// Event listener for the Simulator button
@@ -426,8 +462,8 @@ function displayResultsTable(results, filenames, totalSpins) {
     results.forEach(r => {
         tableHTML += `
             <tr>
-                <td style="color: white;">${r.number}</td>
-                <td style="color: lightblue;">${r.observed}</td>
+                <td style="color: cyan;">${r.number}</td>
+                <td style="color: salmon;">${r.observed}</td>
                 <td style="color: ${r.pValue < 0.05 ? 'yellow' : 'orange'};">${r.pValue.toFixed(6)}</td>
             </tr>`;
     });
@@ -507,6 +543,76 @@ let cumulativePrecomputedPValues = calculateCumulativeProbabilities(observedCoun
     link.click();
     document.body.removeChild(link);
 }
+
+document.getElementById('savePdfButton').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "portrait" });
+
+    function getUploadedFileNames() {
+        let fileInput = document.getElementById("fileInput");
+        if (fileInput.files.length > 0) {
+            return Array.from(fileInput.files).map(file => file.name).join(", ");
+        }
+        return "Unknown_Files";
+    }
+
+    function getFormattedTimestamp() {
+        const now = new Date();
+        return `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+    }
+
+    const fileNames = getUploadedFileNames();
+    const timestamp = getFormattedTimestamp();
+    const pdfFileName = `PValues_${timestamp}.pdf`;
+
+    // ✅ Title
+    doc.setFontSize(18);
+    doc.setTextColor(50, 205, 50);
+    doc.text("P-Value Analysis Report", doc.internal.pageSize.width / 2, 15, { align: "center" });
+
+    // ✅ Filename at the top
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 255);
+    doc.text(`Filename: ${pdfFileName}`, doc.internal.pageSize.width / 2, 25, { align: "center" });
+
+    let startY = 35;
+
+    // ✅ Capture Results Table
+    let resultsTable = document.getElementById("resultsTableContainer").querySelector("table");
+    if (resultsTable) {
+        doc.autoTable({
+            html: resultsTable,
+            startY: startY,
+            theme: "grid",
+            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+            headStyles: { fillColor: [0, 128, 0], textColor: [255, 255, 255] }, // Green headers
+            alternateRowStyles: { fillColor: [245, 245, 245] }
+        });
+        startY = doc.autoTable.previous.finalY + 10;
+    }
+
+    // ✅ Add Source Files List
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 255);
+    doc.text("Source Files", doc.internal.pageSize.width / 2, startY, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    let fileLines = fileNames.split(", ");
+    let startYFiles = startY + 10;
+    fileLines.forEach(file => {
+        if (startYFiles > doc.internal.pageSize.height - 20) {
+            doc.addPage(); // ✅ Add new page if needed
+            startYFiles = 20;
+        }
+        doc.text(file, 20, startYFiles);
+        startYFiles += 6;
+    });
+
+    // ✅ Save the PDF with the generated filename
+    doc.save(pdfFileName);
+});
 
 // Event listener for file upload
 document.getElementById('fileInput').addEventListener('change', function (event) {

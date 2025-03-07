@@ -353,95 +353,103 @@
 
   <script>
   
-function activateTaskButtons(tasksFromFile) {
-    console.log("🔎 Tasks found in file:", tasksFromFile);
-
-    // Check if "No Task" is present
-    const containsNoTasks = tasksFromFile.includes("No Tasks");
-    const filteredTasks = tasksFromFile.filter(task => task !== "No Tasks");
-
-    // Select all toggle buttons
-    const buttons = document.querySelectorAll(".toggle-button");
-
-    console.log("🔄 Resetting all buttons before applying new state...");
-    
-    // **Reset all buttons**
-    buttons.forEach(button => {
-        button.classList.remove("active"); // Ensure all are deactivated
-        button.disabled = false; // Enable buttons for manual selection
-    });
-
-    // Use a slight delay to ensure DOM is updated before activation
-    setTimeout(() => {
-        console.log("🔍 Checking each button for activation...");
-
-        buttons.forEach(button => {
-            const buttonText = button.textContent.trim();
-            console.log(`🟢 Checking button: ${buttonText}`);
-
-            if (filteredTasks.includes(buttonText)) {
-                console.log(`✅ Activating button: ${buttonText}`);
-                button.classList.add("active");
-            } else {
-                console.log(`❌ Button not in list: ${buttonText}`);
-            }
-
-            // Disable buttons to prevent manual selection
-            button.disabled = true;
-        });
-
-        // Handle "No Tasks" separately
-        const noTasksButton = document.getElementById("noTasksButton");
-        if (noTasksButton) {
-            if (containsNoTasks) {
-                console.log("🟡 'No Tasks' detected. Keeping it active.");
-                noTasksButton.classList.add("active");
-            } else {
-                noTasksButton.classList.remove("active"); // Reset if not in new selection
-            }
-        }
-
-        console.log("✅ Button activation complete.");
-
-    }, 50); // Small delay to ensure proper activation
-}
-
-
-
-// Function to extract tasks from CSV data
-function extractTasksFromCSV(csvData) {
-    console.log("📥 Extracting tasks from CSV...");
-    const lines = csvData.split("\n");
-    let extractedTasks = new Set();
-
-    lines.forEach(line => {
-        line = line.trim();
-        if (line.startsWith("Row ")) { // Only process rows that start with "Row "
-            console.log(`🔍 Processing line: ${line}`);
-            const parts = line.split(":"); // Split at the colon
-            if (parts.length > 1) {
-                const tasks = parts[1].split("|").map(task => task.trim()); // Extract tasks after the colon
-                tasks.forEach(task => {
-                    if (task) {
-                        console.log(`➕ Found task: ${task}`);
-                        extractedTasks.add(task);
-                    }
-                });
-            }
-        }
-    });
-
-    console.log("📝 Extracted tasks:", Array.from(extractedTasks));
-    return Array.from(extractedTasks);
-}
-
-
     // =======================================================
     // Helper Functions and Global Variables
     // =======================================================
     let totalRuns = 0;
     let selectedFileNames = []; // Store selected filenames globally
     let statsCollection = {}; // Declare at the top of the script
+    let extractedTasksList = []; // Store tasks from all selected files
+    let extractedTaskRows = []; // ✅ Ensure extractedTaskRows is globally declared
+
+  
+function activateTaskButtons(tasksFromFile) {
+    console.log("🔎 Tasks found in file:", tasksFromFile);
+
+    // ✅ Extract individual tasks from each row
+    const extractedNames = new Set();
+    tasksFromFile.forEach(row => {
+        let parts = row.split(": "); 
+        if (parts.length > 1) {
+            let tasks = parts[1].split("|");
+            tasks.forEach(task => extractedNames.add(task.trim())); // Trim spaces
+        }
+    });
+
+    console.log("🟢 Extracted Individual Task Names for Activation:", [...extractedNames]);
+
+    document.querySelectorAll(".toggle-button").forEach(button => {
+        const buttonText = button.textContent.trim();
+        console.log(`🟢 Checking button: ${buttonText}`);
+
+        if (extractedNames.has(buttonText)) {
+            console.log(`✅ Activating button: ${buttonText}`);
+            button.classList.add("active");
+        } else {
+            console.log(`❌ Button not in list: ${buttonText}`);
+            button.classList.remove("active");
+        }
+    });
+
+    console.log("✅ Button activation complete.");
+}
+
+function extractTasksFromCSV(csvData) {
+    console.log("📥 Extracting task rows from CSV...");
+
+    const lines = csvData.split("\n");
+    let localTaskRows = [];  // ✅ Temporary storage for each file's rows
+
+    lines.forEach(line => {
+        line = line.trim();
+        if (line.startsWith("Row ")) {  
+            console.log(`🔍 Saving row: ${line}`);
+            localTaskRows.push(line);
+        }
+    });
+
+    console.log("📝 Extracted full task rows:", localTaskRows);
+
+    // ✅ Merge new tasks without overwriting
+    extractedTaskRows = [...new Set([...extractedTaskRows, ...localTaskRows])];
+
+    console.log("🟢 Accumulated Task Rows:", extractedTaskRows);
+    return localTaskRows;
+}
+
+
+function updateButtonStates() {
+    console.log("🔍 Checking each button for activation...");
+
+    // ✅ Extract and clean task names properly
+    const taskNames = new Set();
+    extractedTaskRows.forEach(row => {
+        let parts = row.split(": "); // Split at ": "
+        if (parts.length > 1) {
+            let tasks = parts[1].split("|"); // Split multiple tasks
+            tasks.forEach(task => taskNames.add(task.trim())); // Trim spaces and store
+        }
+    });
+
+    console.log("🔹 Extracted Individual Task Names:", [...taskNames]);
+
+    document.querySelectorAll(".toggle-button").forEach(button => {
+        const buttonText = button.textContent.trim();
+        console.log(`🟢 Checking button: ${buttonText}`);
+
+        if (taskNames.has(buttonText)) {
+            console.log(`✅ Activating button: ${buttonText}`);
+            button.classList.add("active");
+        } else {
+            console.log(`❌ Button not in list: ${buttonText}`);
+            button.classList.remove("active");
+        }
+    });
+
+    console.log("✅ Button activation complete.");
+}
+
+
     
     // Group indices for various distributions
     const groupIndices = {
@@ -1157,8 +1165,19 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
         console.log(`📌 Category found: ${category}`);
     });
 
+    // ✅ Include **full** task rows at the top of the CSV
+    if (extractedTaskRows.length > 0) {
+        csvContent += "Tasks:\n";
+        extractedTaskRows.forEach(taskRow => {
+            csvContent += `${taskRow}\n`; // ✅ Keep it exactly as it was in input
+        });
+        csvContent += "\n"; // Spacing before data
+    }
+
+    // ✅ Append frequency distribution data
     csvContent += getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
 
+    // ✅ Include selected file names at the bottom
     if (selectedFileNames.length > 0) {
         csvContent += "\n\nSelected Files:\n";
         selectedFileNames.forEach(fileName => {
@@ -1173,11 +1192,14 @@ function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues
     const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName); // ✅ Use updated filename
+    link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    console.log(`✅ Exported CSV file: ${fileName}`);
 }
+
 
 function getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
     let csvContent = "Category,Metric,Value,Value,Expected Probability,Observed Frequency,Cumulative Probability\n";

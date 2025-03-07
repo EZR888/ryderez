@@ -423,7 +423,7 @@
 
     <!-- New Toggle Button Section (Options for CSV Export) -->
     <div class="framed-section-tasks">
-        <h3 style="color: violet; text-align: center;">Select Tasks</h3>
+        <h3 style="color: violet; text-align: center;">Selected Tasks</h3>
         <div class="toggle-button-container">
             <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
             <button class="toggle-button" onclick="toggleOption(this)">Right - Left</button>
@@ -528,48 +528,50 @@ function getFormattedTimestamp() {
 async function exportTotalsToCSV(array, rowCount, prefix) {
     let timestamp = getFormattedTimestamp();
 
-    // ✅ Header warning message
     let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
-    csvContent += "LAST GENERATED ON: ${timestamp}\n\n"; // ✅ Corrected line
+    csvContent += `LAST GENERATED ON: ${timestamp}\n\n`; 
 
-    // ✅ Add headers to CSV
     let headers = [...Array(38).keys()];
     csvContent += headers.join(",") + "\n";
 
-    // ✅ Append data rows (always just one row)
     array.forEach(row => {
         csvContent += row.join(",") + "\n";
     });
 
-    // ✅ Add a blank line after the table
     csvContent += `\n`;
 
-    // ✅ Append each task on a separate line **WITH "Row 1:"**
     if (selectedOptions.length === 0) {
-        csvContent += `Row 1: No Tasks\n`;
+        csvContent += `No Tasks\n`;
     } else {
         selectedOptions.forEach(task => {
-            csvContent += `Row 1: ${task}\n`; // ✅ Always include "Row 1:" for tasks
+            csvContent += `${task}\n`; 
         });
     }
 
-    // ✅ Generate SHA-256 checksum **BEFORE SAVING**
+    // ✅ Generate SHA-256 checksum
     const checksum = await generateChecksum(csvContent);
 
-    // ✅ Apply checksum obfuscation for filename
+    // ✅ Apply obfuscation for filename
     const obfuscatedChecksum = getObfuscatedChecksum(checksum);
 
-    // ✅ Set filename with the modified checksum part
-    const finalFilename = `${prefix}${rowCount}_${timestamp}_${obfuscatedChecksum}.csv`;
+    // ✅ Generate the task identifier from selected tasks
+    const taskIdentifier = generateTaskIdentifier(selectedOptions);
 
-    // ✅ Save the file directly with final name
-    saveFile(finalFilename, csvContent);
+    // ✅ Define `filename` correctly before logging
+    const filename = `${prefix}${taskIdentifier}_${timestamp}_${obfuscatedChecksum}.csv`;
+
+    // ✅ Debugging logs
+    console.log("🚀 Exporting CSV with Tasks:", selectedOptions);
+    console.log("✅ Final Filename:", filename);
+
+    // ✅ Save the file with the correct name
+    saveFile(csvContent, filename);
 }
 
 /**
- * ✅ Save File to Disk (Download)
+ * ✅ Save File to Disk (Download)x
  */
-function saveFile(filename, content) {
+function saveFile(content, filename) {
     const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -578,7 +580,45 @@ function saveFile(filename, content) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    console.log(`✅ File saved as: ${filename}`);
 }
+
+// Generates the task identifier from selected tasks
+function generateTaskIdentifier(selectedTasks) {
+    if (!Array.isArray(selectedTasks)) {
+        console.error("⚠️ Error: selectedTasks is not an array:", selectedTasks);
+        return "NT"; // Default to "NT" if invalid
+    }
+
+    if (selectedTasks.includes("No Tasks")) {
+        return "NT"; 
+    }
+
+    const taskMappings = {
+        "Sum of 00": "S00",
+        "Sum of 0": "S0",
+        "Top Ends - Center": "TEC",
+        "Bottom Ends - Center": "BEC",
+        "Top - Bottom": "TB",
+        "Right - Left": "RL",
+        "Variance": "V",
+        "Density": "D"
+    };
+
+    let identifier = selectedTasks.map(task => {
+        if (taskMappings[task]) {
+            return taskMappings[task]; 
+        }
+        return task.split(/\s+/) 
+            .filter(word => word[0] === word[0].toUpperCase()) 
+            .map(word => word[0]) 
+            .join(""); 
+    }).join("");
+
+    return identifier || "NT"; 
+}
+
 
 /**
  * ✅ Compute SHA-256 Checksum
@@ -592,9 +632,14 @@ async function generateChecksum(content) {
  * ✅ Obfuscate the checksum for filename use
  */
 function getObfuscatedChecksum(checksum) {
+    if (!checksum || checksum.length < 10) {
+        console.error("⚠️ Error: Invalid checksum provided:", checksum);
+        return "00000"; // Return default if checksum is bad
+    }
+
     const halfLength = Math.floor(checksum.length / 2);
-    const secondHalf = checksum.slice(halfLength); // Extract second half
-    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+    const secondHalf = checksum.slice(halfLength);
+    return secondHalf.slice(0, 5).split("").reverse().join(""); 
 }
 
 
@@ -686,7 +731,7 @@ function multiSpin() {
                     setTimeout(() => singleRun(runIndex + 1), 100);
                 } else {
                     const rowCount = allTotals.length;
-                    exportTotalsToCSV(allTotals, rowCount, "Sim_"); // Use "Multi_" prefix for Multi-Spin
+                    exportTotalsToCSV(allTotals, rowCount, "Sim_"); 
                     endMultiSpin();
                 }
             }

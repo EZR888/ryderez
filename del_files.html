@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>File Manager</h2>
+    <button onclick="scanFiles()">📂 Scan & List Files</button>
+    <button onclick="deleteFiles()" disabled>🗑️ Delete All Matched Files</button>
+    <ul id="fileList"></ul>
+
+ <button onclick="renameTaskFile()">📝 Rename Old Task File</button>
+<ul id="fileList"></ul>
+
+<script>
+    let dirHandle = null;
+
+    async function renameTaskFile() {
+        try {
+            if (!dirHandle) {
+                dirHandle = await window.showDirectoryPicker();
+            }
+
+            let oldFileHandle = null;
+            let newFileName = "";
+            
+            // ✅ Scan for task code files
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === "file" && entry.name.startsWith("Sim_") && entry.name.endsWith(".txt")) {
+                    oldFileHandle = entry;
+                    newFileName = "archived_" + entry.name;
+                    break; // Take the first match (adjust as needed)
+                }
+            }
+
+            if (!oldFileHandle) {
+                alert("No task code files found.");
+                return;
+            }
+
+            console.log(`📂 Found: ${oldFileHandle.name}`);
+            
+            // ✅ Open the old file
+            const oldFile = await oldFileHandle.getFile();
+            const content = await oldFile.text(); // Read content
+
+            // ✅ Create the renamed version
+            const newFileHandle = await dirHandle.getFileHandle(newFileName, { create: true });
+            const writable = await newFileHandle.createWritable();
+            await writable.write(content);
+            await writable.close();
+            console.log(`✅ Renamed: ${oldFileHandle.name} → ${newFileName}`);
+
+            alert(`Renamed ${oldFileHandle.name} to ${newFileName}. You can manually delete the old file.`);
+        } catch (error) {
+            console.error("❌ Error renaming file:", error);
+            alert("Error renaming file.");
+        }
+    }
+</script>
+
+</body>
+</html>

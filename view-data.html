@@ -1540,8 +1540,7 @@ function savePDFSplit() {
         finalY += 6;
     }); 
     
-    // ✅ New Page for Tasks and Selected Files
-    saveTasksAndFilesToPDF(doc, filename);
+    doc.save(filename)
 }
 
 

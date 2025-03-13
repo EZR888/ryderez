@@ -6,7 +6,6 @@
     <title>CSV Reader</title>
     <style>
     
-    
     .modal {
       display: none;
       position: fixed;
@@ -49,11 +48,13 @@
         .container {
             width: 100%;
             display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
             padding: 20px;
+            box-sizing: border-box;
         }
+
         .container h1 {
             margin: 0;
         }
@@ -216,26 +217,16 @@ th:nth-child(20), td:nth-child(20) {
             border: none;
             color: white;
         }
-        #saveButton {
-            background-color: blue;
-        }
-        #savePdfButton {
-            background-color: purple;
-        }
-        #sortByHighestValue {
-            background-color: red;
-        }
-        #sortByLowestValue {
-            background-color: lightcoral;
-        }   
-        #sortCols {
-            background-color: lightgreen;
-            color: black;
-        }     
+
         .file-input-container {
             display: flex;
             align-items: center;
-            margin: 5px 0;
+                border: 2px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 75%; /* Ensure full width */
+    background-color: #333;
+    overflow: auto; /* Prevent overflow clipping */
         }
         .file-input-container > * {
             margin-right: 5px;
@@ -244,7 +235,7 @@ th:nth-child(20), td:nth-child(20) {
             margin-left: 5px;
         }
         .row-count {
-            color: yellow;
+            color: DarkKhaki;
             font-size: 24px;
             margin: 0;
         }
@@ -318,7 +309,30 @@ th:nth-child(20), td:nth-child(20) {
         background-color: orange;
         color: black;
     }
-
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    .button-red {
+        background-color: red;
+        color: white;
+    }
+    .button-lightcoral {
+        background-color: lightcoral;
+        color: white;
+    }
+    .button-blue {
+        background-color: blue;
+        color: white;
+    }
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    .button-lightgreen {
+        background-color: lightgreen;
+        color: black;
+    }
     .button-purple {
         background-color: purple;
         color: white;
@@ -409,6 +423,35 @@ th:nth-child(20), td:nth-child(20) {
   #singleRowBtn:hover {
     background-color: #218838;
   }
+  
+          .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+        
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    } 
+    
+    .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+}
+
 
     </style>
     <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
@@ -420,7 +463,7 @@ th:nth-child(20), td:nth-child(20) {
 <!-- Custom Modal -->
 <div id="savePdfModal" class="modal">
   <div class="modal-content">
-    <h2>Select PDF Format</h2>
+    <h3>Select PDF Format</h3>
     <p>Choose how you want to save the PDF:</p>
     <button id="splitRowBtn">Split Row</button>
     <button id="singleRowBtn">Single Row</button>
@@ -430,14 +473,15 @@ th:nth-child(20), td:nth-child(20) {
 
     <div class="container">
         <div>
-            <div class="framed-section2">
-&nbsp;&nbsp;&nbsp;<button id="howToUseButton"class="button button-purple">How To Use</button>
-                <button id="simButton" class="button button-sim">Simulator</button>
+            <div class="framed-section2" >
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
                 <button id="viewDataButton" class="button">View Data</button>
-                <button id="viewPValueButton" class="button button-DarkSeaGreen">View P-Values</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
                 <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-                <button id="viewStatsButton" class="button button-DarkKhaki">View Stats</button>
-                <button id="singleSpinButton"class="button button-single">Single Spin</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+            	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
             </div>
         </div>
         <br>
@@ -447,7 +491,7 @@ th:nth-child(20), td:nth-child(20) {
             <div class="modal-content">
                 <button class="close-button" id="closeModalButton">&times;</button>
                 <h3>Instructions</h3>
-                <p>Select a .csv file that starts with "Multi" or "SaveCSV"<br><br>
+                <p>Select a .csv file that starts with "Sim_" or "SimX_"<br><br>
                    Clicking a colored box will load a run of whatever the number is in parens, times 1,000.<br><br>
                    Currently, the 8 (1) box will actually load a 10,000 row run.<br><br>
                 </p>
@@ -458,29 +502,28 @@ th:nth-child(20), td:nth-child(20) {
     <div class="container">
         <div class="info-container">
             <h1>View Data</h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div class="info-item2 clickable" data-type="8">8 (1)</div>
-            <div class="info-item2 clickable" data-type="9">9 (2)</div>
-            <div class="info-item2 clickable" data-type="10">10 (3)</div>
-            <div class="info-item2 clickable" data-type="11">11 (4)</div>
-            <div class="info-item2 clickable" data-type="12">12 (5)</div>
-            <div class="info-item2 clickable" data-type="13">13 (6)</div>
-            <div class="info-item2 clickable" data-type="14">14 (7)</div>
-            <div class="info-item2 clickable" data-type="15">15 (8)</div>
-            <div class="info-item2 clickable" data-type="16">16 (9)</div>
-            <div class="info-item2 clickable" data-type="17">17 (10)</div>
+            <div class="info-item2" data-type="8">8</div>
+            <div class="info-item2" data-type="9">9</div>
+            <div class="info-item2" data-type="10">10</div>
+            <div class="info-item2" data-type="11">11</div>
+            <div class="info-item2" data-type="12">12</div>
+            <div class="info-item2" data-type="13">13</div>
+            <div class="info-item2" data-type="14">14</div>
+            <div class="info-item2" data-type="15">15</div>
+            <div class="info-item2" data-type="16">16</div>
+            <div class="info-item2" data-type="17">17</div>
         </div>
         <div class="file-input-container">
-            <h2>Select CSV File</h2>
             <input type="file" id="fileInput" accept=".csv" multiple>
-            <button id="sortByHighestValue">Sort by Highest Value</button>
-            <button id="sortByLowestValue">Reverse Sort</button>
-            <button id="sortCols">Sort Columns</button>
-            <button id="saveButton">Save to CSV</button>
-            <button id="savePdfButton">Save to PDF</button>
-            <div id="rowCount" class="row-count">Runs: 0</div>
+            <button id="sortByHighestValue" class="button button-red">Sort by Highest Value</button>
+            <button id="sortByLowestValue" class="button button-lightcoral">Reverse Sort</button>
+            <button id="sortCols" class="button button-lightgreen">Sort Columns</button>
+            <button id="saveButton" class="button button-blue">Save to CSV</button>
+            <button id="savePdfButton" class="button button-purple">Save to PDF</button>
         </div> 
     </div>
-    
+                <div id="rowCount" class="row-count" align="center""></div>
+                
     <table id="csvTable">
         <thead></thead>
         <tbody></tbody>
@@ -488,6 +531,8 @@ th:nth-child(20), td:nth-child(20) {
   </div>
 
   <script>
+  
+let selectedFileNames = []; // Store selected filenames globally
     
        	// Event listener for the Simulator button
     	document.getElementById('simButton').addEventListener('click', () => {
@@ -517,7 +562,11 @@ th:nth-child(20), td:nth-child(20) {
     	document.getElementById('singleSpinButton').addEventListener('click', () => {
         window.open('new-wheel.html', '_blank');
       });
-      
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });
+          
+
     
            // Function to generate a formatted timestamp // 
         function getFormattedTimestamp() {
@@ -528,7 +577,7 @@ th:nth-child(20), td:nth-child(20) {
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+            return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
         }
         
               // Function to get color for a style
@@ -623,9 +672,7 @@ function createHeaderRow(headerRow) {
     }
 }
 
-
-
-        function createDataCell(cellValue) {
+function createDataCell(cellValue) {
             const td = document.createElement('td');
             td.textContent = cellValue === '0' ? '' : cellValue;
             const numValue = Number(cellValue);
@@ -635,81 +682,289 @@ function createHeaderRow(headerRow) {
             return td;
         }
 
+let extractedStrings = []; // Stores extracted strings with row numbers
+let allDataRows = []; // Stores all table data for CSV/PDF export
+let isNewBatch = true; // Flag to reset tasks only once per new import
+
 function displayCSVData(csvText, isFirstFile) {
-    const lines = csvText.split('\n').map(line => line.split(','));
+    if (isNewBatch) {
+        extractedStrings = []; // ✅ **Clear tasks at the beginning of a new batch**
+        isNewBatch = false;
+    }
+
+    let isTableData = true;
+    const lines = csvText.split('\n').map(line => line.trim());
+
+    if (lines.length <= 3) {
+        console.warn("CSV file contains insufficient data.");
+        return;
+    }
+
+// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
+const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
+const dataLines = shouldSlice ? lines.slice(3) : lines;
+
     const tbody = document.querySelector('#csvTable tbody');
+    let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
+
     const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6'];    
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
 
-    // Create header row only for the first file
+    // ✅ The header row is now taken from the modified data (after skipping lines)
+    const headerRow = dataLines[0].split(',');
+    const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+
     if (isFirstFile && !headerAdded) {
-        createHeaderRow(lines[0]); // Pass the header row to `createHeaderRow`
+        createHeaderRow(headerRow);
     }
 
-    const headerIndices = columnOrder.map(col => lines[0].indexOf(col));
+    for (let i = 1; i < dataLines.length; i++) { // ✅ Start from index 1 since header row is now in `dataLines[0]`
+        let row = dataLines[i].split(',');
 
-    // Process each row, skipping the header row if it's not the first file
-    for (let i = 1; i < lines.length; i++) {
-        if (lines[i].some(cell => cell.trim())) {
+        if (isTableData) {
+            if (row.length === 1 || row.every(cell => cell.trim() === "")) {
+                isTableData = false;
+                continue;
+            }
+
             const tr = document.createElement('tr');
 
-            // Add Line Number
             const tdLineNumber = document.createElement('td');
-            tdLineNumber.textContent = rowCounter++;
+            tdLineNumber.textContent = currentRowNumber;
             tdLineNumber.style.backgroundColor = 'slategray';
             tdLineNumber.style.color = 'white';
             tr.appendChild(tdLineNumber);
 
+            let rowData = [currentRowNumber]; // Store row for export
+            let hasNumericData = false;
             let group1Sum = 0;
             let group2Sum = 0;
             let group1Cells = [];
             let group2Cells = [];
 
-            // Populate row cells
             headerIndices.forEach((index, j) => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 ? lines[i][index] : '';
+                let cellValue = index >= 0 && row.length > index ? row[index].trim() : '';
+
+                if (!isNaN(cellValue) && cellValue !== '') {
+                    hasNumericData = true;
+                }
+
                 if (cellValue === '0') {
                     cellValue = '';
                 }
+
                 td.textContent = cellValue;
 
-                // Apply background color based on value
-                if (!isNaN(cellValue)) {
+                if (!isNaN(cellValue) && cellValue !== '') {
                     const numValue = Number(cellValue);
                     if (numValue === 3) td.classList.add('DarkSeaGreen');
                     else if (numValue === 4) td.classList.add('Gold');
                     else if (numValue >= 5) td.classList.add('light-green');
                 }
 
-                // Apply light-yellow background to group columns
-                if (group1Columns.includes(columnOrder[j]) || group2Columns.includes(columnOrder[j])) {
-                    td.classList.add('default-light-yellow');
-                }
-
-                // Collect cells for group sums
                 if (group1Columns.includes(columnOrder[j])) {
+                    td.classList.add('default-light-yellow');
                     group1Cells.push(td);
                     group1Sum += parseInt(cellValue) || 0;
                 } else if (group2Columns.includes(columnOrder[j])) {
+                    td.classList.add('default-light-yellow');
                     group2Cells.push(td);
                     group2Sum += parseInt(cellValue) || 0;
                 }
 
                 tr.appendChild(td);
+                rowData.push(cellValue);
             });
 
-            // Apply group-based coloring for group sums
             applyGroupColoring(group1Cells, group1Sum);
             applyGroupColoring(group2Cells, group2Sum);
 
-            tbody.appendChild(tr);
+            if (hasNumericData) {
+                tbody.appendChild(tr);
+                allDataRows.push(rowData);
+                currentRowNumber++;
+            }
+        } else {
+            const taskText = dataLines[i].trim();
+            if (taskText) {
+                extractedStrings.push([taskText, currentRowNumber - 1]);
+            }
         }
     }
 
-    // Update row count after processing all rows
-    document.getElementById('rowCount').textContent = `Runs: ${document.querySelectorAll('#csvTable tbody tr').length}`;
+    let rowCount = tbody.querySelectorAll('tr').length;
+    document.getElementById('rowCount').innerHTML = `Runs: <span class="zero-highlight">${rowCount}</span>`;
+
+    displayExtractedStrings();
+}
+
+function displayExtractedStrings() {
+    let outputDiv = document.getElementById('extractedStringsOutput');
+
+    if (!outputDiv) {
+        outputDiv = document.createElement('div');
+        outputDiv.id = 'extractedStringsOutput';
+        outputDiv.style.border = '2px solid white';
+        outputDiv.style.padding = '10px';
+        outputDiv.style.marginTop = '20px';
+        outputDiv.style.backgroundColor = '#333';
+        outputDiv.style.color = 'lightgreen';
+        outputDiv.style.fontFamily = 'Arial, sans-serif';
+        outputDiv.style.fontSize = '16px';
+        document.body.appendChild(outputDiv);
+    }
+
+    outputDiv.innerHTML = `<h2>Tasks:</h2>`;
+
+    if (extractedStrings.length === 0) {
+        outputDiv.innerHTML += `<p>No extracted strings found.</p>`;
+    } else {
+        const ul = document.createElement('ul');
+        extractedStrings.forEach(([text, rowNum]) => {
+            const li = document.createElement('li');
+            li.textContent = `${text}`;
+            ul.appendChild(li);
+        });
+        outputDiv.appendChild(ul);
+    }
+
+    // ✅ Create & Update Selected Files Section Below Tasks
+    let fileOutputDiv = document.getElementById('selectedFilesOutput');
+    
+    if (!fileOutputDiv) {
+        fileOutputDiv = document.createElement('div');
+        fileOutputDiv.id = 'selectedFilesOutput';
+        fileOutputDiv.style.border = '2px solid white';
+        fileOutputDiv.style.padding = '10px';
+        fileOutputDiv.style.marginTop = '20px';
+        fileOutputDiv.style.backgroundColor = '#333';
+        fileOutputDiv.style.color = 'lightgreen';
+        fileOutputDiv.style.fontFamily = 'Arial, sans-serif';
+        fileOutputDiv.style.fontSize = '16px';
+        document.body.appendChild(fileOutputDiv);
+    }
+
+    fileOutputDiv.innerHTML = `<h2>Selected Files:</h2>`;
+
+    if (selectedFileNames.length === 0) {
+        fileOutputDiv.innerHTML += `<p>No files selected.</p>`;
+    } else {
+        const ul = document.createElement('ul');
+        selectedFileNames.forEach(fileName => {
+            const li = document.createElement('li');
+            li.textContent = fileName;
+            ul.appendChild(li);
+        });
+        fileOutputDiv.appendChild(ul);
+    }
+}
+
+// ✅ **Ensure we reset tasks when new batch starts**
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    isNewBatch = true; // Reset task list when new files are chosen
+    clearTable();
+
+    const files = Array.from(event.target.files)
+        .filter(file => file.name.endsWith('.csv'))
+        .sort((a, b) => extractTimestamp(a.name) - extractTimestamp(b.name)); // 🔹 Sort by extracted date
+
+    // 🟢 Reset the global array before storing new filenames
+    selectedFileNames = [];
+
+    if (files.length === 0) {
+        alert("Please select .csv files only.");
+        return;
+    }
+
+    files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const fileContent = e.target.result;
+            displayCSVData(fileContent, index === 0);
+
+            // ✅ Compute checksum of file content
+            const computedChecksum = await generateChecksum(fileContent);
+
+            // ✅ Extract the last 5-character hash from the second half of computed checksum
+            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            if (last5FromFile === obfuscatedComputedChecksum) {
+                console.log(`✅ Filename hash match for ${file.name}`);
+            } else {
+                console.log(`❌ Filename hash mismatch for ${file.name}`);
+                console.log(`Expected: ${last5FromFile}`);
+                console.log(`Computed: ${obfuscatedComputedChecksum}`);
+
+                // 🔴 Alert the user and abort execution
+                alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                location.reload(); // Refresh page to reset state
+                return;
+            }
+        };
+        reader.readAsText(file);
+        selectedFileNames.push(file.name);
+    });
+});
+
+/**
+ * Extracts a sortable timestamp from the filename.
+ * Assumes filename format contains MMDDYY_HH_MM_SS (e.g., "data_090124_14_30_45.csv").
+ * Returns a numeric timestamp for sorting.
+ */
+function extractTimestamp(filename) {
+    const match = filename.match(/(\d{6})_(\d{2})_(\d{2})_(\d{2})/);
+    if (!match) return 0; // If no match, treat as oldest
+
+    const [_, datePart, hour, minute, second] = match;
+    const year = "20" + datePart.slice(4, 6); // Convert YY to YYYY (assumes 2000s)
+    const month = datePart.slice(0, 2);
+    const day = datePart.slice(2, 4);
+
+    return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).getTime();
+}
+
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ✅ Extracts obfuscated checksum using same logic as in `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
+
+// ✅ Validate checksum logic
+async function validateChecksum(file) {
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+        const fileContent = event.target.result;
+        const computedChecksum = await generateChecksum(fileContent);
+        const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+        const filename = file.name;
+        const extractedChecksum = filename.slice(-5);
+
+        if (obfuscatedComputedChecksum === extractedChecksum) {
+            console.log("✅ Checksum matches for", filename);
+        } else {
+            console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", obfuscatedComputedChecksum);
+
+            // 🔴 Alert the user and abort execution
+            alert(`It appears that "${filename}" has been edited. Aborting.`);
+            location.reload(); // Refresh page to reset state
+            return;
+        }
+    };
+    reader.readAsText(file);
 }
 
 
@@ -730,30 +985,6 @@ function applyGroupColoring(cells, sum) {
     if (colorClass) cells.forEach(td => td.classList.add(colorClass));
 }
 
-document.getElementById('fileInput').addEventListener('change', function(event) {
-    clearTable();
-
-    // Get the files as an array and sort by filename
-    const files = Array.from(event.target.files)
-        .filter(file => file.name.endsWith('.csv'))
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-    if (files.length === 0) {
-        alert("Please select .csv files only.");
-        return;
-    }
-
-    files.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            displayCSVData(e.target.result, index === 0);
-        };
-        reader.readAsText(file);
-    });
-});
-
-        
-
 
 
         // Event listener for clickable elements
@@ -769,48 +1000,91 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
             });
         });
 
-        // Event listener for 'saveButton' to save table to CSV
-        document.getElementById('saveButton').addEventListener('click', function() {
-            const table = document.getElementById('csvTable');
-            let csvContent = '';
-            const rows = table.querySelectorAll('tr');
-            const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
+document.getElementById('saveButton').addEventListener('click', async function() { // ✅ Add "async"
+    const table = document.getElementById('csvTable');
+    let csvContent = '';
 
-            rows.forEach((row, rowIndex) => {
-                const cols = row.querySelectorAll('th, td');
-                let rowData = [];
+    const rows = table.querySelectorAll('tr');
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
 
-                cols.forEach(col => {
-                    let cellData = col.textContent;
+    // Define the correct column order (0 to 37)
+    const columnOrder = [...Array(38).keys()].map(String);
 
-                    // Replace the header "00" with "37" in the first row (header row)
-                    if (rowIndex === 0 && cellData === '00') {
-                        cellData = '37';
-                    }
+    // Get the header row and determine correct indices
+    let headerRow = Array.from(rows[0].querySelectorAll('th')).map(th => th.textContent.trim());
 
-                    rowData.push(cellData);
-                });
+    // Replace '00' with '37' in the header row
+    headerRow = headerRow.map(value => value === '00' ? '37' : value);
 
-                csvContent += rowData.join(',') + '\n';
-            });
+    // Find indices of columns in the required order
+    let headerIndices = columnOrder.map(col => headerRow.indexOf(col));
 
-            // Create a Blob from the CSV content
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+    console.log("Column Order: ", columnOrder);
+    console.log("Header Indices: ", headerIndices);
 
-            // Get the formatted timestamp
-            const timestamp = getFormattedTimestamp();
+    // ✅ Add a header warning message
+    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
+    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
 
-            // Set the download attribute with a filename including the row count and timestamp
-            link.setAttribute("download", `SaveCSV_${rowCount}_${timestamp}.csv`);
-            link.style.display = 'none';
+    // ✅ Placeholder for checksum (to be replaced later)
+    csvContent += `"CHECKSUM: PENDING..."`;
 
-            // Append the link to the body, click it and remove it
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+    csvContent += `\n\n`;
+
+    // **Step 1: Process the table data**
+    rows.forEach((row, rowIndex) => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
+
+        if (rowIndex === 0) {
+            // If it's the header row, replace '00' with '37' and reorder columns
+            rowData = headerIndices.map(index => index >= 0 ? headerRow[index] : '');
+        } else {
+            // Rearrange columns for the rest of the rows
+            rowData = headerIndices.map(index => index >= 0 ? cols[index].textContent.trim() : '');
+        }
+
+        csvContent += rowData.join(',') + '\n';
+    });
+
+    // ✅ Add blank lines before appending tasks
+    csvContent += `\n`;
+
+    // **Step 2: Append the Tasks Section**
+    if (extractedStrings.length === 0) {
+        csvContent += `"No Tasks"\n`;
+    } else {
+        extractedStrings.forEach(([text, rowNum]) => {
+            csvContent += `Row ${rowNum}: ${text}\n`;
         });
+    }
+
+    // ✅ Add blank lines before checksum
+    csvContent += `\n\n`;
+
+    // ✅ Generate SHA-256 checksum (after all content is added)
+    const checksum = await generateChecksum(csvContent); // ✅ Now works inside async function
+
+    // ✅ Replace the "PENDING..." placeholder with the actual checksum
+    csvContent = csvContent.replace(`"CHECKSUM: PENDING..."`, `"CHECKSUM: ${checksum}"`);
+
+    // **Step 3: Create the CSV file**
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+
+    // Set the download attribute with a filename including the row count and timestamp
+    link.setAttribute("download", `SimX_${rowCount}_${timestamp}.csv`);
+    link.style.display = 'none';
+
+    // Append the link to the body, click it and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
     // Show the modal
@@ -851,145 +1125,143 @@ function savePDFSplit() {
     const processedData = [];
 
     // Process each row of data
-data.forEach((row, index) => {
-    const rowNumber = index + 1;  // Adding row numbers
+    data.forEach((row, index) => {
+        const rowNumber = index + 1;
 
-    // First half with row number
-    const topHalf = topHalfIndices.map(idx => row[idx] || "");
-    topHalf[0] = rowNumber.toString(); // Add row number only to first half
+        // First half with row number
+        const topHalf = topHalfIndices.map(idx => row[idx] || "");
+        topHalf[0] = rowNumber.toString(); 
 
-    // Second half with an empty cell for row number space
-    const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
-    bottomHalf[0] = ''; // Empty cell in second half
+        // Second half with an empty cell for row number space
+        const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
+        bottomHalf[0] = ''; 
 
-    // Push the first half of the header with row #
-    processedData.push(topHalfHeaders);
-    processedData.push(topHalf);
+        // Push the first half of the header with row #
+        processedData.push(topHalfHeaders);
+        processedData.push(topHalf);
 
-    // Push the second half of the header with empty cell instead of row number
-    const bottomHeaderRow = [...bottomHalfHeaders];
-    bottomHeaderRow[0] = '';  // Ensure empty cell for second half header row
+        // Push the second half of the header with empty cell instead of row number
+        const bottomHeaderRow = [...bottomHalfHeaders];
+        bottomHeaderRow[0] = '';
 
-    processedData.push(bottomHeaderRow);
-    processedData.push(bottomHalf);
+        processedData.push(bottomHeaderRow);
+        processedData.push(bottomHalf);
 
-    // Add an empty row for spacing
-    processedData.push(Array(topHalfHeaders.length).fill(''));
-});
+        // Add an empty row for spacing
+        processedData.push(Array(topHalfHeaders.length).fill(''));
+    });
 
-const timestamp = getFormattedTimestamp();
-const filename = `SavePDF_${data.length}_${timestamp}.pdf`;
+    const timestamp = getFormattedTimestamp();
+    const filename = `Split_${data.length}_${timestamp}.pdf`;
 
-doc.autoTable({
-    body: processedData,
-    startY: 25,
-    theme: 'grid',
-    margin: { top: 25, left: 10, right: 10, bottom: 10 },
-    styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-        fontStyle: 'bold',
-        halign: 'center',
-    },
-    headStyles: {
-        fontSize: 7,
-        textColor: [255, 255, 255],
-        fillColor: [0, 51, 102], // Correct header color
-        halign: 'center',
-    },
-    didParseCell: function (data) {
-        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
-        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
-        const greenColumns = ['0', '00'];  // For green columns
-        const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+    doc.autoTable({
+        body: processedData,
+        startY: 20,  // Decreased starting Y position
+        theme: 'grid',
+        margin: { top: 20, left: 16, right: 16, bottom: 10 },  // Reduced margins
+        styles: {
+            fontSize: 10,  // Reduced font size
+            cellPadding: 1.5,  // Reduced padding
+            overflow: 'linebreak',
+            fontStyle: 'bold',
+            halign: 'center',
+        },
+        headStyles: {
+            fontSize: 6,  // Slightly smaller header font size
+            textColor: [255, 255, 255],
+            fillColor: [0, 51, 102],
+            halign: 'center',
+        },
+        didParseCell: function (data) {
+            const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+            const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+            const greenColumns = ['0', '00'];
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
 
-        const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
+            const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
 
-        if (isHeaderRow) {
-            const headerValue = data.cell.raw.trim();
-            if (greenColumns.includes(headerValue)) {
-                data.cell.styles.fillColor = [0, 200, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else if (redColumns.includes(headerValue)) {
-                data.cell.styles.fillColor = [255, 0, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else if (blackColumns.includes(headerValue)) {
-                data.cell.styles.fillColor = [0, 0, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else {
-                data.cell.styles.fillColor = [200, 200, 200];
-                data.cell.styles.textColor = [0, 0, 0];
+            if (isHeaderRow) {
+                const headerValue = data.cell.raw.trim();
+                if (greenColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 200, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (redColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [255, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (blackColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else {
+                    data.cell.styles.fillColor = [200, 200, 200];
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
+                return;
             }
-            return;
-        }
 
-        if (data.column.index === 0) {
-            if (data.cell.raw === '#') {
-                data.cell.styles.fillColor = [112, 128, 144];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else if (data.row.raw.every(cell => cell === "")) {
+            if (data.column.index === 0) {
+                if (data.cell.raw === '#') {
+                    data.cell.styles.fillColor = [112, 128, 144];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (data.row.raw.every(cell => cell === "")) {
+                    data.cell.styles.fillColor = [255, 255, 255];
+                    data.cell.styles.textColor = [0, 0, 0];
+                } else {
+                    data.cell.styles.fillColor = [211, 211, 211];
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
+                return;
+            }
+
+            if (data.row.raw.every(cell => cell === "")) {
                 data.cell.styles.fillColor = [255, 255, 255];
                 data.cell.styles.textColor = [0, 0, 0];
-            } else {
-                data.cell.styles.fillColor = [211, 211, 211];
-                data.cell.styles.textColor = [0, 0, 0];
+                return;
             }
-            return;
+
+            let appliedColor = false;
+            const cellValue = parseFloat(data.cell.raw);
+
+            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                appliedColor = true;
+            }
+
+            if (!appliedColor) {
+                data.cell.styles.fillColor = [211, 211, 211];
+            }
+        },
+        didDrawPage: function () {
+            doc.setFontSize(12);  // Smaller title font
+            doc.text(filename.replace('.pdf', ''), 14, 10);  // Moved closer to top
         }
+    });
 
-        if (data.row.raw.every(cell => cell === "")) {
-            data.cell.styles.fillColor = [255, 255, 255];
-            data.cell.styles.textColor = [0, 0, 0];
-            return;
-        }
 
-        let appliedColor = false;
-        const cellValue = parseFloat(data.cell.raw);
 
-       // if (!isNaN(cellValue)) {
-       //     if (cellValue === 3) {
-       //         data.cell.styles.fillColor = getColorForStyle('light-red');
-       //         appliedColor = true;
-       //     } else if (cellValue === 4) {
-       //         data.cell.styles.fillColor = getColorForStyle('Gold');
-       //         appliedColor = true;
-       //     } else if (cellValue === 5) {
-       //         data.cell.styles.fillColor = getColorForStyle('violet');
-       //         appliedColor = true;
-       //     } else if (cellValue === 6) {
-       //         data.cell.styles.fillColor = getColorForStyle('light-orange');
-       //         appliedColor = true;
-       //     } else if (cellValue >= 7) {
-       //         data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
-       //         appliedColor = true;
-       //     }
-      //  }
+    // ✅ New Page for Tasks and Selected Files
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text("Tasks:", 14, 20);
 
-        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-            appliedColor = true;
-        }
+    let finalY = 30;
+    doc.setFontSize(12);
+    extractedStrings.forEach(([text, rowNum]) => {
+        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
+        finalY += 6;
+    });
 
-        if (!appliedColor) {
-            data.cell.styles.fillColor = [211, 211, 211];
-        }
-    },
-    didDrawPage: function (data) {
-        const currentY = doc.autoTable.previous.finalY || 25;
-        const pageHeight = doc.internal.pageSize.height;
+    // ✅ Add Selected Files List
+    doc.setFontSize(14);
+    doc.text("Selected Files:", 14, finalY + 10);
 
-        // Check if adding the next set of 4 rows exceeds the page height
-        if (currentY + (4 * 10) > pageHeight - 20) {
-            doc.addPage();
-        }
-
-        doc.setFontSize(16);
-        doc.text(filename.replace('.pdf', ''), 14, 15);
-    }
-});
-
-doc.save(filename);
+    finalY += 20;
+    doc.setFontSize(12);
+    selectedFileNames.forEach(fileName => {
+        doc.text(fileName, 14, finalY);
+        finalY += 6;
+    }); 
+    
+    doc.save(filename);
 }
 
 // Function to get the correct color based on the provided style
@@ -1024,7 +1296,7 @@ function savePDFSingle() {
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;
-    const filename = `SavePDF_${rowCount}_${timestamp}.pdf`;
+    const filename = `Single_${rowCount}_${timestamp}.pdf`;
 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;
@@ -1250,17 +1522,31 @@ didParseCell: function (data) {
         }
     });
 
+    // ✅ New Page for Tasks and Selected Files
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text("Tasks:", 14, 20);
+
+    let finalY = 30;
+    doc.setFontSize(12);
+    extractedStrings.forEach(([text, rowNum]) => {
+        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
+        finalY += 6;
+    });
+
+    // ✅ Add Selected Files List
+    doc.setFontSize(14);
+    doc.text("Selected Files:", 14, finalY + 10);
+
+    finalY += 20;
+    doc.setFontSize(12);
+    selectedFileNames.forEach(fileName => {
+        doc.text(fileName, 14, finalY);
+        finalY += 6;
+    });
+    
     doc.save(filename);
 }
-
-
-        // Event listener for 'showStatsButton'
-        document.getElementById('viewStatsButton').addEventListener('click', function() {
-            console.log('Show Stats button clicked'); // Debugging statement
-            localStorage.setItem('clearTable', 'true');
-            localStorage.setItem('csvData', JSON.stringify(Array.from(document.querySelectorAll('#csvTable tbody tr')).map(row => Array.from(row.querySelectorAll('td')).map(td => td.textContent)))); // Save table data
-            window.open('view-stats.html', '_blank');
-        });
 
         // Event listener for 'sortCols' button
         document.getElementById('sortCols').addEventListener('click', function() {
@@ -1329,7 +1615,7 @@ didParseCell: function (data) {
         modal.style.display = 'none';
       }
     }
-    
+    </script>
 
   </script>
 </body>

@@ -1,4 +1,5 @@
 Category,Difference,pValue,Cumulative P-Value,Observed Frequency
+No Task,0,0,0,0
 Top - Bottom,0,0.128559,,1285591
 Top - Bottom,2,0.122116,0.435693,1221156
 Top - Bottom,4,0.104662,0.313578,1046618

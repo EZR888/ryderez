@@ -515,7 +515,6 @@
     let selectedOptions = [];
     let rowsData = [];  // ✅ Define globally to store all runs
     let allPValues = [];  // ✅ Store all runs' p-values globally
-    let numRuns = 1; // Default value
 
     
     // ✅ Move this to the top so all functions can access it
@@ -527,8 +526,7 @@ const taskMappings = {
     "Top - Bottom": "TB",
     "Left - Right": "LR",
     "Variance (Within-Run)": "V",
-    "Density (Top 5 Sum)": "D",
-    "No Task": "NT"
+    "Density (Top 5 Sum)": "D"
 };
 
 
@@ -653,12 +651,11 @@ function generateTaskIdentifier(selectedTasks) {
         "Top - Bottom": "TB",
         "Left - Right": "LR",
         "Variance (Within-Run)": "V",
-        "Density (Top 5 Sum)": "D",
-        "No Task": "NT"
+        "Density (Top 5 Sum)": "D"
     };
 
-    let identifier = selectedTasks.map(task => taskMappings[task]).join("_");
-    return identifier;
+    let identifier = selectedTasks.map(task => taskMappings[task] || "NT").join("_");
+    return identifier || "NT";
 }
 
 
@@ -746,40 +743,32 @@ function getRandomInt(max) {
 }
 
 function computePValues(selectedOptions, runIndex) {
+    if (!selectedOptions || selectedOptions.length === 0) {
+        console.warn("⚠️ No tasks selected. Defaulting P-values to 1.0.");
+        return [{ run: runIndex + 1, category: "NT", difference: "N/A", pValue: 1.0 }];
+    }
+
     let pValues = [];
 
-    // ✅ Define the 8 expected categories
-    const expectedCategories = [
-        "Top - Bottom",
-        "Left - Right",
-        "Center 9 Top - Bottom",
-        "00 - 0",
-        "Top Ends - Center",
-        "Bottom Ends - Center",
-        "00 Cluster",
-        "0 Cluster"
-    ];
+    selectedOptions.forEach(option => {
+        let activeTask = getActiveTask();
+        let difference = 0;
 
-    // ✅ Compute differences for ALL 8 expected categories
-    let categoryDifferences = {
-        "Top - Bottom": sumColumns(Totals, groupIndices.topIndices) - sumColumns(Totals, groupIndices.bottomIndices),
-        "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
-        "Center 9 Top - Bottom": sumColumns(Totals, groupIndices.cTop) - sumColumns(Totals, groupIndices.cBottom),
-        "00 - 0": sumColumns(Totals, groupIndices.zzCluster) - sumColumns(Totals, groupIndices.zCluster),
-        "Top Ends - Center": sumColumns(Totals, groupIndices.topEnds) - sumColumns(Totals, groupIndices.topCenter),
-        "Bottom Ends - Center": sumColumns(Totals, groupIndices.bottomEnds) - sumColumns(Totals, groupIndices.bottomCenter),
-        "00 Cluster": sumColumns(Totals, groupIndices.zzCluster),
-        "0 Cluster": sumColumns(Totals, groupIndices.zCluster),
-    };
+        if (activeTask.statType === "sum") {
+            let topHits = sumColumns(Totals, groupIndices[activeTask.top]);
+            let bottomHits = sumColumns(Totals, groupIndices[activeTask.bottom]);
+            difference = topHits - bottomHits;
+        } else if (activeTask.statType === "variance") {
+            difference = calculateVariance(Totals);
+        } else if (activeTask.statType === "density") {
+            difference = calculateDensity(Totals);
+        }
 
-    // ✅ Compute P-values for ALL 8 categories, regardless of selected task
-    expectedCategories.forEach(category => {
-        let difference = categoryDifferences[category] || 0;
-        let pValue = lookupPValue(category, difference);
+        let pValue = lookupPValue(activeTask.category, difference);
 
         pValues.push({
-            run: runIndex + 1,
-            category: category,
+            run: runIndex + 1,  // ✅ Ensure correct run number
+            category: activeTask.category,
             difference: difference.toFixed(3),
             pValue: pValue.toFixed(6),
         });
@@ -790,120 +779,10 @@ function computePValues(selectedOptions, runIndex) {
 }
 
 
-function getActiveTask() {
-    const activeButton = document.querySelector(".toggle-button.active");
-    if (!activeButton) return { category: "No Task" };
-    
-    const taskMap = {
-        "Top - Bottom": { category: "Top - Bottom", top: "topIndices", bottom: "bottomIndices", statType: "sum" },
-        "Left - Right": { category: "Left - Right", top: "left", bottom: "right", statType: "sum" }, // ✅ FIXED: Matches refData
-        "Top Ends - Center": { category: "Top Ends - Center", top: "topEnds", bottom: "topCenter", statType: "sum" },
-        "Bottom Ends - Center": { category: "Bottom Ends - Center", top: "bottomEnds", bottom: "bottomCenter", statType: "sum" },
-        "Sum of 00": { category: "00 Cluster", top: "zzCluster", bottom: "zCluster", statType: "sum" },
-        "Sum of 0": { category: "0 Cluster", top: "zCluster", bottom: "zzCluster", statType: "sum" },
-        "Variance": { category: "Variance", statType: "variance" },
-        "Density": { category: "Density", statType: "density" },
-        "No Task": {category: "No Task" }
-    };
-    return taskMap[activeButton.textContent.trim()] || taskMap["Top - Bottom"];
-}
-
-async function loadReferenceData() {
-    try {
-        const response = await fetch('10mcols.csv');
-        const csvText = await response.text();
-        refData = parseCSVToRefData(csvText);     
-        console.log("✅ Reference data loaded!", refData);
-    } catch (error) {
-        console.error("⚠️ Error loading reference data:", error);
-    }
-}
-
-
-// Call function on page load
-window.addEventListener('load', loadReferenceData);
-
-function parseCSVToRefData(csvText, numRuns = 1) {
-    const lines = csvText.split("\n");
-    const refData = {};
-
-    for (let line of lines) {
-        const columns = line.split(",");
-        if (columns.length < 4) continue; // Ensure the line has enough columns
-
-        const category = columns[0].trim();
-        const diff = parseFloat(columns[1].trim());
-        const pVal = parseFloat(columns[2].trim()); // Regular p-value (unused now)
-        const cumPVal = parseFloat(columns[3].trim()); // Extract cumulative p-value
-
-        if (isNaN(diff) || isNaN(cumPVal)) continue; // Skip bad data
-
-        if (!refData[category]) {
-            refData[category] = {};
-        }
-
-        // Multiply the cumulative p-value by the number of runs
-        refData[category][diff] = Math.min(cumPVal * numRuns, 1); // Ensure it doesn't exceed 1
-    }
-
-    return refData;
-}
-
-
-function lookupPValue(category, difference) {
-    let fullCategoryName = Object.keys(taskMappings).find(
-        key => taskMappings[key] === category
-    ) || category;
-
-    console.log(`🔍 Looking up category: '${category}', resolved to: '${fullCategoryName}'`);
-
-    if (!refData[fullCategoryName]) {
-        console.error(`⚠️ ERROR: Category '${fullCategoryName}' not found in reference data!`);
-        return 1.0; // Default if category not found
-    }
-
-    let absDifference = Math.abs(difference);
-
-    let availableDifferences = Object.keys(refData[fullCategoryName]).map(Number);
-    
-    if (availableDifferences.length === 0) {
-        console.warn(`⚠️ WARNING: No differences found for '${fullCategoryName}', using default p=1.0`);
-        return 1.0;
-    }
-
-    let closestDiff = availableDifferences.reduce((a, b) =>
-        Math.abs(b - absDifference) < Math.abs(a - absDifference) ? b : a
-    );
-
-    console.log(`✅ Found closest difference: ${closestDiff} for category '${fullCategoryName}'`);
-
-    let retrievedPValue = refData[fullCategoryName][closestDiff];
-
-    console.log(`🟢 DEBUG: Retrieved pValue from refData = ${retrievedPValue}`);
-
-    if (!(closestDiff in refData[fullCategoryName]) || retrievedPValue === undefined) {
-        console.warn(`⚠️ WARNING: Difference '${absDifference}' not found for '${fullCategoryName}', using default p=1.0`);
-        return 1.0;
-    }
-
-    return retrievedPValue;
-}
-
-
-function getSelectedOptions() {
-    return selectedOptions;  // Returns the globally tracked selected options
-}
-
-function toggleOption(button) {
-    document.querySelectorAll(".toggle-button").forEach(btn => btn.classList.remove("active"));
-    button.classList.add("active");
-    selectedOptions = [button.textContent.trim()];
-    console.log("Selected Options:", selectedOptions); // Debugging log
-}
 
 function multiSpin() {
-    numRuns = parseInt(document.getElementById('x').value) || 1;  // ✅ Update global variable
-    let numSpins = 38; 
+    let numRuns = parseInt(document.getElementById('x').value);
+    let numSpins = 38;
     let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
 
     rowsData = [];  // ✅ Reset storage for new runs
@@ -951,116 +830,131 @@ function multiSpin() {
     singleRun(0);
 }
 
+function getActiveTask() {
+    const activeButton = document.querySelector(".toggle-button.active");
+    if (!activeButton) return { category: "Top - Bottom", top: "topIndices", bottom: "bottomIndices", statType: "sum" };
+    
+    const taskMap = {
+        "Top - Bottom": { category: "Top - Bottom", top: "topIndices", bottom: "bottomIndices", statType: "sum" },
+        "Left - Right": { category: "Left - Right", top: "left", bottom: "right", statType: "sum" }, // ✅ FIXED: Matches refData
+        "Top Ends - Center": { category: "Top Ends - Center", top: "topEnds", bottom: "topCenter", statType: "sum" },
+        "Bottom Ends - Center": { category: "Bottom Ends - Center", top: "bottomEnds", bottom: "bottomCenter", statType: "sum" },
+        "Sum of 00": { category: "00 Cluster", top: "zzCluster", bottom: "zCluster", statType: "sum" },
+        "Sum of 0": { category: "0 Cluster", top: "zCluster", bottom: "zzCluster", statType: "sum" },
+        "Variance": { category: "Variance", statType: "variance" },
+        "Density": { category: "Density", statType: "density" }
+    };
+    return taskMap[activeButton.textContent.trim()] || taskMap["Top - Bottom"];
+}
+
+async function loadReferenceData() {
+    try {
+        const response = await fetch('10mcols.csv');
+        const csvText = await response.text();
+        refData = parseCSVToRefData(csvText);
+        console.log("✅ Reference data loaded!", refData);
+    } catch (error) {
+        console.error("⚠️ Error loading reference data:", error);
+    }
+}
+
+
+// Call function on page load
+window.addEventListener('load', loadReferenceData);
+
+function parseCSVToRefData(csvText, numRuns = 1) {
+    const lines = csvText.split("\n");
+    const refData = {};
+
+    for (let line of lines) {
+        const columns = line.split(",");
+        if (columns.length < 4) continue; // Ensure the line has enough columns
+
+        const category = columns[0].trim();
+        const diff = parseFloat(columns[1].trim());
+        const pVal = parseFloat(columns[2].trim()); // Regular p-value (unused now)
+        const cumPVal = parseFloat(columns[3].trim()); // Extract cumulative p-value
+
+        if (isNaN(diff) || isNaN(cumPVal)) continue; // Skip bad data
+
+        if (!refData[category]) {
+            refData[category] = {};
+        }
+
+        // Multiply the cumulative p-value by the number of runs
+        refData[category][diff] = Math.min(cumPVal * numRuns, 1); // Ensure it doesn't exceed 1
+    }
+
+    return refData;
+}
+
+
+function lookupPValue(category, difference) {
+    let fullCategoryName = Object.keys(taskMappings).find(key => taskMappings[key] === category) || category;
+
+    if (!refData[fullCategoryName]) {
+        console.error(`⚠️ ERROR: Category '${fullCategoryName}' not found in reference data!`);
+        return 1.0; // Default if category not found
+    }
+
+    let absDifference = Math.abs(difference);
+
+    // ✅ Find the closest available difference instead of failing outright
+    let closestDiff = Object.keys(refData[fullCategoryName])
+                            .map(Number) // Convert keys to numbers
+                            .reduce((a, b) => Math.abs(b - absDifference) < Math.abs(a - absDifference) ? b : a);
+
+    if (!(closestDiff in refData[fullCategoryName])) {
+        console.warn(`⚠️ WARNING: Difference '${absDifference}' not found for '${fullCategoryName}', using default p=1.0`);
+        return 1.0;
+    }
+
+    return refData[fullCategoryName][closestDiff];
+}
+
+
+function getSelectedOptions() {
+    return selectedOptions;  // Returns the globally tracked selected options
+}
+
+function toggleOption(button) {
+    document.querySelectorAll(".toggle-button").forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+    selectedOptions = [button.textContent.trim()];
+    console.log("Selected Options:", selectedOptions); // Debugging log
+}
+
 function displayPValues(newPValues) {
+    allPValues.push(...newPValues);  // ✅ Append new runs instead of overwriting
+
     let tableContainer = document.getElementById('pValueTableContainer');
     let table = document.getElementById("pValueTable");
 
     if (!table) {
         tableContainer.innerHTML = `
             <table id="pValueTable" border='1'>
-                <tr>
-                    <th>Run</th>
-                    <th>Task</th>
-                    <th>Difference</th>
-                    <th>Significance</th>
-                    <th>Adjusted P-Value</th>
-                </tr>
+                <tr><th>Run</th><th>Category</th><th>Difference</th><th>Ref Set P-Value</th></tr>
             </table>
         `;
         table = document.getElementById("pValueTable");
     }
 
-    let rowsHTML = "";
-    let groupedRows = {};
+    let rowsHTML = allPValues.map(({ run, category, difference, pValue }) => {
+        let highlight = pValue < 0.05 ? "style='background-color: yellow; color: black;'" : "";
+        let formattedDifference = isNaN(difference) ? "N/A" : Number(difference).toFixed(3);
+        let formattedPValue = isNaN(pValue) ? "N/A" : Number(pValue).toFixed(6);
 
-    // ✅ Group values by run number and category
-    newPValues.forEach(({ run, category, difference, pValue }) => {
-        let numericPValue = parseFloat(pValue);
-        let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
-
-        if (!groupedRows[run]) {
-            groupedRows[run] = {};
-        }
-
-        groupedRows[run][category] = {
-            difference,
-            adjustedPValue
-        };
-    });
-
-    // ✅ Process grouped data for each run
-    Object.keys(groupedRows).forEach(run => {
-        let selectedTask = getActiveTask().category;
-        let significanceMatches = [];
-
-        console.log(`🔍 Checking all categories for Run ${run}...`);
-
-        // ✅ Loop through ONLY the 8 expected categories
-        const expectedCategories = [
-            "Top - Bottom",
-            "Left - Right",
-            "Center 9 Top - Bottom",
-            "00 - 0",
-            "Top Ends - Center",
-            "Bottom Ends - Center",
-            "00 Cluster",
-            "0 Cluster"
-        ];
-
-        expectedCategories.forEach(category => {
-            if (groupedRows[run][category]) {
-                let { difference, adjustedPValue } = groupedRows[run][category];
-
-                console.log(`   📊 Category: ${category}, Difference: ${difference}, Adjusted P-Value: ${adjustedPValue}`);
-
-                if (adjustedPValue !== "-" && parseFloat(adjustedPValue) < 0.05) {
-                    console.log(`   ✅ Category ${category} is SIGNIFICANT for Run ${run}!`);
-                    significanceMatches.push({
-                        category,
-                        difference,
-                        adjustedPValue
-                    });
-                }
-            }
-        });
-
-        // ✅ Generate multiple rows if multiple significant categories exist
-        if (significanceMatches.length > 0) {
-            significanceMatches.forEach(({ category, difference, adjustedPValue }) => {
-                rowsHTML += `
-                    <tr style='background-color: yellow; color: black;'>
-                        <td>${run}</td>
-                        <td>${selectedTask}</td>
-                        <td>${difference}</td>
-                        <td>${category}</td>
-                        <td>${adjustedPValue}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            // ✅ Display a normal row if no significant categories found
-            rowsHTML += `
-                <tr>
+        return `<tr ${highlight}>
                     <td>${run}</td>
-                    <td>${selectedTask}</td>
-                    <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td>
-                    <td>-</td>
-                    <td>${groupedRows[run][selectedTask]?.adjustedPValue ?? "-"}</td>
-                </tr>
-            `;
-        }
-    });
+                    <td>${category}</td>
+                    <td>${formattedDifference}</td>
+                    <td>${formattedPValue}</td>
+                </tr>`;
+    }).join("");
 
-    // ✅ Update the table
-    table.innerHTML = `<tr>
-                            <th>Run</th>
-                            <th>Task</th>
-                            <th>Difference</th>
-                            <th>Significance</th>
-                            <th>Adjusted P-Value</th>
-                        </tr>${rowsHTML}`;
+    table.innerHTML = `<tr><th>Run</th><th>Category</th><th>Difference</th><th>Ref Set P-Value</th></tr>${rowsHTML}`;
 
-    console.log("✅ Finished updating P-Values Display.");
+    console.log("✅ Updated P-Values Display:", allPValues);
 }
 
 // Function to calculate variance

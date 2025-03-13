@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -511,32 +512,14 @@
     // Define the variables
     let Totals = new Array(38).fill(0);
     let currentBlinkCell = null;
-    let lastPValues = [];  // Global variable to store latest P-Values
-    let selectedOptions = [];
-    let rowsData = [];  // ✅ Define globally to store all runs
-    let allPValues = [];  // ✅ Store all runs' p-values globally
-    let numRuns = 1; // Default value
-
-    
-    // ✅ Move this to the top so all functions can access it
-const taskMappings = {
-    "Sum of 00": "S00",
-    "Sum of 0": "S0",
-    "Top Ends - Center": "TEC",
-    "Bottom Ends - Center": "BEC",
-    "Top - Bottom": "TB",
-    "Left - Right": "LR",
-    "Variance (Within-Run)": "V",
-    "Density (Top 5 Sum)": "D",
-    "No Task": "NT"
-};
-
 
     // Function to clear all arrays
     function clearArrays() {
       Totals = new Array(38).fill(0);
     }
-        
+    
+    let selectedOptions = []; // Stores selected options
+    
         const groupIndices = {
       topIndices: [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
       bottomIndices: [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6],
@@ -571,56 +554,49 @@ function getFormattedTimestamp() {
 
 
 // Function to export Totals array data to CSV format
-async function exportTotalsToCSV(array, pValues, rowCount, selectedOptions) {
+async function exportTotalsToCSV(array, rowCount, prefix) {
     let timestamp = getFormattedTimestamp();
+
     let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
     csvContent += `LAST GENERATED ON: ${timestamp}\n\n`;
 
-    if (!Array.isArray(array) || array.length === 0) {
-        console.error("❌ ERROR: No spin data found! Export aborted.");
-        return;
-    }
+    let headers = [...Array(38).keys()];
+    headers.push("Task");  // Add new column header for Task
+    csvContent += headers.join(",") + "\n";
 
-    let category = generateTaskIdentifier(selectedOptions); // ✅ Generate task identifier
+    // ✅ Get the active task identifier
+    const taskIdentifier = generateTaskIdentifier(selectedOptions);
 
-    // ✅ Insert header row at index 3
-    let headerRow = Array.from({ length: 46 }, (_, i) => i).join(",") + "\n";
-    csvContent += headerRow;
-
-    array.forEach((row, rowIndex) => {
-        let matchingPValueEntry = pValues.find(p => p.run === rowIndex + 1);
-        let difference = matchingPValueEntry ? parseFloat(matchingPValueEntry.difference) : "0.000";
-        let pValue = matchingPValueEntry ? parseFloat(matchingPValueEntry.pValue) : 1.0;
-
-        let taskFromRow = row[38] || "(MISSING)";
-        let fullTaskName = Object.keys(taskMappings).find(key => taskMappings[key] === category) || category;
-        let code = "NTN";
-
-        if (pValue < 0.05) {
-            if (category === "NT") {
-                code = "NTS";
-            } else if (fullTaskName.trim().toLowerCase() === taskFromRow.trim().toLowerCase()) {
-                code = "TSS";
-            } else {
-                code = "TSO";
-            }
-        }
-
-        row[38] = category;
-        row[39] = code;
-
-        console.log(`✅ Writing row ${rowIndex + 1} - Difference: ${difference}, P-Value: ${pValue}`);
-
-        let csvRow = row.concat([rowIndex + 1, category, difference, pValue.toFixed(6), row[38], row[39]]);
-        csvContent += csvRow.join(",") + "\n";
+    // ✅ Append the task identifier to each row
+    array.forEach(row => {
+        csvContent += [...row, taskIdentifier].join(",") + "\n";
     });
 
-    // ✅ Restore obfuscated checksum to filename
-    const checksum = await generateChecksum(csvContent);
-    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
-    let filename = `Sim_${rowCount}_${category}_${timestamp}_${obfuscatedChecksum}.csv`;
+    csvContent += `\n`;
 
-    console.log(`✅ Final Filename: ${filename}`);
+    if (selectedOptions.length === 0) {
+        csvContent += `No Tasks\n`;
+    } else {
+        selectedOptions.forEach(task => {
+            csvContent += `${task}\n`;
+        });
+    }
+
+    // ✅ Generate SHA-256 checksum
+    const checksum = await generateChecksum(csvContent);
+
+    // ✅ Apply obfuscation for filename
+    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
+
+    // ✅ Define `filename` correctly before logging
+    const filename = `${prefix}${rowCount}_${taskIdentifier}_${timestamp}_${obfuscatedChecksum}.csv`;
+
+    // ✅ Debugging logs
+    console.log("🚀 Exporting CSV with Tasks:", selectedOptions);
+    console.log("✅ Final Filename:", filename);
+    
+
+    // ✅ Save the file with the correct name
     saveFile(csvContent, filename);
 }
 
@@ -642,9 +618,15 @@ function saveFile(content, filename) {
 
 // Generates the task identifier from selected tasks
 function generateTaskIdentifier(selectedTasks) {
-    if (!Array.isArray(selectedTasks) || selectedTasks.length === 0) {
-        return "NT"; // Default to "NT" (No Task)
+    if (!Array.isArray(selectedTasks)) {
+        console.error("⚠️ Error: selectedTasks is not an array:", selectedTasks);
+        return "NT"; // Default to "NT" if invalid
     }
+
+    if (selectedTasks.includes("No Tasks")) {
+        return "NT"; 
+    }
+
     const taskMappings = {
         "Sum of 00": "S00",
         "Sum of 0": "S0",
@@ -653,12 +635,20 @@ function generateTaskIdentifier(selectedTasks) {
         "Top - Bottom": "TB",
         "Left - Right": "LR",
         "Variance (Within-Run)": "V",
-        "Density (Top 5 Sum)": "D",
-        "No Task": "NT"
+        "Density (Top 5 Sum)": "D"
     };
 
-    let identifier = selectedTasks.map(task => taskMappings[task]).join("_");
-    return identifier;
+    let identifier = selectedTasks.map(task => {
+        if (taskMappings[task]) {
+            return taskMappings[task]; 
+        }
+        return task.split(/\s+/) 
+            .filter(word => word[0] === word[0].toUpperCase()) 
+            .map(word => word[0]) 
+            .join(""); 
+    }).join("");
+
+    return identifier || "NT"; 
 }
 
 
@@ -745,54 +735,65 @@ function getRandomInt(max) {
   return array[0] % max;
 }
 
-function computePValues(selectedOptions, runIndex) {
+function multiSpin() {
+    let numRuns = parseInt(document.getElementById('x').value);
+    let numSpins = 38;
+    let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
+    let allTotals = [];
     let pValues = [];
 
-    // ✅ Define the 8 expected categories
-    const expectedCategories = [
-        "Top - Bottom",
-        "Left - Right",
-        "Center 9 Top - Bottom",
-        "00 - 0",
-        "Top Ends - Center",
-        "Bottom Ends - Center",
-        "00 Cluster",
-        "0 Cluster"
-    ];
+    function singleRun(runIndex) {
+        clearArrays();
+        document.getElementById('TotalsTableContainer').innerHTML = '';
+        let spinCount = 0;
 
-    // ✅ Compute differences for ALL 8 expected categories
-    let categoryDifferences = {
-        "Top - Bottom": sumColumns(Totals, groupIndices.topIndices) - sumColumns(Totals, groupIndices.bottomIndices),
-        "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
-        "Center 9 Top - Bottom": sumColumns(Totals, groupIndices.cTop) - sumColumns(Totals, groupIndices.cBottom),
-        "00 - 0": sumColumns(Totals, groupIndices.zzCluster) - sumColumns(Totals, groupIndices.zCluster),
-        "Top Ends - Center": sumColumns(Totals, groupIndices.topEnds) - sumColumns(Totals, groupIndices.topCenter),
-        "Bottom Ends - Center": sumColumns(Totals, groupIndices.bottomEnds) - sumColumns(Totals, groupIndices.bottomCenter),
-        "00 Cluster": sumColumns(Totals, groupIndices.zzCluster),
-        "0 Cluster": sumColumns(Totals, groupIndices.zCluster),
-    };
+        function spin() {
+            if (spinCount < numSpins) {
+                setTimeout(function () {
+                    let c1 = getRandomInt(38);
+                    Totals[c1] += 1;
+                    document.getElementById('spinNumDisplay').innerHTML = `Spin Num: <span class="zero-highlight">${spinCount + 1}</span>`;
+                    document.getElementById('runNumDisplay').innerHTML = `Run Num:  <span class="zero-highlight">${runIndex + 1}</span>`;
+                    populateTotalsTable(c1, spinCount === numSpins - 1);
+                    spinCount++;
+                    setTimeout(spin, spinDelay);
+                }, 0);
+            } else {
+                allTotals.push([...Totals]);
+                let activeTask = getActiveTask();
+                
+                let difference;
+                if (activeTask.statType === "sum") {
+                    let topHits = sumColumns(Totals, groupIndices[activeTask.top]);
+                    let bottomHits = sumColumns(Totals, groupIndices[activeTask.bottom]);
+                    difference = topHits - bottomHits;
+                } else if (activeTask.statType === "variance") {
+                    difference = calculateVariance(Totals);
+                } else if (activeTask.statType === "density") {
+                    difference = calculateDensity(Totals);
+                }
 
-    // ✅ Compute P-values for ALL 8 categories, regardless of selected task
-    expectedCategories.forEach(category => {
-        let difference = categoryDifferences[category] || 0;
-        let pValue = lookupPValue(category, difference);
+                let pValue = lookupPValue(activeTask.category, difference);
+                pValues.push({ run: runIndex + 1, difference, pValue, category: activeTask.category });
 
-        pValues.push({
-            run: runIndex + 1,
-            category: category,
-            difference: difference.toFixed(3),
-            pValue: pValue.toFixed(6),
-        });
-    });
-
-    console.log(`✅ Computed P-Values for Run ${runIndex + 1}:`, pValues);
-    return pValues;
+                if (runIndex < numRuns - 1) {
+                    setTimeout(() => singleRun(runIndex + 1), 100);
+                } else {
+                    displayPValues(pValues);
+                    const rowCount = allTotals.length;
+                    exportTotalsToCSV(allTotals, rowCount, "Sim_");
+                    endMultiSpin();
+                }
+            }
+        }
+        spin();
+    }
+    singleRun(0);
 }
-
 
 function getActiveTask() {
     const activeButton = document.querySelector(".toggle-button.active");
-    if (!activeButton) return { category: "No Task" };
+    if (!activeButton) return { category: "Top - Bottom", top: "topIndices", bottom: "bottomIndices", statType: "sum" };
     
     const taskMap = {
         "Top - Bottom": { category: "Top - Bottom", top: "topIndices", bottom: "bottomIndices", statType: "sum" },
@@ -802,8 +803,7 @@ function getActiveTask() {
         "Sum of 00": { category: "00 Cluster", top: "zzCluster", bottom: "zCluster", statType: "sum" },
         "Sum of 0": { category: "0 Cluster", top: "zCluster", bottom: "zzCluster", statType: "sum" },
         "Variance": { category: "Variance", statType: "variance" },
-        "Density": { category: "Density", statType: "density" },
-        "No Task": {category: "No Task" }
+        "Density": { category: "Density", statType: "density" }
     };
     return taskMap[activeButton.textContent.trim()] || taskMap["Top - Bottom"];
 }
@@ -812,7 +812,7 @@ async function loadReferenceData() {
     try {
         const response = await fetch('10mcols.csv');
         const csvText = await response.text();
-        refData = parseCSVToRefData(csvText);     
+        refData = parseCSVToRefData(csvText);
         console.log("✅ Reference data loaded!", refData);
     } catch (error) {
         console.error("⚠️ Error loading reference data:", error);
@@ -851,48 +851,20 @@ function parseCSVToRefData(csvText, numRuns = 1) {
 
 
 function lookupPValue(category, difference) {
-    let fullCategoryName = Object.keys(taskMappings).find(
-        key => taskMappings[key] === category
-    ) || category;
-
-    console.log(`🔍 Looking up category: '${category}', resolved to: '${fullCategoryName}'`);
-
-    if (!refData[fullCategoryName]) {
-        console.error(`⚠️ ERROR: Category '${fullCategoryName}' not found in reference data!`);
-        return 1.0; // Default if category not found
+    if (!refData[category]) {
+        console.error(`⚠️ ERROR: Category '${category}' not found in reference data!`);
+        return 1.0;
     }
 
     let absDifference = Math.abs(difference);
-
-    let availableDifferences = Object.keys(refData[fullCategoryName]).map(Number);
-    
-    if (availableDifferences.length === 0) {
-        console.warn(`⚠️ WARNING: No differences found for '${fullCategoryName}', using default p=1.0`);
+    if (!(absDifference in refData[category])) {
+        console.warn(`⚠️ WARNING: Difference '${absDifference}' not found for '${category}', using default p=1.0`);
         return 1.0;
     }
 
-    let closestDiff = availableDifferences.reduce((a, b) =>
-        Math.abs(b - absDifference) < Math.abs(a - absDifference) ? b : a
-    );
-
-    console.log(`✅ Found closest difference: ${closestDiff} for category '${fullCategoryName}'`);
-
-    let retrievedPValue = refData[fullCategoryName][closestDiff];
-
-    console.log(`🟢 DEBUG: Retrieved pValue from refData = ${retrievedPValue}`);
-
-    if (!(closestDiff in refData[fullCategoryName]) || retrievedPValue === undefined) {
-        console.warn(`⚠️ WARNING: Difference '${absDifference}' not found for '${fullCategoryName}', using default p=1.0`);
-        return 1.0;
-    }
-
-    return retrievedPValue;
+    return refData[category][absDifference];
 }
 
-
-function getSelectedOptions() {
-    return selectedOptions;  // Returns the globally tracked selected options
-}
 
 function toggleOption(button) {
     document.querySelectorAll(".toggle-button").forEach(btn => btn.classList.remove("active"));
@@ -901,166 +873,21 @@ function toggleOption(button) {
     console.log("Selected Options:", selectedOptions); // Debugging log
 }
 
-function multiSpin() {
-    numRuns = parseInt(document.getElementById('x').value) || 1;  // ✅ Update global variable
-    let numSpins = 38; 
-    let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
-
-    rowsData = [];  // ✅ Reset storage for new runs
-    let allTotals = [];
-    let allPValues = [];  // ✅ Store P-values correctly
-
-    function singleRun(runIndex) {
-        clearArrays();
-        document.getElementById('TotalsTableContainer').innerHTML = '';
-        let spinCount = 0;
-
-        function spin() {
-            if (spinCount < numSpins) {
-                setTimeout(function () {
-                    let c1 = getRandomInt(38);
-                    Totals[c1] += 1;
-                    document.getElementById('spinNumDisplay').innerHTML = `Spin Num: <span class="zero-highlight">${spinCount + 1}</span>`;
-                    document.getElementById('runNumDisplay').innerHTML = `Run Num:  <span class="zero-highlight">${runIndex + 1}</span>`;
-                    populateTotalsTable(c1, spinCount === numSpins - 1);
-                    spinCount++;
-                    setTimeout(spin, spinDelay);
-                }, 0);
-            } else {
-                allTotals.push([...Totals]);
-                let row = [...Totals];  
-                rowsData.push(row);  
-
-                selectedOptions = selectedOptions.length ? selectedOptions : ["No Tasks"];
-                let pValues = computePValues(selectedOptions, runIndex); // ✅ PASS runIndex
-                allPValues.push(...pValues);  // ✅ Store all runs' P-values
-
-                if (runIndex < numRuns - 1) {
-                    setTimeout(() => singleRun(runIndex + 1), 100);
-                } else {
-                    displayPValues(allPValues);  // ✅ Display all runs' P-values
-                    setTimeout(() => {
-                        exportTotalsToCSV(rowsData, allPValues, rowsData.length, selectedOptions);
-                    }, 500); 
-                    endMultiSpin();
-                }
-            }
-        }
-        spin();
-    }
-    singleRun(0);
-}
-
-function displayPValues(newPValues) {
-    let tableContainer = document.getElementById('pValueTableContainer');
-    let table = document.getElementById("pValueTable");
-
-    if (!table) {
-        tableContainer.innerHTML = `
-            <table id="pValueTable" border='1'>
-                <tr>
-                    <th>Run</th>
-                    <th>Task</th>
-                    <th>Difference</th>
-                    <th>Significance</th>
-                    <th>Adjusted P-Value</th>
-                </tr>
-            </table>
-        `;
-        table = document.getElementById("pValueTable");
-    }
-
-    let rowsHTML = "";
-    let groupedRows = {};
-
-    // ✅ Group values by run number and category
-    newPValues.forEach(({ run, category, difference, pValue }) => {
-        let numericPValue = parseFloat(pValue);
-        let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
-
-        if (!groupedRows[run]) {
-            groupedRows[run] = {};
-        }
-
-        groupedRows[run][category] = {
-            difference,
-            adjustedPValue
-        };
+function displayPValues(pValues) {
+    let output = `<table id="pValueTable" border='1'><tr><th>Run</th><th>Category</th><th>Difference</th><th>Ref Set P-Value</th></tr>`;
+    pValues.forEach(({ run, category, difference, pValue }) => {
+        let highlight = pValue < 0.05 ? "style='background-color: yellow; color: black;'" : "";
+        
+        // Ensure `difference` is a number
+        let formattedDifference = isNaN(difference) ? "N/A" : parseFloat(difference).toFixed(3);
+        let formattedPValue = isNaN(pValue) ? "N/A" : pValue.toFixed(6);
+        
+        output += `<tr ${highlight}><td>${run}</td><td>${category}</td><td>${formattedDifference}</td><td>${formattedPValue}</td></tr>`;
     });
+    output += "</table>";
+    document.getElementById('pValueTableContainer').innerHTML = output;
 
-    // ✅ Process grouped data for each run
-    Object.keys(groupedRows).forEach(run => {
-        let selectedTask = getActiveTask().category;
-        let significanceMatches = [];
-
-        console.log(`🔍 Checking all categories for Run ${run}...`);
-
-        // ✅ Loop through ONLY the 8 expected categories
-        const expectedCategories = [
-            "Top - Bottom",
-            "Left - Right",
-            "Center 9 Top - Bottom",
-            "00 - 0",
-            "Top Ends - Center",
-            "Bottom Ends - Center",
-            "00 Cluster",
-            "0 Cluster"
-        ];
-
-        expectedCategories.forEach(category => {
-            if (groupedRows[run][category]) {
-                let { difference, adjustedPValue } = groupedRows[run][category];
-
-                console.log(`   📊 Category: ${category}, Difference: ${difference}, Adjusted P-Value: ${adjustedPValue}`);
-
-                if (adjustedPValue !== "-" && parseFloat(adjustedPValue) < 0.05) {
-                    console.log(`   ✅ Category ${category} is SIGNIFICANT for Run ${run}!`);
-                    significanceMatches.push({
-                        category,
-                        difference,
-                        adjustedPValue
-                    });
-                }
-            }
-        });
-
-        // ✅ Generate multiple rows if multiple significant categories exist
-        if (significanceMatches.length > 0) {
-            significanceMatches.forEach(({ category, difference, adjustedPValue }) => {
-                rowsHTML += `
-                    <tr style='background-color: yellow; color: black;'>
-                        <td>${run}</td>
-                        <td>${selectedTask}</td>
-                        <td>${difference}</td>
-                        <td>${category}</td>
-                        <td>${adjustedPValue}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            // ✅ Display a normal row if no significant categories found
-            rowsHTML += `
-                <tr>
-                    <td>${run}</td>
-                    <td>${selectedTask}</td>
-                    <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td>
-                    <td>-</td>
-                    <td>${groupedRows[run][selectedTask]?.adjustedPValue ?? "-"}</td>
-                </tr>
-            `;
-        }
-    });
-
-    // ✅ Update the table
-    table.innerHTML = `<tr>
-                            <th>Run</th>
-                            <th>Task</th>
-                            <th>Difference</th>
-                            <th>Significance</th>
-                            <th>Adjusted P-Value</th>
-                        </tr>${rowsHTML}`;
-
-    console.log("✅ Finished updating P-Values Display.");
+    console.log("✅ Updated P-Values Display:", pValues); // Debugging log
 }
 
 // Function to calculate variance

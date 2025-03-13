@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -570,17 +569,16 @@ let selectedFileNames = []; // Store selected filenames globally
 
     
            // Function to generate a formatted timestamp // 
-function getFormattedTimestamp() {
-    const now = new Date();
-    const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
-}
-
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}_${minutes}_${seconds}`;
+        }
         
               // Function to get color for a style
         function getColorForStyle(style) {
@@ -702,9 +700,9 @@ function displayCSVData(csvText, isFirstFile) {
         return;
     }
 
-	// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
-	const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
-	const dataLines = shouldSlice ? lines.slice(3) : lines;
+// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
+const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
+const dataLines = shouldSlice ? lines.slice(3) : lines;
 
     const tbody = document.querySelector('#csvTable tbody');
     let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
@@ -824,69 +822,17 @@ function displayExtractedStrings() {
         outputDiv.innerHTML += `<p>No extracted strings found.</p>`;
     } else {
         const ul = document.createElement('ul');
-        let fileTaskGroups = []; // ✅ Store each file’s row structure separately
-        let groupedTasks = [];
-        let lastFileProcessed = null;
-        let tempFileRows = {}; // Temporary per-file storage of row tasks
-
-        /** ✅ STEP 1: Process tasks from each file separately **/
-        extractedStrings.forEach(([taskWithRow, fileRowNumber]) => {
-            let match = taskWithRow.match(/^Row (\d+): (.+)$/);
-            if (!match) return;
-
-            let originalRowNum = parseInt(match[1], 10);
-            let taskText = match[2];
-
-            // ✅ If starting a new file, store and reset temporary row tracking
-            if (fileRowNumber !== lastFileProcessed) {
-                if (Object.keys(tempFileRows).length > 0) {
-                    fileTaskGroups.push(tempFileRows);
-                }
-                tempFileRows = {}; // Reset for new file
-            }
-
-            // ✅ Group tasks only within the same original file row
-            if (!tempFileRows[originalRowNum]) {
-                tempFileRows[originalRowNum] = new Set();
-            }
-            tempFileRows[originalRowNum].add(taskText);
-
-            lastFileProcessed = fileRowNumber;
-        });
-
-        // ✅ Push the last file’s grouped rows
-        if (Object.keys(tempFileRows).length > 0) {
-            fileTaskGroups.push(tempFileRows);
-        }
-
-        /** ✅ STEP 2: Renumber file rows sequentially on screen **/
-        let screenRowCounter = 1;
-
-        fileTaskGroups.forEach(fileRows => {
-            Object.keys(fileRows)
-                .sort((a, b) => a - b) // ✅ Sort rows within each file
-                .forEach(originalRowNum => {
-                    let tasks = Array.from(fileRows[originalRowNum]).join(" | ");
-                    groupedTasks.push({
-                        screenRow: screenRowCounter++, // ✅ Assign new screen row number
-                        tasks: tasks
-                    });
-                });
-        });
-
-        /** ✅ STEP 3: Display the correctly ordered task rows **/
-        groupedTasks.forEach(({ screenRow, tasks }) => {
+        extractedStrings.forEach(([text, rowNum]) => {
             const li = document.createElement('li');
-            li.textContent = `Row ${screenRow}: ${tasks}`;
+            li.textContent = `${text}`;
             ul.appendChild(li);
         });
-
         outputDiv.appendChild(ul);
     }
 
     // ✅ Create & Update Selected Files Section Below Tasks
     let fileOutputDiv = document.getElementById('selectedFilesOutput');
-
+    
     if (!fileOutputDiv) {
         fileOutputDiv = document.createElement('div');
         fileOutputDiv.id = 'selectedFilesOutput';
@@ -915,7 +861,6 @@ function displayExtractedStrings() {
     }
 }
 
-
 // ✅ **Ensure we reset tasks when new batch starts**
 document.getElementById('fileInput').addEventListener('change', function(event) {
     isNewBatch = true; // Reset task list when new files are chosen
@@ -923,7 +868,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 
     const files = Array.from(event.target.files)
         .filter(file => file.name.endsWith('.csv'))
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .sort((a, b) => extractTimestamp(a.name) - extractTimestamp(b.name)); // 🔹 Sort by extracted date
 
     // 🟢 Reset the global array before storing new filenames
     selectedFileNames = [];
@@ -965,6 +910,23 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
         selectedFileNames.push(file.name);
     });
 });
+
+/**
+ * Extracts a sortable timestamp from the filename.
+ * Assumes filename format contains MMDDYY_HH_MM_SS (e.g., "data_090124_14_30_45.csv").
+ * Returns a numeric timestamp for sorting.
+ */
+function extractTimestamp(filename) {
+    const match = filename.match(/(\d{6})_(\d{2})_(\d{2})_(\d{2})/);
+    if (!match) return 0; // If no match, treat as oldest
+
+    const [_, datePart, hour, minute, second] = match;
+    const year = "20" + datePart.slice(4, 6); // Convert YY to YYYY (assumes 2000s)
+    const month = datePart.slice(0, 2);
+    const day = datePart.slice(2, 4);
+
+    return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).getTime();
+}
 
 
 // ✅ Function to generate SHA-256 checksum
@@ -1038,148 +1000,91 @@ function applyGroupColoring(cells, sum) {
             });
         });
 
-document.getElementById('saveButton').addEventListener('click', async function() {
+document.getElementById('saveButton').addEventListener('click', async function() { // ✅ Add "async"
     const table = document.getElementById('csvTable');
     let csvContent = '';
 
     const rows = table.querySelectorAll('tr');
-    const rowCount = rows.length - 1; // Exclude header row
+    const rowCount = rows.length - 1; // Subtract 1 if the first row is headers
+
+    // Define the correct column order (0 to 37)
+    const columnOrder = [...Array(38).keys()].map(String);
+
+    // Get the header row and determine correct indices
+    let headerRow = Array.from(rows[0].querySelectorAll('th')).map(th => th.textContent.trim());
+
+    // Replace '00' with '37' in the header row
+    headerRow = headerRow.map(value => value === '00' ? '37' : value);
+
+    // Find indices of columns in the required order
+    let headerIndices = columnOrder.map(col => headerRow.indexOf(col));
+
+    console.log("Column Order: ", columnOrder);
+    console.log("Header Indices: ", headerIndices);
 
     // ✅ Add a header warning message
-    csvContent += "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
-    csvContent += `LAST GENERATED ON: ${getFormattedTimestamp()}\n\n`;
+    csvContent += `"THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT."\n`;
+    csvContent += `"LAST GENERATED ON: ${getFormattedTimestamp()}"\n`;
 
-    // ✅ Step 1: Ensure Headers Follow Index Order (0-37)
-    let headers = [...Array(38).keys()]; // Ensures headers 0-37
-    csvContent += headers.join(",") + "\n";
+    // ✅ Placeholder for checksum (to be replaced later)
+    csvContent += `"CHECKSUM: PENDING..."`;
 
-    // ✅ Step 2: Append data rows in correct index order
-    let indexedRows = [];
+    csvContent += `\n\n`;
 
+    // **Step 1: Process the table data**
     rows.forEach((row, rowIndex) => {
-        if (rowIndex === 0) return; // Skip the displayed table header row
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
 
-        const cols = row.querySelectorAll('td');
-
-        // ✅ Ensure row data is indexed from `0-37`
-        let rowData = new Array(38).fill(""); // Create placeholder array for 38 columns
-
-        // ✅ Skip the first column (which is the row number) and map the actual data
-        cols.forEach((col, colIndex) => {
-            if (colIndex === 0) return; // ✅ Skip the row number column
-            rowData[colIndex - 1] = col.textContent.trim(); // ✅ Shift left by one index
-        });
-
-        indexedRows.push(rowData);
-    });
-
-    // ✅ Ensure rows are written in correct index order
-    indexedRows.forEach(row => {
-        csvContent += row.join(",") + "\n";
-    });
-
-    // ✅ Add a blank line after the table
-    csvContent += `\n`;
-
-    // ✅ Step 3: Append the Tasks Section with Correct Row Numbering
-    if (extractedStrings.length === 0) {
-        csvContent += `Row 1: No Tasks\n`;
-    } else {
-        let fileTaskGroups = []; 
-        let groupedTasks = [];
-        let lastFileProcessed = null;
-        let tempFileRows = {}; 
-
-        extractedStrings.forEach(([taskWithRow, fileRowNumber]) => {
-            let match = taskWithRow.match(/^Row (\d+): (.+)$/);
-            if (!match) return;
-
-            let originalRowNum = parseInt(match[1], 10);
-            let taskText = match[2];
-
-            if (fileRowNumber !== lastFileProcessed) {
-                if (Object.keys(tempFileRows).length > 0) {
-                    fileTaskGroups.push(tempFileRows);
-                }
-                tempFileRows = {}; // Reset for new file
-            }
-
-            if (!tempFileRows[originalRowNum]) {
-                tempFileRows[originalRowNum] = new Set();
-            }
-            tempFileRows[originalRowNum].add(taskText);
-
-            lastFileProcessed = fileRowNumber;
-        });
-
-        if (Object.keys(tempFileRows).length > 0) {
-            fileTaskGroups.push(tempFileRows);
+        if (rowIndex === 0) {
+            // If it's the header row, replace '00' with '37' and reorder columns
+            rowData = headerIndices.map(index => index >= 0 ? headerRow[index] : '');
+        } else {
+            // Rearrange columns for the rest of the rows
+            rowData = headerIndices.map(index => index >= 0 ? cols[index].textContent.trim() : '');
         }
 
-        let screenRowCounter = 1;
+        csvContent += rowData.join(',') + '\n';
+    });
 
-        fileTaskGroups.forEach(fileRows => {
-            Object.keys(fileRows)
-                .sort((a, b) => a - b) 
-                .forEach(originalRowNum => {
-                    let tasks = Array.from(fileRows[originalRowNum]).join(" | ");
-                    groupedTasks.push({
-                        screenRow: screenRowCounter++, 
-                        tasks: tasks
-                    });
-                });
-        });
+    // ✅ Add blank lines before appending tasks
+    csvContent += `\n`;
 
-        groupedTasks.forEach(({ screenRow, tasks }) => {
-            csvContent += `Row ${screenRow}: ${tasks}\n`;
-        });
-    }
-
-    // ✅ Step 4: Append the Selected Files Section
-    csvContent += `\n"Selected Files:"\n`;
-
-    if (selectedFileNames.length === 0) {
-        csvContent += `"No files selected"\n`;
+    // **Step 2: Append the Tasks Section**
+    if (extractedStrings.length === 0) {
+        csvContent += `"No Tasks"\n`;
     } else {
-        selectedFileNames.forEach(fileName => {
-            csvContent += `"${fileName}"\n`;
+        extractedStrings.forEach(([text, rowNum]) => {
+            csvContent += `Row ${rowNum}: ${text}\n`;
         });
     }
 
-    // ✅ Generate SHA-256 checksum
-    const checksum = await generateChecksum(csvContent);
-    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
+    // ✅ Add blank lines before checksum
+    csvContent += `\n\n`;
 
-    // ✅ Create the CSV file
+    // ✅ Generate SHA-256 checksum (after all content is added)
+    const checksum = await generateChecksum(csvContent); // ✅ Now works inside async function
+
+    // ✅ Replace the "PENDING..." placeholder with the actual checksum
+    csvContent = csvContent.replace(`"CHECKSUM: PENDING..."`, `"CHECKSUM: ${checksum}"`);
+
+    // **Step 3: Create the CSV file**
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
 
-    // ✅ Get the formatted timestamp
+    // Get the formatted timestamp
     const timestamp = getFormattedTimestamp();
 
-    // ✅ Set the download attribute with the obfuscated checksum
-    link.setAttribute("download", `SimX_${rowCount}_${timestamp}_${obfuscatedChecksum}.csv`);
+    // Set the download attribute with a filename including the row count and timestamp
+    link.setAttribute("download", `SimX_${rowCount}_${timestamp}.csv`);
     link.style.display = 'none';
 
+    // Append the link to the body, click it and remove it
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 });
-
-
-// ✅ Function to generate SHA-256 checksum
-async function generateChecksum(content) {
-    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// ✅ Function to obfuscate the checksum
-function getObfuscatedChecksum(checksum) {
-    const halfLength = Math.floor(checksum.length / 2);
-    const secondHalf = checksum.slice(halfLength); // Extract second half
-    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
-}
 
 document.getElementById('savePdfButton').addEventListener('click', function() {
     // Show the modal
@@ -1198,190 +1103,6 @@ document.getElementById('singleRowBtn').addEventListener('click', function() {
     savePDFSingle();  // Call function for Single Row layout
 });
 
-function savePDFSingle() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape' });
-
-    const table = document.querySelector('#csvTable');
-    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
-    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
-        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
-    );
-
-    const timestamp = getFormattedTimestamp();
-    const rowCount = data.length;
-    const filename = `Single_${data.length}_${timestamp}.pdf`;
-
-    const pageWidth = doc.internal.pageSize.width - 20;
-
-    const group1Columns = [8, 9, 10, 11, 12];
-    const group2Columns = [28, 29, 30, 31, 32];
-
-    const sumConditions = {
-        8: 'light-red',
-        9: 'light-blue',
-        10: 'light-orange',
-        11: 'violet',
-        12: 'DarkKhaki',
-        13: 'DarkSeaGreen',
-        14: 'LightSteelBlue',
-        15: 'Thistle',
-        16: 'GreenYellow',
-        17: 'Gold'
-    };
-
-    function drawColorLegend(startX) {
-        const yStart = 10;
-        const boxSize = 10;
-        const spacing = 2;
-        const legendItems = [
-            { number: 8, color: 'light-red' },
-            { number: 9, color: 'light-blue' },
-            { number: 10, color: 'light-orange' },
-            { number: 11, color: 'violet' },
-            { number: 12, color: 'DarkKhaki' },
-            { number: 13, color: 'DarkSeaGreen' },
-            { number: 14, color: 'LightSteelBlue' },
-            { number: 15, color: 'Thistle' },
-            { number: 16, color: 'GreenYellow' },
-            { number: 17, color: 'Gold' }
-        ];
-
-        doc.setFontSize(10);
-        legendItems.forEach((item, index) => {
-            const x = startX + (index * (boxSize + spacing));
-            doc.setFillColor(...getColorForStyle(item.color));
-            doc.rect(x, yStart, boxSize, boxSize, 'F');
-            doc.setTextColor(0, 0, 0);
-            doc.text(item.number.toString(), x + (boxSize / 2), yStart + (boxSize / 2), { align: 'center', baseline: 'middle' });
-        });
-    }
-
-    function getColorForStyle(style) {
-        const colors = {
-            'light-red': [255, 182, 193],
-            'light-blue': [173, 216, 230],
-            'light-orange': [255, 165, 0],
-            'violet': [238, 130, 238],
-            'DarkKhaki': [189, 183, 107],
-            'DarkSeaGreen': [143, 188, 143],
-            'LightSteelBlue': [176, 196, 222],
-            'Thistle': [216, 191, 216],
-            'GreenYellow': [173, 255, 47],
-            'Gold': [255, 215, 0],
-            'light-green': [144, 238, 144],
-            'default-light-yellow': [255, 255, 224]
-        };
-        return colors[style] || [255, 255, 255];
-    }
-
-    function applyCellColors(data, isHeader) {
-        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
-        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
-        const greenColumns = ['0', '00'];
-        const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
-
-        const row = data.row.raw;
-        const cellValue = data.cell.raw ? data.cell.raw.trim() : "";
-        let appliedColor = false;
-
-        if (data.row.raw.every(cell => cell === "")) {
-            data.cell.styles.fillColor = [255, 255, 255];
-            data.cell.styles.textColor = [0, 0, 0];
-            return;
-        }
-
-        if (isHeader) {
-            if (greenColumns.includes(cellValue)) {
-                data.cell.styles.fillColor = [0, 200, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else if (redColumns.includes(cellValue)) {
-                data.cell.styles.fillColor = [255, 0, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            } else if (blackColumns.includes(cellValue)) {
-                data.cell.styles.fillColor = [0, 0, 0];
-                data.cell.styles.textColor = [255, 255, 255];
-            }
-            return;
-        }
-
-        data.cell.styles.fillColor = [211, 211, 211];
-
-        if (data.column.index === 0) {
-            data.cell.styles.fillColor = [112, 128, 144];
-            data.cell.styles.textColor = [255, 255, 255];
-            return;
-        }
-
-        let group1Sum = 0;
-        let group2Sum = 0;
-
-        group1Columns.forEach(index => {
-            const value = parseFloat(row[index]);
-            if (!isNaN(value)) group1Sum += value;
-        });
-
-        group2Columns.forEach(index => {
-            const value = parseFloat(row[index]);
-            if (!isNaN(value)) group2Sum += value;
-        });
-
-        if (group1Columns.includes(data.column.index)) {
-            const group1CellStyle = sumConditions[group1Sum];
-            if (group1CellStyle) {
-                data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                appliedColor = true;
-            }
-        }
-
-        if (group2Columns.includes(data.column.index)) {
-            const group2CellStyle = sumConditions[group2Sum];
-            if (group2CellStyle) {
-                data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                appliedColor = true;
-            }
-        }
-
-        const numValue = parseFloat(cellValue);
-        if (!isNaN(numValue)) {
-            if (numValue === 3) data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
-            else if (numValue === 4) data.cell.styles.fillColor = getColorForStyle('Gold');
-            else if (numValue === 5) data.cell.styles.fillColor = getColorForStyle('light-green');
-            else if (numValue === 6) data.cell.styles.fillColor = getColorForStyle('light-orange');
-            else if (numValue >= 7) data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
-        }
-
-        if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-            data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
-        }
-    }
-
-    doc.autoTable({
-        head: [headers],
-        body: data,
-        startY: 25,
-        theme: 'grid',
-        margin: { top: 25, left: 10, right: 10, bottom: 10 },
-        styles: { 
-            fontSize: 10, 
-            cellPadding: 2, 
-            overflow: 'linebreak', 
-            fontStyle: 'bold', 
-            halign: 'center',
-            lineColor: [112, 128, 144], // ✅ Darker grid lines
-        },
-        didParseCell: function (data) {
-            applyCellColors(data, data.row.section === 'head');
-        },
-        didDrawPage: function () {
-            doc.setFontSize(16);
-            doc.text(filename.replace('.pdf', ''), 14, 15);
-            drawColorLegend(pageWidth - 150);
-        }
-    });
-
-    saveTasksAndFilesToPDF(doc, filename);
-}
 
 function savePDFSplit() {
     const { jsPDF } = window.jspdf;
@@ -1540,175 +1261,292 @@ function savePDFSplit() {
         finalY += 6;
     }); 
     
-    doc.save(filename)
+    doc.save(filename);
 }
 
+// Function to get the correct color based on the provided style
+function getColorForStyle(style) {
+    const colorMap = {
+        'lightcoral': [255, 204, 204],
+        'light-blue': [173, 216, 230],
+        'light-orange': [255, 165, 0],
+        'violet': [238, 130, 238],
+        'DarkKhaki': [189, 183, 107],
+        'DarkSeaGreen': [143, 188, 143],
+        'LightSteelBlue': [176, 196, 222],
+        'Thistle': [216, 191, 216],
+        'GreenYellow': [173, 255, 47],
+        'Gold': [255, 215, 0],
+        'light-green': [144, 238, 144],
+        'default-light-yellow': [255, 255, 224]
+    };
 
-/** ✅ Fix: Ensure Header Colors Are Applied Correctly **/
-function applyCellColors(data, isHeader) {
-    const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
-    const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
-    const greenColumns = ['0', '00'];
-
-    // ✅ Columns **8-12 and 25-29** should always have a light yellow background (unless overridden)
-    const lightYellowColumns = [...Array(5).keys()].map(i => i + 8).concat([...Array(5).keys()].map(i => i + 25));
-
-    const cellValue = data.cell.raw ? data.cell.raw.trim() : "";
-
-    // ✅ Ensure blank rows remain pure white
-    if (data.row.raw.every(cell => cell === "")) {
-        data.cell.styles.fillColor = [255, 255, 255]; // White background
-        data.cell.styles.textColor = [0, 0, 0]; // Black text
-        return;
-    }
-
-    if (isHeader) {
-        // ✅ Apply header colors based on header text
-        if (greenColumns.includes(cellValue)) {
-            data.cell.styles.fillColor = [0, 200, 0]; // Green
-            data.cell.styles.textColor = [255, 255, 255];
-        } else if (redColumns.includes(cellValue)) {
-            data.cell.styles.fillColor = [255, 0, 0]; // Red
-            data.cell.styles.textColor = [255, 255, 255];
-        } else if (blackColumns.includes(cellValue)) {
-            data.cell.styles.fillColor = [0, 0, 0]; // Black
-            data.cell.styles.textColor = [255, 255, 255];
-        }
-        return;
-    }
-
-    // ✅ Default all data cells to light gray
-    data.cell.styles.fillColor = [211, 211, 211]; // Light gray
-
-    if (data.column.index === 0) {
-        // ✅ Row number column (always slategray)
-        data.cell.styles.fillColor = [112, 128, 144]; // Slategray
-        data.cell.styles.textColor = [255, 255, 255];
-        return;
-    }
-
-    if (lightYellowColumns.includes(data.column.index)) {
-        // ✅ Always light yellow for these **column indices**
-        data.cell.styles.fillColor = [255, 255, 224]; // Light yellow
-    }
-
-    // ✅ Specific value-based highlighting (overrides default colors)
-    const numValue = parseFloat(cellValue);
-    if (!isNaN(numValue)) {
-        if (numValue === 3) {
-            data.cell.styles.fillColor = [143, 188, 143]; // DarkSeaGreen
-        } else if (numValue === 4) {
-            data.cell.styles.fillColor = [255, 215, 0]; // Gold
-        } else if (numValue === 5) {
-            data.cell.styles.fillColor = [144, 238, 144]; // Light green
-        } else if (numValue === 6) {
-            data.cell.styles.fillColor = [255, 165, 0]; // Light orange
-        } else if (numValue >= 7) {
-            data.cell.styles.fillColor = [189, 183, 107]; // DarkKhaki
-        }
-    }
+    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
 }
 
+function savePDFSingle() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
 
-/** ✅ Handle Task & File Listing in PDFs **/
-function saveTasksAndFilesToPDF(doc, filename) {
+    const table = document.querySelector('#csvTable');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map((tr, index) =>
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+    );
+
+    const timestamp = getFormattedTimestamp();
+    const rowCount = data.length;
+    const filename = `Single_${rowCount}_${timestamp}.pdf`;
+
+    const baseFontSize = 8;
+    const headerFontSize = baseFontSize * 0.9;
+    const cellFontSize = baseFontSize * 1.1;
+
+    const columnCount = headers.length;
+    const pageWidth = doc.internal.pageSize.width - 20;
+    const columnWidth = pageWidth / columnCount;
+
+    const group1Columns = [8, 9, 10, 11, 12];
+    const group2Columns = [28, 29, 30, 31, 32];
+
+    const sumConditions = {
+        8: 'light-red',
+        9: 'light-blue',
+        10: 'light-orange',
+        11: 'violet',
+        12: 'DarkKhaki',
+        13: 'DarkSeaGreen',
+        14: 'LightSteelBlue',
+        15: 'Thistle',
+        16: 'GreenYellow',
+        17: 'Gold'
+    };
+
+    function getColorForStyle(style) {
+        const colors = {
+            'light-red': [255, 182, 193],
+            'light-blue': [173, 216, 230],
+            'light-orange': [255, 165, 0],
+            'violet': [238, 130, 238],
+            'DarkKhaki': [189, 183, 107],
+            'DarkSeaGreen': [143, 188, 143],
+            'LightSteelBlue': [176, 196, 222],
+            'Thistle': [216, 191, 216],
+            'GreenYellow': [173, 255, 47],
+            'Gold': [255, 215, 0],
+            'light-green': [144, 238, 144],
+            'default-light-yellow': [255, 255, 224]
+        };
+        return colors[style] || [255, 255, 255];
+    }
+
+    function drawColorLegend(startX) {
+        const yStart = 10;
+        const boxSize = 10;
+        const spacing = 2;
+
+        const legendItems = [
+            { number: 8, color: 'light-red' },
+            { number: 9, color: 'light-blue' },
+            { number: 10, color: 'light-orange' },
+            { number: 11, color: 'violet' },
+            { number: 12, color: 'DarkKhaki' },
+            { number: 13, color: 'DarkSeaGreen' },
+            { number: 14, color: 'LightSteelBlue' },
+            { number: 15, color: 'Thistle' },
+            { number: 16, color: 'GreenYellow' },
+            { number: 17, color: 'Gold' }
+        ];
+
+        doc.setFontSize(10);
+
+        legendItems.forEach((item, index) => {
+            const x = startX + (index * (boxSize + spacing));
+            doc.setFillColor(...getColorForStyle(item.color));
+            doc.rect(x, yStart, boxSize, boxSize, 'F');
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(10);
+            doc.text(item.number.toString(), x + (boxSize / 2), yStart + (boxSize / 2), { align: 'center', baseline: 'middle' });
+        });
+    }
+
+    doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 25,
+        theme: 'grid',
+        margin: { top: 25, left: 10, right: 10, bottom: 10 },
+        tableWidth: 'auto',
+        styles: {
+            fontSize: cellFontSize,
+            cellPadding: 2,
+            overflow: 'linebreak',
+            fontStyle: 'bold',
+            halign: 'center',
+        },
+        headStyles: {
+            fontSize: headerFontSize,
+            textColor: [255, 255, 255],
+            halign: 'center',
+        },
+        columnStyles: {
+            0: {
+                cellWidth: columnWidth,
+                fillColor: getColorForStyle('light-green')
+            },
+            1: {
+                cellWidth: columnWidth,
+                fillColor: getColorForStyle('green')
+            },
+            2: {
+                cellWidth: columnWidth,
+                fillColor: getColorForStyle('green')
+            },
+            ...Array.from({ length: columnCount - 2 }, (_, i) => i + 2).reduce((acc, i) => {
+                acc[i] = { cellWidth: columnWidth };
+                return acc;
+            }, {})
+        },
+didParseCell: function (data) {
+    if (data.row.section === 'head') {
+        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+        const greenColumns = ['0', '00']; // For green columns
+
+        // Default lightgray background for all cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
+
+        // Apply colors based on header value
+        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
+
+        if (greenColumns.includes(headerValue)) {
+            // Green for '0' and '00'
+            data.cell.styles.fillColor = [0, 200, 0]; // Green RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (redColumns.includes(headerValue)) {
+            // Red for specific columns
+            data.cell.styles.fillColor = [255, 0, 0]; // Red RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else if (blackColumns.includes(headerValue)) {
+            // Black for specific columns
+            data.cell.styles.fillColor = [0, 0, 0]; // Black RGB
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        }
+    }
+
+    if (data.row.section === 'body') {
+        const row = data.row.raw;
+
+        // Default lightgray background for all body cells
+        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
+
+        if (data.column.index === 0) {
+            // Line number column
+            data.cell.styles.fillColor = [112, 128, 144]; // Slategray
+            data.cell.styles.textColor = [255, 255, 255]; // White text
+        } else {
+            let group1Sum = 0;
+            let group2Sum = 0;
+
+            // Calculate sums for group columns
+            group1Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group1Sum += value;
+            });
+
+            group2Columns.forEach(index => {
+                const value = parseFloat(row[index]);
+                if (!isNaN(value)) group2Sum += value;
+            });
+
+            let appliedColor = false;
+
+            // Apply group-based coloring
+            if (group1Columns.includes(data.column.index)) {
+                const group1CellStyle = sumConditions[group1Sum];
+                if (group1CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                    appliedColor = true;
+                }
+            }
+
+            if (group2Columns.includes(data.column.index)) {
+                const group2CellStyle = sumConditions[group2Sum];
+                if (group2CellStyle) {
+                    data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                    appliedColor = true;
+                }
+            }
+
+            // Specific value-based coloring
+            const cellValue = parseFloat(data.cell.text);
+            
+        if (!isNaN(cellValue)) {
+            if (cellValue === 3) {
+                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+                appliedColor = true;
+            } else if (cellValue === 4) {
+                data.cell.styles.fillColor = getColorForStyle('Gold');
+                appliedColor = true;
+            } else if (cellValue === 5) {
+                data.cell.styles.fillColor = getColorForStyle('light-green');
+                appliedColor = true;
+            } else if (cellValue === 6) {
+                data.cell.styles.fillColor = getColorForStyle('light-orange');
+                appliedColor = true;
+            } else if (cellValue >= 7) {
+                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+                appliedColor = true;
+            }
+        }
+
+            // Apply default light-yellow for specific columns if no color applied
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+            }
+        }
+    }
+},
+
+
+        didDrawPage: function () {
+            doc.setFontSize(16);
+            const titleX = 14;
+            doc.text(filename.replace('.pdf', ''), titleX, 15);
+
+            const legendWidth = 8 * 8 + 7 * 2;
+            const xStart = pageWidth - legendWidth - 50;  // Move legend to the left by 50 units (about 2 inches)
+
+            drawColorLegend(xStart);
+        }
+    });
+
+    // ✅ New Page for Tasks and Selected Files
     doc.addPage();
     doc.setFontSize(14);
     doc.text("Tasks:", 14, 20);
 
     let finalY = 30;
-    let pageHeight = doc.internal.pageSize.height - 20; // Account for margins
     doc.setFontSize(12);
-
-    let groupedTasks = [];
-    let fileTaskGroups = [];
-    let lastFileProcessed = null;
-    let tempFileRows = {};
-
-    extractedStrings.forEach(([taskWithRow, fileRowNumber]) => {
-        let match = taskWithRow.match(/^Row (\d+): (.+)$/);
-        if (!match) return;
-
-        let originalRowNum = parseInt(match[1], 10);
-        let taskText = match[2];
-
-        if (fileRowNumber !== lastFileProcessed) {
-            if (Object.keys(tempFileRows).length > 0) {
-                fileTaskGroups.push(tempFileRows);
-            }
-            tempFileRows = {};
-        }
-
-        if (!tempFileRows[originalRowNum]) {
-            tempFileRows[originalRowNum] = new Set();
-        }
-        tempFileRows[originalRowNum].add(taskText);
-
-        lastFileProcessed = fileRowNumber;
-    });
-
-    if (Object.keys(tempFileRows).length > 0) {
-        fileTaskGroups.push(tempFileRows);
-    }
-
-    let screenRowCounter = 1;
-
-    fileTaskGroups.forEach(fileRows => {
-        Object.keys(fileRows)
-            .sort((a, b) => a - b)
-            .forEach(originalRowNum => {
-                let tasks = Array.from(fileRows[originalRowNum]).join(" | ");
-                groupedTasks.push({
-                    screenRow: screenRowCounter++,
-                    tasks: tasks
-                });
-            });
-    });
-
-    // ✅ Write tasks, ensuring pagination when needed
-    groupedTasks.forEach(({ screenRow, tasks }) => {
-        if (finalY + 10 > pageHeight) { 
-            doc.addPage(); // ✅ Add a new page if near bottom
-            finalY = 20;
-            doc.setFontSize(14);
-            doc.text("Tasks (continued):", 14, finalY);
-            finalY += 10;
-            doc.setFontSize(12);
-        }
-
-        doc.text(`Row ${screenRow}: ${tasks}`, 14, finalY);
+    extractedStrings.forEach(([text, rowNum]) => {
+        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
         finalY += 6;
     });
 
-    // ✅ Add a new page if needed before writing selected files
-    if (finalY + 20 > pageHeight) {
-        doc.addPage();
-        finalY = 20;
-    }
-
+    // ✅ Add Selected Files List
     doc.setFontSize(14);
     doc.text("Selected Files:", 14, finalY + 10);
+
     finalY += 20;
     doc.setFontSize(12);
-
-    // ✅ Write file names with pagination check
     selectedFileNames.forEach(fileName => {
-        if (finalY + 10 > pageHeight) {
-            doc.addPage();
-            finalY = 20;
-            doc.setFontSize(14);
-            doc.text("Selected Files (continued):", 14, finalY);
-            finalY += 10;
-            doc.setFontSize(12);
-        }
-
         doc.text(fileName, 14, finalY);
         finalY += 6;
     });
-
+    
     doc.save(filename);
 }
-
 
         // Event listener for 'sortCols' button
         document.getElementById('sortCols').addEventListener('click', function() {

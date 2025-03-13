@@ -746,40 +746,32 @@ function getRandomInt(max) {
 }
 
 function computePValues(selectedOptions, runIndex) {
+    if (!selectedOptions || selectedOptions.length === 0) {
+        console.warn("⚠️ No tasks selected. Defaulting P-values to 1.0.");
+        return [{ run: runIndex + 1, category: "NT", difference: "N/A", pValue: 1.0 }];
+    }
+
     let pValues = [];
 
-    // ✅ Define the 8 expected categories
-    const expectedCategories = [
-        "Top - Bottom",
-        "Left - Right",
-        "Center 9 Top - Bottom",
-        "00 - 0",
-        "Top Ends - Center",
-        "Bottom Ends - Center",
-        "00 Cluster",
-        "0 Cluster"
-    ];
+    selectedOptions.forEach(option => {
+        let activeTask = getActiveTask();
+        let difference = 0;
 
-    // ✅ Compute differences for ALL 8 expected categories
-    let categoryDifferences = {
-        "Top - Bottom": sumColumns(Totals, groupIndices.topIndices) - sumColumns(Totals, groupIndices.bottomIndices),
-        "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
-        "Center 9 Top - Bottom": sumColumns(Totals, groupIndices.cTop) - sumColumns(Totals, groupIndices.cBottom),
-        "00 - 0": sumColumns(Totals, groupIndices.zzCluster) - sumColumns(Totals, groupIndices.zCluster),
-        "Top Ends - Center": sumColumns(Totals, groupIndices.topEnds) - sumColumns(Totals, groupIndices.topCenter),
-        "Bottom Ends - Center": sumColumns(Totals, groupIndices.bottomEnds) - sumColumns(Totals, groupIndices.bottomCenter),
-        "00 Cluster": sumColumns(Totals, groupIndices.zzCluster),
-        "0 Cluster": sumColumns(Totals, groupIndices.zCluster),
-    };
+        if (activeTask.statType === "sum") {
+            let topHits = sumColumns(Totals, groupIndices[activeTask.top]);
+            let bottomHits = sumColumns(Totals, groupIndices[activeTask.bottom]);
+            difference = topHits - bottomHits;
+        } else if (activeTask.statType === "variance") {
+            difference = calculateVariance(Totals);
+        } else if (activeTask.statType === "density") {
+            difference = calculateDensity(Totals);
+        }
 
-    // ✅ Compute P-values for ALL 8 categories, regardless of selected task
-    expectedCategories.forEach(category => {
-        let difference = categoryDifferences[category] || 0;
-        let pValue = lookupPValue(category, difference);
+        let pValue = lookupPValue(activeTask.category, difference);
 
         pValues.push({
-            run: runIndex + 1,
-            category: category,
+            run: runIndex + 1,  // ✅ Ensure correct run number
+            category: activeTask.category,
             difference: difference.toFixed(3),
             pValue: pValue.toFixed(6),
         });
@@ -973,7 +965,7 @@ function displayPValues(newPValues) {
     let rowsHTML = "";
     let groupedRows = {};
 
-    // ✅ Group values by run number and category
+    // ✅ Group values by run number for easier lookup
     newPValues.forEach(({ run, category, difference, pValue }) => {
         let numericPValue = parseFloat(pValue);
         let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
@@ -995,19 +987,10 @@ function displayPValues(newPValues) {
 
         console.log(`🔍 Checking all categories for Run ${run}...`);
 
-        // ✅ Loop through ONLY the 8 expected categories
-        const expectedCategories = [
-            "Top - Bottom",
-            "Left - Right",
-            "Center 9 Top - Bottom",
-            "00 - 0",
-            "Top Ends - Center",
-            "Bottom Ends - Center",
-            "00 Cluster",
-            "0 Cluster"
-        ];
+        // ✅ Loop through ALL categories in `refData` for this run
+        Object.keys(refData).forEach(category => {
+            console.log(`   🔄 Checking category: ${category} for Run ${run}`);
 
-        expectedCategories.forEach(category => {
             if (groupedRows[run][category]) {
                 let { difference, adjustedPValue } = groupedRows[run][category];
 
@@ -1015,40 +998,24 @@ function displayPValues(newPValues) {
 
                 if (adjustedPValue !== "-" && parseFloat(adjustedPValue) < 0.05) {
                     console.log(`   ✅ Category ${category} is SIGNIFICANT for Run ${run}!`);
-                    significanceMatches.push({
-                        category,
-                        difference,
-                        adjustedPValue
-                    });
+                    significanceMatches.push(category);
                 }
+            } else {
+                console.log(`   ❌ No data for category ${category} in Run ${run}`);
             }
         });
 
-        // ✅ Generate multiple rows if multiple significant categories exist
-        if (significanceMatches.length > 0) {
-            significanceMatches.forEach(({ category, difference, adjustedPValue }) => {
-                rowsHTML += `
-                    <tr style='background-color: yellow; color: black;'>
-                        <td>${run}</td>
-                        <td>${selectedTask}</td>
-                        <td>${difference}</td>
-                        <td>${category}</td>
-                        <td>${adjustedPValue}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            // ✅ Display a normal row if no significant categories found
-            rowsHTML += `
-                <tr>
-                    <td>${run}</td>
-                    <td>${selectedTask}</td>
-                    <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td>
-                    <td>-</td>
-                    <td>${groupedRows[run][selectedTask]?.adjustedPValue ?? "-"}</td>
-                </tr>
-            `;
-        }
+        let highlight = significanceMatches.length > 0 ? "style='background-color: yellow; color: black;'" : "";
+
+        rowsHTML += `
+            <tr ${highlight}>
+                <td>${run}</td>
+                <td>${selectedTask}</td>
+                <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td>
+                <td>${significanceMatches.length > 0 ? significanceMatches.join(", ") : "-"}</td>
+                <td>${groupedRows[run][selectedTask]?.adjustedPValue ?? "-"}</td>
+            </tr>
+        `;
     });
 
     // ✅ Update the table

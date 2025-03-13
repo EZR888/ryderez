@@ -280,6 +280,10 @@
       background-color: red;
       color: white;
     }
+    .button-clear {
+      background-color: green;
+      color: white;
+    }
     .button-multi:hover {
       background-color: darkgreen;
     }
@@ -455,6 +459,8 @@
 
     <label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
     <input type="number" id="spinDelay" value="0" style="width: 10ch"><br><br>
+    
+    <button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
     
         <table id="csvTable">
           <thead></thead>
@@ -889,6 +895,11 @@ function lookupPValue(category, difference) {
     return retrievedPValue;
 }
 
+function clearTask() {
+    document.querySelectorAll(".toggle-button").forEach(btn => btn.classList.remove("active"));
+    selectedOptions = [];
+    console.log("✅ Cleared selected tasks. Selected Options:", selectedOptions);
+}
 
 function getSelectedOptions() {
     return selectedOptions;  // Returns the globally tracked selected options

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -868,8 +869,10 @@ function lookupPValue(category, difference) {
         return 1.0; // Default if category not found
     }
 
-    let absDifference = Math.abs(difference);
+    // ✅ Preserve the original sign
+    let signedDifference = difference;
 
+    // Convert reference data keys into numbers
     let availableDifferences = Object.keys(refData[fullCategoryName]).map(Number);
     
     if (availableDifferences.length === 0) {
@@ -877,8 +880,9 @@ function lookupPValue(category, difference) {
         return 1.0;
     }
 
+    // ✅ Find the closest matching absolute difference
     let closestDiff = availableDifferences.reduce((a, b) =>
-        Math.abs(b - absDifference) < Math.abs(a - absDifference) ? b : a
+        Math.abs(b - signedDifference) < Math.abs(a - signedDifference) ? b : a
     );
 
     console.log(`✅ Found closest difference: ${closestDiff} for category '${fullCategoryName}'`);
@@ -887,8 +891,8 @@ function lookupPValue(category, difference) {
 
     console.log(`🟢 DEBUG: Retrieved pValue from refData = ${retrievedPValue}`);
 
-    if (!(closestDiff in refData[fullCategoryName]) || retrievedPValue === undefined) {
-        console.warn(`⚠️ WARNING: Difference '${absDifference}' not found for '${fullCategoryName}', using default p=1.0`);
+    if (retrievedPValue === undefined) {
+        console.warn(`⚠️ WARNING: Difference '${signedDifference}' not found for '${fullCategoryName}', using default p=1.0`);
         return 1.0;
     }
 
@@ -993,8 +997,11 @@ function displayPValues(newPValues) {
             groupedRows[run] = {};
         }
 
+        // ✅ Preserve the negative difference
+        let signedDifference = parseFloat(difference); 
+
         groupedRows[run][category] = {
-            difference,
+            difference: signedDifference.toFixed(3), // Preserve sign
             adjustedPValue
         };
     });
@@ -1042,7 +1049,7 @@ function displayPValues(newPValues) {
                     <tr style='background-color: yellow; color: black;'>
                         <td>${run}</td>
                         <td>${selectedTask}</td>
-                        <td>${difference}</td>
+                        <td>${difference}</td>  <!-- ✅ Now displays correct signed difference -->
                         <td>${category}</td>
                         <td>${adjustedPValue}</td>
                     </tr>
@@ -1054,7 +1061,7 @@ function displayPValues(newPValues) {
                 <tr>
                     <td>${run}</td>
                     <td>${selectedTask}</td>
-                    <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td>
+                    <td>${groupedRows[run][selectedTask]?.difference ?? "-"}</td> <!-- ✅ Fix applied -->
                     <td>-</td>
                     <td>${groupedRows[run][selectedTask]?.adjustedPValue ?? "-"}</td>
                 </tr>

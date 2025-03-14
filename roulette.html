@@ -1299,6 +1299,14 @@ function applyCellColors(data, isHeader) {
       }
     }
 
+// Hide the p-value table by default when the page loads
+window.addEventListener('load', function() {
+    let tableContainer = document.getElementById('pValueTableContainer');
+    if (tableContainer) {
+        tableContainer.style.display = 'none';
+    }
+});
+
 // Function to toggle visibility of the p-value table
 function togglePValueTable(visible) {
     let tableContainer = document.getElementById('pValueTableContainer');
@@ -1317,8 +1325,7 @@ document.addEventListener('keydown', function(event) {
         togglePValueTable(true);
     }
 });
-  
-    
+ 
   </script>
 </body>
 </html>

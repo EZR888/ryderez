@@ -1298,7 +1298,26 @@ function applyCellColors(data, isHeader) {
         modal.style.display = 'none';
       }
     }
-    
+
+// Function to toggle visibility of the p-value table
+function togglePValueTable(visible) {
+    let tableContainer = document.getElementById('pValueTableContainer');
+    if (tableContainer) {
+        tableContainer.style.display = visible ? 'block' : 'none';
+    }
+}
+
+// Add keyboard shortcuts: Shift+H to hide, Shift+U to unhide
+document.addEventListener('keydown', function(event) {
+    if (event.shiftKey && event.key.toUpperCase() === 'H') {
+        console.log("🔴 Hiding P-Values Table...");
+        togglePValueTable(false);
+    } else if (event.shiftKey && event.key.toUpperCase() === 'U') {
+        console.log("🟢 Unhiding P-Values Table...");
+        togglePValueTable(true);
+    }
+});
+  
     
   </script>
 </body>

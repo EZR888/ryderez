@@ -6,6 +6,15 @@
     <title>CSV Reader</title>
     <style>
     
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Include all your CSS styles -->
+    <title>CSV Reader</title>
+    <style>
+    
     .modal {
       display: none;
       position: fixed;
@@ -1610,3 +1619,131 @@ didParseCell: function (data) {
   </script>
 </body>
 </html>
+function savePDFSplit(rowCategoriesMap) {
+    console.log('✅ Categories from fileInput:', rowCategoriesMap);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+
+    const table = document.querySelector('#csvTable');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+    );
+
+    // Define split indices
+    const topHalfIndices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    const bottomHalfIndices = [0,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+
+    // Extract headers for both halves
+    const topHalfHeaders = topHalfIndices.map(idx => headers[idx]);
+    const bottomHalfHeaders = bottomHalfIndices.map(idx => headers[idx]);
+
+    const processedData = [];
+
+    data.forEach((row, index) => {
+        const rowNumber = index + 1; 
+
+        const topHalf = topHalfIndices.map(idx => row[idx] || "");
+        topHalf[0] = rowNumber.toString();
+
+        const bottomHalf = bottomHalfIndices.map(idx => row[idx] || "");
+        bottomHalf[0] = "";
+
+        let taskCategories = rowCategoriesMap[rowNumber] || [];  
+        let taskDisplay = taskCategories.length > 0 ? taskCategories.join(", ") : "NT"; 
+
+        processedData.push(topHalfHeaders);
+        processedData.push(topHalf);
+        processedData.push(bottomHalfHeaders);
+        processedData.push(bottomHalf);
+
+        let taskRow = Array(topHalfHeaders.length).fill('');
+        taskRow[0] = `${taskDisplay}`; 
+        processedData.push(taskRow); 
+    });
+
+    const timestamp = getFormattedTimestamp();
+    const filename = `Split_${data.length}_${timestamp}.pdf`;
+
+    doc.autoTable({
+        body: processedData,
+        startY: 20,  
+        theme: 'grid',
+        margin: { top: 20, left: 16, right: 16, bottom: 10 },  
+        styles: {
+            fontSize: 10,  
+            cellPadding: 1.5,  
+            overflow: 'linebreak',
+            fontStyle: 'bold',
+            halign: 'center',
+        },
+        headStyles: {
+            fontSize: 6,  
+            textColor: [255, 255, 255],
+            fillColor: [0, 51, 102],
+            halign: 'center',
+        },
+        didParseCell: function (data) {
+            const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+            const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+            const greenColumns = ['0', '00'];
+            const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
+
+            const isHeaderRow = (data.row.index % 5 === 0) || (data.row.index % 5 === 2);
+            const isTaskRow = data.row.raw[0] && data.row.raw[0];
+
+            if (isHeaderRow) {
+                const headerValue = data.cell.raw.trim();
+                if (greenColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 200, 0]; 
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (redColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [255, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (blackColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 0, 0];
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else {
+                    data.cell.styles.fillColor = [200, 200, 200]; 
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
+                return;
+            }
+
+            if (isTaskRow) {
+                data.cell.styles.fillColor = [255, 255, 255]; 
+                data.cell.styles.textColor = [0, 0, 0]; 
+                return;
+            }
+
+            const isTopHalfDataRow = (data.row.index % 5 === 1);
+            const isBottomHalfDataRow = (data.row.index % 5 === 3);
+
+            if (isTopHalfDataRow || isBottomHalfDataRow) {
+                if (lightYellowColumns.includes(data.column.index)) {
+                    data.cell.styles.fillColor = [255, 255, 224]; // Light yellow ✅
+                } else {
+                    data.cell.styles.fillColor = [211, 211, 211]; // Light gray ✅
+                }
+            }
+        },
+        didDrawPage: function () {
+            doc.setFontSize(12);  
+            doc.text(filename.replace('.pdf', ''), 14, 10);  
+        }
+    });
+
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text("Selected Files:", 14, 20);
+
+    let finalY = 30;
+    doc.setFontSize(12);
+    selectedFileNames.forEach(fileName => {
+        doc.text(fileName, 14, finalY);
+        finalY += 6;
+    });
+
+    doc.save(filename);
+}

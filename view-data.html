@@ -579,7 +579,7 @@ const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '2
 
     
            // Function to generate a formatted timestamp // 
-        function getFormattedTimestamp() {
+function getFormattedTimestamp() {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -591,7 +591,7 @@ const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '2
         }
         
               // Function to get color for a style
-        function getColorForStyle(style) {
+function getColorForStyle(style) {
             const colorMap = {
                 'default-light-yellow': [255, 255, 224],
                 'lightcoral': [255, 204, 204],
@@ -634,7 +634,7 @@ function createHeaderRow() {
 
         columnOrder.forEach((col) => {
             const th = document.createElement('th');
-            th.textContent = col;
+            th.textContent = (col === '37') ? '00' : col;  // ✅ Change 37 to "00"
             if (col === '0' || col === '37') {
                 th.style.backgroundColor = 'green';
                 th.style.color = 'white';
@@ -1222,8 +1222,8 @@ function savePDFSplit(rowCategoriesMap) {
     const topHalfIndices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
     const bottomHalfIndices = [0,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 
-    const topHalfHeaders = topHalfIndices.map(idx => headers[idx]);
-    const bottomHalfHeaders = bottomHalfIndices.map(idx => headers[idx]);
+	const topHalfHeaders = topHalfIndices.map(idx => headers[idx] === '37' ? '00' : headers[idx]); // ✅ Replace 37 with "00"
+	const bottomHalfHeaders = bottomHalfIndices.map(idx => headers[idx] === '37' ? '00' : headers[idx]); // ✅ Replace 37 with "00"
 
     rows.forEach((row, index) => {
         const rowNumber = parseInt(row.cells[0].textContent.trim(), 10); // ✅ Extract row number properly
@@ -1359,7 +1359,7 @@ function savePDFSingle() {
     const doc = new jsPDF({ orientation: 'landscape' });
 
     const table = document.querySelector('#csvTable');
-    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText === '37' ? '00' : th.innerText); // ✅ Replace 37 with "00"
     const data = Array.from(table.querySelectorAll('tbody tr')).map((tr, index) =>
         Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
     );

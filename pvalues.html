@@ -434,7 +434,12 @@ function processCSVData(csvData) {
     let totalSpins = 0;
 
     rows.forEach((row, index) => {
-        const values = row.split(",").map(Number);
+        let values = row.split(",").map(Number);
+
+        // Ensure only the first 38 columns are considered for data rows (starting at index 3)
+        if (index >= 3) {
+            values = values.slice(0, 38); // Trim extra columns beyond 37
+        }
 
         // Skip header row (only log once per file)
         if (index === 3 && values.length === 38 && values.every((val, idx) => val === idx)) {

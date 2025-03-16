@@ -1235,7 +1235,7 @@ function savePDFSplit(rowCategoriesMap) {
         bottomHalf[0] = "";
 
         let taskInfo = rowCategoriesMap[rowNumber] || { taskCode: "NT", categories: [] };
-        let taskDisplay = [taskInfo.taskCode, ...taskInfo.categories].filter(val => val.trim() !== "").join(", ") || "NT";
+        let taskDisplay = [...taskInfo.categories].filter(val => val.trim() !== "").join(", ") || "NT";
 
         processedData.push(topHalfHeaders);
         processedData.push(topHalf);
@@ -1380,7 +1380,7 @@ function savePDFSingle() {
     const group2Columns = [28, 29, 30, 31, 32];
 
     const sumConditions = {
-        8: 'light-red',
+        8: 'lightcoral',
         9: 'light-blue',
         10: 'light-orange',
         11: 'violet',
@@ -1394,7 +1394,7 @@ function savePDFSingle() {
 
     function getColorForStyle(style) {
         const colors = {
-            'light-red': [255, 182, 193],
+            'lightcoral': [240, 128, 128],
             'light-blue': [173, 216, 230],
             'light-orange': [255, 165, 0],
             'violet': [238, 130, 238],
@@ -1416,7 +1416,7 @@ function savePDFSingle() {
         const spacing = 2;
 
         const legendItems = [
-            { number: 8, color: 'light-red' },
+            { number: 8, color: 'lightcoral' },
             { number: 9, color: 'light-blue' },
             { number: 10, color: 'light-orange' },
             { number: 11, color: 'violet' },

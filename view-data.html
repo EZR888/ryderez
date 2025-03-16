@@ -1198,6 +1198,25 @@ document.getElementById('singleRowBtn').addEventListener('click', function() {
     savePDFSingle();  // Call function for Single Row layout
 });
 
+// Function to get the correct color based on the provided style
+function getColorForStyle(style) {
+    const colorMap = {
+        'lightcoral': [255, 204, 204],
+        'light-blue': [173, 216, 230],
+        'light-orange': [255, 165, 0],
+        'violet': [238, 130, 238],
+        'DarkKhaki': [189, 183, 107],
+        'DarkSeaGreen': [143, 188, 143],
+        'LightSteelBlue': [176, 196, 222],
+        'Thistle': [216, 191, 216],
+        'GreenYellow': [173, 255, 47],
+        'Gold': [255, 215, 0],
+        'light-green': [144, 238, 144],
+        'default-light-yellow': [255, 255, 224]
+    };
+
+    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
+}
 
 function savePDFSplit(rowCategoriesMap) {
     console.log('✅ Categories from fileInput:', rowCategoriesMap);
@@ -1325,34 +1344,23 @@ function savePDFSplit(rowCategoriesMap) {
     doc.text("Selected Files:", 14, 20);
 
     let finalY = 30;
+    const pageHeight = doc.internal.pageSize.height;
+    const lineHeight = 6;
+    
     doc.setFontSize(12);
     selectedFileNames.forEach(fileName => {
+            if (finalY + lineHeight > pageHeight - 20) {
+            doc.addPage();
+            finalY = 20;
+        }
         doc.text(fileName, 14, finalY);
-        finalY += 6;
+        finalY += lineHeight;
     });
 
     doc.save(filename);
 }
 
-// Function to get the correct color based on the provided style
-function getColorForStyle(style) {
-    const colorMap = {
-        'lightcoral': [255, 204, 204],
-        'light-blue': [173, 216, 230],
-        'light-orange': [255, 165, 0],
-        'violet': [238, 130, 238],
-        'DarkKhaki': [189, 183, 107],
-        'DarkSeaGreen': [143, 188, 143],
-        'LightSteelBlue': [176, 196, 222],
-        'Thistle': [216, 191, 216],
-        'GreenYellow': [173, 255, 47],
-        'Gold': [255, 215, 0],
-        'light-green': [144, 238, 144],
-        'default-light-yellow': [255, 255, 224]
-    };
 
-    return colorMap[style] || [255, 255, 255]; // Default to white if style is not found
-}
 
 function savePDFSingle() {
     const { jsPDF } = window.jspdf;
@@ -1520,23 +1528,37 @@ function savePDFSingle() {
     doc.text("Tasks:", 14, 20);
 
     let finalY = 30;
+    const pageHeight = doc.internal.pageSize.height;
+    const lineHeight = 6;
     doc.setFontSize(12);
 
     Object.entries(rowCategoriesMap).forEach(([rowNum, data]) => {
         let taskText = `Row ${rowNum}: Task Code: ${data.taskCode || "NT"} | Significance: ${data.categories.length > 0 ? data.categories.join(", ") : "None"}`;
+        
+       if (finalY + lineHeight > pageHeight - 20) {
+            doc.addPage();
+            finalY = 20;
+        }
+  
         doc.text(taskText, 14, finalY);
         finalY += 6;
     });
 
     // ✅ Add Selected Files List
+    doc.addPage();
     doc.setFontSize(14);
-    doc.text("Selected Files:", 14, finalY + 10);
-
-    finalY += 20;
+    doc.text("Selected Files:", 14, 20);
+    
+    finalY = 30;
     doc.setFontSize(12);
     selectedFileNames.forEach(fileName => {
+    
+        if (finalY + lineHeight > pageHeight - 20) {
+            doc.addPage();
+            finalY = 20;
+        }
         doc.text(fileName, 14, finalY);
-        finalY += 6;
+        finalY += lineHeight;
     });
 
     doc.save(filename);

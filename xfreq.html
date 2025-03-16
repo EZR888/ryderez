@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -328,8 +325,8 @@
             <button class="toggle-button" onclick="toggleOption(this)">Right - Left</button>
             <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
             <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Variance</button>
-             <button class="toggle-button" onclick="toggleOption(this)">Density</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Variance (Within-Run)</button>
+             <button class="toggle-button" onclick="toggleOption(this)">Density (Top 5 Sum)</button>
             <button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
             <button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
             <br>
@@ -363,26 +360,14 @@
     let extractedTaskRows = []; // ✅ Ensure extractedTaskRows is globally declared
 
   
-function activateTaskButtons(tasksFromFile) {
-    console.log("🔎 Tasks found in file:", tasksFromFile);
-
-    // ✅ Extract individual tasks from each row
-    const extractedNames = new Set();
-    tasksFromFile.forEach(row => {
-        let parts = row.split(": "); 
-        if (parts.length > 1) {
-            let tasks = parts[1].split("|");
-            tasks.forEach(task => extractedNames.add(task.trim())); // Trim spaces
-        }
-    });
-
-    console.log("🟢 Extracted Individual Task Names for Activation:", [...extractedNames]);
+function activateTaskButtons(taskNames) {
+    console.log("🔎 Activating buttons for tasks:", [...taskNames]);
 
     document.querySelectorAll(".toggle-button").forEach(button => {
         const buttonText = button.textContent.trim();
         console.log(`🟢 Checking button: ${buttonText}`);
 
-        if (extractedNames.has(buttonText)) {
+        if (taskNames.has(buttonText)) {
             console.log(`✅ Activating button: ${buttonText}`);
             button.classList.add("active");
         } else {
@@ -395,26 +380,42 @@ function activateTaskButtons(tasksFromFile) {
 }
 
 function extractTasksFromCSV(csvData) {
-    console.log("📥 Extracting task rows from CSV...");
+    console.log("📥 Extracting task names from CSV...");
 
-    const lines = csvData.split("\n");
-    let localTaskRows = [];  // ✅ Temporary storage for each file's rows
+    const lines = csvData.trim().split("\n");
+    let taskNames = new Set();
 
-    lines.forEach(line => {
-        line = line.trim();
-        if (line.startsWith("Row ")) {  
-            console.log(`🔍 Saving row: ${line}`);
-            localTaskRows.push(line);
+    lines.forEach((line, index) => {
+        let values = line.split(",").map(value => value.trim());
+
+        // Log first few lines for debugging
+        if (index < 6) {
+            console.log(`🔍 Sample Row ${index + 1}:`, values);
+        }
+
+        // ✅ Ensure we start extracting at **row index 4** (1-based row 5)
+        if (index >= 4 && values.length > 40) {
+            let tasks = values.slice(40); // Extract tasks from column index 40 onward
+            console.log(`🟢 Extracted Tasks from Row ${index + 1}:`, tasks);
+
+            tasks.forEach(task => {
+                task = task.trim();
+                if (task && task !== "NT") { // ✅ Ignore empty values & "NT"
+                    taskNames.add(task);
+                    console.log(`✅ Added Task: ${task}`);
+                } else {
+                    console.log(`⏩ Ignored Task: ${task}`);
+                }
+            });
+        } else if (index < 4) {
+            console.log(`⏩ Skipping Row ${index + 1} (Metadata/Header)`);
+        } else {
+            console.warn(`⚠️ Row ${index + 1} has insufficient columns. Skipping.`, values);
         }
     });
 
-    console.log("📝 Extracted full task rows:", localTaskRows);
-
-    // ✅ Merge new tasks without overwriting
-    extractedTaskRows = [...new Set([...extractedTaskRows, ...localTaskRows])];
-
-    console.log("🟢 Accumulated Task Rows:", extractedTaskRows);
-    return localTaskRows;
+    console.log("🟢 Final Extracted Task Names:", [...taskNames]);
+    return taskNames;
 }
 
 
@@ -1576,7 +1577,7 @@ document.getElementById("fileInput").addEventListener("change", async function (
     }
 
     let allCSVData = "";
-    let allTasks = new Set();  // 🟢 Accumulate tasks across all files
+    let allTasks = new Set(); // Accumulate tasks across all files
     selectedFileNames = [];
     let filesRead = 0;
 
@@ -1597,29 +1598,16 @@ document.getElementById("fileInput").addEventListener("change", async function (
         const reader = new FileReader();
         reader.onload = async function (e) {
             const fileContent = e.target.result;
-
-            // ✅ Compute checksum & verify file integrity
-            const computedChecksum = await generateChecksum(fileContent);
-            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
-            const last5FromFile = file.name.replace(".csv", "").slice(-5);
-
-            if (last5FromFile !== obfuscatedComputedChecksum) {
-                alert(`It appears that "${file.name}" has been edited. Aborting.`);
-                location.reload();
-                return;
-            }
-
             allCSVData += fileContent + "\n";
             filesRead++;
 
-            // ✅ Extract tasks from each file and accumulate them
+            // Extract tasks from this file and accumulate them
             const tasksFromFile = extractTasksFromCSV(fileContent);
-            tasksFromFile.forEach(task => allTasks.add(task));  // 🟢 Merge tasks into the Set
+            tasksFromFile.forEach(task => allTasks.add(task));
 
-            // ✅ Once all files are processed, activate buttons correctly
             if (filesRead === files.length) {
-                console.log("🟢 Accumulated Tasks:", Array.from(allTasks));
-                activateTaskButtons(Array.from(allTasks)); // Convert Set to Array before passing
+                console.log("🟢 Final Accumulated Tasks:", Array.from(allTasks));
+                activateTaskButtons(allTasks);
                 processConcatenatedCSVData(allCSVData);
                 document.getElementById("fileInput").value = ""; // Reset input for re-selection
             }

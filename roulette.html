@@ -607,7 +607,7 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
 
         console.log(`✅ Writing row ${runNumber} - Primary Category: ${primaryCategory}, Significant Categories:`, significantCategories);
 
-        let csvRow = row.concat([runNumber, primaryCategory], significantCategories);
+        let csvRow = row.concat([runNumber], significantCategories);
         csvContent += csvRow.join(",") + "\n";
 
         // ✅ Store categories for filename generation, **but don't use them to override NT**

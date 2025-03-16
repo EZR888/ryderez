@@ -1359,8 +1359,8 @@ function savePDFSingle() {
     const doc = new jsPDF({ orientation: 'landscape' });
 
     const table = document.querySelector('#csvTable');
-const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText === '37' ? '00' : th.innerText); // ✅ Replace 37 with "00"
-    const data = Array.from(table.querySelectorAll('tbody tr')).map((tr, index) =>
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText === '37' ? '00' : th.innerText);
+    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
         Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
     );
 
@@ -1371,10 +1371,6 @@ const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText 
     const baseFontSize = 8;
     const headerFontSize = baseFontSize * 0.9;
     const cellFontSize = baseFontSize * 1.1;
-
-    const columnCount = headers.length;
-    const pageWidth = doc.internal.pageSize.width - 20;
-    const columnWidth = pageWidth / columnCount;
 
     const group1Columns = [8, 9, 10, 11, 12];
     const group2Columns = [28, 29, 30, 31, 32];
@@ -1410,36 +1406,6 @@ const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText 
         return colors[style] || [255, 255, 255];
     }
 
-    function drawColorLegend(startX) {
-        const yStart = 10;
-        const boxSize = 10;
-        const spacing = 2;
-
-        const legendItems = [
-            { number: 8, color: 'lightcoral' },
-            { number: 9, color: 'light-blue' },
-            { number: 10, color: 'light-orange' },
-            { number: 11, color: 'violet' },
-            { number: 12, color: 'DarkKhaki' },
-            { number: 13, color: 'DarkSeaGreen' },
-            { number: 14, color: 'LightSteelBlue' },
-            { number: 15, color: 'Thistle' },
-            { number: 16, color: 'GreenYellow' },
-            { number: 17, color: 'Gold' }
-        ];
-
-        doc.setFontSize(10);
-
-        legendItems.forEach((item, index) => {
-            const x = startX + (index * (boxSize + spacing));
-            doc.setFillColor(...getColorForStyle(item.color));
-            doc.rect(x, yStart, boxSize, boxSize, 'F');
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(10);
-            doc.text(item.number.toString(), x + (boxSize / 2), yStart + (boxSize / 2), { align: 'center', baseline: 'middle' });
-        });
-    }
-
     doc.autoTable({
         head: [headers],
         body: data,
@@ -1459,148 +1425,106 @@ const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText 
             textColor: [255, 255, 255],
             halign: 'center',
         },
-        columnStyles: {
-            0: {
-                cellWidth: columnWidth,
-                fillColor: getColorForStyle('light-green')
-            },
-            1: {
-                cellWidth: columnWidth,
-                fillColor: getColorForStyle('green')
-            },
-            2: {
-                cellWidth: columnWidth,
-                fillColor: getColorForStyle('green')
-            },
-            ...Array.from({ length: columnCount - 2 }, (_, i) => i + 2).reduce((acc, i) => {
-                acc[i] = { cellWidth: columnWidth };
-                return acc;
-            }, {})
-        },
-didParseCell: function (data) {
-    if (data.row.section === 'head') {
-        const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
-        const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
-        const greenColumns = ['0', '00']; // For green columns
-
-        // Default lightgray background for all cells
-        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
-
-        // Apply colors based on header value
-        const headerValue = data.cell.raw; // Use `raw` for unformatted header text
-
-        if (greenColumns.includes(headerValue)) {
-            // Green for '0' and '00'
-            data.cell.styles.fillColor = [0, 200, 0]; // Green RGB
-            data.cell.styles.textColor = [255, 255, 255]; // White text
-        } else if (redColumns.includes(headerValue)) {
-            // Red for specific columns
-            data.cell.styles.fillColor = [255, 0, 0]; // Red RGB
-            data.cell.styles.textColor = [255, 255, 255]; // White text
-        } else if (blackColumns.includes(headerValue)) {
-            // Black for specific columns
-            data.cell.styles.fillColor = [0, 0, 0]; // Black RGB
-            data.cell.styles.textColor = [255, 255, 255]; // White text
-        }
-    }
-
-    if (data.row.section === 'body') {
-        const row = data.row.raw;
-
-        // Default lightgray background for all body cells
-        data.cell.styles.fillColor = [211, 211, 211]; // LightGray RGB
-
-        if (data.column.index === 0) {
-            // Line number column
-            data.cell.styles.fillColor = [112, 128, 144]; // Slategray
-            data.cell.styles.textColor = [255, 255, 255]; // White text
-        } else {
-            let group1Sum = 0;
-            let group2Sum = 0;
-
-            // Calculate sums for group columns
-            group1Columns.forEach(index => {
-                const value = parseFloat(row[index]);
-                if (!isNaN(value)) group1Sum += value;
-            });
-
-            group2Columns.forEach(index => {
-                const value = parseFloat(row[index]);
-                if (!isNaN(value)) group2Sum += value;
-            });
-
-            let appliedColor = false;
-
-            // Apply group-based coloring
-            if (group1Columns.includes(data.column.index)) {
-                const group1CellStyle = sumConditions[group1Sum];
-                if (group1CellStyle) {
-                    data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
-                    appliedColor = true;
-                }
-            }
-
-            if (group2Columns.includes(data.column.index)) {
-                const group2CellStyle = sumConditions[group2Sum];
-                if (group2CellStyle) {
-                    data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
-                    appliedColor = true;
-                }
-            }
-
-            // Specific value-based coloring
-            const cellValue = parseFloat(data.cell.text);
-            
-        if (!isNaN(cellValue)) {
-            if (cellValue === 3) {
-                data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
-                appliedColor = true;
-            } else if (cellValue === 4) {
-                data.cell.styles.fillColor = getColorForStyle('Gold');
-                appliedColor = true;
-            } else if (cellValue === 5) {
-                data.cell.styles.fillColor = getColorForStyle('light-green');
-                appliedColor = true;
-            } else if (cellValue === 6) {
-                data.cell.styles.fillColor = getColorForStyle('light-orange');
-                appliedColor = true;
-            } else if (cellValue >= 7) {
-                data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
-                appliedColor = true;
-            }
-        }
-
-            // Apply default light-yellow for specific columns if no color applied
+        didParseCell: function (data) {
+            const redColumns = ['5', '34', '3', '36', '1', '27', '25', '12', '19', '18', '32', '7', '30', '9', '14', '23', '16', '21'];
+            const blackColumns = ['22', '15', '24', '13', '37', '10', '29', '8', '31', '6', '17', '20', '11', '26', '28', '2', '35', '4', '33'];
+            const greenColumns = ['0', '00'];
             const lightYellowColumns = [8, 9, 10, 11, 12, 28, 29, 30, 31, 32];
-            if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
-                data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+
+            const headerValue = data.cell.raw.trim();
+
+            if (data.row.section === 'head') {
+                if (greenColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 200, 0]; // Green
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (redColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [255, 0, 0]; // Red
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else if (blackColumns.includes(headerValue)) {
+                    data.cell.styles.fillColor = [0, 0, 0]; // Black
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else {
+                    data.cell.styles.fillColor = [200, 200, 200]; // Default Gray
+                    data.cell.styles.textColor = [0, 0, 0];
+                }
             }
-        }
-    }
-},
 
+            if (data.row.section === 'body') {
+                data.cell.styles.fillColor = [211, 211, 211]; // LightGray for all body rows
 
+                if (data.column.index === 0) {
+                    data.cell.styles.fillColor = [112, 128, 144]; // SlateGray for row numbers
+                    data.cell.styles.textColor = [255, 255, 255];
+                } else {
+                    let group1Sum = 0;
+                    let group2Sum = 0;
+
+                    group1Columns.forEach(index => {
+                        const value = parseFloat(data.row.raw[index]);
+                        if (!isNaN(value)) group1Sum += value;
+                    });
+
+                    group2Columns.forEach(index => {
+                        const value = parseFloat(data.row.raw[index]);
+                        if (!isNaN(value)) group2Sum += value;
+                    });
+
+                    let appliedColor = false;
+
+                    if (group1Columns.includes(data.column.index)) {
+                        const group1CellStyle = sumConditions[group1Sum];
+                        if (group1CellStyle) {
+                            data.cell.styles.fillColor = getColorForStyle(group1CellStyle);
+                            appliedColor = true;
+                        }
+                    }
+
+                    if (group2Columns.includes(data.column.index)) {
+                        const group2CellStyle = sumConditions[group2Sum];
+                        if (group2CellStyle) {
+                            data.cell.styles.fillColor = getColorForStyle(group2CellStyle);
+                            appliedColor = true;
+                        }
+                    }
+
+                    const cellValue = parseFloat(data.cell.text);
+                    if (!isNaN(cellValue)) {
+                        if (cellValue === 3) {
+                            data.cell.styles.fillColor = getColorForStyle('DarkSeaGreen');
+                        } else if (cellValue === 4) {
+                            data.cell.styles.fillColor = getColorForStyle('Gold');
+                        } else if (cellValue === 5) {
+                            data.cell.styles.fillColor = getColorForStyle('light-green');
+                        } else if (cellValue === 6) {
+                            data.cell.styles.fillColor = getColorForStyle('light-orange');
+                        } else if (cellValue >= 7) {
+                            data.cell.styles.fillColor = getColorForStyle('DarkKhaki');
+                        }
+                    }
+
+                    if (!appliedColor && lightYellowColumns.includes(data.column.index)) {
+                        data.cell.styles.fillColor = getColorForStyle('default-light-yellow');
+                    }
+                }
+            }
+        },
         didDrawPage: function () {
             doc.setFontSize(16);
-            const titleX = 14;
-            doc.text(filename.replace('.pdf', ''), titleX, 15);
-
-            const legendWidth = 8 * 8 + 7 * 2;
-            const xStart = pageWidth - legendWidth - 50;  // Move legend to the left by 50 units (about 2 inches)
-
-            drawColorLegend(xStart);
+            doc.text(filename.replace('.pdf', ''), 14, 15);
         }
     });
 
-    // ✅ New Page for Tasks and Selected Files
+    // ✅ New Page for Task Codes and Categories
     doc.addPage();
     doc.setFontSize(14);
     doc.text("Tasks:", 14, 20);
 
     let finalY = 30;
     doc.setFontSize(12);
-    extractedStrings.forEach(([text, rowNum]) => {
-        doc.text(`Row ${rowNum}: ${text}`, 14, finalY);
+
+    Object.entries(rowCategoriesMap).forEach(([rowNum, data]) => {
+        let taskText = `Row ${rowNum}: Task Code: ${data.taskCode || "NT"} | Significance: ${data.categories.length > 0 ? data.categories.join(", ") : "None"}`;
+        doc.text(taskText, 14, finalY);
         finalY += 6;
     });
 
@@ -1614,9 +1538,10 @@ didParseCell: function (data) {
         doc.text(fileName, 14, finalY);
         finalY += 6;
     });
-    
+
     doc.save(filename);
 }
+
 
         // Event listener for 'sortCols' button
         document.getElementById('sortCols').addEventListener('click', function() {

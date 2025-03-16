@@ -1538,10 +1538,15 @@ function processConcatenatedCSVData(csvData) {
   }
 
   const dataRows = [];
-  rows.forEach(row => {
-    const values = row.split(",").map(value => value.trim());
+  rows.forEach((row, index) => {
+    let values = row.split(",").map(value => value.trim());
 
-    // Check if the row is a header
+    // Ensure only the first 38 columns are considered for data rows (starting at index 3)
+    if (index >= 3) {
+      values = values.slice(0, 38); // Trim extra columns beyond 37
+    }
+
+    // Check if the row is a header (skip it)
     const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
     if (isHeader) {
       console.log("Header row detected and skipped:", row);
@@ -1555,7 +1560,7 @@ function processConcatenatedCSVData(csvData) {
     }
   });
 
-  totalRuns = dataRows.length; // ✅ FIX: Count actual valid data rows, not all rows
+  totalRuns = dataRows.length; // ✅ Count only valid data rows
   console.log("Total Runs after filtering headers:", totalRuns);
   processData(dataRows);
 

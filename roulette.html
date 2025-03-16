@@ -484,8 +484,8 @@
                 <h2>Instructions</h2>
                 <p>One Set = 38 Spins<br>
                     Each spin randomly picks a number from 1 to 38<br>                   
-                    Spin Delay can be set to less than 1. Ex: .05 for very fast<br>
-                    Please choose 1 or more Tasks to focus your Intention<br>
+                    Spin Delay at 0 is very fast, but you can increase it to allow time to focus<br>
+                    Please choose the Task button if you want to try to mentally influence the run<br>
                     <h2>Tasks</h2>
 
 					<i>Directional Differences</i>: Measures shifts in distribution of hits within runs.<br><br>
@@ -1348,16 +1348,19 @@ function togglePValueTable(visible) {
     }
 }
 
-// Add keyboard shortcuts: Shift+H to hide, Shift+U to unhide
+// Add keyboard shortcuts: 'h' (or 'H') to hide, 'u' (or 'U') to unhide
 document.addEventListener('keydown', function(event) {
-    if (event.shiftKey && event.key.toUpperCase() === 'H') {
+    const key = event.key.toLowerCase(); // Convert key to lowercase for uniformity
+
+    if (key === 'h') {
         console.log("🔴 Hiding P-Values Table...");
         togglePValueTable(false);
-    } else if (event.shiftKey && event.key.toUpperCase() === 'U') {
+    } else if (key === 'u') {
         console.log("🟢 Unhiding P-Values Table...");
         togglePValueTable(true);
     }
 });
+
  
   </script>
 </body>

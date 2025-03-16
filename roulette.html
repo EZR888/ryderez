@@ -1063,7 +1063,7 @@ function displayPValues(newPValues) {
         });
 
         // ✅ Store significant categories in pValuesTableMap
-        tempPValuesTableMap[run] = significanceMatches.length ? significanceMatches : ["NT"]; // ✅ Default to "NT" if empty
+        tempPValuesTableMap[run] = significanceMatches.length ? significanceMatches : ["None"]; // ✅ Default to "NT" if empty
 
         // ✅ Generate multiple rows if multiple significant categories exist
         if (significanceMatches.length > 0) {

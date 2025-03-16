@@ -322,7 +322,7 @@
         <div class="toggle-button-container">
             <button class="toggle-button active" id="noTasksButton" style="display: none;">No Tasks</button>
             <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Right - Left</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Left - Right</button>
             <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
             <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
             <button class="toggle-button" onclick="toggleOption(this)">Variance (Within-Run)</button>
@@ -380,10 +380,23 @@ function activateTaskButtons(taskNames) {
 }
 
 function extractTasksFromCSV(csvData) {
-    console.log("📥 Extracting task names from CSV...");
+    console.log("📥 Extracting task codes from CSV...");
 
     const lines = csvData.trim().split("\n");
     let taskNames = new Set();
+
+    // Define mapping from task codes to button text
+    const taskMappings = {
+        "S00": "Sum of 00",
+        "S0": "Sum of 0",
+        "TEC": "Top Ends - Center",
+        "BEC": "Bottom Ends - Center",
+        "TB": "Top - Bottom",
+        "LR": "Left - Right",
+        "V": "Variance (Within-Run)",
+        "D": "Density (Top 5 Sum)",
+        "NT": "No Task"
+    };
 
     lines.forEach((line, index) => {
         let values = line.split(",").map(value => value.trim());
@@ -394,19 +407,17 @@ function extractTasksFromCSV(csvData) {
         }
 
         // ✅ Ensure we start extracting at **row index 4** (1-based row 5)
-        if (index >= 4 && values.length > 40) {
-            let tasks = values.slice(40); // Extract tasks from column index 40 onward
-            console.log(`🟢 Extracted Tasks from Row ${index + 1}:`, tasks);
+        if (index >= 4 && values.length > 38) {
+            let taskCode = values[38]; // Column 38 (index 37)
+            console.log(`🟢 Extracted Task Code from Row ${index + 1}:`, taskCode);
 
-            tasks.forEach(task => {
-                task = task.trim();
-                if (task && task !== "NT") { // ✅ Ignore empty values & "NT"
-                    taskNames.add(task);
-                    console.log(`✅ Added Task: ${task}`);
-                } else {
-                    console.log(`⏩ Ignored Task: ${task}`);
-                }
-            });
+            if (taskCode && taskCode !== "NT") { // ✅ Ignore "NT"
+                let taskText = taskMappings[taskCode] || taskCode; // Map to button text or use raw code
+                taskNames.add(taskText);
+                console.log(`✅ Mapped & Added Task: ${taskText}`);
+            } else {
+                console.log(`⏩ Ignored Task: ${taskCode}`);
+            }
         } else if (index < 4) {
             console.log(`⏩ Skipping Row ${index + 1} (Metadata/Header)`);
         } else {
@@ -637,7 +648,7 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
     }
 
     if (!statsCollection[category]) {
-        console.error(`❌ ERROR: ${category} is missing from statsCollection!`);
+        console.log(`❌ ERROR: ${category} is missing from statsCollection!`);
         return {};
     }
 
@@ -648,10 +659,16 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
         return {};
     }
 
-    if (!statsCollection || Object.keys(statsCollection).length === 0) {
-        console.error("❌ ERROR: statsCollection is empty or not initialized! Skipping cumulative probability calculation.");
-        return {};
-    }
+if (!statsCollection || Object.keys(statsCollection).length === 0) {
+    console.error("❌ ERROR: statsCollection is empty or not initialized! Skipping cumulative probability calculation.");
+    return {};
+}
+
+// Ensure category exists in statsCollection before proceeding
+if (!statsCollection[category]) {
+    console.warn(`⚠️ WARNING: ${category} not found in statsCollection! Initializing as empty.`);
+    statsCollection[category] = {};  // Initialize it to prevent errors
+}
 
     // ✅ List of sum-based categories (these will use MEAN)
     const sumCategories = [
@@ -1483,17 +1500,24 @@ function processData(rows, isGeneratingReferenceData = false) {
 
     [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
 
-    Object.keys(differences).forEach(category => {
-        statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
-    });
+Object.keys(differences).forEach(category => {
+    if (!statsCollection[category]) statsCollection[category] = {};  // Ensure category exists
+    statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+});
 
-    Object.keys(groupSums).forEach(group => {
-        statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
-    });
+Object.keys(groupSums).forEach(group => {
+    if (!statsCollection[group]) statsCollection[group] = {};  // Ensure group exists
+    statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+});
 
-    statsCollection["varianceDifference"] = calculateDescriptiveStatistics(differences.varianceDifference);
-    statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
-    statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
+// Explicitly initialize "varianceDifference", "Density", and "Variance"
+if (!statsCollection["varianceDifference"]) statsCollection["varianceDifference"] = {};
+if (!statsCollection["Density"]) statsCollection["Density"] = {};
+if (!statsCollection["Variance"]) statsCollection["Variance"] = {};
+
+statsCollection["varianceDifference"] = calculateDescriptiveStatistics(differences.varianceDifference);
+statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
+statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
 
     console.log("✅ Data Processed, Displaying Results...");
     

@@ -780,7 +780,7 @@ function displayExtractedStrings() {
     Object.entries(rowCategoriesMap).forEach(([rowNum, data]) => {
         if (data.taskCode !== "NT" || data.categories.length > 0) {  
             const li = document.createElement("li");
-            li.textContent = `Row ${rowNum}: Task - ${data.taskCode}, Significance - ${data.categories.join(", ")}`;
+            li.textContent = `Row ${rowNum}:  Task: ${data.taskCode}  |  Significance: ${data.categories.join(", ")}`;
             ul.appendChild(li);
         }
     });
@@ -1235,7 +1235,7 @@ function savePDFSplit(rowCategoriesMap) {
         bottomHalf[0] = "";
 
         let taskInfo = rowCategoriesMap[rowNumber] || { taskCode: "NT", categories: [] };
-        let taskDisplay = [...taskInfo.categories].filter(val => val.trim() !== "").join(", ") || "NT";
+        let taskDisplay = [...taskInfo.categories].filter(val => val.trim() !== "").join(", ") || "None";
 
         processedData.push(topHalfHeaders);
         processedData.push(topHalf);

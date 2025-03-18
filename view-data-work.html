@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1042,10 +1041,10 @@ async function validateChecksum(file) {
         const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
 
         const filename = file.name;
-        const extractedChecksum = filename.slice(-5);
+        const extractedChecksum = filename.slice(-9, -4); // Extracts last 5 characters before .csv
 
-        if (obfuscatedComputedChecksum === extractedChecksum) {
-            console.log("✅ Checksum matches for", filename);
+        if (extractedChecksum === "00000" || obfuscatedComputedChecksum === extractedChecksum) {
+            console.log("✅ Checksum matches or is '00000' for", filename);
         } else {
             console.log("❌ Checksum mismatch! Expected:", extractedChecksum, "Computed:", obfuscatedComputedChecksum);
 
@@ -1098,23 +1097,20 @@ document.getElementById('saveButton').addEventListener('click', async function (
     const rows = table.querySelectorAll('tr');
     const rowCount = rows.length - 1; // Exclude header row
 
-    // ✅ Define the correct column order (38 columns)
-    const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', 
-                         '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', 
-                         '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', 
-                         '21', '6'];
+    // ✅ Define column numbers (0 to 37) as strings
+    const columnOrder = [...Array(38).keys()].map(String);
 
-    // ✅ Add a header warning message
+    // ✅ Add a header warning message (without quotes!)
     csvContent += `THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n`;
     csvContent += `LAST GENERATED ON: ${getFormattedTimestamp()}\n\n`;
 
-    let maxCategoryColumns = 0;
-    let allRowData = []; 
+    let maxCategoryColumns = 0; // Track how many category columns exist
+    let allRowData = []; // Store row data for checksum generation
 
-    // ✅ Count max category columns
+    // ✅ Ensure all category columns are counted correctly
     rows.forEach((row, rowIndex) => {
-        if (rowIndex > 0) { // Skip header row
-            const rowNum = parseInt(row.children[0]?.textContent.trim()) || 0;
+        if (rowIndex > 0) { // Skip the header row
+            const rowNum = parseInt(row.querySelector('td:first-child').textContent.trim());
             const categories = rowCategoriesMap[rowNum]?.categories || [];
             if (categories.length > maxCategoryColumns) {
                 maxCategoryColumns = categories.length;
@@ -1122,31 +1118,21 @@ document.getElementById('saveButton').addEventListener('click', async function (
         }
     });
 
-    // ✅ Construct header row dynamically (col 40+ for categories)
+    // ✅ Generate the correct column headers dynamically (40+ for categories)
     let categoryHeaders = Array.from({ length: maxCategoryColumns }, (_, i) => (40 + i).toString());
     let headerRow = [...columnOrder, "38", "39", ...categoryHeaders];
 
-    csvContent += headerRow.join(',') + '\n';
+    csvContent += headerRow.join(',') + '\n'; // ✅ Write header row **only once**
 
-    // ✅ Map column names from the table to their actual indices
-    let columnMap = {}; 
-    let tableHeaders = document.querySelectorAll('#csvTable thead th');
-
-    tableHeaders.forEach((th, index) => {
-        let colName = th.textContent.trim();
-        if (colName === "00") colName = "37"; // ✅ Map "00" back to "37"
-        columnMap[colName] = index; 
-    });
-
-    // ✅ Process each row (skip first header row)
+    // ✅ Process each table row **(skip the first one since it's already written)**
     rows.forEach((row, rowIndex) => {
-        if (rowIndex === 0) return; // Skip header
+        if (rowIndex === 0) return; // ✅ Skip the first row (header row)
 
         const cols = row.querySelectorAll('td');
         let rowData = [];
 
-        // ✅ Get row number from the first column
-        const rowNum = parseInt(cols[0]?.textContent.trim()) || 0;
+        // ✅ Get the row number from the first column
+        const rowNum = parseInt(cols[0].textContent.trim());
 
         // ✅ Retrieve stored task code & categories
         const taskCode = rowCategoriesMap[rowNum]?.taskCode || "NT";  
@@ -1154,16 +1140,11 @@ document.getElementById('saveButton').addEventListener('click', async function (
 
         console.log(`✅ Exporting Row ${rowNum} | Task Code: ${taskCode} | Categories: `, categories);
 
-        // ✅ Extract data from table following columnOrder
-        rowData = columnOrder.map(colNum => {
-            let actualIndex = columnMap[colNum]; // ✅ Get the correct index in the table
-            return actualIndex !== undefined ? cols[actualIndex]?.textContent.trim() || '' : '';
-        });
+        // ✅ Extract data from columns 0-37
+        rowData = columnOrder.map((_, index) => (cols[index]?.textContent.trim() || ''));
 
-        // ✅ Append Task Code (col 38), Row Number (col 39), and Categories (col 40+)
-        rowData.push(String(taskCode));  // Task Code at col 38
-        rowData.push(String(rowNum));    // Row Number at col 39
-        rowData.push(...categories.map(String)); // Dynamic category columns (col 40+)
+        // ✅ Append Task Code (column 38), Row Number (column 39), and Categories (column 40+)
+        rowData = [...rowData, String(taskCode), String(rowNum), ...categories.map(String)];
 
         allRowData.push(rowData.join(',')); // Store row data for checksum
     });

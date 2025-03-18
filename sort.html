@@ -459,27 +459,19 @@ document.getElementById('fileInput').addEventListener('change', function (event)
 
             // ✅ Compute checksum of file content
             const computedChecksum = await generateChecksum(csvData);
-
-            // ✅ Extract the last 5-character hash from the second half of computed checksum
             const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
-
-            // ✅ Extract last 5 characters from filename (before .csv)
             const last5FromFile = file.name.replace(".csv", "").slice(-5);
 
             if (last5FromFile === obfuscatedComputedChecksum) {
                 console.log(`✅ Filename hash match for ${file.name}`);
             } else {
                 console.log(`❌ Filename hash mismatch for ${file.name}`);
-                console.log(`Expected: ${last5FromFile}`);
-                console.log(`Computed: ${obfuscatedComputedChecksum}`);
-
-                // 🔴 Alert the user and abort execution
                 alert(`It appears that "${file.name}" has been edited. Aborting.`);
-                location.reload(); // Refresh page to reset state
+                location.reload(); 
                 return;
             }
 
-            let rows = csvData.split("\n").map(row => row.trim()); // Trim whitespace from each row
+            let rows = csvData.split("\n").map(row => row.trim()); 
 
             if (rows.length < 4) {
                 console.warn(`File "${file.name}" does not have enough data.`);
@@ -488,18 +480,15 @@ document.getElementById('fileInput').addEventListener('change', function (event)
             }
 
             let processedRows = [];
-            for (let i = 4; i < rows.length; i++) { // Start from the fourth row (index 3)
-                if (!rows[i].trim()) { // Stop at the first completely empty row
-                    break;
-                }
+            for (let i = 4; i < rows.length; i++) { // Start from row 4 (index 3)
+                if (!rows[i].trim()) break;
 
-                let rowValues = rows[i].split(",").map(value => value.trim()); // Trim each cell value
+                let rowValues = rows[i].split(",").map(value => value.trim());
 
-                if (rowValues.every(cell => cell === "")) { // Stop if all cells are empty
-                    break;
-                }
+                if (rowValues.every(cell => cell === "")) break;
 
-                processedRows.push(rowValues.map(value => (value === "" ? "" : Number(value) || value)));
+                // ✅ Limit row to first 38 columns
+                processedRows.push(rowValues.slice(0, 37).map(value => (value === "" ? "" : Number(value) || value)));
             }
 
             allData = allData.concat(processedRows);
@@ -512,6 +501,7 @@ document.getElementById('fileInput').addEventListener('change', function (event)
 
     readFile(0);
 });
+
 
 // ✅ Function to generate SHA-256 checksum
 async function generateChecksum(content) {

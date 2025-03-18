@@ -1008,7 +1008,7 @@ function displayPValues(newPValues) {
                     <th>Task</th>
                     <th>Difference</th>
                     <th>Significance</th>
-                    <th>Adjusted P-Value</th>
+                    <th>P-Value</th>
                 </tr>
             </table>
         `;
@@ -1022,7 +1022,8 @@ function displayPValues(newPValues) {
     // ✅ Group values by run number and category
     newPValues.forEach(({ run, category, difference, pValue }) => {
         let numericPValue = parseFloat(pValue);
-        let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
+        // let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
+        let adjustedPValue = numericPValue;
 
         if (!groupedRows[run]) {
             groupedRows[run] = {};
@@ -1115,7 +1116,7 @@ function displayPValues(newPValues) {
                             <th>Task</th>
                             <th>Difference</th>
                             <th>Significance</th>
-                            <th>Adjusted P-Value</th>
+                            <th>P-Value</th>
                         </tr>${rowsHTML}`;
 
     console.log("✅ Finished updating P-Values Display.");

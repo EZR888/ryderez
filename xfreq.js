@@ -1,0 +1,1397 @@
+/* Copyright 2025 © EZR Consulting. All rights reserved. */
+
+// =======================================================
+    // Helper Functions and Global Variables
+    // =======================================================
+    let totalRuns = 0;
+    let selectedFileNames = []; // Store selected filenames globally
+    let statsCollection = {}; // Declare at the top of the script
+    let extractedTasksList = []; // Store tasks from all selected files
+    let extractedTaskRows = []; // ✅ Ensure extractedTaskRows is globally declared
+
+  
+function activateTaskButtons(taskNames) {
+    console.log("🔎 Activating buttons for tasks:", [...taskNames]);
+
+    document.querySelectorAll(".toggle-button").forEach(button => {
+        const buttonText = button.textContent.trim();
+        console.log(`🟢 Checking button: ${buttonText}`);
+
+        if (taskNames.has(buttonText)) {
+            console.log(`✅ Activating button: ${buttonText}`);
+            button.classList.add("active");
+        } else {
+            console.log(`❌ Button not in list: ${buttonText}`);
+            button.classList.remove("active");
+        }
+    });
+
+    console.log("✅ Button activation complete.");
+}
+
+function extractTasksFromCSV(csvData) {
+    console.log("📥 Extracting task codes from CSV...");
+
+    const lines = csvData.trim().split("\n");
+    let taskNames = new Set();
+
+    // Define mapping from task codes to button text
+    const taskMappings = {
+        "S00": "Sum of 00",
+        "S0": "Sum of 0",
+        "TEC": "Top Ends - Center",
+        "BEC": "Bottom Ends - Center",
+        "TB": "Top - Bottom",
+        "LR": "Left - Right",
+        "V": "Variance (Within-Run)",
+        "D": "Density (Top 5 Sum)",
+        "NT": "No Task"
+    };
+
+    lines.forEach((line, index) => {
+        let values = line.split(",").map(value => value.trim());
+
+        // Log first few lines for debugging
+        if (index < 6) {
+            console.log(`🔍 Sample Row ${index + 1}:`, values);
+        }
+
+        // ✅ Ensure we start extracting at **row index 4** (1-based row 5)
+        if (index >= 4 && values.length > 38) {
+            let taskCode = values[38]; // Column 38 (index 37)
+            console.log(`🟢 Extracted Task Code from Row ${index + 1}:`, taskCode);
+
+            if (taskCode && taskCode !== "NT") { // ✅ Ignore "NT"
+                let taskText = taskMappings[taskCode] || taskCode; // Map to button text or use raw code
+                taskNames.add(taskText);
+                console.log(`✅ Mapped & Added Task: ${taskText}`);
+            } else {
+                console.log(`⏩ Ignored Task: ${taskCode}`);
+            }
+        } else if (index < 4) {
+            console.log(`⏩ Skipping Row ${index + 1} (Metadata/Header)`);
+        } else {
+            console.warn(`⚠️ Row ${index + 1} has insufficient columns. Skipping.`, values);
+        }
+    });
+
+    console.log("🟢 Final Extracted Task Names:", [...taskNames]);
+    return taskNames;
+}
+
+
+function updateButtonStates() {
+    console.log("🔍 Checking each button for activation...");
+
+    // ✅ Extract and clean task names properly
+    const taskNames = new Set();
+    extractedTaskRows.forEach(row => {
+        let parts = row.split(": "); // Split at ": "
+        if (parts.length > 1) {
+            let tasks = parts[1].split("|"); // Split multiple tasks
+            tasks.forEach(task => taskNames.add(task.trim())); // Trim spaces and store
+        }
+    });
+
+    console.log("🔹 Extracted Individual Task Names:", [...taskNames]);
+
+    document.querySelectorAll(".toggle-button").forEach(button => {
+        const buttonText = button.textContent.trim();
+        console.log(`🟢 Checking button: ${buttonText}`);
+
+        if (taskNames.has(buttonText)) {
+            console.log(`✅ Activating button: ${buttonText}`);
+            button.classList.add("active");
+        } else {
+            console.log(`❌ Button not in list: ${buttonText}`);
+            button.classList.remove("active");
+        }
+    });
+
+    console.log("✅ Button activation complete.");
+}
+
+
+    
+    // Group indices for various distributions
+    const groupIndices = {
+      topIndices: [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
+      bottomIndices: [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6],
+      leftTop: [5,22,34,15,3],
+      leftBottom: [17,32,20,7,11],
+      rightTop: [12,8,19,31,18],
+      rightBottom: [4,16,33,21,6],
+      cTop: [24,36,13,1,37,27,10,25,29],
+      cBottom: [30,26,9,28,0,2,14,35,23],
+      zzCluster: [13,1,37,27,10],
+      zCluster: [9,28,0,2,14],
+      left: [5,22,34,15,3,24,36,13,1,17,32,20,7,11,30,26,9,28],
+      right: [27,10,25,29,12,8,19,31,18,2,14,35,23,4,16,33,21,6],
+      topEnds: [5,22,34,15,3,12,8,19,31,18],
+      bottomEnds: [17,32,20,7,11,4,16,3,21,6],
+      topCenter: [24,36,13,1,37,27,10,25,29],
+      bottomCenter: [30,26,9,28,0,2,14,35,23],
+      zeroSums: [13,1,37,27,10,9,28,0,2,14]
+    };
+
+function sumColumns(counts, indices) {
+      return indices.reduce((sum, idx) => sum + counts[idx], 0);
+    }
+    
+// Function to compute Density (sum of top 5 values in a row)
+function calculateDensity(counts) {
+    return counts
+        .slice() // Clone the array to avoid modifying original
+        .sort((a, b) => b - a) // Sort in descending order
+        .slice(0, 5) // Take top 5
+        .reduce((sum, val) => sum + val, 0)
+        .toFixed(6); // 🔥 Trim to 6 decimal places
+}
+
+// Function to compute Variance (spread of values in a row)
+function calculateVariance(counts) {
+    let n = counts.length;
+    let mean = counts.reduce((sum, val) => sum + val, 0) / n;
+    let variance = counts.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+    return parseFloat(variance.toFixed(6)); // 🔥 Ensure it's a number with 6 decimal places
+}
+
+function calculateVarianceDifference(topVariance, bottomVariance) {
+      return parseFloat((topVariance - bottomVariance).toFixed(6));
+}
+
+function calculateAllSums(counts) {
+      return {
+        topBottomDiff: sumColumns(counts, groupIndices.topIndices) - sumColumns(counts, groupIndices.bottomIndices),
+        leftRightDiff: sumColumns(counts, groupIndices.left) - sumColumns(counts, groupIndices.right),
+        cDiff: sumColumns(counts, groupIndices.cTop) - sumColumns(counts, groupIndices.cBottom),
+        zzDiff: sumColumns(counts, groupIndices.zzCluster) - sumColumns(counts, groupIndices.zCluster),
+        topDiff: sumColumns(counts, groupIndices.topEnds) - sumColumns(counts, groupIndices.topCenter),
+        bottomDiff: sumColumns(counts, groupIndices.bottomEnds) - sumColumns(counts, groupIndices.bottomCenter),
+      };	
+    }
+
+    // =======================================================
+    // Descriptive Statistics & Frequency Functions
+    // =======================================================
+function calculateDescriptiveStatistics(differences) {
+    if (!Array.isArray(differences) || differences.length === 0) {
+        throw new TypeError("The 'differences' argument must be a non-empty array.");
+    }
+  
+    let n = 0, mean = 0, M2 = 0, M3 = 0, M4 = 0;
+    let min = Infinity, max = -Infinity;
+    
+    differences.forEach(x => {
+        n++;
+        const delta = x - mean;
+        const deltaN = delta / n;
+        const deltaNSquared = deltaN * deltaN;
+        const term1 = delta * deltaN * (n - 1);
+        mean += deltaN;
+        M4 += term1 * deltaNSquared * (n * n - 3 * n + 3) + 6 * deltaNSquared * M2 - 4 * deltaN * M3;
+        M3 += term1 * deltaN * (n - 2) - 3 * deltaN * M2;
+        M2 += term1;
+        if (x < min) min = x;
+        if (x > max) max = x;
+    });
+
+    const variance = M2 / n;
+    const stdDev = Math.sqrt(variance);
+
+    // **🔥 Prevent NaN issue when variance = 0**
+    if (variance === 0) {
+        return {
+            mean: mean.toFixed(4),
+            variance: variance.toFixed(4),
+            stdDev: stdDev.toFixed(4),
+            median: calculateMedian(differences),
+            min,
+            max,
+            skewness: "0.0000",  // No skewness if all values are the same
+            kurtosis: "0.0000"   // No excess kurtosis if variance = 0
+        };
+    }
+
+    const skewness = (M3 / n) / Math.pow(stdDev, 3);
+    const kurtosis = (M4 / n) / (variance * variance) - 3;  
+
+    return {
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        median: calculateMedian(differences),
+        min,
+        max,
+        skewness: skewness.toFixed(4),
+        kurtosis: kurtosis.toFixed(4)
+    };
+}
+
+// =======================================================
+// Ensure referenceData has correct means for categories
+// =======================================================
+function getExpectedMean(category, isGeneratingReferenceData = false) {
+    if (isGeneratingReferenceData) {
+        console.log(`🟢 Skipping expected mean lookup for ${category} since this is a reference data run.`);
+        return 0;
+    }
+
+    if (referenceData[category]) {
+        if (category === "Density" || category === "Variance") {
+            console.log(`🟢 Using expected mean for ${category}:`, referenceData[category]);
+            return parseFloat(referenceData[category]?.mean || 0);
+        } else if (referenceData[category]["mean"]) {
+            return parseFloat(referenceData[category]["mean"]);
+        }
+    }
+
+    console.warn(`⚠️ No mean found for category: ${category}`);
+    return 0;
+}
+
+
+// =======================================================
+// Validate Density and Variance values before processing
+// =======================================================
+function validateDensityAndVariance(densityValues, varianceValues) {
+    if (!Array.isArray(densityValues) || densityValues.length === 0) {
+        console.error("❌ ERROR: Density values array is empty or invalid!");
+        densityValues = [0]; // Provide default fallback
+    }
+    if (!Array.isArray(varianceValues) || varianceValues.length === 0) {
+        console.error("❌ ERROR: Variance values array is empty or invalid!");
+        varianceValues = [0]; // Provide default fallback
+    }
+    return [densityValues, varianceValues];
+}
+
+
+function calculateMedian(arr) {
+    const sorted = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    
+    return sorted.length % 2 !== 0 
+        ? parseFloat(sorted[mid].toFixed(4))  // Ensure number, 4 decimal places
+        : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));  // Ensure number, 4 decimal places
+}
+
+// =======================================================
+// Fix calculateFrequencyDistribution crashing on undefined
+// =======================================================
+function calculateFrequencyDistribution(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error("❌ ERROR: Invalid data provided to calculateFrequencyDistribution");
+        return {}; // Return empty object to prevent crash
+    }
+    const frequency = {};
+    data.forEach(val => {
+        frequency[val] = (frequency[val] || 0) + 1;
+    });
+    return frequency;
+}
+
+function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
+    if (!category || typeof category !== "string") {
+        console.error("❌ ERROR: Invalid category passed to calculateCumulativeProbabilities!", category);
+        return {};
+    }
+
+    if (!statsCollection[category]) {
+        console.log(`❌ ERROR: ${category} is missing from statsCollection!`);
+        return {};
+    }
+
+    console.log(`🟢 Processing category: ${category}`);
+
+    if (!totalValue || totalValue <= 0) {
+        console.error("❌ ERROR: totalValue is invalid for cumulative probability calculation:", totalValue);
+        return {};
+    }
+
+if (!statsCollection || Object.keys(statsCollection).length === 0) {
+    console.error("❌ ERROR: statsCollection is empty or not initialized! Skipping cumulative probability calculation.");
+    return {};
+}
+
+// Ensure category exists in statsCollection before proceeding
+if (!statsCollection[category]) {
+    console.warn(`⚠️ WARNING: ${category} not found in statsCollection! Initializing as empty.`);
+    statsCollection[category] = {};  // Initialize it to prevent errors
+}
+
+    // ✅ List of sum-based categories (these will use MEAN)
+    const sumCategories = [
+        "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
+        "cTop", "cBottom", "zzCluster", "zCluster", "left", "right", "topEnds", "bottomEnds", 
+        "topCenter", "bottomCenter", "zeroSums", "Density", "Variance"
+    ];
+
+    const isSumCategory = sumCategories.includes(category);
+    const isDifferenceCategory = category.includes("Diff");
+
+    const sortedKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+    let cumulativeProbabilities = {};
+    let cumulativeBelow = 0, cumulativeAbove = 0;
+
+    // ✅ Get center value (Mean for sum-based categories, 0 for difference categories)
+    let centerValue = isDifferenceCategory ? 0 : 
+                      (referenceData?.[category]?.mean ?? statsCollection?.[category]?.mean ?? null);
+
+    if (centerValue === null) {
+        console.warn(`⚠️ No mean found for ${category}, defaulting to 0.`);
+        centerValue = 0;
+    }
+
+    console.log(`🟢 Using ${isDifferenceCategory ? "0" : `MEAN (${centerValue})`} as center for cumulative probabilities in: ${category}`);
+
+    // ✅ Find the closest value to the mean in the dataset
+    let closestValue = sortedKeys.reduce((prev, curr) => 
+        Math.abs(curr - centerValue) < Math.abs(prev - centerValue) ? curr : prev, sortedKeys[0]
+    );
+
+    console.log(`🟢 Closest value to mean (${centerValue}) is: ${closestValue}`);
+
+    if (isDifferenceCategory) {
+        // ✅ Keep the existing logic for differences (DO NOT CHANGE)
+        let belowCenter = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
+        let aboveCenter = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
+
+        for (let key of belowCenter) {
+            cumulativeBelow += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeBelow,
+                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            };
+        }
+
+        for (let key of aboveCenter) {
+            cumulativeAbove += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeAbove,
+                cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+            };
+        }
+    } else if (isSumCategory) {
+        // ✅ New Fix: Ensure cumulative probability is blank when closest Value to Mean is found
+        let belowMean = sortedKeys.filter(key => key < centerValue).sort((a, b) => a - b);
+        let aboveMean = sortedKeys.filter(key => key > centerValue).sort((a, b) => b - a);
+
+        for (let key of belowMean) {
+            cumulativeBelow += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeBelow,
+                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            };
+        }
+
+        for (let key of aboveMean) {
+            cumulativeAbove += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeAbove,
+                cumulativeP: (cumulativeAbove / totalValue).toFixed(6)
+            };
+        }
+
+        // ✅ If the closest value exists in frequency distribution, set its cumulative probability to ""
+        if (cumulativeProbabilities.hasOwnProperty(closestValue)) {
+            console.log(`🟡 Setting cumulative probability to "" for closest value to mean: ${closestValue}`);
+            cumulativeProbabilities[closestValue].cumulativeP = "";
+        } else {
+            console.warn(`⚠️ Closest value ${closestValue} not found in frequency distribution.`);
+        }
+    } else {
+        // ✅ Default behavior for other categories
+        sortedKeys.sort((a, b) => a - b);
+        for (let key of sortedKeys) {
+            cumulativeBelow += frequencyDistribution[key];
+            cumulativeProbabilities[key] = {
+                cumulativeFrequency: cumulativeBelow,
+                cumulativeP: (cumulativeBelow / totalValue).toFixed(6)
+            };
+        }
+    }
+
+    console.log(`✅ Final Cumulative Probabilities for ${category}:`, cumulativeProbabilities);
+    return cumulativeProbabilities;
+}
+
+    // =======================================================
+    // Display Functions (Existing)
+    // =======================================================
+    const categoryLabels = {
+      topBottomDiff: "Top - Bottom",
+      leftRightDiff: "Left - Right",
+      cDiff: "Center 9 Top - Bottom",
+      zzDiff: "00 - 0",
+      topIndices: "Top",
+      bottomIndices: "Bottom",
+      leftTop: "Left Top",
+      leftBottom: "Left Bottom",
+      rightTop: "Right Top",
+      rightBottom: "Right Bottom",
+      cTop: "Center Top",
+      cBottom: "Center Bottom",
+      zzCluster: "00 Cluster",
+      zCluster: "0 Cluster",
+      left: "Left",
+      right: "Right",
+      topEnds: "Top Ends",
+      bottomEnds: "Bottom Ends",
+      topCenter: "Top Center",
+      bottomCenter: "Bottom Center",
+      topDiff: "Top Ends - Center",
+      bottomDiff: "Bottom Ends - Center",
+      zeroSums: "Zero Sums Total",
+      Density: "Density (Top 5 Sum)",
+      Variance: "Variance (Within-Run Spread)",
+      varianceDifference: "Variance Difference (Top - Bottom)"
+    };
+
+function displayDescriptiveStatistics(stats) {
+    if (!stats || typeof stats !== "object") {
+        console.error("Invalid statistics data provided for display.");
+        alert("An error occurred while displaying statistics.");
+        return;
+    }
+    const statsElement = document.getElementById("statistics");
+    statsElement.innerHTML = `
+        <ul>
+            <li><strong><span style="color: salmon;"> Mean:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.mean}</span></li>
+            <li><strong><span style="color: salmon;">Variance:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.variance}</span></li>
+            <li><strong><span style="color: salmon;">Standard Deviation:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.stdDev}</span></li>
+            <li><strong><span style="color: salmon;">Median:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.median}</span></li>
+            <li><strong><span style="color: salmon;">Minimum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.min}</span></li>
+            <li><strong><span style="color: salmon;">Maximum:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.max}</span></li>
+            <li><strong><span style="color: salmon;">Skewness:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.skewness}</span></li>
+            <li><strong><span style="color: salmon;">Kurtosis:</span></strong><span style="color: white;">&nbsp;&nbsp; ${stats.kurtosis}</span></li>
+        </ul>
+    `;
+}
+
+
+    // =======================================================
+    // CSV EXPORT FUNCTIONS
+    // =======================================================
+// =======================================================
+// Fix getFreqDistCSV crashing on undefined Density/Variance
+// =======================================================
+function getFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
+    if (!totalRuns || totalRuns <= 0) {
+        console.error("Invalid totalRuns for CSV export:", totalRuns);
+        return "";
+    }
+    console.log("🟢 Checking statsCollection before calling calculateCumulativeProbabilities:", statsCollection);
+
+    console.log("🟢 Density & Variance Passed to CSV:", { densityValues, varianceValues });
+
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
+
+    let csvContent = "Category,Metric,Value,,Value,Expected Probability,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
+    const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    Object.entries(stats).forEach(([category, values]) => {
+    
+    if (!category || typeof category !== "string") {
+        console.error("🚨 ERROR: Invalid category found in getFreqDistCSV:", category);
+        return; // Skip this iteration
+    }
+    	console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
+    	const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+
+    if (!frequencyDistribution || Object.keys(frequencyDistribution).length === 0) {
+        console.warn(`⚠️ Skipping cumulative probability calculation for ${category} (Empty distribution).`);
+        return;
+    }
+if (!category) {
+    console.error("🚨 ERROR: Undefined category detected before calling calculateCumulativeProbabilities!");
+    return;
+}
+const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
+
+        console.log(`🟢 Calling calculateCumulativeProbabilities with category: ${category}`);
+if (!category) {
+    console.error("🚨 ERROR: Undefined category detected in getFreqDistCSV!");
+}
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? values[metric] : "";
+
+            if ((category === "Variance" || category === "Density") && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let observedFrequency = "";
+            let expectedProbability = "";
+            let cumulativeProbability = "";
+
+            if (difference !== null) {
+                observedFrequency = frequencyDistribution[difference] || "";
+                expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
+                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
+                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
+            }
+
+            if (!referenceData[categoryLabel]) {
+                referenceData[categoryLabel] = {};
+            }
+
+            if (!referenceData[categoryLabel][difference]) {
+                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
+                referenceData[categoryLabel][difference] = {
+                    pValue: expectedProbability,
+                    cumulativePValue: cumulativeProbability,
+                    observedFrequency: observedFrequency
+                };
+            } else {
+                expectedProbability = referenceData[categoryLabel][difference].pValue;
+                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
+                referenceData[categoryLabel][difference].observedFrequency = observedFrequency;
+            }
+
+            csvContent += `${categoryLabel},${metric},${value},,${difference},${expectedProbability},${observedFrequency},${cumulativeProbability},\n`;
+        }
+    });
+
+    return csvContent;
+}
+
+           // Function to generate a formatted timestamp // 
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
+}
+
+
+function exportReferenceDataCSV() {
+    if (Object.keys(referenceData).length === 0) {
+        console.log("🟡 Skipping Reference Data CSV export (No reference data generated).");
+        return;
+    }
+
+    let csvContent = "Category,Difference,pValue,Cumulative P-Value,Observed Frequency\n";
+
+    Object.entries(referenceData).forEach(([category, differences]) => {
+        Object.entries(differences).forEach(([difference, values]) => {
+            csvContent += `${category},${difference},${values.pValue},${values.cumulativePValue},${values.observedFrequency || 0}\n`;
+        });
+    });
+
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `RefData_${totalRuns}_${timestamp}.csv`;
+
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`✅ Reference Data Exported as ${fileName}`);
+}
+
+
+// Global object to store reference data from 10mcols.csv
+let referenceData = {};
+// Call this function once at the beginning
+document.addEventListener("DOMContentLoaded", function () {
+    const useReferenceCheckbox = document.getElementById("useReferenceData");
+
+    function handleReferenceDataToggle() {
+        if (useReferenceCheckbox.checked) {
+            loadReferenceData("10mcols.csv");
+            console.log("✅ Enabled reference data from 10mcols.csv");
+        } else {
+            referenceData = {};  // 🔥 Clear reference data
+            console.log("❌ Disabled reference data.");
+        }
+    }
+
+    // ✅ Load reference data on page load if checked
+    handleReferenceDataToggle();
+
+    // ✅ Toggle reference data when checkbox is clicked
+    useReferenceCheckbox.addEventListener("change", handleReferenceDataToggle);
+});
+
+
+// Function to load reference data from 10mcols.csv
+function loadReferenceData(csvFilePath) {
+    fetch(csvFilePath)
+        .then(response => response.text())
+        .then(text => {
+            const rows = text.split("\n");
+            rows.forEach(row => {
+                const cols = row.split(",");
+                if (cols.length < 4) return; // Ensure row has enough columns
+
+                const category = cols[0].trim();  // Category (index key)
+                const difference = cols[1].trim(); // Difference value
+                const pValue = cols[2].trim();  // p-Value from 10mcols.csv
+                const cumulativePValue = cols[3].trim(); // Cumulative P-Value
+
+                if (!referenceData[category]) {
+                    referenceData[category] = {};
+                }
+                referenceData[category][difference] = { pValue, cumulativePValue };
+            });
+        })
+        .catch(error => console.error("Error loading reference data:", error));
+}
+
+function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = "";
+
+    const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+	console.log("🟢 Checking statsCollection before calling calculateCumulativeProbabilities:", statsCollection);
+
+    // Create options for the dropdown
+    let categoryOptions = `<option value="">Select a Category...</option>`;
+    Object.keys(allCategories).forEach(category => {
+    
+      if (!category || typeof category !== "string") {
+        console.error("🚨 Invalid category found:", category);
+    }
+    
+        if (!stats[category]) return;
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+        categoryOptions += `<option value="${anchorId}">${categoryLabel}</option>`;
+    });
+
+    Object.keys(allCategories).forEach(category => {
+        if (!stats[category]) {
+            console.warn(`⚠️ Skipping undefined category: ${category}`);
+            return;
+        }
+        console.log(`🟢 Displaying category: ${category}`);
+
+        // ✅ Moved these lines inside the loop
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+
+        // Dropdown inside each category
+        let categoryDropdownHTML = `
+            <div style="text-align: left; margin-bottom: 2px;">
+                <label for="categoryDropdown-${anchorId}" style="font-size: 14px; color: lightgreen;"></label>
+                <select class="categoryDropdown" id="categoryDropdown-${anchorId}" onchange="jumpToCategory(this)" style="padding: 5px; font-size: 14px; width: 220px;">
+                    ${categoryOptions}
+                </select>
+            </div>
+        `;
+
+        let categoryHTML = `
+            <div id="${anchorId}" class="category-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
+                ${categoryDropdownHTML}
+                <h2 class="category-label" style="margin-top: 20px; text-align: center;">
+                    <a href="#${anchorId}" style="color: lightgreen; text-decoration: none;">${categoryLabel}</a>
+                </h2>
+            </div>
+        `;
+
+        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
+        const totalSpins = totalRuns * 38;
+
+        let imageLineHTML = `
+            <center style="margin-bottom: 5px;">
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalRuns}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Runs</span>
+                &nbsp;&nbsp;
+                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 5px auto;">
+                &nbsp;&nbsp;
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalSpins}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Spins</span>
+            </center>`;
+
+        let tableHTML = `
+            ${categoryHTML}
+            ${imageLineHTML}
+            <table border='1' style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Metric</th>
+                <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Value</th>
+                <th></th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Expected Probability</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Observed Frequency</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Adjusted P-Value</th>
+            </tr>`;
+
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(stats[category]);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? stats[category][metric] : "";
+
+            if (category === "Variance" && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let frequency = "";
+            let pValue = "";
+            let cumulativePValue = "";
+
+            if (difference !== null) {  
+                frequency = frequencyDistribution[difference] || "";
+                pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
+                        (frequency ? (frequency / totalRuns).toFixed(6) : "");
+                cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
+            }
+
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+                pValue = referenceData[categoryLabel][difference].pValue;
+                cumulativePValue = referenceData[categoryLabel][difference].cumulativePValue;
+            }
+
+            let metricStyle = "color: orange; font-weight: bold;";
+            let valueStyle = "color: lightblue; font-weight: bold;";
+            let dataStyle = "color: lightgray;";
+            let highlightStyle = "color: yellow; font-weight: bold;";
+            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+
+            tableHTML += `
+            <tr>
+                <td style="padding: 8px; text-align: center; ${metricStyle}">${metric}</td>
+                <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+                <td style="padding: 8px;"></td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}"></td>
+            </tr>`;
+        }
+
+        tableHTML += `</table><br/>`;
+        explanationElement.innerHTML += tableHTML;
+    });
+}
+
+
+// Fix for navigation issue
+function jumpToCategory(dropdown) {
+    const selectedCategory = dropdown.value;
+    if (selectedCategory) {
+        document.getElementById(selectedCategory).scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+
+function getMaxHitsCSV(maxHits) {
+    let csvContent = "Max Hits per Number (Binomial p-values)\n";
+    csvContent += "Number,Max Hits Observed,P-Value\n";
+
+    for (let num = 0; num < 38; num++) {
+        let k = maxHits[num];
+        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1 / 38)) : 1;
+
+        // 🔥 Overwrite pValue using reference data (if available)
+        let pValueLookup = referenceData["MaxHits"]?.[num.toString()]?.pValue;
+        if (pValueLookup !== undefined) {
+            pValue = pValueLookup;
+        }
+
+        csvContent += `${num},${k},${pValue.toFixed(6)}\n`;
+    }
+
+    return csvContent;
+}
+
+
+
+// =======================================================
+// Fix CSV Export to Include Correct Density & Variance
+// =======================================================
+function exportCombinedCSV(differences, groupSums, stats, maxHits, densityValues, varianceValues, updatedFileName) {
+    let csvContent = "";
+
+    console.log("🟢 Exporting CSV... Checking Density & Variance:", { densityValues, varianceValues });
+
+    console.log(`📤 Exporting CSV. Checking categories:`);
+    Object.keys(stats).forEach(category => {
+        console.log(`📌 Category found: ${category}`);
+    });
+
+    // ✅ Include **full** task rows at the top of the CSV
+    if (extractedTaskRows.length > 0) {
+        csvContent += "Tasks:\n";
+        extractedTaskRows.forEach(taskRow => {
+            csvContent += `${taskRow}\n`; // ✅ Keep it exactly as it was in input
+        });
+        csvContent += "\n"; // Spacing before data
+    }
+
+    // ✅ Append frequency distribution data
+    csvContent += getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues);
+
+    // ✅ Include selected file names at the bottom
+    if (selectedFileNames.length > 0) {
+        csvContent += "\n\nSelected Files:\n";
+        selectedFileNames.forEach(fileName => {
+            csvContent += `${fileName}\n`;
+        });
+    }
+
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+    const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
+
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`✅ Exported CSV file: ${fileName}`);
+}
+
+
+function getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, varianceValues) {
+    let csvContent = "Category,Metric,Value,Value,Expected Probability,Observed Frequency,Cumulative Probability\n";
+    const allData = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+    Object.entries(stats).forEach(([category, values]) => {
+        console.log(`🟢 Processing category: ${category}`);
+
+        const categoryLabel = categoryLabels[category] || category;
+        const frequencyDistribution = calculateFrequencyDistribution(allData[category] || []);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(values);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        csvContent += `\n${categoryLabel}\n`; // ✅ Print category only once before its rows
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? values[metric] : "";
+
+            if ((category === "Variance" || category === "Density") && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let observedFrequency = "";
+            let expectedProbability = "";
+            let cumulativeProbability = "";
+
+            if (difference !== null) {
+                observedFrequency = frequencyDistribution[difference] || "";
+                expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
+                    (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
+                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
+            }
+
+            if (!referenceData[categoryLabel]) {
+                referenceData[categoryLabel] = {};
+            }
+
+            if (!referenceData[categoryLabel][difference]) {
+                expectedProbability = observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "";
+                referenceData[categoryLabel][difference] = {
+                    pValue: expectedProbability,
+                    cumulativePValue: cumulativeProbability,
+                    observedFrequency: observedFrequency
+                };
+            } else {
+                expectedProbability = referenceData[categoryLabel][difference].pValue;
+                cumulativeProbability = referenceData[categoryLabel][difference].cumulativePValue;
+                referenceData[categoryLabel][difference].observedFrequency = observedFrequency;
+            }
+
+            csvContent += `,${metric},${value},${difference},${expectedProbability},${observedFrequency},${cumulativeProbability}\n`;
+        }
+    });
+
+    return csvContent;
+}
+
+
+    
+
+    // =======================================================
+    // DISPLAY FUNCTIONS for Max Counts and Max Hits
+    // =======================================================
+function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+      let total = 38;
+      let tableHTML = `
+        <h3><center><span style="color: orange;">Max Counts</span>
+        <br>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <th style="padding: 8px; color: salmon; text-align: center;">Metric</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Count</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Frequency</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">P-Value</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Frequency</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
+          </tr>`;
+      let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+      let metricKeys = Object.keys(maxHitsStats);
+      let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+      for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const frequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        const pValue = frequency ? (frequency / total).toFixed(6) : "";
+        let cumulativeFrequency = "";
+        let cumulativePValue = "";
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+          cumulativeFrequency = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+          cumulativePValue = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
+        let metricStyle = "color: orange; font-weight: bold;";
+        let valueStyle = "color: lightblue; font-weight: bold;";
+        let dataStyle = "color: lightgray;";
+        let highlightStyle = "color: yellow; font-weight: bold;";
+        let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+        tableHTML += `
+          <tr>
+            <td style="padding: 8px; text-align: center; ${metricStyle}">${formattedMetric}</td>
+            <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${countValue}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativeFrequency}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+          </tr>`;
+      }
+      tableHTML += `</table><br/>`;
+      document.getElementById("explanation").innerHTML += tableHTML;
+    }
+
+//loadReferenceData("10mcols.csv");
+
+function displayMaxHitsTable(maxHits) {
+      let tableHTML = `
+        <h3><center><span style="color: orange;">Max Hits per Number</span>
+        <span style="color: lightgreen;"> (With Binomial p-values)</span></center></h3>
+        <br>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <th style="padding: 8px; color: salmon; text-align: center;">Number</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">Max Hits Observed</th>
+            <th style="padding: 8px; color: salmon; text-align: center;">P-Value (P(X ≥ k))</th>
+          </tr>
+      `;
+      for (let num = 0; num < 38; num++) {
+        let k = maxHits[num];
+        let pValue = (k > 0) ? (1 - jStat.binomial.cdf(k - 1, 38, 1/38)) : 1;
+        let dataStyle = "color: lightgray;";
+        let highlightStyle = "color: yellow; font-weight: bold;";
+        let applyHighlight = (pValue < 0.05);
+        tableHTML += `
+          <tr>
+            <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${num}</td>
+            <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${k}</td>
+            <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue.toFixed(6)}</td>
+          </tr>
+        `;
+      }
+      tableHTML += `</table><br/>`;
+      document.getElementById("explanation").innerHTML += tableHTML;
+    }
+
+
+function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+    let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
+    csvContent += "Metric,Value,Count,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
+
+    let sortedKeys = Object.keys(maxHitsFreq).map(Number).sort((a, b) => a - b);
+    let metricKeys = Object.keys(maxHitsStats);
+    let maxRows = Math.max(metricKeys.length, sortedKeys.length);
+
+    for (let i = 0; i < maxRows; i++) {
+        const metric = metricKeys[i] || "";
+        const formattedMetric = metric ? metric.charAt(0).toUpperCase() + metric.slice(1) : "";
+        const value = metric ? maxHitsStats[metric] : "";
+        const countValue = sortedKeys[i] !== undefined ? sortedKeys[i] : "";
+        const observedFrequency = countValue !== "" ? maxHitsFreq[countValue] : "";
+        let expectedFrequency = observedFrequency ? (observedFrequency / 38).toFixed(6) : "0.000000";
+        let adjustedPValue = "";
+        let cumulativeProbability = "";
+
+        if (countValue !== "" && maxHitsCumulative[countValue.toString()]) {
+            adjustedPValue = maxHitsCumulative[countValue.toString()].cumulativeFrequency;
+            cumulativeProbability = Number(maxHitsCumulative[countValue.toString()].cumulativeP).toFixed(6);
+        }
+
+        // 🔥 Overwrite expected frequency and cumulative probability using the reference data 🔥
+        let expectedFrequencyLookup = referenceData["MaxCounts"]?.[countValue]?.pValue;
+        let cumulativeProbabilityLookup = referenceData["MaxCounts"]?.[countValue]?.cumulativePValue;
+        if (expectedFrequencyLookup !== undefined) {
+            expectedFrequency = expectedFrequencyLookup;
+        }
+        if (cumulativeProbabilityLookup !== undefined) {
+            cumulativeProbability = cumulativeProbabilityLookup;
+        }
+
+        csvContent += `${formattedMetric},${value},${countValue},${expectedFrequency},${cumulativeProbability},${adjustedPValue}\n`;
+    }
+
+    return csvContent;
+}
+
+let dataRows = []; // Global storage to accumulate all generated data
+
+function processChunk(startIndex, chunkSize, isGeneratingReferenceData) {
+    let localData = [];  // Use a local array to prevent memory growth
+
+    for (let i = startIndex; i < Math.min(totalRuns, startIndex + chunkSize); i++) {
+        const counts = getRandomCounts(38);
+        localData.push(counts);
+    }
+
+    console.log(`🟢 Processed chunk: ${startIndex} - ${Math.min(totalRuns, startIndex + chunkSize)}`);
+
+    // Process and discard data from memory
+    processData(localData, isGeneratingReferenceData);
+    localData = null;  // Free memory
+
+    if (startIndex + chunkSize < totalRuns) {
+        setTimeout(() => processChunk(startIndex + chunkSize, chunkSize, isGeneratingReferenceData), 0);
+    }
+}
+
+
+function processData(rows, isGeneratingReferenceData = false) {
+    console.log("🟢 Processing Final Data...");
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.error("❌ ERROR: rows is missing or invalid! Aborting processing.");
+        return;
+    }
+
+    // ✅ Declare 'differences' FIRST before using it
+    statsCollection = {};
+    const differences = { 
+        topBottomDiff: [], 
+        leftRightDiff: [], 
+        cDiff: [], 
+        zzDiff: [], 
+        varianceDifference: [],
+        topDiff: [],
+        bottomDiff: []
+    };
+    const groupSums = {};
+    let densityValues = [];
+    let varianceValues = [];
+
+    console.log("🟢 Verifying category assignments in processData...");
+
+    // ✅ Initialize all groups before using them
+    for (const key in groupIndices) {
+        groupSums[key] = [];
+    }
+
+    let maxHits = Array(38).fill(0);
+
+    rows.forEach(counts => {
+        for (const key in groupIndices) {
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+        }
+
+        const sums = calculateAllSums(counts);
+        differences.topBottomDiff.push(sums.topBottomDiff);
+        differences.leftRightDiff.push(sums.leftRightDiff);
+        differences.cDiff.push(sums.cDiff);
+        differences.zzDiff.push(sums.zzDiff);
+        differences.topDiff.push(sums.topDiff);
+        differences.bottomDiff.push(sums.bottomDiff);
+
+        let sortedCounts = counts.slice().sort((a, b) => b - a);
+        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+        densityValues.push(parseFloat(density.toFixed(4)));
+
+        let variance = calculateVariance(counts);
+        varianceValues.push(parseFloat(variance.toFixed(4)));
+
+        // ✅ Variance Difference Calculation Inside Main Loop
+        let topVariance = calculateVariance(counts.filter((_, index) => groupIndices.topIndices.includes(index)));
+        let bottomVariance = calculateVariance(counts.filter((_, index) => groupIndices.bottomIndices.includes(index)));
+        let varianceDiff = calculateVarianceDifference(topVariance, bottomVariance);
+        differences.varianceDifference.push(varianceDiff);
+
+        for (let i = 0; i < 38; i++) {
+            if (counts[i] > maxHits[i]) {
+                maxHits[i] = counts[i];
+            }
+        }
+    });
+
+    console.log("🟢 Density Values:", densityValues);
+    console.log("🟢 Variance Values:", varianceValues);
+
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
+
+Object.keys(differences).forEach(category => {
+    if (!statsCollection[category]) statsCollection[category] = {};  // Ensure category exists
+    statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+});
+
+Object.keys(groupSums).forEach(group => {
+    if (!statsCollection[group]) statsCollection[group] = {};  // Ensure group exists
+    statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+});
+
+// Explicitly initialize "varianceDifference", "Density", and "Variance"
+if (!statsCollection["varianceDifference"]) statsCollection["varianceDifference"] = {};
+if (!statsCollection["Density"]) statsCollection["Density"] = {};
+if (!statsCollection["Variance"]) statsCollection["Variance"] = {};
+
+statsCollection["varianceDifference"] = calculateDescriptiveStatistics(differences.varianceDifference);
+statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
+statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
+
+    console.log("✅ Data Processed, Displaying Results...");
+    
+    if (!statsCollection || Object.keys(statsCollection).length === 0) {
+        console.error("❌ ERROR: statsCollection is empty or invalid!");
+        return;
+    }
+console.log("🟢 Checking if statsCollection is populated before calling displayResults...");
+console.log(statsCollection);
+setTimeout(() => {
+    console.log("🟢 Running displayResults AFTER processData to ensure statsCollection is populated...");
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+}, 100);  // 🔥 Delay execution slightly to allow all assignments to complete
+
+    // 🟢 Generate dynamic filename
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
+
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, fileName);
+
+	isGeneratingReferenceData = true;
+    // 🔥 Only export reference data when generating it (not during user tests)
+    if (!isGeneratingReferenceData == true) {
+        exportReferenceDataCSV();
+    }
+}
+
+    // =======================================================
+    // FILE INPUT HANDLING
+    // =======================================================
+let csvProcessingStarted = false; // Prevent duplicate processing
+
+function processConcatenatedCSVData(csvData) {
+  if (csvProcessingStarted) return;
+  csvProcessingStarted = true;
+
+  const rows = csvData.trim().split("\n");
+  if (rows.length <= 1) {
+    alert("The combined CSV data does not contain enough data.");
+    csvProcessingStarted = false;
+    return;
+  }
+
+  const dataRows = [];
+  rows.forEach((row, index) => {
+    let values = row.split(",").map(value => value.trim());
+
+    // Ensure only the first 38 columns are considered for data rows (starting at index 3)
+    if (index >= 3) {
+      values = values.slice(0, 38); // Trim extra columns beyond 37
+    }
+
+    // Check if the row is a header (skip it)
+    const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
+    if (isHeader) {
+      console.log("Header row detected and skipped:", row);
+      return;
+    }
+
+    const numericValues = values.map(val => (val === "" || isNaN(val)) ? 0 : Number(val));
+
+    if (numericValues.length === 38) {
+      dataRows.push(numericValues);
+    }
+  });
+
+  totalRuns = dataRows.length; // ✅ Count only valid data rows
+  console.log("Total Runs after filtering headers:", totalRuns);
+  processData(dataRows);
+
+  csvProcessingStarted = false;
+}
+
+
+document.getElementById("fileInput").addEventListener("change", async function (event) {
+    const files = event.target.files;
+    if (files.length === 0) {
+        alert("No files selected.");
+        return;
+    }
+
+    let allCSVData = "";
+    let allTasks = new Set(); // Accumulate tasks across all files
+    selectedFileNames = [];
+    let filesRead = 0;
+
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    for (let file of files) {
+        if (!file.name.endsWith(".csv")) {
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            continue;
+        }
+
+        selectedFileNames.push(file.name);
+        const listItem = document.createElement("li");
+        listItem.textContent = file.name;
+        fileList.appendChild(listItem);
+
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+            const fileContent = e.target.result;
+            allCSVData += fileContent + "\n";
+            filesRead++;
+
+            // Extract tasks from this file and accumulate them
+            const tasksFromFile = extractTasksFromCSV(fileContent);
+            tasksFromFile.forEach(task => allTasks.add(task));
+
+            if (filesRead === files.length) {
+                console.log("🟢 Final Accumulated Tasks:", Array.from(allTasks));
+                activateTaskButtons(allTasks);
+                processConcatenatedCSVData(allCSVData);
+                document.getElementById("fileInput").value = ""; // Reset input for re-selection
+            }
+        };
+
+        reader.onerror = function () {
+            alert(`Error reading file: ${file.name}`);
+        };
+
+        reader.readAsText(file);
+    }
+});
+
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
+
+
+    // =======================================================
+    // SIMULATION (Run Button) HANDLER
+    // =======================================================
+    const setAIndices = [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18];
+    const setBIndices = [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6];
+
+const worker = new Worker("worker.js");
+
+
+// ✅ Function to Detect Incognito Mode
+async function detectIncognito() {
+    return new Promise(resolve => {
+        if (navigator.storage && navigator.storage.estimate) {
+            navigator.storage.estimate().then(estimate => {
+                resolve(estimate.quota < 120000000); // Quota under 120MB suggests Incognito Mode
+            });
+        } else {
+            resolve(false); // Assume non-incognito if storage API is unavailable
+        }
+    });
+}
+
+// ✅ Function to Run Simulations in a Web Worker
+function runSimulationWithWorker(numRuns) {
+    const worker = new Worker("worker.js");
+
+    worker.postMessage({ numRuns });
+
+    worker.onmessage = function (e) {
+        processData(e.data);
+    };
+
+    worker.onerror = function (error) {
+        console.error("Worker error:", error);
+        alert("Error occurred in Web Worker. Try reducing the number of runs.");
+    };
+}
+
+
+function getRandomCounts(numPicks) {
+  const counts = Array(38).fill(0);
+  for (let i = 0; i < numPicks; i++) {
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    const pickedNumber = array[0] % 38; // Using crypto RNG instead of Math.random()
+    counts[pickedNumber]++;
+  }
+  return counts;
+}
+
+
+    // =======================================================
+    // ADDITIONAL EVENT LISTENERS
+    // =======================================================
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+        document.getElementById("densityButton").addEventListener("click", () => { 
+        window.open("sort.html", "_blank"); 
+      });

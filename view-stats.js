@@ -1,134 +1,298 @@
 /* Copyright 2025 © EZR Consulting. All rights reserved. */
 
-function updateClusterStats(csvData) {
-    const cluster00Cols = [13, 1, 37, 27, 10]; 
-    const cluster0Cols = [9, 28, 0, 2, 14];
-
-    let cluster00Sums = { 13: 0, 1: 0, 37: 0, 27: 0, 10: 0, total: 0 };
-    let cluster0Sums = { 9: 0, 28: 0, 0: 0, 2: 0, 14: 0, total: 0 };
-
-    csvData.forEach(row => {
-        cluster00Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10);
-            cluster00Sums[colIndex] += value;
-            cluster00Sums.total += value;
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if elements exist before adding event listeners
+    let simButton = document.getElementById('simButton');
+    if (simButton) {
+        simButton.addEventListener('click', () => {
+            window.open('roulette.html', '_blank');
         });
-
-        cluster0Cols.forEach(colIndex => {
-            let value = parseInt(row[colIndex] || 0, 10);
-            cluster0Sums[colIndex] += value;
-            cluster0Sums.total += value;
-        });
-    });
-
-    cluster00Cols.forEach(colIndex => {
-        let cell = document.getElementById(`cluster00-${colIndex}`);
-        if (cell) cell.textContent = cluster00Sums[colIndex] > 0 ? cluster00Sums[colIndex] : "-";
-    });
-
-    let total00Cell = document.getElementById("cluster00-total");
-    if (total00Cell) total00Cell.textContent = cluster00Sums.total > 0 ? cluster00Sums.total : "-";
-
-    cluster0Cols.forEach(colIndex => {
-        let cell = document.getElementById(`cluster0-${colIndex}`);
-        if (cell) cell.textContent = cluster0Sums[colIndex] > 0 ? cluster0Sums[colIndex] : "-";
-    });
-
-    let total0Cell = document.getElementById("cluster0-total");
-    if (total0Cell) total0Cell.textContent = cluster0Sums.total > 0 ? cluster0Sums.total : "-";
-}
-
-// Function to process CSV data and update tables
-function processCSVData(csvData) {
-    if (csvData.length === 0) return;
-
-    //localStorage.setItem("csvData", JSON.stringify(csvData));
-
-    updateClusterStats(csvData);
-    updateStatsTable(csvData);
-    updateQuadrantTable(csvData);
-}
-
-// Function to update main stats table
-function updateStatsTable(csvData) {
-    const table = document.getElementById("statsTable");
-    const thead = table.querySelector("thead");
-    const tbody = table.querySelector("tbody");
-
-    thead.innerHTML = "";
-    tbody.innerHTML = "";
-
-    document.getElementById("runsCount").innerHTML = `Runs: <span class="zero-highlight">${csvData.length}</span>`;
-
-    const headers = ["Totals", "Cluster 0", "Cluster 00", "Times Hit"];
-    const trHeader = document.createElement("tr");
-
-    headers.forEach(text => {
-        const th = document.createElement("th");
-        th.textContent = text;
-        trHeader.appendChild(th);
-    });
-
-    thead.appendChild(trHeader);
-
-    let statsData = {
-        highHits: Array(18).fill(0), 
-        cluster0Hits: Array(18).fill(0), 
-        cluster00Hits: Array(18).fill(0)
-    };
-
-    const cluster0Numbers = [0, 9, 14, 28, 2];
-    const cluster00Numbers = [1, 13, 27, 10, 37];
-
-    csvData.forEach(row => {
-        let cluster0Sum = 0;
-        let cluster00Sum = 0;
-
-        row.forEach((num, idx) => {
-            if (!isNaN(num) && num !== undefined) {
-                if (cluster0Numbers.includes(idx)) {
-                    cluster0Sum += num;
-                }
-                if (cluster00Numbers.includes(idx)) {
-                    cluster00Sum += num;
-                }
-                if (num >= 0 && num <= 17) {
-                    statsData.highHits[num]++;
-                }
-            }
-        });
-
-        if (cluster0Sum >= 0 && cluster0Sum <= 17) {
-            statsData.cluster0Hits[cluster0Sum]++;
-        }
-        if (cluster00Sum >= 0 && cluster00Sum <= 17) {
-            statsData.cluster00Hits[cluster00Sum]++;
-        }
-    });
-
-    for (let i = 0; i <= 17; i++) {
-        const tr = document.createElement('tr');
-
-        const tdValue = document.createElement("td");
-        tdValue.textContent = i;
-        tr.appendChild(tdValue);
-
-        const tdCluster0 = document.createElement("td");
-        tdCluster0.textContent = statsData.cluster0Hits[i] || 0;
-        tr.appendChild(tdCluster0);
-
-        const tdCluster00 = document.createElement("td");
-        tdCluster00.textContent = statsData.cluster00Hits[i] || 0;
-        tr.appendChild(tdCluster00);
-
-        const tdTimesHit = document.createElement("td");
-        tdTimesHit.textContent = statsData.highHits[i] || 0;
-        tr.appendChild(tdTimesHit);
-
-        tbody.appendChild(tr);
     }
+
+    let viewDataButton = document.getElementById('viewDataButton');
+    if (viewDataButton) {
+        viewDataButton.addEventListener('click', () => {
+            window.open('view-data.html', '_blank');
+        });
+    }
+
+    let viewPValueButton = document.getElementById('viewPValueButton');
+    if (viewPValueButton) {
+        viewPValueButton.addEventListener('click', () => {
+            window.open('pvalues.html', '_blank');
+        });
+    }
+
+    let viewFreqDistButton = document.getElementById('viewFreqDistButton');
+    if (viewFreqDistButton) {
+        viewFreqDistButton.addEventListener('click', () => {
+            window.open('xfreq.html', '_blank');
+        });
+    }
+
+    let viewStatsButton = document.getElementById('viewStatsButton');
+    if (viewStatsButton) {
+        viewStatsButton.addEventListener('click', () => {
+            window.open('view-stats.html', '_blank');
+        });
+    }
+
+    let singleSpinButton = document.getElementById('singleSpinButton');
+    if (singleSpinButton) {
+        singleSpinButton.addEventListener('click', () => {
+            window.open('new-wheel.html', '_blank');
+        });
+    }
+    
+    let densityButton = document.getElementById('densityButton');
+    if (densityButton) {
+        densityButton.addEventListener('click', () => {
+            window.open('sort.html', '_blank');
+        });
+    }
+    
+});
+      
+      
+        let rowData = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+document.getElementById('fileInput').addEventListener('change', function (event) {
+    let files = event.target.files;
+    let allData = [];
+    let fileCount = files.length;
+    let filesProcessed = 0;
+
+    function readFile(index) {
+        if (index >= fileCount) {
+            if (allData.length) {
+                parseCSVAndGenerateTable(allData);
+            }
+            return;
+        }
+
+        let file = files[index];
+        let reader = new FileReader();
+
+        reader.onload = async function (e) {
+            let csvData = e.target.result;
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            // ✅ Allow hash values in the range 00000 to 00200 to bypass checksum validation
+            const isBypass = /^[0-9]{5}$/.test(last5FromFile) && parseInt(last5FromFile, 10) <= 200;
+
+            if (!isBypass) {
+                // ✅ Compute checksum of file content
+                const computedChecksum = await generateChecksum(csvData);
+
+                // ✅ Extract the last 5-character hash from the second half of computed checksum
+                const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+                if (last5FromFile !== obfuscatedComputedChecksum) {
+                    console.log(`❌ Filename hash mismatch for ${file.name}`);
+                    console.log(`Expected: ${last5FromFile}`);
+                    console.log(`Computed: ${obfuscatedComputedChecksum}`);
+                    alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                    location.reload(); // Refresh page to reset state
+                    return;
+                } else {
+                    console.log(`✅ Filename hash match for ${file.name}`);
+                }
+            } else {
+                console.log(`⚠️ Checksum bypass for ${file.name} due to allowed numeric code`);
+            }
+
+            let rows = csvData.split("\n").map(row => row.trim()); // Trim whitespace from each row
+
+            if (rows.length < 4) {
+                console.warn(`File "${file.name}" does not have enough data.`);
+                readFile(index + 1);
+                return;
+            }
+
+            let processedRows = [];
+            for (let i = 4; i < rows.length; i++) { // Start from the fourth row (index 3)
+                if (!rows[i].trim()) {
+                    break;
+                }
+
+                let rowValues = rows[i].split(",").map(value => value.trim());
+
+                if (rowValues.every(cell => cell === "")) {
+                    break;
+                }
+
+                processedRows.push(rowValues.map(value => (value === "" ? "" : Number(value) || value)));
+            }
+
+            allData = allData.concat(processedRows);
+            filesProcessed++;
+            readFile(index + 1);
+        };
+
+        reader.readAsText(file);
+    }
+
+    readFile(0);
+});
+
+// ✅ Function to generate SHA-256 checksum
+async function generateChecksum(content) {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
+// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
+function getObfuscatedChecksum(checksum) {
+    const halfLength = Math.floor(checksum.length / 2);
+    const secondHalf = checksum.slice(halfLength); // Extract second half
+    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
+}
+
+
+function parseCSVAndGenerateTable(data) {
+                if (!data.length) return;
+
+                rowData = data.map((row, index) => ({ originalIndex: index + 1, data: row }));
+
+                rowData.forEach(row => row.data.sort((a, b) => b - a));
+
+                rowData.sort((rowA, rowB) => {
+                    for (let i = 0; i < rowA.data.length; i++) {
+                        if (rowA.data[i] !== rowB.data[i]) {
+                            return rowB.data[i] - rowA.data[i];
+                        }
+                    }
+                    return 0;
+                });
+
+                generateTable();
+                generateFrequencyTable();
+            }
+
+function generateTable() {
+    let tableContainer = document.getElementById('tableContainer');
+    if (!tableContainer) {
+        console.error("Error: #tableContainer not found.");
+        return;
+    }
+
+    if (!rowData.length) {
+        tableContainer.innerHTML = "<p style='color: lightgray;'>No valid data found.</p>";
+        return;
+    }
+
+    let tableHtml = `<table id="csvTable" border="1" style="border-collapse: collapse; width: 100%; margin-top: 10px;">
+    <thead>
+        <tr>
+            <th class="original-number" style="background-color: slategray; color: white; padding: 8px;">Orig</th>
+            <th class="sorted-number" style="background-color: red; color: white; padding: 8px;">Sort</th>`;
+
+    for (let i = 0; i < rowData[0].data.length; i++) {
+        tableHtml += `<th class="other-number" style="background-color: green; color: white; padding: 8px;">${i + 1}</th>`;
+    }
+
+    tableHtml += `</tr></thead><tbody>`;
+
+    rowData.forEach((row, rowIndex) => {
+        tableHtml += `<tr>`;
+        tableHtml += `<td class="original-number" style="background-color: slategray; color: white; padding: 6px; text-align: center;"><strong>${row.originalIndex}</strong></td>`;
+        tableHtml += `<td class="sorted-number" style="background-color: red; color: white; padding: 6px; text-align: center;"><strong>${rowIndex + 1}</strong></td>`;
+
+        row.data.forEach(cell => {
+            tableHtml += `<td class="other-number" style="background-color: lightgray; color: black; padding: 6px; text-align: center;">${cell === "0" ? '' : cell}</td>`;
+        });
+
+        tableHtml += `</tr>`;
+    });
+
+    tableHtml += `</tbody></table>`;
+    tableContainer.innerHTML = tableHtml;
+}
+
+        
+function generateFrequencyTable() {
+    let frequencyContainer = document.getElementById('frequencyContainer');
+    if (!frequencyContainer) {
+        console.error("Error: #frequencyContainer not found.");
+        return;
+    }
+
+    if (!rowData.length) {
+        console.warn("No data available for frequency table.");
+        frequencyContainer.innerHTML = "<p style='color: lightgray;'>No data available.</p>";
+        return;
+    }
+
+    let sumCounts = {};
+    let totalRows = rowData.length;
+    let cumulativeCounts = 0;
+    let cumulativeProbabilities = {};
+
+    rowData.forEach(row => {
+        let selectedValues = row.data.slice(0, 5);
+        let sum = selectedValues.reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
+        sumCounts[sum] = (sumCounts[sum] || 0) + 1;
+    });
+
+    let sortedSums = Object.keys(sumCounts)
+        .map(Number)
+        .sort((a, b) => b - a);
+
+    let freqTableHtml = `
+    <table id="frequencyTable" border='1' style="border-collapse: collapse; width: 60%; margin-top: 10px;">
+    <thead>
+        <tr>    
+            <th style="padding: 8px; color: salmon; background-color: black;">Sum</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">Frequency</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">P-Value</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">Cumulative</th>
+        </tr>
+    </thead>
+    <tbody>`;
+
+    sortedSums.forEach(sum => {
+        cumulativeCounts += sumCounts[sum];
+        cumulativeProbabilities[sum] = (cumulativeCounts / totalRows).toFixed(6);
+        let cellStyle = (parseFloat(cumulativeProbabilities[sum]) < 0.05)
+            ? "color: yellow; font-weight: bold;" 
+            : "color: lightgray;";
+
+        freqTableHtml += `
+        <tr>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${sum}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${sumCounts[sum]}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${(sumCounts[sum] / totalRows).toFixed(6)}</td>
+            <td style="padding: 6px; text-align: center; ${cellStyle}">${cumulativeProbabilities[sum]}</td>
+        </tr>`;
+    });
+
+    freqTableHtml += `</tbody></table>`;
+    frequencyContainer.innerHTML = freqTableHtml;
+}
+
+
+            document.getElementById('reverseSortButton').addEventListener('click', function () {
+                rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
+                generateTable();
+                generateFrequencyTable();
+            });
+        });
+        
+// Function to extract all uploaded file names
+function getUploadedFileNames() {
+    let fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length > 0) {
+        let fileNames = Array.from(fileInput.files).map(file => file.name); // Get all file names
+        return fileNames.join(", "); // Join names with commas
+    }
+    return "Unknown_Files"; // Default name if no file is selected
+}
+
+// Function to generate a formatted timestamp
 function getFormattedTimestamp() {
     const now = new Date();
     const year = String(now.getFullYear()).slice(-2); // Get last two digits of the year
@@ -140,153 +304,6 @@ function getFormattedTimestamp() {
     return `${month}${day}${year}_${hours}_${minutes}_${seconds}`;
 }
 
-
-// Function to update quadrant table
-function updateQuadrantTable(csvData) {
-    let quadrantHits = { UpperLeft: 0, UpperRight: 0, LowerLeft: 0, LowerRight: 0 };
-
-    const UpperLeft = new Set([5, 22, 34, 15, 3, 24, 36, 13, 1]);
-    const UpperRight = new Set([27, 10, 25, 29, 12, 8, 19, 31, 18]);
-    const LowerRight = new Set([6, 21, 33, 16, 4, 23, 35, 14, 2]);
-    const LowerLeft = new Set([28, 9, 26, 30, 11, 7, 20, 32, 17]);
-
-    csvData.forEach(row => {
-        row.forEach((num, idx) => {
-            if (!isNaN(num) && num !== undefined && num !== "") {  // ✅ Ensure valid number
-                num = parseInt(num, 10); // Convert to integer for proper summing
-                
-                if (UpperLeft.has(idx)) {
-                    quadrantHits.UpperLeft += num;
-                } 
-                if (UpperRight.has(idx)) {
-                    quadrantHits.UpperRight += num;
-                } 
-                if (LowerLeft.has(idx)) {
-                    quadrantHits.LowerLeft += num;
-                } 
-                if (LowerRight.has(idx)) {
-                    quadrantHits.LowerRight += num;
-                }
-            }
-        });
-    });
-
-    // ✅ Update the table values
-    document.getElementById('UpperLeftHits').textContent = quadrantHits.UpperLeft > 0 ? quadrantHits.UpperLeft : "-";
-    document.getElementById('UpperRightHits').textContent = quadrantHits.UpperRight > 0 ? quadrantHits.UpperRight : "-";
-    document.getElementById('LowerLeftHits').textContent = quadrantHits.LowerLeft > 0 ? quadrantHits.LowerLeft : "-";
-    document.getElementById('LowerRightHits').textContent = quadrantHits.LowerRight > 0 ? quadrantHits.LowerRight : "-";
-}
-
-
-//let headerAdded = false;
-//et rowCounter = 1;
-
-//function clearTable() {
-//            document.querySelector('#csvTable thead').innerHTML = '';
-//            document.querySelector('#csvTable tbody').innerHTML = '';
-//            headerAdded = false;
- //           rowCounter = 1;
-//        } 
-           
-// File input event listener
-document.getElementById('fileInput').addEventListener('change', function(event) {
-    isNewBatch = true; // Reset task list when new files are chosen
-
-    const files = Array.from(event.target.files)
-        .filter(file => file.name.endsWith('.csv'))
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-    selectedFileNames = [];
-
-    if (files.length === 0) {
-        alert("Please select .csv files only.");
-        return;
-    }
-
-    let allCSVData = [];
-    let filesRead = 0;
-
-    files.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const fileContent = e.target.result;
-
-            // ✅ Compute checksum of file content
-            const computedChecksum = await generateChecksum(fileContent);
-
-            // ✅ Extract the last 5-character hash from the second half of computed checksum
-            const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
-
-            // ✅ Extract last 5 characters from filename (before .csv)
-            const last5FromFile = file.name.replace(".csv", "").slice(-5);
-
-            if (last5FromFile === obfuscatedComputedChecksum) {
-                console.log(`✅ Filename hash match for ${file.name}`);
-            } else {
-                console.log(`❌ Filename hash mismatch for ${file.name}`);
-                console.log(`Expected: ${last5FromFile}`);
-                console.log(`Computed: ${obfuscatedComputedChecksum}`);
-
-                // 🔴 Alert the user and abort execution
-                alert(`It appears that "${file.name}" has been edited. Aborting.`);
-                location.reload(); // Refresh page to reset state
-                return;
-            }
-
-            // ✅ Process the file contents, starting from line 5 (index 4)
-            let rows = fileContent.trim().split("\n");
-
-            if (rows.length >= 5) { // Ensure there are at least 5 lines to start from line 5
-                rows.slice(4).forEach(row => {  // Skip first 4 lines
-                    const values = row.split(",").map(num => {
-                        let trimmedNum = num.trim();
-                        return trimmedNum === "" ? "" : parseInt(trimmedNum, 10);
-                    });
-                    allCSVData.push(values);
-                });
-            } else {
-                console.warn(`File "${file.name}" has less than 5 lines, skipping processing.`);
-            }
-
-            filesRead++;
-            if (filesRead === files.length) {
-                processCSVData(allCSVData);
-            }
-        };
-
-        reader.readAsText(file);
-        selectedFileNames.push(file.name);
-    });
-});
-
-
-
-// ✅ Function to generate SHA-256 checksum
-async function generateChecksum(content) {
-    const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(content));
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-
-// ✅ Extracts obfuscated checksum using the same logic as `exportTotalsToCSV`
-function getObfuscatedChecksum(checksum) {
-    const halfLength = Math.floor(checksum.length / 2);
-    const secondHalf = checksum.slice(halfLength); // Extract second half
-    return secondHalf.slice(0, 5).split("").reverse().join(""); // Reverse first 5 chars
-}
-
-// Function to get all uploaded file names
-function getUploadedFileNames() {
-    let fileInput = document.getElementById("fileInput");
-    if (fileInput.files.length > 0) {
-        let fileNames = Array.from(fileInput.files).map(file => file.name); 
-        return fileNames.join(", "); // Join names with commas
-    }
-    return "Unknown_Files"; // Default if no file is selected
-}
-
-
 // Function to convert RGB to an array (for jsPDF)
 function hexToRGBArray(hex) {
     hex = hex.replace("#", "");
@@ -294,216 +311,96 @@ function hexToRGBArray(hex) {
     return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 }
 
-// Function to generate PDF with table colors preserved
-document.getElementById("saveStatsPdfButton").addEventListener("click", function () {
-    const doc = new window.jspdf.jsPDF({ orientation: "portrait" });
 
-    function getUploadedFileNames() {
-        let fileInput = document.getElementById("fileInput");
-        if (fileInput.files.length > 0) {
-            let fileNames = Array.from(fileInput.files).map(file => file.name);
-            return fileNames.join(", ");
-        }
-        return "Unknown_Files";
-    }
+// Event listener for Save to PDF button
+document.getElementById("savePdfButton").addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
 
-    function getFormattedTimestamp() {
-        const now = new Date();
-        return `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
-    }
-
+    // ✅ Get all selected file names
     const fileNames = getUploadedFileNames();
     const timestamp = getFormattedTimestamp();
-    const pdfFileName = `Totals_${timestamp}.pdf`;
 
-    // ✅ Title
+    // ✅ Create a shorter filename for saving
+    let shortFileName = fileNames.length > 50 ? "Sorted" : fileNames.replace(/\.[^/.]+$/, "").replace(/[, ]+/g, "_");
+
+    const pdfFileName = `${shortFileName}_${timestamp}.pdf`;
+
+    // ✅ Add Filename (displayed inside the PDF)
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 255); // Blue text for filename
+    doc.text(`Filename: ${pdfFileName}`, doc.internal.pageSize.width / 2, 10, { align: "center" });
+
+    // ✅ Add Title
     doc.setFontSize(18);
-    doc.setTextColor(50, 205, 50);
-    doc.text("Aggregate Totals", doc.internal.pageSize.width / 2, 15, { align: "center" });
+    doc.setTextColor(50, 205, 50); // Light green
+    doc.text("Sorted Table & Frequency Distribution", doc.internal.pageSize.width / 2, 20, { align: "center" });
 
-    let pageWidth = doc.internal.pageSize.width;
-    let tableWidth = pageWidth * 0.5; // ✅ Reduce table width to 50% of page width
-    let marginX = (pageWidth - tableWidth) / 2; // ✅ Centering calculation
+    let startY = 35; // Adjust for filename spacing
 
-function applyDataCellColors(data) {
-    if (data.row.section === "body") {  // ✅ Apply only to actual data rows, NOT headers
-        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
-    }
-}
-
-function applyStatsTableColors(data) {
-    data.tableId = data.tableId || "statsTable"; // Ensure it is defined
-
-    const cellText = (typeof data.cell.text === "string") ? data.cell.text.trim() : String(data.cell.text || "").trim();
-    
-    console.log(`[DEBUG] Checking Table ID: "${data.tableId}", Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}, Section: ${data.row.section}`);
-
-    // ✅ Column Headers - Custom Colors
-    if (data.row.index === 0 && data.row.section === "head") {
-        const colorMap = {
-            "Totals": { fillColor: [0, 0, 255], textColor: [255, 255, 255] },  // Blue
-            "Cluster 00": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },  // Green
-            "Cluster 0": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },  // Green
-            "Times Hit": { fillColor: [255, 0, 0], textColor: [255, 255, 255] }   // Red
-        };
-
-        if (colorMap[cellText]) {
-            console.log(`[DEBUG] Applying Color to Stats Table Header: ${cellText}`);
-            data.cell.styles.fillColor = colorMap[cellText].fillColor;
-            data.cell.styles.textColor = colorMap[cellText].textColor;
+    // ✅ Add Explanation Text (if exists)
+    let explanationElement = document.getElementById("explanation");
+    if (explanationElement) {
+        let explanationText = explanationElement.innerText.trim();
+        if (explanationText.length > 0) {
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0); // Black
+            doc.text(explanationText, doc.internal.pageSize.width / 2, startY, { align: "center", maxWidth: 260 });
+            startY += 10; // Adjust start position
         }
     }
 
-    // ✅ Totals Column - Blue Background (Indexes **ALL ROWS** in column 0)
-    if (data.column.index === 0) {
-        console.log(`[DEBUG] Applying BLUE to Totals Column Cell: ${cellText}`);
-        data.cell.styles.fillColor = [0, 0, 255]; // Blue
-        data.cell.styles.textColor = [255, 255, 255]; // White Text
-        return; // Prevents overriding by general cell rules
+    // ✅ Capture Frequency Table (50% Thinner)
+    let freqTable = document.getElementById("frequencyTable");
+    if (freqTable) {
+        let pageWidth = doc.internal.pageSize.width;
+        let tableWidth = pageWidth * 0.25; // ✅ Reduce to 50% width
+        let marginX = (pageWidth - tableWidth) / 2; // ✅ Center it
+
+        doc.autoTable({
+            html: "#frequencyTable",
+            startY: startY,
+            theme: "grid",
+            margin: { left: marginX, right: marginX }, // ✅ Center & reduce width
+            tableWidth: tableWidth,
+            styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
+            headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Red header
+            alternateRowStyles: { fillColor: [240, 240, 240] }
+        });
+
+        startY = doc.autoTable.previous.finalY + 10; // Move down for next table
     }
 
-    // ✅ General Data Cells - Light Yellow
-    if (data.row.section === "body") {
-        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
-    }
-}
-
-
-
-function applyClusterHeaderColors(data) {
-    const cellText = (typeof data.cell.text === "string") ? data.cell.text.trim() : String(data.cell.text || "").trim();
-
-    console.log(`[DEBUG] Checking Table ID: "${data.tableId}", Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}, Section: ${data.row.section}`);
-
-    if (data.tableId === "clusterStatsTable" && data.row.section === "head") {
-        const colorMap = {
-            "13": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-            "1": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
-            "37": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },
-            "27": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
-            "10": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-            "Total": { fillColor: [0, 0, 255], textColor: [255, 255, 255] },
-            "9": { fillColor: [255, 0, 0], textColor: [255, 255, 255] },
-            "28": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-            "0": { fillColor: [0, 128, 0], textColor: [255, 255, 255] },
-            "2": { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
-            "14": { fillColor: [255, 0, 0], textColor: [255, 255, 255] }
-        };
-
-        // ✅ Apply specific column header colors
-        if (data.column.index === 1 || data.column.index === 2) {
-            data.cell.styles.fillColor = [0, 128, 0]; // Green background
-            data.cell.styles.textColor = [255, 255, 255];
-        } else if (data.column.index === 3) {
-            data.cell.styles.fillColor = [255, 0, 0]; // Red background
-            data.cell.styles.textColor = [255, 255, 255];
-        }
-
-        // Apply color mapping
-        if (colorMap[cellText]) {
-            data.cell.styles.fillColor = colorMap[cellText].fillColor;
-            data.cell.styles.textColor = colorMap[cellText].textColor;
-        }
-    }
-}
-
-function applyQuadrantTableColors(data) {
-    const cellText = data.cell.text ? String(data.cell.text).trim() : "";
-
-    console.log(`[DEBUG] Quadrant Table - Checking Cell: "${cellText}", Row: ${data.row.index}, Column: ${data.column.index}`);
-
-    // ✅ Label Cells (Text like "Upper Left", "Lower Right", etc.) → Slate Gray
-    const slateCells = ["Upper Left", "Upper Right", "Lower Left", "Lower Right"];
-    if (slateCells.includes(cellText)) {
-        data.cell.styles.fillColor = [112, 128, 144]; // Slate Gray
-        data.cell.styles.textColor = [255, 255, 255]; // White text
-        return; // Exit early to prevent any override
-    }
-
-    // ✅ Data Cells (Numbers) → Light Yellow
-    if (!isNaN(cellText) && cellText !== "" && cellText !== "-") {
-        data.cell.styles.fillColor = [255, 255, 224]; // Light Yellow
-        data.cell.styles.textColor = [0, 0, 0]; // Black text
-    }
-}
-
-
-    // ✅ Cluster Stats Table (Aggregate Table)
-    if (document.getElementById("clusterStatsTable")) {
+    // ✅ Capture Sorted Table (Full Width)
+    let csvTable = document.getElementById("csvTable");
+    if (csvTable) {
 doc.autoTable({
-    html: "#clusterStatsTable",
-    startY: 30,
+    html: "#csvTable",
+    startY: startY,
     theme: "grid",
-    margin: { left: marginX, right: marginX },
-    tableWidth: tableWidth,
-    styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
-    headStyles: { fillColor: [0, 128, 0], textColor: [245, 245, 245] },
+    margin: { left: 10, right: 10 }, // 🔹 Reduced margins (default is ~10-20)
+    styles: { fontSize: 8.7, cellPadding: 2, halign: "center", fontStyle: "bold" },
+    headStyles: { fillColor: [0, 0, 255], textColor: [255, 255, 255] }, // Default: Blue header
+    alternateRowStyles: { fillColor: [240, 240, 240] }, // Light gray alternating rows
     didParseCell: function (data) {
-        data.tableId = "clusterStatsTable";  // ✅ Ensure correct table ID
-        applyClusterHeaderColors(data);
-        applyDataCellColors(data); // ✅ Apply light yellow to body cells
-    }
-});
-
-
-    }
-
-doc.autoTable({
-    html: "#statsTable",
-    startY: doc.autoTable.previous.finalY + 10,
-    theme: "grid",
-    margin: { left: marginX, right: marginX },
-    tableWidth: tableWidth,
-    styles: { fontSize: 9, cellPadding: 2, halign: "center", fontStyle: "bold" },
-    headStyles: { fillColor: [0, 0, 255], textColor: [245, 245, 245] }, // Default blue, overridden per column
-    didParseCell: function (data) {
-        data.tableId = "statsTable";  // ✅ Ensure correct table ID
-        applyStatsTableColors(data);
-    }
-});
-
-
-    // ✅ Quadrants Table Heading
-    let nextY = doc.autoTable.previous.finalY + 15;
-    doc.setFontSize(14);
-    doc.setTextColor(255, 165, 0);
-    doc.text("Quadrants", doc.internal.pageSize.width / 2, nextY, { align: "center" });
-    
-    // ✅ Add extra spacing before rendering the table
-nextY += 8;  // 🔹 Additional space before starting table
-
-    // ✅ Quadrants Table (Replacing Images with Text Labels)
-    let quadrantData = [
-        ["Upper Left", "Upper Right"],
-        [document.getElementById("UpperLeftHits").textContent, document.getElementById("UpperRightHits").textContent],
-        ["Lower Left", "Lower Right"],
-        [document.getElementById("LowerLeftHits").textContent, document.getElementById("LowerRightHits").textContent]
-    ];
-
-doc.autoTable({
-    body: quadrantData,
-    startY: nextY,  // 🔹 Ensuring padding remains correct
-    theme: "grid",
-    margin: { left: marginX, right: marginX },
-    tableWidth: tableWidth,
-    styles: { fontSize: 9, cellPadding: 4, halign: "center", fontStyle: "bold" },
-    headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
-    alternateRowStyles: { fillColor: [245, 245, 245] },
-    didParseCell: function (data) {
-        const cellText = data.cell.text ? String(data.cell.text).trim() : ""; // Ensure text is a string
-
-        // 🔹 Check if the cell is a label (row index is even: 0, 2)
-        if (data.row.index % 2 === 0) {
-            data.cell.styles.fillColor = [112, 128, 144]; // Slate background
+        if (data.row.section === "head" && data.column.index >= 2) {
+            data.cell.styles.fillColor = [0, 128, 0]; // Green background for data columns
             data.cell.styles.textColor = [255, 255, 255]; // White text
-        } else {
-            // 🔹 Otherwise, it's a data cell -> Light Yellow
-            data.cell.styles.fillColor = [255, 255, 224]; // Light yellow
+        } else if (data.row.section === "body") { // Apply only to data cells
+            if (data.column.index === 0) {
+                data.cell.styles.fillColor = [112, 128, 144]; // Slate background
+                data.cell.styles.textColor = [255, 255, 255]; // White text
+            } else if (data.column.index === 1) {
+                data.cell.styles.fillColor = [255, 0, 0]; // Red background
+                data.cell.styles.textColor = [255, 255, 255]; // White text
+            } else {
+                data.cell.styles.fillColor = [255, 255, 224]; // Light gray background for all other data cells
+            }
         }
     }
 });
 
-
+    }
 
     // ✅ ADD A NEW PAGE FOR SOURCE FILES
     doc.addPage();
@@ -518,50 +415,16 @@ doc.autoTable({
     doc.setTextColor(0, 0, 0);
 
     let fileLines = fileNames.split(", ");
-    let startY = 30;
+    let startYFiles = 30;
     fileLines.forEach(file => {
-        if (startY > doc.internal.pageSize.height - 20) {
-            doc.addPage();
-            startY = 20;
+        if (startYFiles > doc.internal.pageSize.height - 20) {
+            doc.addPage(); // ✅ Add new page if needed
+            startYFiles = 20;
         }
-        doc.text(file, 20, startY);
-        startY += 6;
+        doc.text(file, 20, startYFiles);
+        startYFiles += 6;
     });
 
-    // ✅ Save the PDF
+    // ✅ Save the PDF with the generated filename
     doc.save(pdfFileName);
 });
-
-
-
-       	// Event listener for the Simulator button
-    	document.getElementById('simButton').addEventListener('click', () => {
-        window.open('roulette.html', '_blank');
-      });
-      
-        // New event listener for the View Data button
-      	document.getElementById('viewDataButton').addEventListener('click', () => {
-        window.open('view-data.html', '_blank');
-      });
-      
-        // New event listener for the View P-Value button
-      	document.getElementById('viewPValueButton').addEventListener('click', () => {
-        window.open('pvalues.html', '_blank');
-      });
-      
-        // New event listener for the View P-Value button
-      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
-        window.open('xfreq.html', '_blank');
-      });
-       // New event listener for the View Stats button
-      	document.getElementById('viewStatsButton').addEventListener('click', () => {
-        window.open('view-stats.html', '_blank');
-      });
-
-       	// Event listener for the Simulator button
-    	document.getElementById('singleSpinButton').addEventListener('click', () => {
-        window.open('new-wheel.html', '_blank');
-      });
-        document.getElementById("densityButton").addEventListener("click", () => { 
-        window.open("sort.html", "_blank"); 
-      });

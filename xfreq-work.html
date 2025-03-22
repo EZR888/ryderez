@@ -1,6 +1,356 @@
-/* Copyright 2025 © EZR Consulting. All rights reserved. */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roulette P-Values</title>
+  <style>
+  .category-dropdown-container {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 16px;
+}
 
-// =======================================================
+.category-dropdown-container select {
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid lightgreen;
+    background-color: black;
+    color: lightgreen;
+}
+
+    .framed-buttons {
+      border: 2px solid lightblue;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: black;
+      color: lightgreen;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+    }
+    .container h1 {
+      margin: 0;
+    }
+    .button {
+      font-size: 120%;
+      padding: 6px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .button:hover {
+      opacity: 0.8;
+    }
+    .button-single {
+      background-color: salmon;
+      color: black;
+    }
+    .button-purple {
+      background-color: purple;
+      color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray;
+      color: black !important;
+    }
+    .header-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .header-text {
+      color: lightgreen;
+      font-size: 48px;
+    }
+    .results-container {
+      border: 2px solid white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 800px;
+      background-color: #333;
+      border-radius: 10px;
+    }
+    .results-container h3 {
+      color: lightgreen;
+      margin-bottom: 10px;
+    }
+    .results-container p {
+      color: white;
+      margin: 5px 0;
+    }
+    #explanation {
+      border: 1px solid lightgreen;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #222;
+      border-radius: 5px;
+      color: white;
+    }
+    #topContributors {
+      color: white;
+    }
+    input[type="file"] {
+      margin-bottom: 15px;
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: white;
+      color: black;
+      cursor: pointer;
+    }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+      background-color: violet;
+      color: black;
+    }
+    .button-sim {
+      background-color: orange;
+      color: black;
+    }
+    .framed-section2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px;
+      border: 2px solid lightgreen;
+      border-radius: 10px;
+      background-color: black;
+      margin: 10px 0;
+    }
+
+  .file-list-container {
+    margin: 20px auto; /* Centers the container */
+    padding: 15px;
+    border: 2px solid lightgreen;
+    border-radius: 10px;
+    width: 80%; /* Matches the results container */
+    max-width: 800px;
+    background-color: #222;
+    color: white;
+    text-align: center; /* Centers the text */
+  }
+  .file-list-container h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: center;
+  }
+  #fileList {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+  }
+  #fileList li {
+    padding: 5px;
+    border-bottom: 1px solid lightgray;
+    display: block; /* Ensures filenames appear on new lines */
+    width: auto; /* Makes it look more balanced */
+  }
+  .category-label {
+  color: lightgreen !important;
+  font-size: 42px !important;
+  font-weight: normal !important;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  display: block;
+}
+/* Ensure all sections have the same width and height */
+.framed-section {
+    border: 2px solid lightgreen;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 8px;
+    width: 26%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+}
+
+.framed-section-tasks {
+    border: 2px solid lightgreen;
+    background-color: #222;
+    border-radius: 8px;
+    width: 100%; /* Equal width for all sections */
+    min-height: 140px; /* Ensures they are the same height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+    box-sizing: border-box;
+    font-size: 24px !important;
+  	font-weight: normal !important;
+}
+
+/* Ensure the button container evenly distributes sections */
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1100px;
+    justify-items: center;
+}
+
+/* Make toggle button container a grid */
+.toggle-button-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 2 columns */
+    gap: 5px;
+    width: 100%;
+    justify-items: center;
+}
+
+/* Style for toggle buttons */
+.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 8px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: purple !important;
+    color: white;
+}
+
+
+  
+  </style>
+  <!-- jStat is used for statistical functions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <br />
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+  <div class="header-container">
+    <h1 class="header-text">Stats and Frequency Distribution</h1>
+  </div>
+  <div class="results-container">
+    <input type="file" id="fileInput" accept=".csv" multiple />
+        <div class="framed-section-tasks">
+        <h3 style="color: violet; text-align: center;">Selected Tasks</h3>
+        <div class="toggle-button-container">
+            <button class="toggle-button active" id="noTasksButton" style="display: none;">No Tasks</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Left - Right</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Variance (Within-Run)</button>
+             <button class="toggle-button" onclick="toggleOption(this)">Density (Top 5 Sum)</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
+            <button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
+            <br>
+        </div>
+    </div>
+    <br>
+    <label style="display: none;">
+        <input type="checkbox" id="useReferenceData" checked />
+  		Use 10m Reference Data
+	</label>
+
+    <div id="statistics"></div>
+    <div id="explanation"></div>
+  </div>
+  
+  <!-- Add this just before the closing </body> tag -->
+<div class="file-list-container">
+  <h3>Selected Files:</h3>
+  <ul id="fileList"></ul>
+</div>
+
+  <script>
+  
+    // =======================================================
     // Helper Functions and Global Variables
     // =======================================================
     let totalRuns = 0;
@@ -1420,3 +1770,10 @@ function getRandomCounts(numPicks) {
         document.getElementById("densityButton").addEventListener("click", () => { 
         window.open("sort.html", "_blank"); 
       });
+          
+
+</script>
+
+
+</body>
+</html>

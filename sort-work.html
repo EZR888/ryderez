@@ -1,6 +1,385 @@
-/* Copyright 2025 © EZR Consulting. All rights reserved. */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorted Table Visualization</title>
+    <style>
+ 
+    .framed-buttons {
+      border: 2px solid lightblue;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .container h1 {
+      margin: 0;
+    }
+    .button {
+      font-size: 120%;
+      padding: 6px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .button:hover {
+      opacity: 0.8;
+    }
+    .button-single {
+      background-color: salmon;
+      color: black;
+    }
+    .button-purple {
+      background-color: purple;
+      color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray;
+      color: black !important;
+    }
+    .header-text {
+      color: lightgreen;
+      font-size: 48px;
+      display: block; /* Ensures it's on its own line */
+      text-align: center;
+      margin-bottom: 10px; /* Adds space below */
+    }
+    .results-container {
+      border: 2px solid white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 800px;
+      background-color: #333;
+      border-radius: 10px;
+    }
+    .results-container h3 {
+      color: lightgreen;
+      margin-bottom: 10px;
+    }
+    .results-container p {
+      color: white;
+      margin: 5px 0;
+    }
+    #explanation {
+      border: 1px solid lightgreen;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #222;
+      border-radius: 5px;
+      color: white;
+    }
+    #topContributors {
+      color: white;
+    }
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+      background-color: violet;
+      color: black;
+    }
+    .button-sim {
+      background-color: orange;
+      color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    .framed-section2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px;
+      border: 2px solid lightgreen;
+      border-radius: 10px;
+      background-color: black;
+      margin: 10px 0;
+    }
+    
+    
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0px;
+            font-size: 16px;
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
+        .button-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px;
+        }
+        #savePdfButton {
+            background-color: purple;
+            color: white;
+        }
+        #reverseSortButton {
+            background-color: blue;
+            color: white;
+        }
+        #accessSim {
+            background-color: slategray;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+            table-layout: fixed; /* Enforce fixed width for columns */
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        th {
+            color: white;
+            background-color: green;
+        }
+        td {
+            background-color: lightgray;
+        }
+        /* Adjust width for Original # and Sorted # columns */
+        td.original-number, th.original-number {
+            width: 40px;
+            background-color: slategray;
+            color: white;
+        }
+        td.sorted-number, th.sorted-number {
+            width: 40px;
+            background-color: red;
+            color: white;
+        }
+        /* Set a uniform width for other columns */
+        td.other-number, th.other-number {
+            width: 18px;
+        }
+
+.header-wrapper {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px; /* Ensures spacing after the header */
+}
+
+.header-text {
+    color: lightgreen;
+    font-size: 48px;
+    margin: 0; /* Prevents default margin issues */
+    padding-bottom: 10px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; /* Centers elements */
+    align-items: center; /* Ensures vertical alignment */
+    gap: 40px; /* Adjust the spacing between elements */
+    flex-wrap: wrap; /* Prevents overflow */
+}
+
+.header-container input[type="file"] {
+    flex: 1; /* Allows it to shrink properly */
+    width: 300px; /* Prevents excessive width */
+    max-width: 300px; /* Limits width */
+    height: 26px; /* Matches button height */
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.header-container button {
+    height: 40px; /* Matches input height */
+    font-size: 16px;
+    padding: 5px 15px;
+}
+
+
+ .results-container {
+    border: 2px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 100%; /* Ensure full width */
+    background-color: #333;
+    border-radius: 10px;
+    display: flex; /* Use flexbox to ensure it wraps content */
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: auto; /* Prevent overflow clipping */
+}
+
+.results-container h3 {
+    color: lightgreen;
+    margin-bottom: 10px;
+}
+
+.results-container table {
+    width: 100%; /* Ensures table stretches inside container */
+    border-collapse: collapse;
+    min-width: max-content; /* Prevents table from shrinking inside container */
+}
+#frequencyTable th {
+    border: 1px solid lightgray; 
+    padding: 8px;
+    text-align: center;
+    font-weight: 100; /* Keep headers bold */
+    background-color: black;
+    color: salmon;
+}
+
+#frequencyTable td {
+    border: 1px solid lightgray; 
+    padding: 6px;
+    text-align: center;
+    font-weight: normal; /* Ensures data cells are NOT bold */
+    background-color: black;
+    color: lightgray;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px; /* Adds space below the heading */
+}
+
+/* Add this CSS to the <style> section */
+.highlight-row {
+    color: yellow !important;
+    font-weight: bold !important;
+}
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+    	<button id="densityButton" class="button button-LightSteelBlue">Density</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <br />
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+  
+		<div class="header-wrapper">
+    		<h1 class="header-text">Column Sorting</h1>
+		</div>
+
+        <div class="results-container">
+        		<div class="header-container">
+    				<input type="file" id="fileInput" accept=".csv" multiple>
+    				<button id="reverseSortButton" class="button button-blue">Reverse Sort</button>
+    				<button id="savePdfButton" class="button button-purple">Save to PDF</button>
+				</div>  
+    		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
+    		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
+    		</div>
+		</div>
+		<div class="results-container">
+    		<h3>Sorted Table</h3>
+    		<div id="tableContainer"></div>  <!-- This ensures the script finds it -->
+    		</div>
+		</div>  
+    	
+    	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    
+        document.addEventListener('DOMContentLoaded', function() {
     // Check if elements exist before adding event listeners
     let simButton = document.getElementById('simButton');
     if (simButton) {
@@ -428,3 +807,9 @@ doc.autoTable({
     // ✅ Save the PDF with the generated filename
     doc.save(pdfFileName);
 });
+
+
+    </script>
+
+</body>
+</html>

@@ -127,112 +127,6 @@ function createHeaderRow() {
 const group1Columns = ['14', '2', '0', '28', '9'];
 const group2Columns = ['13', '1', '37', '27', '10'];
 
-function processCSVData(csvText, isFirstFile) {
-    if (isNewBatch) {
-        extractedStrings = [];
-        isNewBatch = false;
-    }
-
-    const lines = csvText.split('\n').map(line => line.trim());
-    if (lines.length <= 3) return;
-
-    const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
-    const dataLines = shouldSlice ? lines.slice(3) : lines;
-    
-    let headerRow = dataLines[0].split(',');
-    let headerIndices = columnOrder.map(col => headerRow.indexOf(col));
-
-    if (isFirstFile && !headerAdded) {
-        createHeaderRow();
-    }
-
-    const tbody = document.querySelector('#csvTable tbody');
-    let currentRowNumber = tbody.querySelectorAll('tr').length + 1;
-
-    for (let row of dataLines.slice(1)) {
-        let rowData = row.split(',');
-        if (rowData.length < 39) continue;
-
-        let orderedRowData = headerIndices.map(index => (index >= 0 ? rowData[index] : ""));
-        let taskCode = rowData[38] || "NT";  // ✅ Extract task code
-        let categories = rowData.slice(40).filter(val => val.trim() !== ""); // ✅ Extract categories
-
-        let tr = document.createElement('tr');
-
-        let tdLineNumber = document.createElement('td');
-        tdLineNumber.textContent = currentRowNumber;
-        tdLineNumber.style.backgroundColor = 'slategray';
-        tdLineNumber.style.color = 'white';
-        tr.appendChild(tdLineNumber);
-        
-        let group1Cells = [];
-        let group2Cells = [];
-        let group1Sum = 0;
-        let group2Sum = 0;
-        let cellsToOverrideGreen = [];
-
-        orderedRowData.forEach((cellValue, j) => {
-            let td = document.createElement('td');
-            td.textContent = cellValue;
-            tr.appendChild(td);
-            
-            const columnName = columnOrder[j];
-
-            if (!isNaN(cellValue) && cellValue !== '') {
-                const numValue = Number(cellValue);
-
-                // ✅ Store all "3" cells for later color override
-                if (numValue === 3) {
-                    cellsToOverrideGreen.push(td); // Save this cell to be made green later
-                }
-
-                // ✅ Apply number-based coloring
-                if (numValue === 4) {
-                    td.classList.add('Gold');
-                } else if (numValue >= 5) {
-                    td.classList.add('light-green');
-                }
-
-                // ✅ Apply group-based coloring (BUT DON'T OVERRIDE YET)
-                if (group1Columns.includes(columnName)) {
-                    td.classList.add('default-light-yellow');
-                    group1Cells.push(td);
-                    group1Sum += numValue || 0;
-                } else if (group2Columns.includes(columnName)) {
-                    td.classList.add('default-light-yellow');
-                    group2Cells.push(td);
-                    group2Sum += numValue || 0;
-                }
-            }
-        });
-
-        // ✅ Apply group-based coloring FIRST
-        applyGroupColoring(group1Cells, group1Sum);
-        applyGroupColoring(group2Cells, group2Sum);
-
-        // ✅ FINAL OVERRIDE: Make all "3" cells DarkSeaGreen (AFTER other colors are applied)
-        cellsToOverrideGreen.forEach(td => {
-            td.className = ''; // Remove all existing classes
-            td.classList.add('DarkSeaGreen'); // Apply DarkSeaGreen
-        });
-
-        tbody.appendChild(tr);
-
-        // ✅ Store Task Code and Categories for this row
-        rowCategoriesMap[currentRowNumber] = { 
-            taskCode: taskCode, 
-            categories: categories 
-        };
-
-        console.log(`✅ Stored Row ${currentRowNumber} | Task Code: ${taskCode} | Categories: `, categories);
-
-        currentRowNumber++;
-    }
-
-    displayExtractedStrings();
-    displayFilenames();
-}
-
 function displayExtractedStrings() {
     let outputDiv = document.getElementById("extractedStringsOutput");
     if (!outputDiv) {
@@ -331,7 +225,7 @@ document.getElementById("fileInput").addEventListener("change", function (event)
             }
 
             // ✅ If checksum is valid or bypassed, proceed
-            processCSVData(fileContent, fileIndex === 0);
+            displayCSVData(fileContent, fileIndex === 0);
             fileIndex++;  // ✅ Move to the next file
             readNextFile();  // ✅ Process next file sequentially
         };
@@ -378,7 +272,7 @@ function createDataCell(cellValue) {
 
 function displayCSVData(csvText, isFirstFile) {
     if (isNewBatch) {
-        extractedStrings = []; // ✅ **Clear tasks at the beginning of a new batch**
+        extractedStrings = []; // ✅ Clear tasks at the beginning of a new batch
         isNewBatch = false;
     }
 
@@ -390,18 +284,21 @@ function displayCSVData(csvText, isFirstFile) {
         return;
     }
 
-// Only remove first 4 lines if the filename starts with "Sim" or "XSim"
-const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
-const dataLines = shouldSlice ? lines.slice(3) : lines;
+    // ✅ Only remove first 4 lines if the filename starts with "Sim" or "SimX"
+    const shouldSlice = selectedFileNames.some(fileName => fileName.startsWith("Sim") || fileName.startsWith("SimX"));
+    const dataLines = shouldSlice ? lines.slice(3) : lines;
 
     const tbody = document.querySelector('#csvTable tbody');
-    let currentRowNumber = tbody.querySelectorAll('tr').length + 1; // **Track row count (excluding header)**
+
+    // ✅ Clear out any existing rows before inserting new ones
+    tbody.innerHTML = '';
+
+    let currentRowNumber = 1; // Start from 1 for this new batch
 
     const columnOrder = ['5', '22', '34', '15', '3', '24', '36', '13', '1', '37', '27', '10', '25', '29', '12', '8', '19', '31', '18', '17', '32', '20', '7', '11', '30', '26', '9', '28', '0', '2', '14', '35', '23', '4', '16', '33', '21', '6'];    
     const group1Columns = ['14', '2', '0', '28', '9'];
     const group2Columns = ['13', '1', '37', '27', '10'];
 
-    // ✅ The header row is now taken from the modified data (after skipping lines)
     const headerRow = dataLines[0].split(',');
     const headerIndices = columnOrder.map(col => headerRow.indexOf(col));
 
@@ -409,7 +306,7 @@ const dataLines = shouldSlice ? lines.slice(3) : lines;
         createHeaderRow(headerRow);
     }
 
-    for (let i = 1; i < dataLines.length; i++) { // ✅ Start from index 1 since header row is now in `dataLines[0]`
+    for (let i = 1; i < dataLines.length; i++) {
         let row = dataLines[i].split(',');
 
         if (isTableData) {
@@ -426,7 +323,7 @@ const dataLines = shouldSlice ? lines.slice(3) : lines;
             tdLineNumber.style.color = 'white';
             tr.appendChild(tdLineNumber);
 
-            let rowData = [currentRowNumber]; // Store row for export
+            let rowData = [currentRowNumber];
             let hasNumericData = false;
             let group1Sum = 0;
             let group2Sum = 0;
@@ -435,37 +332,42 @@ const dataLines = shouldSlice ? lines.slice(3) : lines;
 
             headerIndices.forEach((index, j) => {
                 const td = document.createElement('td');
-                let cellValue = index >= 0 && row.length > index ? row[index].trim() : '';
 
-                if (!isNaN(cellValue) && cellValue !== '') {
+                // ✅ Get raw value safely and trim it
+                let rawValue = index >= 0 && row.length > index ? row[index].replace(/\uFEFF/g, '').trim() : '';
+
+                // ✅ Check if it's truly a zero (even if it's "0 ", "0.0", etc.)
+                const numValue = parseFloat(rawValue);
+                const isNumeric = !isNaN(numValue);
+                const isZero = isNumeric && numValue === 0;
+
+                // ✅ Final value to display in the table
+                const displayValue = isZero ? '' : rawValue;
+
+                td.textContent = displayValue;
+
+                // ✅ Only mark row as valid if there's meaningful numeric data
+                if (isNumeric && !isZero) {
                     hasNumericData = true;
-                }
 
-                if (cellValue === '0') {
-                    cellValue = '';
-                }
-
-                td.textContent = cellValue;
-
-                if (!isNaN(cellValue) && cellValue !== '') {
-                    const numValue = Number(cellValue);
                     if (numValue === 3) td.classList.add('DarkSeaGreen');
                     else if (numValue === 4) td.classList.add('Gold');
                     else if (numValue >= 5) td.classList.add('light-green');
                 }
 
+                // ✅ Highlight group columns and calculate sums (including zero)
                 if (group1Columns.includes(columnOrder[j])) {
                     td.classList.add('default-light-yellow');
                     group1Cells.push(td);
-                    group1Sum += parseInt(cellValue) || 0;
+                    group1Sum += isNumeric ? numValue : 0;
                 } else if (group2Columns.includes(columnOrder[j])) {
                     td.classList.add('default-light-yellow');
                     group2Cells.push(td);
-                    group2Sum += parseInt(cellValue) || 0;
+                    group2Sum += isNumeric ? numValue : 0;
                 }
 
                 tr.appendChild(td);
-                rowData.push(cellValue);
+                rowData.push(displayValue); // ✅ Store the visible value (blank for 0s)
             });
 
             applyGroupColoring(group1Cells, group1Sum);
@@ -761,10 +663,18 @@ function savePDFSplit(rowCategoriesMap) {
     rows.forEach((row, index) => {
         const rowNumber = parseInt(row.cells[0].textContent.trim(), 10); // ✅ Extract row number properly
 
-        const topHalf = topHalfIndices.map(idx => row.cells[idx]?.textContent || "");
+        const topHalf = topHalfIndices.map(idx => {
+    	const value = row.cells[idx]?.textContent.trim() || "";
+    	return value === "0" ? "" : value;
+	});
+
         topHalf[0] = rowNumber.toString();
 
-        const bottomHalf = bottomHalfIndices.map(idx => row.cells[idx]?.textContent || "");
+        const bottomHalf = bottomHalfIndices.map(idx => {
+    	const value = row.cells[idx]?.textContent.trim() || "";
+    	return value === "0" ? "" : value;
+	});
+
         bottomHalf[0] = "";
 
         let taskInfo = rowCategoriesMap[rowNumber] || { taskCode: "NT", categories: [] };
@@ -882,9 +792,13 @@ function savePDFSingle() {
 
     const table = document.querySelector('#csvTable');
     const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText === '37' ? '00' : th.innerText);
-    const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
-        Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
-    );
+const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+    Array.from(tr.querySelectorAll('td')).map(td => {
+        const val = td.innerText.trim();
+        return val === "0" ? "" : val;
+    })
+);
+
 
     const timestamp = getFormattedTimestamp();
     const rowCount = data.length;

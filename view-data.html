@@ -1175,6 +1175,12 @@ document.getElementById('saveButton').addEventListener('click', async function (
 
     csvContent += allRowData.join('\n') + '\n'; // ✅ Append all data rows after the header
 
+    // ✅ Add selected filenames to the end of the CSV file
+    csvContent += `\nFILENAMES USED, IN DATE-TIME ORDER:\n`;
+    selectedFileNames.forEach((name, index) => {
+        csvContent += `${index + 1}. ${name}\n`;
+    });
+
     // ✅ Generate SHA-256 checksum for filename obfuscation only
     const checksum = await generateChecksum(csvContent); 
     const obfuscatedChecksum = getObfuscatedChecksum(checksum); // 5-character obfuscation

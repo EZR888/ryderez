@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -687,8 +686,8 @@ function processCSVData(csvText, isFirstFile) {
         if (rowData.length < 39) continue;
 
         let orderedRowData = headerIndices.map(index => (index >= 0 ? rowData[index] : ""));
-        let taskCode = rowData[38] || "NT";  // ✅ Extract task code
-        let categories = rowData.slice(40).filter(val => val.trim() !== ""); // ✅ Extract categories
+        let taskCode = rowData[38] || "NT";
+        let categories = rowData.slice(40).filter(val => val.trim() !== "");
 
         let tr = document.createElement('tr');
 
@@ -706,52 +705,48 @@ function processCSVData(csvText, isFirstFile) {
 
         orderedRowData.forEach((cellValue, j) => {
             let td = document.createElement('td');
-            td.textContent = cellValue;
+
+            // Replace "0" with empty string for display
+            const displayValue = (parseFloat(cellValue) === 0) ? '' : cellValue.trim();
+            td.textContent = displayValue;
             tr.appendChild(td);
-            
+
             const columnName = columnOrder[j];
 
-            if (!isNaN(cellValue) && cellValue !== '') {
-                const numValue = Number(cellValue);
+            const numValue = parseFloat(cellValue);
+            const isNumeric = !isNaN(numValue);
 
-                // ✅ Store all "3" cells for later color override
+            if (isNumeric && numValue !== 0) {
                 if (numValue === 3) {
-                    cellsToOverrideGreen.push(td); // Save this cell to be made green later
-                }
-
-                // ✅ Apply number-based coloring
-                if (numValue === 4) {
+                    cellsToOverrideGreen.push(td);
+                } else if (numValue === 4) {
                     td.classList.add('Gold');
                 } else if (numValue >= 5) {
                     td.classList.add('light-green');
                 }
+            }
 
-                // ✅ Apply group-based coloring (BUT DON'T OVERRIDE YET)
-                if (group1Columns.includes(columnName)) {
-                    td.classList.add('default-light-yellow');
-                    group1Cells.push(td);
-                    group1Sum += numValue || 0;
-                } else if (group2Columns.includes(columnName)) {
-                    td.classList.add('default-light-yellow');
-                    group2Cells.push(td);
-                    group2Sum += numValue || 0;
-                }
+            if (group1Columns.includes(columnName)) {
+                td.classList.add('default-light-yellow');
+                group1Cells.push(td);
+                group1Sum += isNumeric ? numValue : 0;
+            } else if (group2Columns.includes(columnName)) {
+                td.classList.add('default-light-yellow');
+                group2Cells.push(td);
+                group2Sum += isNumeric ? numValue : 0;
             }
         });
 
-        // ✅ Apply group-based coloring FIRST
         applyGroupColoring(group1Cells, group1Sum);
         applyGroupColoring(group2Cells, group2Sum);
 
-        // ✅ FINAL OVERRIDE: Make all "3" cells DarkSeaGreen (AFTER other colors are applied)
         cellsToOverrideGreen.forEach(td => {
-            td.className = ''; // Remove all existing classes
-            td.classList.add('DarkSeaGreen'); // Apply DarkSeaGreen
+            td.className = '';
+            td.classList.add('DarkSeaGreen');
         });
 
         tbody.appendChild(tr);
 
-        // ✅ Store Task Code and Categories for this row
         rowCategoriesMap[currentRowNumber] = { 
             taskCode: taskCode, 
             categories: categories 

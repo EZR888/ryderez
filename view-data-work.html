@@ -833,9 +833,37 @@ document.getElementById("fileInput").addEventListener("change", function (event)
         const file = files[fileIndex];
         const reader = new FileReader();
 
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
             console.log(`📂 Processing file: ${file.name}`);
-            processCSVData(e.target.result, fileIndex === 0);
+            const fileContent = e.target.result;
+
+            // ✅ Extract last 5 characters from filename (before .csv)
+            const last5FromFile = file.name.replace(".csv", "").slice(-5);
+
+            // ✅ Allow hash values in the range 00000 to 00200 to bypass checksum validation
+            const isBypass = /^[0-9]{5}$/.test(last5FromFile) && parseInt(last5FromFile, 10) <= 200;
+
+            if (!isBypass) {
+                // ✅ Compute checksum of file content
+                const computedChecksum = await generateChecksum(fileContent);
+
+                // ✅ Extract the last 5-character hash from the second half of computed checksum
+                const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
+
+                if (last5FromFile !== obfuscatedComputedChecksum) {
+                    console.log(`❌ Filename hash mismatch for ${file.name}`);
+                    console.log(`Expected: ${last5FromFile}`);
+                    console.log(`Computed: ${obfuscatedComputedChecksum}`);
+                    alert(`It appears that "${file.name}" has been edited. Aborting.`);
+                    location.reload(); // Refresh page to reset state
+                    return;
+                }
+            } else {
+                console.log(`⚠️ Checksum bypass for ${file.name} due to allowed numeric code`);
+            }
+
+            // ✅ If checksum is valid or bypassed, proceed
+            processCSVData(fileContent, fileIndex === 0);
             fileIndex++;  // ✅ Move to the next file
             readNextFile();  // ✅ Process next file sequentially
         };

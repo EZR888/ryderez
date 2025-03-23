@@ -772,8 +772,8 @@ function computePValues(selectedOptions, runIndex) {
         "Bottom Ends - Center",
         "Variance (Within-Run Spread)",
         "Density (Top 5 Sum)",
-        "00 Cluster",
-        "0 Cluster"
+        "Sum of 00",
+        "Sum of 0"
     ];
 
     // ✅ Compute differences for ALL 8 expected categories
@@ -782,8 +782,8 @@ function computePValues(selectedOptions, runIndex) {
         "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
         "Top Ends - Center": sumColumns(Totals, groupIndices.topEnds) - sumColumns(Totals, groupIndices.topCenter),
         "Bottom Ends - Center": sumColumns(Totals, groupIndices.bottomEnds) - sumColumns(Totals, groupIndices.bottomCenter),
-        "00 Cluster": sumColumns(Totals, groupIndices.zzCluster),
-        "0 Cluster": sumColumns(Totals, groupIndices.zCluster),
+        "Sum of 00": sumColumns(Totals, groupIndices.zzCluster),
+        "Sum of 0": sumColumns(Totals, groupIndices.zCluster),
     };
 
     // ✅ Compute Variance & Density separately
@@ -1053,8 +1053,8 @@ function displayPValues(newPValues) {
             "Bottom Ends - Center",
             "Variance (Within-Run Spread)",
             "Density (Top 5 Sum)",
-            "00 Cluster",
-            "0 Cluster"
+            "Sum of 00",
+            "Sum of 0"
         ];
 
         expectedCategories.forEach(category => {

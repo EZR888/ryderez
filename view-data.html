@@ -1176,7 +1176,7 @@ document.getElementById('saveButton').addEventListener('click', async function (
     csvContent += allRowData.join('\n') + '\n'; // ✅ Append all data rows after the header
 
     // ✅ Add selected filenames to the end of the CSV file
-    csvContent += `\nFILENAMES USED, IN DATE-TIME ORDER:\n`;
+    csvContent += `\nFILENAMES USED IN DATE-TIME ORDER:\n`;
     selectedFileNames.forEach((name, index) => {
         csvContent += `${index + 1}. ${name}\n`;
     });
@@ -1197,8 +1197,17 @@ document.getElementById('saveButton').addEventListener('click', async function (
     let categoryString = firstRowTaskCode.replace(/[^a-zA-Z0-9-_]/g, "").trim();
     if (!categoryString) categoryString = "NT";
 
-    // ✅ Filename includes obfuscated checksum (BUT NOT inside the file!)
-    let filename = `SimX_${categoryString}_${rowCount}_${getFormattedTimestamp()}_${obfuscatedChecksum}.csv`;
+    // ✅ Extract timestamps from the first and last filenames
+    function extractShortTimestamp(name) {
+        const match = name.match(/_(\d{6})_(\d{2})_(\d{2})_(\d{2})/);
+        return match ? `${match[1]}_${match[2]}_${match[3]}_${match[4]}` : "000000_00_00_00";
+    }
+
+    const oldestTimestamp = selectedFileNames.length > 0 ? extractShortTimestamp(selectedFileNames[0]) : "000000_00_00_00";
+    const newestTimestamp = selectedFileNames.length > 0 ? extractShortTimestamp(selectedFileNames[selectedFileNames.length - 1]) : "000000_00_00_00";
+
+    // ✅ Filename in new format
+    let filename = `SimX_${categoryString}_${rowCount}_${oldestTimestamp}-${newestTimestamp}_${obfuscatedChecksum}.csv`;
 
     console.log(`✅ Final Filename: ${filename}`);
     link.setAttribute("download", filename);

@@ -481,7 +481,11 @@ function updateButtonStates() {
       bottomEnds: [17,32,20,7,11,4,16,3,21,6],
       topCenter: [24,36,13,1,37,27,10,25,29],
       bottomCenter: [30,26,9,28,0,2,14,35,23],
-      zeroSums: [13,1,37,27,10,9,28,0,2,14]
+      zeroSums: [13,1,37,27,10,9,28,0,2,14],
+      UpperLeft = [5, 22, 34, 15, 3, 24, 36, 13, 1],
+      UpperRight = [27, 10, 25, 29, 12, 8, 19, 31, 18],
+      LowerRight = [6, 21, 33, 16, 4, 23, 35, 14, 2],
+      LowerLeft = [28, 9, 26, 30, 11, 7, 20, 32, 17]
     };
 
 function sumColumns(counts, indices) {
@@ -674,7 +678,7 @@ if (!statsCollection[category]) {
     const sumCategories = [
         "topIndices", "bottomIndices", "leftTop", "leftBottom", "rightTop", "rightBottom", 
         "cTop", "cBottom", "zzCluster", "zCluster", "left", "right", "topEnds", "bottomEnds", 
-        "topCenter", "bottomCenter", "zeroSums", "Density", "Variance"
+        "topCenter", "bottomCenter", "zeroSums", "Density", "Variance", "UpperLeft", "UpperRight", "LowerLeft", "LowerRight"
     ];
 
     const isSumCategory = sumCategories.includes(category);
@@ -795,7 +799,11 @@ if (!statsCollection[category]) {
       zeroSums: "Zero Sums Total",
       Density: "Density (Top 5 Sum)",
       Variance: "Variance (Within-Run Spread)",
-      varianceDifference: "Variance Difference (Top - Bottom)"
+      varianceDifference: "Variance Difference (Top - Bottom)",
+      UpperLeft: "Upper Left",
+      UpperRight: "Upper Right",
+      LowerLeft: "Lower Left",
+      LoweRight: "Lower Right"
     };
 
 function displayDescriptiveStatistics(stats) {

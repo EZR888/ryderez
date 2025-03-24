@@ -569,7 +569,11 @@ const taskMappings = {
       bottomEnds: [17,32,20,7,11,4,16,3,21,6],
       topCenter: [24,36,13,1,37,27,10,25,29],
       bottomCenter: [30,26,9,28,0,2,14,35,23],
-      zeroSums: [13,1,37,27,10,9,28,0,2,14]
+      zeroSums: [13,1,37,27,10,9,28,0,2,14],
+      UpperLeft: [5,22,34,15,3,24,36,13,1],
+      UpperRight: [27,10,25,29,12,8,19,31,18],
+      LowerRight: [6,21,33,16,4,23,35,14,2],
+      LowerLeft: [28,9,26,30,11,7,20,32,17]
     };
 
            // Function to generate a formatted timestamp // 
@@ -773,10 +777,14 @@ function computePValues(selectedOptions, runIndex) {
         "Variance (Within-Run Spread)",
         "Density (Top 5 Sum)",
         "Sum of 00",
-        "Sum of 0"
+        "Sum of 0",
+        "Upper Left",
+        "Upper Right",
+        "Lower Left",
+        "Lower Right"
     ];
 
-    // ✅ Compute differences for ALL 8 expected categories
+    // ✅ Compute differences for ALL 12 expected categories
     let categoryDifferences = {
         "Top - Bottom": sumColumns(Totals, groupIndices.topIndices) - sumColumns(Totals, groupIndices.bottomIndices),
         "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
@@ -784,6 +792,10 @@ function computePValues(selectedOptions, runIndex) {
         "Bottom Ends - Center": sumColumns(Totals, groupIndices.bottomEnds) - sumColumns(Totals, groupIndices.bottomCenter),
         "Sum of 00": sumColumns(Totals, groupIndices.zzCluster),
         "Sum of 0": sumColumns(Totals, groupIndices.zCluster),
+        "Upper Left": sumColumns(Totals, groupIndices.UpperLeft),
+        "Upper Right": sumColumns(Totals, groupIndices.UpperRight),
+        "Lower Left": sumColumns(Totals, groupIndices.LowerLeft),
+        "Lower Right": sumColumns(Totals, groupIndices.LowerRight)
     };
 
     // ✅ Compute Variance & Density separately
@@ -791,7 +803,7 @@ function computePValues(selectedOptions, runIndex) {
     categoryDifferences["Density (Top 5 Sum)"] = calculateDensity(Totals);
 
     // ✅ Compute P-values for ALL 8 categories
-expectedCategories.forEach(category => {
+	expectedCategories.forEach(category => {
     let difference = categoryDifferences[category];
 
     // ✅ Ensure difference is a valid number
@@ -1054,7 +1066,11 @@ function displayPValues(newPValues) {
             "Variance (Within-Run Spread)",
             "Density (Top 5 Sum)",
             "Sum of 00",
-            "Sum of 0"
+            "Sum of 0",
+            "Upper Left",
+            "Upper Right",
+            "Lower Right",
+            "Lower Left"
         ];
 
         expectedCategories.forEach(category => {

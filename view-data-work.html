@@ -809,6 +809,21 @@ document.getElementById("fileInput").addEventListener("change", function (event)
     rowCategoriesMap = {};
 
     let files = Array.from(event.target.files).filter(file => file.name.endsWith(".csv"));
+    
+    const simXFiles = files.filter(file => file.name.startsWith("SimX_"));
+    const simFiles = files.filter(file => file.name.startsWith("Sim_"));
+
+    // ⚠️ Check for mixed selection of SimX_ and Sim_ files
+    if (simXFiles.length > 0 && simFiles.length > 0) {
+        alert("⚠️ You cannot load SimX_ files together with Sim_ files.\n\nSimX_ files have been removed from the selection.");
+        files = simFiles; // Only keep Sim_ files
+    }
+
+    // ✅ If only SimX_ files selected, allow them, but only one at a time
+    if (simXFiles.length > 0 && simFiles.length === 0 && simXFiles.length > 1) {
+        alert("⚠️ SimX_ files must be loaded one at a time.");
+        return;
+    }
 
     // ✅ Sort files by extracted timestamp before processing
     files.sort((a, b) => extractTimestamp(a.name) - extractTimestamp(b.name));
@@ -840,16 +855,9 @@ document.getElementById("fileInput").addEventListener("change", function (event)
             const isBypass = /^[0-9]{5}$/.test(last5FromFile) && parseInt(last5FromFile, 10) <= 200;
 
             if (!isBypass) {
-                // ✅ Compute checksum of file content
                 const computedChecksum = await generateChecksum(fileContent);
-
-                // ✅ Extract the last 5-character hash from the second half of computed checksum
-                const obfuscatedComputedChecksum = getObfuscatedChecksum(computedChecksum);
-
-                if (last5FromFile !== obfuscatedComputedChecksum) {
-                    console.log(`❌ Filename hash mismatch for ${file.name}`);
-                    console.log(`Expected: ${last5FromFile}`);
-                    console.log(`Computed: ${obfuscatedComputedChecksum}`);
+                const obfuscatedChecksum = getObfuscatedChecksum(computedChecksum);
+                if (last5FromFile !== obfuscatedChecksum) {
                     alert(`It appears that "${file.name}" has been edited. Aborting.`);
                     location.reload(); // Refresh page to reset state
                     return;
@@ -858,10 +866,9 @@ document.getElementById("fileInput").addEventListener("change", function (event)
                 console.log(`⚠️ Checksum bypass for ${file.name} due to allowed numeric code`);
             }
 
-            // ✅ If checksum is valid or bypassed, proceed
             processCSVData(fileContent, fileIndex === 0);
-            fileIndex++;  // ✅ Move to the next file
-            readNextFile();  // ✅ Process next file sequentially
+            fileIndex++;
+            readNextFile();
         };
 
         reader.readAsText(file);
@@ -869,7 +876,6 @@ document.getElementById("fileInput").addEventListener("change", function (event)
 
     readNextFile();  // ✅ Start processing first file
 });
-
 
 /**
  * ✅ Extracts a sortable timestamp from the filename.

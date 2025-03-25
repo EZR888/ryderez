@@ -535,10 +535,13 @@ function getObfuscatedChecksum(checksum) {
 function parseCSVAndGenerateTable(data) {
                 if (!data.length) return;
 
-                rowData = data.map((row, index) => ({ originalIndex: index + 1, data: row }));
-
-                rowData.forEach(row => row.data.sort((a, b) => b - a));
-
+rowData = data.map((row, index) => {
+    const first38 = row.slice(0, 38).map(v => (isNaN(v) ? 0 : Number(v)));
+    return {
+        originalIndex: index + 1,
+        data: first38.sort((a, b) => b - a)
+    };
+});
                 rowData.sort((rowA, rowB) => {
                     for (let i = 0; i < rowA.data.length; i++) {
                         if (rowA.data[i] !== rowB.data[i]) {
@@ -570,7 +573,7 @@ function generateTable() {
             <th class="original-number" style="background-color: slategray; color: white; padding: 8px;">Orig</th>
             <th class="sorted-number" style="background-color: red; color: white; padding: 8px;">Sort</th>`;
 
-    for (let i = 0; i < rowData[0].data.length; i++) {
+    for (let i = 0; i < 38; i++) {
         tableHtml += `<th class="other-number" style="background-color: green; color: white; padding: 8px;">${i + 1}</th>`;
     }
 
@@ -581,9 +584,11 @@ function generateTable() {
         tableHtml += `<td class="original-number" style="background-color: slategray; color: white; padding: 6px; text-align: center;"><strong>${row.originalIndex}</strong></td>`;
         tableHtml += `<td class="sorted-number" style="background-color: red; color: white; padding: 6px; text-align: center;"><strong>${rowIndex + 1}</strong></td>`;
 
-        row.data.forEach(cell => {
-            tableHtml += `<td class="other-number" style="background-color: lightgray; color: black; padding: 6px; text-align: center;">${cell === "0" ? '' : cell}</td>`;
-        });
+        for (let i = 0; i < 38; i++) {
+            const cell = row.data[i];
+            const displayValue = (cell == 0) ? '' : cell; // ✅ Works for 0 or "0"
+            tableHtml += `<td class="other-number" style="background-color: lightgray; color: black; padding: 6px; text-align: center;">${displayValue}</td>`;
+        }
 
         tableHtml += `</tr>`;
     });
@@ -654,12 +659,16 @@ function generateFrequencyTable() {
 }
 
 
-            document.getElementById('reverseSortButton').addEventListener('click', function () {
-                rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
-                generateTable();
-                generateFrequencyTable();
-            });
-        });
+document.getElementById('reverseSortButton').addEventListener('click', function () {
+    rowData = rowData.map(row => ({
+        originalIndex: row.originalIndex,
+        data: row.data.slice().reverse()  // ✅ Reverse entire 38-column array
+    }));
+    generateTable();
+    generateFrequencyTable();
+});
+});
+
         
 // Function to extract all uploaded file names
 function getUploadedFileNames() {

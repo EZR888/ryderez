@@ -3,7 +3,7 @@
 # Requires: javascript-obfuscator and Python 3
 # Install: npm install -g javascript-obfuscator
 
-declare -a files=("view-data.html")
+declare -a files=("roulette.html" "view-data.html" "sort.html" "totals.html" "pvalues.html" "xfreq.html")
 # declare -a files=("roulette.html" "view-data.html" "sort.html" "view-stats.html" "pvalues.html" "xfreq.html")
 
 for file in "${files[@]}"; do

@@ -358,7 +358,6 @@
     let statsCollection = {}; // Declare at the top of the script
     let extractedTasksList = []; // Store tasks from all selected files
     let extractedTaskRows = []; // ✅ Ensure extractedTaskRows is globally declared
-    let maxHits = []; // 🔥 Add this line
 
   
 function activateTaskButtons(taskNames) {
@@ -623,62 +622,28 @@ function validateDensityAndVariance(densityValues, varianceValues) {
 
 
 function calculateMedian(arr) {
-    const numeric = arr.filter(val => typeof val === 'number' && !isNaN(val));
-    if (numeric.length === 0) return 0;
-
-    const sorted = numeric.slice().sort((a, b) => a - b);
+    const sorted = arr.slice().sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
     
     return sorted.length % 2 !== 0 
-        ? parseFloat(sorted[mid].toFixed(4))  
-        : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));
+        ? parseFloat(sorted[mid].toFixed(4))  // Ensure number, 4 decimal places
+        : parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(4));  // Ensure number, 4 decimal places
 }
-
-// PATCHED: Centralize Category Dropdown to Prevent Partial Listing
-function populateGlobalCategoryDropdown(allCategories, stats) {
-  let categoryOptions = `<option value="">Select a Category...</option>`;
-  const allKeys = Object.keys(allCategories);
-  const sortedCategoryKeys = [
-    ...taskButtonCategoryOrder,
-    ...allKeys.filter(key => !taskButtonCategoryOrder.includes(key)).sort()
-  ];
-
-  sortedCategoryKeys.forEach(category => {
-    const statsForCategory = stats[category];
-    if (!statsForCategory || typeof statsForCategory !== "object" || Object.keys(statsForCategory).length === 0) return;
-
-    const categoryLabel = categoryLabels[category] || category;
-    let anchorId = category.replace(/\s+/g, "-").toLowerCase();
-    categoryOptions += `<option value="${anchorId}">${categoryLabel}</option>`;
-  });
-
-  // Apply to all dropdowns
-  document.querySelectorAll('.categoryDropdown').forEach(dropdown => {
-    dropdown.innerHTML = categoryOptions;
-  });
-}
-
 
 // =======================================================
 // Fix calculateFrequencyDistribution crashing on undefined
 // =======================================================
-function calculateFrequencyDistribution(dataArray) {
-    if (!Array.isArray(dataArray) || dataArray.length === 0) {
-        console.error("❌ ERROR: Invalid data provided to calculateFrequencyDistribution:", dataArray);
-        return {};
+function calculateFrequencyDistribution(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error("❌ ERROR: Invalid data provided to calculateFrequencyDistribution");
+        return {}; // Return empty object to prevent crash
     }
-
-    let freq = {};
-    dataArray.forEach(value => {
-        if (value !== null && value !== undefined) {
-            freq[value] = (freq[value] || 0) + 1;
-        }
+    const frequency = {};
+    data.forEach(val => {
+        frequency[val] = (frequency[val] || 0) + 1;
     });
-
-    console.log("🟢 Frequency Distribution Calculated:", freq);
-    return freq;
+    return frequency;
 }
-
 
 function calculateCumulativeProbabilities(frequencyDistribution, totalValue, category) {
     if (!category || typeof category !== "string") {
@@ -686,17 +651,10 @@ function calculateCumulativeProbabilities(frequencyDistribution, totalValue, cat
         return {};
     }
 
-if (!statsCollection || Object.keys(statsCollection).length === 0) {
-    console.error("❌ ERROR: statsCollection is empty or not initialized! Skipping cumulative probability calculation.");
-    return {};
-}
-
-// ⚠️ Don’t return early if category is missing — allow fallback!
-if (!statsCollection[category]) {
-    console.warn(`⚠️ WARNING: ${category} not found in statsCollection! Initializing as empty.`);
-    statsCollection[category] = {};
-}
-
+    if (!statsCollection[category]) {
+        console.log(`❌ ERROR: ${category} is missing from statsCollection!`);
+        return {};
+    }
 
     console.log(`🟢 Processing category: ${category}`);
 
@@ -828,8 +786,8 @@ if (!statsCollection[category]) {
       rightBottom: "Right Bottom",
       cTop: "Center Top",
       cBottom: "Center Bottom",
-      zzCluster: "Sum 00",
-      zCluster: "Sum 0",
+      zzCluster: "00 Cluster",
+      zCluster: "0 Cluster",
       left: "Left",
       right: "Right",
       topEnds: "Top Ends",
@@ -849,18 +807,6 @@ if (!statsCollection[category]) {
       maxHits: "Max Hits",
       maxCounts: "Max Counts"
     };
-    
-const taskButtonCategoryOrder = [
-  "topBottomDiff",
-  "leftRightDiff",
-  "topDiff",
-  "bottomDiff",
-  "zzDiff",
-  "cDiff",
-  "Density",
-  "Variance"
-];
-
 
 function displayDescriptiveStatistics(stats) {
     if (!stats || typeof stats !== "object") {
@@ -949,7 +895,7 @@ if (!category) {
                 observedFrequency = frequencyDistribution[difference] || "";
                 expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
                     (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
-				cumulativeProbability = referenceData[categoryLabel]?.[difference]?.cumulativePValue || cumulativeData[difference]?.cumulativeP || "";
+                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
             }
 
             if (!referenceData[categoryLabel]) {
@@ -1067,6 +1013,142 @@ function loadReferenceData(csvFilePath) {
         .catch(error => console.error("Error loading reference data:", error));
 }
 
+function displayResults(differences, groupSums, stats, densityValues, varianceValues) {
+    const explanationElement = document.getElementById("explanation");
+    explanationElement.innerHTML = "";
+
+    const allCategories = { ...differences, ...groupSums, Density: densityValues, Variance: varianceValues };
+
+	console.log("🟢 Checking statsCollection before calling calculateCumulativeProbabilities:", statsCollection);
+
+    // Create options for the dropdown
+    let categoryOptions = `<option value="">Select a Category...</option>`;
+    Object.keys(allCategories).forEach(category => {
+    
+      if (!category || typeof category !== "string") {
+        console.error("🚨 Invalid category found:", category);
+    }
+    
+        if (!stats[category]) return;
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+        categoryOptions += `<option value="${anchorId}">${categoryLabel}</option>`;
+    });
+
+    Object.keys(allCategories).forEach(category => {
+        if (!stats[category]) {
+            console.warn(`⚠️ Skipping undefined category: ${category}`);
+            return;
+        }
+        console.log(`🟢 Displaying category: ${category}`);
+
+        // ✅ Moved these lines inside the loop
+        const categoryLabel = categoryLabels[category] || category;
+        let anchorId = category.replace(/\s+/g, "-").toLowerCase();
+
+        // Dropdown inside each category
+        let categoryDropdownHTML = `
+            <div style="text-align: left; margin-bottom: 2px;">
+                <label for="categoryDropdown-${anchorId}" style="font-size: 14px; color: lightgreen;"></label>
+                <select class="categoryDropdown" id="categoryDropdown-${anchorId}" onchange="jumpToCategory(this)" style="padding: 5px; font-size: 14px; width: 220px;">
+                    ${categoryOptions}
+                </select>
+            </div>
+        `;
+
+        let categoryHTML = `
+            <div id="${anchorId}" class="category-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
+                ${categoryDropdownHTML}
+                <h2 class="category-label" style="margin-top: 20px; text-align: center;">
+                    <a href="#${anchorId}" style="color: lightgreen; text-decoration: none;">${categoryLabel}</a>
+                </h2>
+            </div>
+        `;
+
+        const frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
+        const cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
+        const totalSpins = totalRuns * 38;
+
+        let imageLineHTML = `
+            <center style="margin-bottom: 5px;">
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalRuns}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Runs</span>
+                &nbsp;&nbsp;
+                <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 5px auto;">
+                &nbsp;&nbsp;
+                <span style="color: orange; font-size: 18px; font-weight: bold;">${totalSpins}</span>
+                <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Spins</span>
+            </center>`;
+
+        let tableHTML = `
+            ${categoryHTML}
+            ${imageLineHTML}
+            <table border='1' style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Metric</th>
+                <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Value</th>
+                <th></th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Expected Probability</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Observed Frequency</th>
+                <th style="padding: 8px; color: salmon; text-align: center;">Adjusted P-Value</th>
+            </tr>`;
+
+        const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
+        const metricKeys = Object.keys(stats[category]);
+        const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
+
+        for (let i = 0; i < maxRows; i++) {
+            const metric = metricKeys[i] || "";
+            let value = metric ? stats[category][metric] : "";
+
+            if (category === "Variance" && value !== "") {
+                value = parseFloat(value).toFixed(4);
+            }
+
+            const difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
+            let frequency = "";
+            let pValue = "";
+            let cumulativePValue = "";
+
+            if (difference !== null) {  
+                frequency = frequencyDistribution[difference] || "";
+                pValue = referenceData[categoryLabel]?.[difference]?.pValue || 
+                        (frequency ? (frequency / totalRuns).toFixed(6) : "");
+                cumulativePValue = cumulativeData[difference]?.cumulativeP || "";
+            }
+
+            if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
+                pValue = referenceData[categoryLabel][difference].pValue;
+                cumulativePValue = referenceData[categoryLabel][difference].cumulativePValue;
+            }
+
+            let metricStyle = "color: orange; font-weight: bold;";
+            let valueStyle = "color: lightblue; font-weight: bold;";
+            let dataStyle = "color: lightgray;";
+            let highlightStyle = "color: yellow; font-weight: bold;";
+            let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
+
+            tableHTML += `
+            <tr>
+                <td style="padding: 8px; text-align: center; ${metricStyle}">${metric}</td>
+                <td style="padding: 8px; text-align: center; ${valueStyle}">${value}</td>
+                <td style="padding: 8px;"></td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${difference}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${pValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${cumulativePValue}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}">${frequency}</td>
+                <td style="padding: 8px; text-align: center; ${applyHighlight ? highlightStyle : dataStyle}"></td>
+            </tr>`;
+        }
+
+        tableHTML += `</table><br/>`;
+        explanationElement.innerHTML += tableHTML;
+    });
+}
+
+
 // Fix for navigation issue
 function jumpToCategory(dropdown) {
     const selectedCategory = dropdown.value;
@@ -1095,6 +1177,7 @@ function getMaxHitsCSV(maxHits) {
 
     return csvContent;
 }
+
 
 
 // =======================================================
@@ -1179,7 +1262,7 @@ function getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, v
                 observedFrequency = frequencyDistribution[difference] || "";
                 expectedProbability = referenceData[categoryLabel]?.[difference]?.pValue || 
                     (observedFrequency ? (observedFrequency / totalRuns).toFixed(6) : "");
-				cumulativeProbability = referenceData[categoryLabel]?.[difference]?.cumulativePValue || cumulativeData[difference]?.cumulativeP || "";
+                cumulativeProbability = cumulativeData[difference]?.cumulativeP || "";
             }
 
             if (!referenceData[categoryLabel]) {
@@ -1212,7 +1295,7 @@ function getFormattedFreqDistCSV(differences, groupSums, stats, densityValues, v
     // =======================================================
     // DISPLAY FUNCTIONS for Max Counts and Max Hits
     // =======================================================
-function displaymaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+function displayMaxCountsResults(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
       let total = 38;
       let tableHTML = `
         <h3><center><span style="color: orange;">Max Counts</span>
@@ -1296,7 +1379,7 @@ function displayMaxHitsTable(maxHits) {
     }
 
 
-function getmaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
+function getMaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
     let csvContent = "Max Counts (Statistical Summary and Frequency Distribution)\n";
     csvContent += "Metric,Value,Count,Expected Frequency,Observed Frequency,Cumulative Probability,Adjusted P-Value\n";
 
@@ -1320,8 +1403,8 @@ function getmaxCountsCSV(maxHitsStats, maxHitsFreq, maxHitsCumulative) {
         }
 
         // 🔥 Overwrite expected frequency and cumulative probability using the reference data 🔥
-        let expectedFrequencyLookup = referenceData["maxCounts"]?.[countValue]?.pValue;
-        let cumulativeProbabilityLookup = referenceData["maxCounts"]?.[countValue]?.cumulativePValue;
+        let expectedFrequencyLookup = referenceData["MaxCounts"]?.[countValue]?.pValue;
+        let cumulativeProbabilityLookup = referenceData["MaxCounts"]?.[countValue]?.cumulativePValue;
         if (expectedFrequencyLookup !== undefined) {
             expectedFrequency = expectedFrequencyLookup;
         }
@@ -1357,299 +1440,127 @@ function processChunk(startIndex, chunkSize, isGeneratingReferenceData) {
 }
 
 
-// 📌 Your updated JavaScript/HTML setup with new statistical categories integrated
+function processData(rows, isGeneratingReferenceData = false) {
+    console.log("🟢 Processing Final Data...");
 
-// [unchanged code above...]
-
-// ...existing code above remains unchanged...
-
-// PATCHED: DisplayResults Now Uses Global Dropdown Population
-function displayResults(
-  differences,
-  groupSums,
-  stats,
-  densityValues,
-  varianceValues,
-  maxHits,
-  maxHitsFreq,
-  maxHitsCumulative,
-  maxCountsArray,
-  maxCountsFreq,
-  maxCountsCumulative
-) {
-  const explanationElement = document.getElementById("explanation");
-  explanationElement.innerHTML = "";
-
-  const allCategories = {
-    ...differences,
-    ...groupSums,
-    Density: densityValues,
-    Variance: varianceValues,
-    maxHits: maxHits,
-    maxCounts: maxCountsArray
-  };
-
-  const totalSpins = totalRuns * 38;
-
-  // PATCH: Update global dropdowns once
-  setTimeout(() => populateGlobalCategoryDropdown(allCategories, stats), 100);
-
-const sortedCategoryKeys = [
-  ...taskButtonCategoryOrder,
-  ...Object.keys(allCategories).filter(key => !taskButtonCategoryOrder.includes(key)).sort()
-];
-
-  sortedCategoryKeys.forEach(category => {
-    const statsForCategory = stats[category];
-    if (!statsForCategory || typeof statsForCategory !== "object" || Object.keys(statsForCategory).length === 0) return;
-
-    const categoryLabel = categoryLabels[category] || category;
-    const anchorId = category.replace(/\s+/g, "-").toLowerCase();
-
-    let categoryDropdownHTML = `
-      <div style="text-align: left; margin-bottom: 2px;">
-        <label for="categoryDropdown-${anchorId}" style="font-size: 14px; color: lightgreen;"></label>
-        <select class="categoryDropdown" id="categoryDropdown-${anchorId}" onchange="jumpToCategory(this)" style="padding: 5px; font-size: 14px; width: 220px;"></select>
-      </div>`;
-
-    let categoryHTML = `
-      <div id="${anchorId}" class="category-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
-        ${categoryDropdownHTML}
-        <h2 class="category-label" style="margin-top: 20px; text-align: center;">
-          <a href="#${anchorId}" style="color: lightgreen; text-decoration: none;">${categoryLabel}</a>
-        </h2>
-      </div>`;
-
-    let frequencyDistribution = {};
-    let cumulativeData = {};
-
-if (category === "maxHits") {
-  frequencyDistribution = calculateFrequencyDistribution(maxHits); // ✅ Was maxHitsFreq
-  cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, 38, "maxHits");
-} else if (category === "maxCounts") {
-  frequencyDistribution = calculateFrequencyDistribution(maxCountsArray); // ✅ Was maxCountsFreq
-  cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, 38, "maxCounts");
-} else {
-  frequencyDistribution = calculateFrequencyDistribution(allCategories[category]);
-  cumulativeData = calculateCumulativeProbabilities(frequencyDistribution, totalRuns, category);
-}
-
-    const imageLineHTML = `
-      <center style="margin-bottom: 5px;">
-        <span style="color: orange; font-size: 18px; font-weight: bold;">${totalRuns}</span>
-        <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Runs</span>
-        &nbsp;&nbsp;
-        <img src="${category}.png" alt="${categoryLabel}" style="max-width: 250px; display: inline-block; margin: 5px auto;">
-        &nbsp;&nbsp;
-        <span style="color: orange; font-size: 18px; font-weight: bold;">${totalSpins}</span>
-        <span style="color: DarkKhaki; font-size: 16px; font-weight: bold;">Spins</span>
-      </center>`;
-
-    let tableHTML = `
-      ${categoryHTML}
-      ${imageLineHTML}
-      <table border='1' style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Metric</th>
-          <th style="padding: 8px; color: lightgreen; text-align: center;background-color: gray;">Value</th>
-          <th></th>
-          <th style="padding: 8px; color: salmon; text-align: center;">Value</th>
-          <th style="padding: 8px; color: salmon; text-align: center;">Expected Probability</th>
-          <th style="padding: 8px; color: salmon; text-align: center;">Cumulative Probability</th>
-          <th style="padding: 8px; color: salmon; text-align: center;">Observed Frequency</th>
-          <th style="padding: 8px; color: salmon; text-align: center;">Adjusted P-Value</th>
-        </tr>`;
-
-    const sortedFrequencyKeys = Object.keys(frequencyDistribution).map(Number).sort((a, b) => a - b);
-    const metricKeys = Object.keys(statsForCategory);
-    const maxRows = Math.max(metricKeys.length, sortedFrequencyKeys.length);
-
-    for (let i = 0; i < maxRows; i++) {
-const metric = metricKeys[i] || "";
-let value = metric ? statsForCategory[metric] : "";
-
-if (
-  (category === "Variance" || category === "Density" || category === "varianceDifference") &&
-  value !== ""
-) {
-  value = parseFloat(value).toFixed(6); // 🔥 Force 6 decimals
-}
-
-let difference = sortedFrequencyKeys[i] !== undefined ? sortedFrequencyKeys[i] : "";
-let displayDifference = difference;
-if (
-  (category === "varianceDifference" || category === "Variance" || category === "Density") &&
-  difference !== ""
-) {
-  displayDifference = parseFloat(difference).toFixed(6);
-}
-
-      let frequency = "";
-      let pValue = "";
-      let cumulativePValue = "";
-
-      if (difference !== "") {
-        frequency = frequencyDistribution[difference] || "";
-        pValue = referenceData[categoryLabel]?.[difference]?.pValue || (frequency ? (frequency / totalRuns).toFixed(6) : "");
-		const diffKey = difference.toString();
-cumulativePValue = referenceData[categoryLabel]?.[diffKey]?.cumulativePValue || cumulativeData[diffKey]?.cumulativeP || "";
-      }
-
-      if (referenceData[categoryLabel] && referenceData[categoryLabel][difference]) {
-        pValue = referenceData[categoryLabel][difference].pValue;
-        cumulativePValue = referenceData[categoryLabel][difference].cumulativePValue;
-      }
-
-      let applyHighlight = (cumulativePValue !== "" && parseFloat(cumulativePValue) < 0.05);
-
-      tableHTML += `
-        <tr>
-          <td style="padding: 8px; text-align: center; color: orange; font-weight: bold;">${metric}</td>
-          <td style="padding: 8px; text-align: center; color: lightblue; font-weight: bold;">${value}</td>
-          <td style="padding: 8px;"></td>
-<td style="padding: 8px; text-align: center; ${applyHighlight ? 'color: yellow; font-weight: bold;' : 'color: lightgray;'}">${displayDifference}</td>
-          <td style="padding: 8px; text-align: center; ${applyHighlight ? 'color: yellow; font-weight: bold;' : 'color: lightgray;'}">${pValue}</td>
-          <td style="padding: 8px; text-align: center; ${applyHighlight ? 'color: yellow; font-weight: bold;' : 'color: lightgray;'}">${cumulativePValue}</td>
-          <td style="padding: 8px; text-align: center; ${applyHighlight ? 'color: yellow; font-weight: bold;' : 'color: lightgray;'}">${frequency}</td>
-          <td style="padding: 8px; text-align: center; color: lightgray;"></td>
-        </tr>`;
-    }
-
-    tableHTML += `</table><br/>`;
-    explanationElement.innerHTML += tableHTML;
-  });
-}
-
-
-function handleFinalCSVData(dataRows) {
-    if (!Array.isArray(dataRows) || dataRows.length === 0) {
-        console.error("❌ ERROR: No data provided to handleFinalCSVData");
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.error("❌ ERROR: rows is missing or invalid! Aborting processing.");
         return;
     }
 
-    totalRuns = dataRows.length;
-
-    const densityValues = dataRows.map(row => calculateDensity(row));
-    const varianceValues = dataRows.map(row => calculateVariance(row));
-
-    const groupSums = {
-        topIndices: dataRows.map(row => sumColumns(row, groupIndices.topIndices)),
-        bottomIndices: dataRows.map(row => sumColumns(row, groupIndices.bottomIndices)),
-        leftTop: dataRows.map(row => sumColumns(row, groupIndices.leftTop)),
-        leftBottom: dataRows.map(row => sumColumns(row, groupIndices.leftBottom)),
-        rightTop: dataRows.map(row => sumColumns(row, groupIndices.rightTop)),
-        rightBottom: dataRows.map(row => sumColumns(row, groupIndices.rightBottom)),
-        cTop: dataRows.map(row => sumColumns(row, groupIndices.cTop)),
-        cBottom: dataRows.map(row => sumColumns(row, groupIndices.cBottom)),
-        zzCluster: dataRows.map(row => sumColumns(row, groupIndices.zzCluster)),
-        zCluster: dataRows.map(row => sumColumns(row, groupIndices.zCluster)),
-        left: dataRows.map(row => sumColumns(row, groupIndices.left)),
-        right: dataRows.map(row => sumColumns(row, groupIndices.right)),
-        topEnds: dataRows.map(row => sumColumns(row, groupIndices.topEnds)),
-        bottomEnds: dataRows.map(row => sumColumns(row, groupIndices.bottomEnds)),
-        topCenter: dataRows.map(row => sumColumns(row, groupIndices.topCenter)),
-        bottomCenter: dataRows.map(row => sumColumns(row, groupIndices.bottomCenter)),
-        zeroSums: dataRows.map(row => sumColumns(row, groupIndices.zeroSums)),
-        UpperLeft: dataRows.map(row => sumColumns(row, groupIndices.UpperLeft)),
-        UpperRight: dataRows.map(row => sumColumns(row, groupIndices.UpperRight)),
-        LowerLeft: dataRows.map(row => sumColumns(row, groupIndices.LowerLeft)),
-        LowerRight: dataRows.map(row => sumColumns(row, groupIndices.LowerRight))
+    // ✅ Declare 'differences' FIRST before using it
+    statsCollection = {};
+    const differences = { 
+        topBottomDiff: [], 
+        leftRightDiff: [], 
+        cDiff: [], 
+        zzDiff: [], 
+        varianceDifference: [],
+        topDiff: [],
+        bottomDiff: []
     };
+    const groupSums = {};
+    let densityValues = [];
+    let varianceValues = [];
 
-    const differences = {
-        topBottomDiff: groupSums.topIndices.map((v, i) => v - groupSums.bottomIndices[i]),
-        leftRightDiff: groupSums.left.map((v, i) => v - groupSums.right[i]),
-        cDiff: groupSums.cTop.map((v, i) => v - groupSums.cBottom[i]),
-        zzDiff: groupSums.zzCluster.map((v, i) => v - groupSums.zCluster[i]),
-        topDiff: groupSums.topEnds.map((v, i) => v - groupSums.topCenter[i]),
-        bottomDiff: groupSums.bottomEnds.map((v, i) => v - groupSums.bottomCenter[i]),
-        varianceDifference: groupSums.topIndices.map((_, i) => {
-            const topSlice = groupIndices.topIndices.map(idx => dataRows[i][idx]);
-            const bottomSlice = groupIndices.bottomIndices.map(idx => dataRows[i][idx]);
-            return calculateVariance(topSlice) - calculateVariance(bottomSlice);
-        })
-    };
+    console.log("🟢 Verifying category assignments in processData...");
 
-    // 🔥 Calculate Max Hits
-    const maxHits = Array(38).fill(0);
-    dataRows.forEach(row => {
-        row.forEach((val, idx) => {
-            const num = parseFloat(val);
-            if (!isNaN(num) && num > maxHits[idx]) {
-                maxHits[idx] = num;
+    // ✅ Initialize all groups before using them
+    for (const key in groupIndices) {
+        groupSums[key] = [];
+    }
+
+    let maxHits = Array(38).fill(0);
+
+    rows.forEach(counts => {
+        for (const key in groupIndices) {
+            groupSums[key].push(sumColumns(counts, groupIndices[key]));
+        }
+
+        const sums = calculateAllSums(counts);
+        differences.topBottomDiff.push(sums.topBottomDiff);
+        differences.leftRightDiff.push(sums.leftRightDiff);
+        differences.cDiff.push(sums.cDiff);
+        differences.zzDiff.push(sums.zzDiff);
+        differences.topDiff.push(sums.topDiff);
+        differences.bottomDiff.push(sums.bottomDiff);
+
+        let sortedCounts = counts.slice().sort((a, b) => b - a);
+        let density = sortedCounts.slice(0, 5).reduce((sum, val) => sum + val, 0);
+        densityValues.push(parseFloat(density.toFixed(4)));
+
+        let variance = calculateVariance(counts);
+        varianceValues.push(parseFloat(variance.toFixed(4)));
+
+        // ✅ Variance Difference Calculation Inside Main Loop
+        let topVariance = calculateVariance(counts.filter((_, index) => groupIndices.topIndices.includes(index)));
+        let bottomVariance = calculateVariance(counts.filter((_, index) => groupIndices.bottomIndices.includes(index)));
+        let varianceDiff = calculateVarianceDifference(topVariance, bottomVariance);
+        differences.varianceDifference.push(varianceDiff);
+
+        for (let i = 0; i < 38; i++) {
+            if (counts[i] > maxHits[i]) {
+                maxHits[i] = counts[i];
             }
-        });
+        }
     });
 
-    let maxHitsStats;
-    try {
-        maxHitsStats = calculateDescriptiveStatistics(maxHits);
-    } catch (e) {
-        console.error("❌ Failed to calculate maxHitsStats:", e);
-        maxHitsStats = {
-            mean: "0.0000", variance: "0.0000", stdDev: "0.0000", median: 0, min: 0, max: 0,
-            skewness: "0.0000", kurtosis: "0.0000"
-        };
+    console.log("🟢 Density Values:", densityValues);
+    console.log("🟢 Variance Values:", varianceValues);
+
+    [densityValues, varianceValues] = validateDensityAndVariance(densityValues, varianceValues);
+
+Object.keys(differences).forEach(category => {
+    if (!statsCollection[category]) statsCollection[category] = {};  // Ensure category exists
+    statsCollection[category] = calculateDescriptiveStatistics(differences[category]);
+});
+
+Object.keys(groupSums).forEach(group => {
+    if (!statsCollection[group]) statsCollection[group] = {};  // Ensure group exists
+    statsCollection[group] = calculateDescriptiveStatistics(groupSums[group]);
+});
+
+// Explicitly initialize "varianceDifference", "Density", and "Variance"
+if (!statsCollection["varianceDifference"]) statsCollection["varianceDifference"] = {};
+if (!statsCollection["Density"]) statsCollection["Density"] = {};
+if (!statsCollection["Variance"]) statsCollection["Variance"] = {};
+
+statsCollection["varianceDifference"] = calculateDescriptiveStatistics(differences.varianceDifference);
+statsCollection["Density"] = calculateDescriptiveStatistics(densityValues);
+statsCollection["Variance"] = calculateDescriptiveStatistics(varianceValues);
+
+    console.log("✅ Data Processed, Displaying Results...");
+    
+    if (!statsCollection || Object.keys(statsCollection).length === 0) {
+        console.error("❌ ERROR: statsCollection is empty or invalid!");
+        return;
     }
+console.log("🟢 Checking if statsCollection is populated before calling displayResults...");
+console.log(statsCollection);
+setTimeout(() => {
+    console.log("🟢 Running displayResults AFTER processData to ensure statsCollection is populated...");
+    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues);
+}, 100);  // 🔥 Delay execution slightly to allow all assignments to complete
 
-    const maxHitsFreq = calculateFrequencyDistribution(maxHits);
-    const maxHitsCumulative = calculateCumulativeProbabilities(maxHitsFreq, 38, "maxHits");
+    // 🟢 Generate dynamic filename
+    // Get the formatted timestamp
+    const timestamp = getFormattedTimestamp();
+	const fileName = `Analysis_${totalRuns}_${timestamp}.csv`;
 
-    // 🔥 Derive Max Counts from frequency of maxHits
-    let maxCounts = [];
-    if (maxHitsFreq && typeof maxHitsFreq === 'object' && Object.keys(maxHitsFreq).length > 0) {
-        maxCounts = Object.values(maxHitsFreq).map(freq => Number(freq));
-    } else {
-        console.warn("⚠️ maxHitsFreq is empty or invalid — setting maxCounts to fallback array of zeros");
-        maxCounts = Array(38).fill(0);
+    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues, fileName);
+
+	isGeneratingReferenceData = true;
+    // 🔥 Only export reference data when generating it (not during user tests)
+    if (!isGeneratingReferenceData == true) {
+        exportReferenceDataCSV();
     }
-
-    let maxCountsStats;
-    try {
-        maxCountsStats = calculateDescriptiveStatistics(maxCounts);
-    } catch (e) {
-        console.error("❌ Failed to calculate maxCountsStats:", e);
-        maxCountsStats = {
-            mean: "0.0000", variance: "0.0000", stdDev: "0.0000", median: 0, min: 0, max: 0,
-            skewness: "0.0000", kurtosis: "0.0000"
-        };
-    }
-
-    const maxCountsFreq = calculateFrequencyDistribution(maxCounts);
-    const maxCountsCumulative = calculateCumulativeProbabilities(maxCountsFreq, 38, "maxCounts");
-
-    // ✅ Assign to global statsCollection
-    statsCollection = {
-        ...Object.fromEntries(
-            Object.entries({ ...differences, ...groupSums, Density: densityValues, Variance: varianceValues })
-                .map(([key, values]) => [key, calculateDescriptiveStatistics(values)])
-        ),
-        maxCounts: maxCountsStats,
-        maxHits: maxHitsStats,
-        maxCountsFreq,
-        maxCountsCumulative,
-        maxHitsFreq,
-        maxHitsCumulative
-    };
-
-    // ✅ Display
-    displayMaxHitsTable(maxHits);
-    displaymaxCountsResults(maxCountsStats, maxCountsFreq, maxCountsCumulative);
-    displayResults(differences, groupSums, statsCollection, densityValues, varianceValues, maxHits, maxHitsFreq, maxHitsCumulative, maxCounts, maxCountsFreq, maxCountsCumulative);
-
-    // ✅ Export
-    exportCombinedCSV(differences, groupSums, statsCollection, maxHits, densityValues, varianceValues);
-    exportReferenceDataCSV();
 }
-
-
 
     // =======================================================
     // FILE INPUT HANDLING
     // =======================================================
 let csvProcessingStarted = false; // Prevent duplicate processing
 
-// 🛠️ PATCH: Replace old processData reference with correct function call
 function processConcatenatedCSVData(csvData) {
   if (csvProcessingStarted) return;
   csvProcessingStarted = true;
@@ -1665,10 +1576,12 @@ function processConcatenatedCSVData(csvData) {
   rows.forEach((row, index) => {
     let values = row.split(",").map(value => value.trim());
 
+    // Ensure only the first 38 columns are considered for data rows (starting at index 3)
     if (index >= 3) {
-      values = values.slice(0, 38);
+      values = values.slice(0, 38); // Trim extra columns beyond 37
     }
 
+    // Check if the row is a header (skip it)
     const isHeader = values.length === 38 && values.every((val, idx) => Number(val) === idx);
     if (isHeader) {
       console.log("Header row detected and skipped:", row);
@@ -1682,9 +1595,9 @@ function processConcatenatedCSVData(csvData) {
     }
   });
 
-  totalRuns = dataRows.length;
+  totalRuns = dataRows.length; // ✅ Count only valid data rows
   console.log("Total Runs after filtering headers:", totalRuns);
-  handleFinalCSVData(dataRows); // 🔄 Fixed function name
+  processData(dataRows);
 
   csvProcessingStarted = false;
 }

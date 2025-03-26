@@ -1513,14 +1513,14 @@ document.addEventListener('keydown', function(event) {
     const metaOrCtrl = isMac ? event.metaKey : event.ctrlKey;
 
     // Cmd/Ctrl + Shift + Minus → Hide
-    if (metaOrCtrl && event.shiftKey && event.code === "Minus") {
-        console.log("🔴 Cmd/Ctrl+Shift+- detected: Hiding P-Values Table...");
+    if (metaOrCtrl && event.shiftKey && event.code === "Digit0") {
+        console.log("🔴 Cmd/Ctrl+Shift+) detected: Hiding P-Values Table...");
         togglePValueTable(false);
     }
 
     // Cmd/Ctrl + Shift + Equal → Unhide
-    else if (metaOrCtrl && event.shiftKey && event.code === "Equal") {
-        console.log("🟢 Cmd/Ctrl+Shift+= detected: Unhiding P-Values Table...");
+    else if (metaOrCtrl && event.shiftKey && event.code === "Digit9") {
+        console.log("🟢 Cmd/Ctrl+Shift+() detected: Unhiding P-Values Table...");
         togglePValueTable(true);
     }
 });

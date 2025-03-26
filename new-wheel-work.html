@@ -18,33 +18,48 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
     }
 
     .main-container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       width: 100vw;
       height: 100vh;
-      overflow: auto;
+      overflow: hidden;
     }
 
-    .wheel-wrapper {
-      width: 100%;
+    .table-side {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      margin-top: 10px;
+      justify-content: center;
+      max-width: 100px;
+      overflow-y: auto;
+      height: 90vh;
+      margin: 0 80px; /* Add horizontal space from wheel */
+    }
+
+    .table-side table {
+      font-size: 22px;
+      border-collapse: collapse;
     }
 
     #output {
-      width: 100%;
+      width: auto;
       height: auto;
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    .wheel-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .button-container {
@@ -73,28 +88,11 @@
       font-weight: bold;
     }
 
-    #TotalsTableContainer {
-      max-width: 95vw;
-      overflow-x: auto;
-      padding: 10px 0;
-    }
-    
-    #TotalsTableContainer table {
-  	  transform: scale(0.5);
-  	  transform-origin: top center;
-	}
-
-    table {
-      border-collapse: collapse;
-      margin: 0 auto;
-    }
-
     th, td {
       border: 1px solid white;
-      padding: 6px;
+      padding: 4px;
       text-align: center;
       color: white;
-      min-width: 35px;
     }
 
     .red-header { background-color: red; }
@@ -104,216 +102,227 @@
     .red { background-color: #331111; }
     .black { background-color: #222; }
     .green { background-color: #004400; }
-
-    @media (max-width: 768px) {
-      .button { font-size: 0.9rem; padding: 6px 10px; }
-      th, td { padding: 4px; font-size: 0.8rem; }
-    }
   </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="wheel-wrapper">
-      <div id="output"></div>
-    </div>
+<div class="main-container">
+  <div class="table-side left-table"></div>
 
+  <div class="wheel-wrapper">
+    <div id="output"></div>
     <div class="button-container">
       <button id="startButton" class="button">Spin</button>
       <button id="saveDataButton" class="button">Save Data</button>
       <button id="resetButton" class="button">Reset Count</button>
     </div>
-
-    <div class="caption">TOTAL TIMES PICKED ACROSS ALL RUNS <span id="spinCounter">SPIN 0</span></div>
-    <div id="TotalsTableContainer"></div>
+    <div class="caption"><span id="spinCounter">SPIN 0</span></div>
   </div>
 
-  <script>
-    let wheelRadius;
-    let wheelCenterX;
-    let wheelCenterY;
-    let ballRadius = 14;
-    let ballX, ballY, ballSpeed, ballAngle;
-    let ballFriction = 0.9945;
-    let isSpinning = false;
-    let minSpeed = 0.85;
-    let finalIndex, winningNumber;
-    let numSlots = 38;
-    let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18];
-    let slotAngle;
-    let wheelSound, soundLoaded = false;
-    let Totals = new Array(38).fill(0);
-    let spinCount = 0;
-    let lastUpdatedIndex = null;
+  <div class="table-side right-table"></div>
+</div>
 
-    function setup() {
-      let canvasSize = Math.min(windowWidth, windowHeight) * 0.7; // 20-30% smaller than full screen
-      wheelRadius = canvasSize * 0.5;
-      let canvas = createCanvas(canvasSize, canvasSize);
-      canvas.parent('output');
-      wheelCenterX = width / 2;
-      wheelCenterY = height / 2;
-      slotAngle = 360 / numSlots;
+<script>
+let wheelRadius;
+let wheelCenterX;
+let wheelCenterY;
+let ballRadius = 14;
+let ballX, ballY, ballSpeed, ballAngle;
+let ballFriction = 0.9945;
+let isSpinning = false;
+let minSpeed = 0.85;
+let finalIndex, winningNumber;
+let numSlots = 38;
+let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18];
+let slotAngle;
+let wheelSound, soundLoaded = false;
+let Totals = new Array(38).fill(0);
+let spinCount = 0;
+let lastUpdatedIndex = null;
 
-      document.getElementById('startButton').onclick = () => { startWheelSpin(); updateSpinCounter(); };
-      document.getElementById('resetButton').onclick = () => { resetSpinCounter(); clearAndResetTotals(); };
-      document.getElementById('saveDataButton').onclick = () => { exportTotalsToCSV(Totals); };
+function setup() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.6;
+  wheelRadius = canvasSize * 0.5;
+  let canvas = createCanvas(canvasSize, canvasSize);
+  canvas.parent('output');
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+  slotAngle = 360 / numSlots;
 
-      loadAndPlaySound();
-    }
+  document.getElementById('startButton').onclick = () => { startWheelSpin(); updateSpinCounter(); };
+  document.getElementById('resetButton').onclick = () => { resetSpinCounter(); clearAndResetTotals(); };
+  document.getElementById('saveDataButton').onclick = () => { exportTotalsToCSV(Totals); };
 
-    function windowResized() {
-      let canvasSize = Math.min(windowWidth, windowHeight) * 0.7;
-      wheelRadius = canvasSize * 0.5;
-      resizeCanvas(canvasSize, canvasSize);
-      wheelCenterX = width / 2;
-      wheelCenterY = height / 2;
-    }
+  loadAndPlaySound();
+  populateTotalsTable();
+}
 
-    function draw() {
-      background(0);
-      fill(0);
-      ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2.05);
-      drawWheel();
+function windowResized() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.6;
+  wheelRadius = canvasSize * 0.5;
+  resizeCanvas(canvasSize, canvasSize);
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+}
 
-      if (isSpinning) {
-        ballAngle += ballSpeed;
-        ballSpeed *= ballFriction;
+function draw() {
+  background(0);
+  fill(0);
+  ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2.05);
+  drawWheel();
 
-        if (ballSpeed < minSpeed) {
-          isSpinning = false;
-          finalIndex = calculateSlotIndex();
-          winningNumber = slotNumbers[finalIndex];
-          moveBallToWinningSlot();
-          if (wheelSound) wheelSound.stop();
-          if (winningNumber !== undefined) {
-            let index = slotNumbers.indexOf(winningNumber);
-            Totals[index]++;
-            populateTotalsTable();
-          }
-        }
+  if (isSpinning) {
+    ballAngle += ballSpeed;
+    ballSpeed *= ballFriction;
 
-        ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(ballAngle));
-        ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(ballAngle));
-      }
-
-      fill(255);
-      ellipse(ballX, ballY, ballRadius * 2);
-    }
-
-    function drawWheel() {
-      const anglePerSlot = TWO_PI / numSlots;
-      for (let i = 0; i < numSlots; i++) {
-        let angleStart = i * anglePerSlot;
-        let angleEnd = (i + 1) * anglePerSlot;
-
-        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') fill(0, 128, 0);
-        else fill(i % 2 === 0 ? 0 : [255, 0, 0]);
-
-        beginShape();
-        vertex(wheelCenterX, wheelCenterY);
-        for (let a = angleStart; a <= angleEnd; a += 0.01) {
-          let x = wheelCenterX + wheelRadius * cos(a);
-          let y = wheelCenterY + wheelRadius * sin(a);
-          vertex(x, y);
-        }
-        endShape(CLOSE);
-
-        let midAngle = (angleStart + angleEnd) / 2;
-        let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
-        let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
-        fill(255);
-        textAlign(CENTER, CENTER);
-        textSize(16);
-        text(slotNumbers[i], textX, textY);
+    if (ballSpeed < minSpeed) {
+      isSpinning = false;
+      finalIndex = calculateSlotIndex();
+      winningNumber = slotNumbers[finalIndex];
+      moveBallToWinningSlot();
+      if (wheelSound) wheelSound.stop();
+      if (winningNumber !== undefined) {
+        let index = slotNumbers.indexOf(winningNumber);
+        Totals[index]++;
+        populateTotalsTable();
       }
     }
 
-    function startWheelSpin() {
-      if (!isSpinning) {
-        if (soundLoaded) wheelSound.play();
-        isSpinning = true;
-        ballAngle = random(0, 360);
-        ballSpeed = random(5, 10);
-      }
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(ballAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(ballAngle));
+  }
+
+  fill(255);
+  ellipse(ballX, ballY, ballRadius * 2);
+}
+
+function drawWheel() {
+  const anglePerSlot = TWO_PI / numSlots;
+  for (let i = 0; i < numSlots; i++) {
+    let angleStart = i * anglePerSlot;
+    let angleEnd = (i + 1) * anglePerSlot;
+
+    if (slotNumbers[i] === 0 || slotNumbers[i] === '00') fill(0, 128, 0);
+    else fill(i % 2 === 0 ? 0 : [255, 0, 0]);
+
+    beginShape();
+    vertex(wheelCenterX, wheelCenterY);
+    for (let a = angleStart; a <= angleEnd; a += 0.01) {
+      let x = wheelCenterX + wheelRadius * cos(a);
+      let y = wheelCenterY + wheelRadius * sin(a);
+      vertex(x, y);
     }
+    endShape(CLOSE);
 
-    function calculateSlotIndex() {
-      let normalizedAngle = (ballAngle % 360 + 360) % 360;
-      let anglePerSlot = 360 / numSlots;
-      return Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+    let midAngle = (angleStart + angleEnd) / 2;
+    let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
+    let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(16);
+    text(slotNumbers[i], textX, textY);
+  }
+}
+
+function startWheelSpin() {
+  if (!isSpinning) {
+    if (soundLoaded) wheelSound.play();
+    isSpinning = true;
+    ballAngle = random(0, 360);
+    ballSpeed = random(5, 10);
+  }
+}
+
+function calculateSlotIndex() {
+  let normalizedAngle = (ballAngle % 360 + 360) % 360;
+  let anglePerSlot = 360 / numSlots;
+  return Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+}
+
+function moveBallToWinningSlot() {
+  if (!isSpinning) {
+    let centerAngle = (finalIndex + 0.5) * slotAngle;
+    let correctedAngle = (360 - centerAngle + 360) % 360;
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(correctedAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(correctedAngle));
+  }
+}
+
+function updateSpinCounter() {
+  spinCount++;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function resetSpinCounter() {
+  spinCount = 0;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function clearAndResetTotals() {
+  Totals.fill(0);
+  populateTotalsTable();
+}
+
+function loadAndPlaySound() {
+  wheelSound = new Howl({
+    src: ['wheel-ball.wav'],
+    loop: true,
+    onload: () => soundLoaded = true
+  });
+}
+
+function exportTotalsToCSV(totals) {
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}`;
+  const slotMap = [...Array(37).keys(), '00'];
+  const header = slotMap.join(',');
+  const row = slotMap.map(n => totals[slotNumbers.indexOf(n)] || 0).join(',');
+  const csvContent = `data:text/csv;charset=utf-8,${header}\n${row}`;
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `Totals-${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function populateTotalsTable() {
+  const left = document.querySelector('.left-table');
+  const right = document.querySelector('.right-table');
+  left.innerHTML = '';
+  right.innerHTML = '';
+
+  const makeVerticalTable = (start, end) => {
+    const table = document.createElement('table');
+    for (let i = start; i < end; i++) {
+      const row = table.insertRow();
+      const cellLabel = row.insertCell();
+      const cellValue = row.insertCell();
+      const value = Totals[i];
+	  cellValue.innerHTML = value > 0 ? value : '&nbsp;&nbsp;&nbsp;&nbsp;';
+      
+      cellLabel.innerText = slotNumbers[i];
+      cellValue.innerHTML = Totals[i] > 0 ? Totals[i] : '&nbsp;&nbsp;&nbsp;&nbsp;';
+
+      const headerClass = slotNumbers[i] === 0 || slotNumbers[i] === '00'
+        ? 'green-header'
+        : i % 2 === 0 ? 'black-header' : 'red-header';
+
+      const colorClass = slotNumbers[i] === 0 || slotNumbers[i] === '00'
+        ? 'green'
+        : i % 2 === 0 ? 'black' : 'red';
+
+      cellLabel.className = headerClass;
+      cellValue.className = colorClass;
     }
+    return table;
+  };
 
-    function moveBallToWinningSlot() {
-      if (!isSpinning) {
-        let centerAngle = (finalIndex + 0.5) * slotAngle;
-        let correctedAngle = (360 - centerAngle + 360) % 360;
-        ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(correctedAngle));
-        ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(correctedAngle));
-      }
-    }
+  const half = Math.ceil(slotNumbers.length / 2);
+  left.appendChild(makeVerticalTable(0, half));
+  right.appendChild(makeVerticalTable(half, slotNumbers.length));
+}
 
-    function updateSpinCounter() {
-      spinCount++;
-      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-    }
-
-    function resetSpinCounter() {
-      spinCount = 0;
-      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-    }
-
-    function clearAndResetTotals() {
-      Totals.fill(0);
-      populateTotalsTable();
-    }
-
-    function loadAndPlaySound() {
-      wheelSound = new Howl({
-        src: ['wheel-ball.wav'],
-        loop: true,
-        onload: () => soundLoaded = true
-      });
-    }
-
-    function exportTotalsToCSV(totals) {
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}`;
-      const slotMap = [...Array(37).keys(), '00'];
-      const header = slotMap.join(',');
-      const row = slotMap.map(n => totals[slotNumbers.indexOf(n)] || 0).join(',');
-      const csvContent = `data:text/csv;charset=utf-8,${header}\n${row}`;
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement('a');
-      link.setAttribute('href', encodedUri);
-      link.setAttribute('download', `Totals-${timestamp}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function populateTotalsTable() {
-      const container = document.getElementById('TotalsTableContainer');
-      container.innerHTML = '';
-      const table = document.createElement('table');
-      const thead = table.createTHead();
-      const tbody = table.createTBody();
-      const rowHead = thead.insertRow();
-      const rowData = tbody.insertRow();
-
-      for (let i = 0; i < slotNumbers.length; i++) {
-        const th = document.createElement('th');
-        th.innerText = slotNumbers[i];
-        th.className = slotNumbers[i] === 0 || slotNumbers[i] === '00' ? 'green-header' : i % 2 === 0 ? 'black-header' : 'red-header';
-        rowHead.appendChild(th);
-
-        const td = document.createElement('td');
-        td.innerText = Totals[i] || '';
-        td.className = slotNumbers[i] === 0 || slotNumbers[i] === '00' ? 'green' : i % 2 === 0 ? 'black' : 'red';
-        rowData.appendChild(td);
-      }
-
-      container.appendChild(table);
-    }
-  </script>
+</script>
 </body>
 </html>

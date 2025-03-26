@@ -102,6 +102,18 @@
     .red { background-color: #331111; }
     .black { background-color: #222; }
     .green { background-color: #004400; }
+    
+    .blink-yellow {
+  animation: yellowBlink 1s step-start infinite;
+}
+
+@keyframes yellowBlink {
+  0% { background-color: yellow; }
+  50% { background-color: white; }
+  100% { background-color: yellow; }
+}
+
+
   </style>
 </head>
 <body>
@@ -292,35 +304,56 @@ function populateTotalsTable() {
   left.innerHTML = '';
   right.innerHTML = '';
 
+  const highlightList = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10];
+
   const makeVerticalTable = (start, end) => {
     const table = document.createElement('table');
+
     for (let i = start; i < end; i++) {
       const row = table.insertRow();
       const cellLabel = row.insertCell();
       const cellValue = row.insertCell();
-      const value = Totals[i];
-	  cellValue.innerHTML = value > 0 ? value : '&nbsp;&nbsp;&nbsp;&nbsp;';
-      
-      cellLabel.innerText = slotNumbers[i];
-      cellValue.innerHTML = Totals[i] > 0 ? Totals[i] : '&nbsp;&nbsp;&nbsp;&nbsp;';
 
-      const headerClass = slotNumbers[i] === 0 || slotNumbers[i] === '00'
+      // Set number label
+      cellLabel.innerText = slotNumbers[i];
+
+      // Determine value or placeholder
+      const value = Totals[i] > 0 ? Totals[i] : '&nbsp;&nbsp;&nbsp;&nbsp;';
+      cellValue.innerHTML = value;
+
+      // Assign classes for headers and data cells
+      const headerClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
         ? 'green-header'
         : i % 2 === 0 ? 'black-header' : 'red-header';
 
-      const colorClass = slotNumbers[i] === 0 || slotNumbers[i] === '00'
+      const baseColor = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
         ? 'green'
         : i % 2 === 0 ? 'black' : 'red';
 
       cellLabel.className = headerClass;
-      cellValue.className = colorClass;
+      cellValue.className = baseColor;
+
+      // Optional yellow highlight
+      if (highlightList.includes(slotNumbers[i])) {
+        cellValue.classList.add('highlight-yellow');
+      }
+
+      // Add blinking effect to the most recent update
+      if (i === finalIndex) {
+        cellValue.classList.add('blink-yellow');
+      } else if (lastUpdatedIndex !== null && i === lastUpdatedIndex) {
+        cellValue.classList.remove('blink-yellow');
+      }
     }
+
     return table;
   };
 
   const half = Math.ceil(slotNumbers.length / 2);
   left.appendChild(makeVerticalTable(0, half));
   right.appendChild(makeVerticalTable(half, slotNumbers.length));
+
+  lastUpdatedIndex = finalIndex;
 }
 
 </script>

@@ -1,764 +1,361 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Roulette Wheel Animation</title>
+  <title>Roulette Wheel</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <style>
-     .framed-buttons {
-      border: 2px solid lightblue;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      display: inline-flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      max-width: 500px;
-      text-align: center;
-      color: black;
-    }
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 20px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    body {
-      overflow: hidden;
-      background-color: black;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-      padding: 0px;
+    html, body {
       margin: 0;
-      box-sizing: border-box;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-     /* Flexbox wrapper to prevent content cutoff */
-    .flex-frame {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh; /* Full height of the viewport */
-      width: 100vw;  /* Full width of the viewport */
-      overflow: auto; /* Allows scrolling when zoomed in */
-      padding-top: 80px; /* Ensures space below buttons */
+      padding: 0;
+      height: 100%;
+      background-color: black;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
-    .wheel-container {
-      border: 5px solid #fff;
-      border-radius: 50%;
-      padding: 10px;
+    body {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      width: 635px;  /* Fixed width */
-      height: 635px; /* Fixed height */
-      max-width: 90%; /* Ensure it doesn't exceed the viewport width */
-      max-height: 100vh; /* Ensure it doesn't exceed viewport height */
-      box-sizing: border-box;
+      justify-content: center;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .table-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 100px;
+      overflow-y: auto;
+      height: 90vh;
+      margin: 0 80px; /* Add horizontal space from wheel */
+    }
+
+    .table-side table {
+      font-size: 18px;
+      border-collapse: collapse;
     }
 
     #output {
-      width: 100%;
-      height: 100%;
+      width: auto;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .button-container, .table-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-     .button {
-      font-size: 110%;
-      padding: 6px 12px;
-      margin: 5px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .button:hover {
-      opacity: 0.8;
-    }
-    .button-single {
-      background-color: salmon;
-      color: black;
-    }
-    .button-purple {
-      background-color: purple;
-      color: white;
-    }
-    #viewDataButton {
-      background-color: lightgray;
-      color: black !important;
-    }
-    #startButton {
-      background-color: #4CAF50; /* Green */
-      color: white;
-    }
-
-    #saveDataButton {
-      background-color: #f44336; /* Red */
-      color: white;
-    }
-    .button-DarkKhaki {
-      background-color: DarkKhaki;
-      color: black !important;
-    }
-    .button-DarkSeaGreen {
-      background-color: DarkSeaGreen;
-      color: black !important;
-    }
-    .button-salmon {
-      background-color: salmon;
-      color: black !important;
-    }
-    .button-single {
-      background-color: violet;
-      color: black;
-    }
-    .button-sim {
-      background-color: orange;
-      color: black;
-    }
-	.button-LightSteelBlue {
-	  background-color: LightSteelBlue;
-	  color: black !important;
-	}
-	
-
-    .highlight-yellow {
-  		background-color: lightyellow !important;
-	}
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: center;
-      font-weight: bold; /* Bold text */
-      color: black; /* Black text color */
-      width: 50px; /* Fixed width for cells */
-      text-overflow: ellipsis; /* Handle overflow */
-      overflow: hidden; /* Hide overflow */
-      white-space: nowrap; /* Prevent line breaks */
-      min-height: 30px; /* Minimum height to maintain cell size */
-      min-width: 50px; /* Minimum width to maintain cell size */
-    }
-
-    th {
-      color: white;
-    }
-
-    .green-header {
-      background-color: green;
-      color: white;
-    }
-
-    .black-header {
-      background-color: black;
-      color: white;
-    }
-
-    .red-header {
-      background-color: red;
-      color: white;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .caption {
-      font-weight: bold;
-      color: lightgreen;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .green, .red, .black {
-      background-color: lightgray;
-    }
-
-    .lgreen-text {
-      color: lightgreen;
-      text-align: center;
-    }
-    
-    #viewDataButton {
-      background-color: lightgray; /* Orange */
-      color: black;
-    }
-
-    #TotalsTableContainer {
+    .wheel-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: auto;
-    }
-
-    .table-half {
-      display: flex;
       justify-content: center;
+    }
+
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
       margin: 10px 0;
-      width: 100%;
     }
 
-    .table-half table {
-      width: auto;
-      max-width: 100%;
+    .button {
+      font-size: 1rem;
+      padding: 8px 12px;
+      margin: 4px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #333;
+      color: white;
     }
 
-
-/* CSS for centering content and adding padding to cells */
-#TotalsTableContainer table td {
-  text-align: center;  /* Center the text horizontally */
-  vertical-align: middle;  /* Center the text vertically */
-  padding: 10px;  /* Add padding to ensure space within cells */
-  min-width: 40px;  /* Ensure minimum width to prevent flattening */
-  height: 30px;  /* Set a height to ensure all cells are the same size */
-}
-
-#TotalsTableContainer table th {
-  text-align: center;  /* Center the header text */
-  padding: 10px;  /* Add padding to ensure space in header cells */
-  min-width: 40px;  /* Ensure headers have consistent width with cells */
-}
-
-
-    .blink {
-      animation: blink 1s step-start infinite;
+    .caption {
+      color: lightgreen;
+      margin: 10px 0 5px;
+      text-align: center;
+      font-weight: bold;
     }
+
+    th, td {
+      border: 1px solid white;
+      padding: 4px;
+      text-align: center;
+      color: white;
+    }
+
+    .red-header { background-color: red; }
+    .black-header { background-color: black; }
+    .green-header { background-color: green; }
+
+    .red { background-color: #331111; }
+    .black { background-color: #222; }
+    .green { background-color: #004400; }
     
-    @keyframes yellowBlink {
+    .blink-yellow {
+  animation: yellowBlink 1s step-start infinite;
+}
+
+@keyframes yellowBlink {
   0% { background-color: yellow; }
   50% { background-color: white; }
   100% { background-color: yellow; }
 }
 
-.blink-yellow {
-  animation: yellowBlink 1s step-start infinite;
-}
 
-
-    @keyframes blink {
-      0% { background-color: white; }
-      50% { background-color: lightgray; }
-      100% { background-color: white; }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .spin {
-      animation: spin 2s linear infinite;
-    }
-
-    /* Media Queries */
-    @media (max-width: 768px) {
-      .wheel-container {
-        padding: 5px;
-        width: 90%; /* Scale down proportionally */
-        height: auto; /* Maintain aspect ratio */
-      }
-
-      .button {
-        font-size: 16px; /* Adjusted font size for medium screens */
-        padding: 8px; /* Adjusted padding for medium screens */
-      }
-
-      table {
-        width: 100%;
-        max-width: none;
-      }
-
-      th, td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      .caption {
-        font-size: 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .wheel-container {
-        width: 100%; /* Full width on very small screens */
-        height: auto; /* Maintain aspect ratio */
-      }
-
-      .button {
-        font-size: 14px; /* Adjusted font size for small screens */
-        padding: 6px; /* Adjusted padding for small screens */
-      }
-
-      .caption {
-        font-size: 12px;
-      }
-    }
-    .button-DarkKhaki {
-      background-color: DarkKhaki;
-      color: black !important;
-    }
-    
-    .button-DarkSeaGreen {
-      background-color: DarkSeaGreen;
-      color: black !important;
-    }
-    .button-salmon {
-      background-color: salmon;
-      color: black !important;
-    }
-    .button-single {
-        background-color: violet;
-        color: black;
-    }
-    .button-sim {
-        background-color: orange;
-        color: black;
-    }
-	.button-LightSteelBlue {
-	  background-color: LightSteelBlue;
-	  color: black !important;
-	}
-    .framed-section2 {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 20px;
-            border: 2px solid lightgreen;
-            border-radius: 10px;
-            background-color: black;
-            margin: 10px 0;
-    } 
-    .button-purple {
-        background-color: purple;
-        color: white;
-    }
-    
   </style>
 </head>
 <body>
-  <div class="container">
-    <div>
-      <div class="framed-section2">
-        <button class="button button-purple" id="howToUseButton">How To Use</button>
-        <button class="button button-sim" id="simButton">Simulator</button>
-        <button id="viewDataButton" class="button">View Data</button>
-        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
-        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
-        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
-        <button class="button button-single" id="singleSpinButton">Wheel</button>
-      </div>
-    </div>
-    <div id="instructionsModal" class="modal">
-      <div class="modal-content">
-        <button class="close-button" id="closeModalButton">&times;</button>
-        <h3>How To Read This Screen</h3>
-        <p>...</p>
-      </div>
-    </div>
-  </div>
-        
-  <div class="flex-frame">  <!-- Flexbox frame added here -->
-    <h1 class="lgreen-text">Roulette Wheel</h1>
-    <div class="wheel-container">
-      <div id="output"></div>
-    </div>
-    <br><br>
+<div class="main-container">
+  <div class="table-side left-table"></div>
+
+  <div class="wheel-wrapper">
+    <div id="output"></div>
     <div class="button-container">
-      <button id="startButton" class="button"><b>Spin</b></button>
-      <button id="saveDataButton" class="button"><b>Save Data</b></button>
-      <button id="resetButton" class="button"><b>Reset Count</b></button>
+      <button id="startButton" class="button">Spin</button>
+      <button id="saveDataButton" class="button">Save Data</button>
+      <button id="resetButton" class="button">Reset Count</button>
     </div>
-    <div class="table-container">
-      <p class="bold caption">TOTAL TIMES PICKED ACROSS ALL RUNS&nbsp;&nbsp;&nbsp;<span id="spinCounter" class="lgreen-text" style="color: yellow;">SPIN 0</span></p>
-      <div id="TotalsTableContainer"></div>
-    </div>
-  </div> <!-- End of flex-frame -->
-  <br><br>
-  
-  <script>
-  
-         	// Event listener for the Simulator button
-    	document.getElementById('simButton').addEventListener('click', () => {
-        window.open('roulette.html', '_blank');
-      });
-      
-        // New event listener for the View Data button
-      	document.getElementById('viewDataButton').addEventListener('click', () => {
-        window.open('view-data.html', '_blank');
-      });
-      
-        // New event listener for the View P-Value button
-      	document.getElementById('viewPValueButton').addEventListener('click', () => {
-        window.open('pvalues.html', '_blank');
-      });
-      
-        // New event listener for the View P-Value button
-      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
-        window.open('xfreq.html', '_blank');
-      });
-       // New event listener for the View Stats button
-      	document.getElementById('viewStatsButton').addEventListener('click', () => {
-        window.open('view-stats.html', '_blank');
-      });
+    <div class="caption"><span id="spinCounter">SPIN 0</span></div>
+  </div>
 
-       	// Event listener for the Simulator button
-    	document.getElementById('singleSpinButton').addEventListener('click', () => {
-        window.open('new-wheel.html', '_blank');
-      });
-      
-        document.getElementById("densityButton").addEventListener("click", () => { 
-        window.open("sort.html", "_blank"); 
-      });
-      
-    // Roulette Wheel Variables
-    let wheelRadius = 280;
-    let wheelCenterX;
-    let wheelCenterY;
-    let ballRadius = 14;
-    let ballX;
-    let ballY;
-    let ballSpeed;
-    let ballAngle;
-    let ballFriction = .9945;
-    let isSpinning = false;
-    let minSpeed = .85;
-    let finalIndex;
-    let winningNumber;
-    let numSlots = 38;
-    let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18 ];
-    let slotAngle;
-    let wheelSound;
-    let soundLoaded = false;
-    let Totals = new Array(38).fill(0);
-    let spinCount = 0;
+  <div class="table-side right-table"></div>
+</div>
 
-    // Setup function
-    function setup() {
-      let canvas = createCanvas(600, 600);
-      canvas.parent('output');
-      wheelCenterX = width / 2;
-      wheelCenterY = height / 2;
-      slotAngle = 360 / numSlots;
-
-      document.getElementById('startButton').addEventListener('click', () => {
-        startWheelSpin();
-        updateSpinCounter();
-      });
-
-      document.getElementById('resetButton').addEventListener('click', () => {
-        resetSpinCounter();
-        clearAndResetTotals();
-      });
-
-      document.getElementById('saveDataButton').addEventListener('click', () => {
-        exportTotalsToCSV(Totals);
-      });
-
-      document.getElementById('singleSpinButton').addEventListener('click', () => {
-        window.location.href = 'roulette.html';
-      });
-      
-      // New event listener for the View Data button
-      document.getElementById('viewDataButton').addEventListener('click', () => {
-        window.open('view-data.html', '_blank');
-      });
-
-      loadAndPlaySound();
-    }
-
-    // Function to update the spin counter
-    function updateSpinCounter() {
-      spinCount++;
-      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-    }
-
-    // Function to reset the spin counter
-    function resetSpinCounter() {
-      spinCount = 0;
-      document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
-    }
-
-    // Start wheel spin function
-    function startWheelSpin() {
-      if (!isSpinning) {
-        if (soundLoaded) {
-          wheelSound.play();
-        } else {
-          console.error('Sound not loaded');
-        }
-        isSpinning = true;
-        ballAngle = cryptoRandom(0, 360);
-        ballSpeed = cryptoRandom(5, 10);
-      }
-    }
-    
-    function draw() {
-      background(0);
-      drawWheel();
-
-      if (isSpinning) {
-        ballAngle += ballSpeed;
-        ballSpeed *= ballFriction;
-
-        if (ballSpeed < minSpeed) {
-          isSpinning = false;
-          finalIndex = calculateSlotIndex();
-          winningNumber = slotNumbers[finalIndex];
-          console.log(`Ball stopped. Final index: ${finalIndex}, Winning Number: ${winningNumber}`);
-          moveBallToWinningSlot();
-
-          if (wheelSound) {
-            wheelSound.stop();
-          }
-
-          if (winningNumber !== undefined) {
-            let index = slotNumbers.indexOf(winningNumber);
-            Totals[index]++;
-            populateTotalsTable();
-          }
-        }
-
-        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(ballAngle));
-        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(ballAngle));
-      }
-
-      fill(255);
-      ellipse(ballX, ballY, ballRadius * 2, ballRadius * 2);
-    }
-
-    function drawWheel() {
-      noStroke();
-      for (let i = 0; i < numSlots; i++) {
-        let angleStart = i * slotAngle * Math.PI / 180;
-        let angleEnd = (i + 1) * slotAngle * Math.PI / 180;
-
-        if (slotNumbers[i] === 0 || slotNumbers[i] === '00') {
-          fill(0, 128, 0);
-        } else {
-          fill(i % 2 === 0 ? color(0) : color(255, 0, 0));
-        }
-
-        arc(wheelCenterX, wheelCenterY, wheelRadius * 2, wheelRadius * 2, angleStart, angleEnd, PIE);
-
-        let midAngle = (angleStart + angleEnd) / 2;
-        let x = wheelCenterX + (wheelRadius - 30) * Math.cos(midAngle);
-        let y = wheelCenterY + (wheelRadius - 30) * Math.sin(midAngle);
-
-        fill(255);
-        textAlign(CENTER, CENTER);
-        textSize(16);
-        text(slotNumbers[i], x, y);
-      }
-    }
-
-    function calculateSlotIndex() {
-      let normalizedAngle = (ballAngle % 360 + 360) % 360;
-      let anglePerSlot = 360 / numSlots;
-      let index = Math.floor(normalizedAngle / anglePerSlot) % numSlots;
-      return index;
-    }
-
-    function moveBallToWinningSlot() {
-      if (!isSpinning) {
-        let centerAngle = (finalIndex + 0.5) * slotAngle;
-        let correctedAngle = (360 - centerAngle + 360) % 360;
-
-        ballX = wheelCenterX + (wheelRadius - ballRadius) * Math.cos(radians(correctedAngle));
-        ballY = wheelCenterY + (wheelRadius - ballRadius) * Math.sin(radians(correctedAngle));
-      }
-    }
-
-    function loadAndPlaySound() {
-      wheelSound = new Howl({
-        src: ['wheel-ball.wav'], // Path to your local audio file
-        loop: true,
-        onload: () => {
-          soundLoaded = true;
-          console.log('Sound loaded');
-        },
-        onloaderror: (id, error) => {
-          console.error('Sound loading error:', error);
-        },
-        onplayerror: (id, error) => {
-          console.error('Sound play error:', error);
-        }
-      });
-    }
-
-    function cryptoRandom(min, max) {
-      const array = new Uint32Array(1);
-      window.crypto.getRandomValues(array);
-      const randomNumber = array[0] / (0xFFFFFFFF + 1);
-      return Math.floor(randomNumber * (max - min) + min);
-    }
-
-// Store the index of the last updated cell
+<script>
+let wheelRadius;
+let wheelCenterX;
+let wheelCenterY;
+let ballRadius = 14;
+let ballX, ballY, ballSpeed, ballAngle;
+let ballFriction = 0.9945;
+let isSpinning = false;
+let minSpeed = 0.85;
+let finalIndex, winningNumber;
+let numSlots = 38;
+let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18];
+let slotAngle;
+let wheelSound, soundLoaded = false;
+let Totals = new Array(38).fill(0);
+let spinCount = 0;
 let lastUpdatedIndex = null;
 
-function populateTotalsTable() {
-  let tableContainer = document.getElementById('TotalsTableContainer');
+function setup() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
+  wheelRadius = canvasSize * 0.5;
+  let canvas = createCanvas(canvasSize, canvasSize);
+  canvas.parent('output');
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+  slotAngle = 360 / numSlots;
 
-  // Only create the table if it doesn't already exist
-  if (!tableContainer.querySelector('table')) {
-    let tableHTML = '<div class="table-half"><table id="TotalsTable1"><thead><tr>';
+  document.getElementById('startButton').onclick = () => { startWheelSpin(); updateSpinCounter(); };
+  document.getElementById('resetButton').onclick = () => { resetSpinCounter(); clearAndResetTotals(); };
+  document.getElementById('saveDataButton').onclick = () => { exportTotalsToCSV(Totals); };
 
-    // Header Row (Second Half)
-    for (let i = 0; i < numSlots / 2; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'black-header' : 'red-header');
-      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-    }
-
-    tableHTML += '</tr></thead><tbody><tr>';
-
-    // Data Row (Second Half)
-    for (let i = 0; i < numSlots / 2; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'black' : 'red');
-      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
-      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
-      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
-    }
-
-    tableHTML += '</tr></tbody></table></div><div class="table-half"><table id="TotalsTable2"><thead><tr>';
-
-    // Header Row (First Half)
-    for (let i = numSlots / 2; i < numSlots; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green-header' :
-                       (i % 2 === 0 ? 'black-header' : 'red-header');
-      tableHTML += `<th class="${colorClass}">${slotNumbers[i]}</th>`;
-    }
-
-    tableHTML += '</tr></thead><tbody><tr>';
-
-    // Data Row (First Half)
-    for (let i = numSlots / 2; i < numSlots; i++) {
-      let colorClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00') ? 'green' :
-                       (i % 2 === 0 ? 'black' : 'red');
-      let isHighlighted = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10].includes(slotNumbers[i]);
-      let backgroundColorClass = isHighlighted ? 'highlight-yellow' : '';
-      tableHTML += `<td class="${colorClass} ${backgroundColorClass}">${Totals[i] === 0 ? '' : Totals[i]}</td>`;
-    }
-
-
-    tableHTML += '</tr></tbody></table></div>';
-    tableContainer.innerHTML = tableHTML;
-  }
-
-  // Update the specific cell with the new total and blinking effect
-  let tableCells = document.querySelectorAll(`#TotalsTable1 td, #TotalsTable2 td`);
-
-  // Remove blinking effect from the previously updated cell
-  if (lastUpdatedIndex !== null && tableCells[lastUpdatedIndex]) {
-    tableCells[lastUpdatedIndex].classList.remove('blink-yellow');
-  }
-
-  // Update the cell content and add blinking effect to the updated cell
-  if (finalIndex !== null && tableCells[finalIndex]) {
-    tableCells[finalIndex].textContent = Totals[finalIndex] === 0 ? '' : Totals[finalIndex];
-    tableCells[finalIndex].classList.add('blink-yellow');
-  }
-
-  // Update the last updated index
-  lastUpdatedIndex = finalIndex;
+  loadAndPlaySound();
+  populateTotalsTable();
 }
 
+function windowResized() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
+  wheelRadius = canvasSize * 0.5;
+  resizeCanvas(canvasSize, canvasSize);
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+}
 
+function draw() {
+  background(0);
+  fill(0);
+  ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2.05);
+  drawWheel();
 
-    // Function to generate a formatted timestamp
-    function getFormattedTimestamp() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day}-${hours}-${minutes}`;
+  if (isSpinning) {
+    ballAngle += ballSpeed;
+    ballSpeed *= ballFriction;
+
+    if (ballSpeed < minSpeed) {
+      isSpinning = false;
+      finalIndex = calculateSlotIndex();
+      winningNumber = slotNumbers[finalIndex];
+      moveBallToWinningSlot();
+      if (wheelSound) wheelSound.stop();
+      if (winningNumber !== undefined) {
+        let index = slotNumbers.indexOf(winningNumber);
+        Totals[index]++;
+        populateTotalsTable();
+      }
     }
 
-function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
-  const formattedTimestamp = getFormattedTimestamp();
-  const fileName = `${fileNamePrefix}-${formattedTimestamp}.csv`;
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(ballAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(ballAngle));
+  }
 
-  // Define the new order of slot numbers, changing '00' to '37'
-  const orderedSlotNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37];
+  fill(255);
+  ellipse(ballX, ballY, ballRadius * 2);
+}
 
-  // Map totals to the new slot number order, replacing '00' index with '37'
-  const orderedTotals = orderedSlotNumbers.map(number => {
-    const index = slotNumbers.indexOf(number === 37 ? '00' : number);
-    return index !== -1 ? totals[index] : 0;
+function drawWheel() {
+  const anglePerSlot = TWO_PI / numSlots;
+  for (let i = 0; i < numSlots; i++) {
+    let angleStart = i * anglePerSlot;
+    let angleEnd = (i + 1) * anglePerSlot;
+
+    if (slotNumbers[i] === 0 || slotNumbers[i] === '00') fill(0, 128, 0);
+    else fill(i % 2 === 0 ? 0 : [255, 0, 0]);
+
+    beginShape();
+    vertex(wheelCenterX, wheelCenterY);
+    for (let a = angleStart; a <= angleEnd; a += 0.01) {
+      let x = wheelCenterX + wheelRadius * cos(a);
+      let y = wheelCenterY + wheelRadius * sin(a);
+      vertex(x, y);
+    }
+    endShape(CLOSE);
+
+    let midAngle = (angleStart + angleEnd) / 2;
+    let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
+    let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(16);
+    text(slotNumbers[i], textX, textY);
+  }
+}
+
+function startWheelSpin() {
+  if (!isSpinning) {
+    if (soundLoaded) wheelSound.play();
+    isSpinning = true;
+    ballAngle = random(0, 360);
+    ballSpeed = random(5, 10);
+  }
+}
+
+function calculateSlotIndex() {
+  let normalizedAngle = (ballAngle % 360 + 360) % 360;
+  let anglePerSlot = 360 / numSlots;
+  return Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+}
+
+function moveBallToWinningSlot() {
+  if (!isSpinning) {
+    let centerAngle = (finalIndex + 0.5) * slotAngle;
+    let correctedAngle = (360 - centerAngle + 360) % 360;
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(correctedAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(correctedAngle));
+  }
+}
+
+function updateSpinCounter() {
+  spinCount++;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function resetSpinCounter() {
+  spinCount = 0;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function clearAndResetTotals() {
+  Totals.fill(0);
+  populateTotalsTable();
+}
+
+function loadAndPlaySound() {
+  wheelSound = new Howl({
+    src: ['wheel-ball.wav'],
+    loop: true,
+    onload: () => soundLoaded = true
   });
+}
 
-  let csvContent = "data:text/csv;charset=utf-8,";
-
-  // Add headers with '37' instead of '00'
-  csvContent += orderedSlotNumbers.join(",") + "\n";
-
-  // Add totals row
-  csvContent += orderedTotals.join(",") + "\n";
-
-  // Create a link to download the CSV file
+function exportTotalsToCSV(totals) {
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}`;
+  const slotMap = [...Array(37).keys(), '00'];
+  const header = slotMap.join(',');
+  const row = slotMap.map(n => totals[slotNumbers.indexOf(n)] || 0).join(',');
+  const csvContent = `data:text/csv;charset=utf-8,${header}\n${row}`;
   const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", fileName);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `Totals-${timestamp}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
 
+function populateTotalsTable() {
+  const left = document.querySelector('.left-table');
+  const right = document.querySelector('.right-table');
+  left.innerHTML = '';
+  right.innerHTML = '';
 
-    function clearAndResetTotals() {
-      Totals.fill(0);
-      populateTotalsTable();
+  const highlightList = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10];
+
+  const makeVerticalTable = (start, end) => {
+    const table = document.createElement('table');
+
+    for (let i = start; i < end; i++) {
+      const row = table.insertRow();
+      const cellLabel = row.insertCell();
+      const cellValue = row.insertCell();
+
+      // Set number label
+      cellLabel.innerText = slotNumbers[i];
+
+      // Determine value or placeholder
+      const value = Totals[i] > 0 ? Totals[i] : '&nbsp;&nbsp;&nbsp;&nbsp;';
+      cellValue.innerHTML = value;
+
+      // Assign classes for headers and data cells
+      const headerClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
+        ? 'green-header'
+        : i % 2 === 0 ? 'black-header' : 'red-header';
+
+      const baseColor = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
+        ? 'green'
+        : i % 2 === 0 ? 'black' : 'red';
+
+      cellLabel.className = headerClass;
+      cellValue.className = baseColor;
+
+      // Optional yellow highlight
+      if (highlightList.includes(slotNumbers[i])) {
+        cellValue.classList.add('highlight-yellow');
+      }
+
+      // Add blinking effect to the most recent update
+      if (i === finalIndex) {
+        cellValue.classList.add('blink-yellow');
+      } else if (lastUpdatedIndex !== null && i === lastUpdatedIndex) {
+        cellValue.classList.remove('blink-yellow');
+      }
     }
-  </script>
-  
+
+    return table;
+  };
+
+  const half = Math.ceil(slotNumbers.length / 2);
+  left.appendChild(makeVerticalTable(0, half));
+  right.appendChild(makeVerticalTable(half, slotNumbers.length));
+
+  lastUpdatedIndex = finalIndex;
+}
+
+</script>
 </body>
 </html>

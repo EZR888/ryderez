@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roulette Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Roulette Simulation</h1>
+    <div>
+      <label for="x">Number of Runs:</label>
+      <input type="number" id="x" value="1" />
+
+      <label for="spinDelay">Delay (0-1000 ms):</label>
+      <input type="number" id="spinDelay" value="10" />
+
+      <button onclick="multiSpin()">Start Simulation</button>
+    </div>
+
+    <div id="runNumDisplay"></div>
+    <div id="spinNumDisplay"></div>
+
+    <div id="TotalsTableContainer"></div>
+    <div id="pValueTableContainer"></div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script src="logic.js"></script>
+  <script>
+    // ➕ NEW: Post-run calculation for Points
+    function calculatePointsForRun(pValues) {
+      let points = 0;
+      for (const p of pValues) {
+        const pval = parseFloat(p.pValue);
+        if (!isNaN(pval) && pval > 0) {
+          points += 1 / pval;
+        }
+      }
+      return parseFloat(points.toFixed(6));
+    }
+
+    // 🟢 Hook into displayPValues to add the Points column
+    function displayPValues(newPValues) {
+      let tableContainer = document.getElementById('pValueTableContainer');
+      let table = document.getElementById("pValueTable");
+
+      if (!table) {
+        tableContainer.innerHTML = `
+          <table id="pValueTable" border='1'>
+            <tr>
+              <th>Run</th>
+              <th>Task</th>
+              <th>Difference / Sum</th>
+              <th>Significance</th>
+              <th>Cumulative P-Value</th>
+              <th>Points</th>
+            </tr>
+          </table>
+        `;
+        table = document.getElementById("pValueTable");
+      }
+
+      let groupedByRun = {};
+      for (const row of newPValues) {
+        if (!groupedByRun[row.run]) groupedByRun[row.run] = [];
+        groupedByRun[row.run].push(row);
+      }
+
+      let rowsHTML = "";
+      for (const [run, group] of Object.entries(groupedByRun)) {
+        const task = getActiveTask();
+        const significant = group.filter(r => parseFloat(r.pValue) < 0.05);
+        const points = calculatePointsForRun(group);
+
+        if (significant.length > 0) {
+          for (const sig of significant) {
+            rowsHTML += `
+              <tr style='background-color: yellow; color: black;'>
+                <td>${sig.run}</td>
+                <td>${task}</td>
+                <td>${sig.difference}</td>
+                <td>${sig.category}</td>
+                <td>${sig.pValue}</td>
+                <td>${points}</td>
+              </tr>`;
+          }
+        } else {
+          rowsHTML += `
+            <tr>
+              <td>${run}</td>
+              <td>${task}</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>${points}</td>
+            </tr>`;
+        }
+      }
+
+      table.innerHTML = `<tr>
+        <th>Run</th>
+        <th>Task</th>
+        <th>Difference / Sum</th>
+        <th>Significance</th>
+        <th>Cumulative P-Value</th>
+        <th>Points</th>
+      </tr>${rowsHTML}`;
+    }
+  </script>
+</body>
+</html>

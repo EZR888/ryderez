@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roulette Simulator</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="roulette.js"></script>
+</head>
+<body>
+  <h1>Roulette Simulator</h1>
+  <div id="controls">
+    <button onclick="startSimulation()">Start Simulation</button>
+    <button onclick="resetSimulation()">Reset</button>
+  </div>
+  <div id="output">
+    <table id="pValuesTable">
+      <thead>
+        <tr>
+          <th>Run</th>
+          <th>Task</th>
+          <th>Difference / Sum</th>
+          <th>Significance</th>
+          <th>Cumulative P-Value</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const categories = [
+      "Top - Bottom", "Left - Right", "Center 9 Top - Bottom", "00 - 0", "Top Ends - Center",
+      "Bottom Ends - Center", "Top", "Bottom", "Left Top", "Left Bottom", "Right Top", "Right Bottom",
+      "Center Top", "Center Bottom", "Left", "Right", "Top Ends", "Bottom Ends", "Top Center", "Bottom Center",
+      "Zero Sums Total", "Upper Left", "Upper Right", "Lower Left", "Lower Right", "Sum 00", "Sum 0",
+      "Density (Top 5 Sum)", "Variance (Within-Run Spread)", "Variance Difference (Top - Bottom)",
+      "Max Hits", "Max Counts"
+    ];
+
+    // Reference data placeholder
+    const referenceData = {}; // This should be populated from 10mcols.csv elsewhere in your app
+
+    function simulateRun() {
+      const runData = generateRun(); // Assume this returns an array of 38 numbers
+      const resultStats = analyzeRun(runData);
+      const points = calculatePoints(resultStats);
+      addRunToTable(resultStats, points);
+    }
+
+    function analyzeRun(runData) {
+      // Placeholder: calculate statistics for each category
+      let stats = [];
+      categories.forEach(category => {
+        let difference = calculateDifferenceForCategory(runData, category); // Custom function per category
+        let pVal = getPValueFromReference(category, difference);
+        let cumulative = getCumulativeFromReference(category, difference);
+        let isSignificant = (parseFloat(cumulative) < 0.05);
+        stats.push({ category, difference, cumulative, isSignificant });
+      });
+      return stats;
+    }
+
+    function calculatePoints(stats) {
+      return stats.reduce((sum, s) => {
+        const p = parseFloat(s.cumulative);
+        return p > 0 ? sum + 1 / p : sum;
+      }, 0).toFixed(3);
+    }
+
+    let currentRun = 1;
+    function addRunToTable(stats, points) {
+      const tbody = document.querySelector("#pValuesTable tbody");
+      stats.forEach(s => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${currentRun}</td>
+          <td>${s.category}</td>
+          <td>${s.difference}</td>
+          <td style="color: ${s.isSignificant ? 'yellow' : 'gray'}">${s.isSignificant ? s.category : ''}</td>
+          <td>${s.cumulative}</td>
+          <td>${points}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      currentRun++;
+    }
+
+    // Placeholder category logic
+    function calculateDifferenceForCategory(data, category) {
+      // Each category needs its logic; for now return dummy number
+      return Math.floor(Math.random() * 20);
+    }
+
+    function getPValueFromReference(category, diff) {
+      return referenceData[category]?.[diff]?.pValue || "";
+    }
+
+    function getCumulativeFromReference(category, diff) {
+      return referenceData[category]?.[diff]?.cumulativePValue || "";
+    }
+
+    function generateRun() {
+      return Array.from({ length: 38 }, () => Math.floor(Math.random() * 38));
+    }
+
+    function startSimulation() {
+      simulateRun(); // Could loop here for multiple runs
+    }
+
+    function resetSimulation() {
+      document.querySelector("#pValuesTable tbody").innerHTML = "";
+      currentRun = 1;
+    }
+  </script>
+</body>
+</html>

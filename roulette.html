@@ -1,11 +1,12 @@
 
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roulette Random Picker</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Roulette Random Picker</title>
+<style>
   
   body {
   margin: 0;
@@ -413,146 +414,144 @@
 
 
   </style>
-      <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+<!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-    <div class="container"> 
-        <div>
-            <div class="framed-section2">
-                <button class="button button-purple" id="howToUseButton">How To Use</button>
-                <button class="button button-sim" id="simButton">Simulator</button>
-                <button id="viewDataButton" class="button">View Data</button>
-                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
-                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
-                <button id="densityButton" class="button button-LightSteelBlue">Density</button>
-                <button class="button button-single" id="singleSpinButton">Wheel</button>      
-            </div>
-        </div>
-
-        <h1 class="lgreen-text">Roulette Wheel Simulator</h1>
-		<p class="compact-text">Please click the How To Use button above for instructions!</p>
-    <div>
- 
-<div class="container">                  
+<div class="container">
+<div>
+<div class="framed-section2">
+<button class="button button-purple" id="howToUseButton">How To Use</button>
+<button class="button button-sim" id="simButton">Simulator</button>
+<button class="button" id="viewDataButton">View Data</button>
+<button class="button button-DarkSeaGreen" id="viewPValueButton">P-Values</button>
+<button class="button button-salmon" id="viewFreqDistButton">Freq Dist</button>
+<button class="button button-DarkKhaki" id="viewStatsButton">Totals</button>
+<button class="button button-LightSteelBlue" id="densityButton">Density</button>
+<button class="button button-single" id="singleSpinButton">Wheel</button>
+</div>
+</div>
+<h1 class="lgreen-text">Roulette Wheel Simulator</h1>
+<p class="compact-text">Please click the How To Use button above for instructions!</p>
+<div>
+<div class="container">
 <div class="button-container">
-
-
-    <!-- New Toggle Button Section (Options for CSV Export) -->
-    <div class="framed-section-tasks">
-        <h3 style="color: violet; text-align: center;">Select Task</h3>
-        <div class="toggle-button-container">
-            <button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Left - Right</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Variance (Within-Run)</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Density (Top 5 Sum)</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
-            <button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
-            <br>
-        </div>
-    </div>
-
-    <!-- Multi-Spin Section -->
+<!-- New Toggle Button Section (Options for CSV Export) -->
+<div class="framed-section-tasks">
+<h3 style="color: violet; text-align: center;">Select Task</h3>
+<div class="toggle-button-container">
+<button class="toggle-button" onclick="toggleOption(this)">Top - Bottom</button>
+<button class="toggle-button" onclick="toggleOption(this)">Left - Right</button>
+<button class="toggle-button" onclick="toggleOption(this)">Top Ends - Center</button>
+<button class="toggle-button" onclick="toggleOption(this)">Bottom Ends - Center</button>
+<button class="toggle-button" onclick="toggleOption(this)">Variance (Within-Run)</button>
+<button class="toggle-button" onclick="toggleOption(this)">Density (Top 5 Sum)</button>
+<button class="toggle-button" onclick="toggleOption(this)">Sum of 00</button>
+<button class="toggle-button" onclick="toggleOption(this)">Sum of 0</button>
+<br/>
+</div>
+</div>
+<!-- Multi-Spin Section -->
 <div class="framed-section">
-
-        <button class="button button-multi" onclick="multiSpin()">Run Simulation</button>
-<br><br>
-    
-    <label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
-    <input type="number" id="x" value="1" style="width: 10ch"><br><br>
-
-    <label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
-    <input type="number" id="spinDelay" value="0" style="width: 10ch"><br><br>
-    
-    <button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
-    
-        <table id="csvTable">
-          <thead></thead>
-          <tbody></tbody>
-        </table>
-    
-</div>
-
-
+<button class="button button-multi" onclick="multiSpin()">Run Simulation</button>
+<br/><br/>
+<label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
+<input id="x" style="width: 10ch" type="number" value="1"/><br/><br/>
+<label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
+<input id="spinDelay" style="width: 10ch" type="number" value="0"/><br/><br/>
+<button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
+<table id="csvTable">
+<thead></thead>
+<tbody></tbody>
+</table>
 </div>
 </div>
-        <center>
-            <span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
-            <span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br><br>
-        </center>
-        <!-- Instructions Modal -->
-        <div id="instructionsModal" class="modal">
-            <div class="modal-content">
-                <button class="close-button" id="closeModalButton">&times;</button>
-                <h2>Instructions</h2>
-                <p>One Set = 38 Spins<br>
-                    Each spin randomly picks a number from 1 to 38<br>                   
-                    Spin Delay at 0 is very fast, but you can increase it to allow time to focus<br>
-                    Please choose the Task button if you want to try to mentally influence the run<br>
-                    <h2>Tasks</h2>
-
-					<i>Directional Differences</i>: Measures shifts in distribution of hits within runs.<br><br>
-  						<u>Top - Bottom</u>: Measures shifts in the balance of hits between the top and bottom halves of the wheel.<br>
-  						<u>Left - Right</u>: Tests for lateral bias (complements top-bottom).<br>
-                        <u>Top Ends - Center</u>: Measures shifts from the center of the top row towards or away from the 5 spaces at the left and the right.<br> 						
-  						<u>Bottom Ends - Center</u>: Measures shifts from the center of the bottom row towards or away from the 5 spaces at the left and the right. <br><br>
-
-					<i>Variance & Distribution</i>:  (Variance, Density, Clustering) Measures key characteristics from sets of data.<br><br>
-  						<u>Variance</u>:  Within-run variance, showing distribution of 38 spins.<br>
-  						<u>Density</u>:  Highest frequency for five spaces on the wheel for each run.<br><br>
+</div>
+<center>
+<span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
+<span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br/><br/>
+</center>
+<!-- Instructions Modal -->
+<div class="modal" id="instructionsModal">
+<div class="modal-content">
+<button class="close-button" id="closeModalButton">×</button>
+<h2>Instructions</h2>
+<p>One Set = 38 Spins<br/>
+                    Each spin randomly picks a number from 1 to 38<br/>                   
+                    Spin Delay at 0 is very fast, but you can increase it to allow time to focus<br/>
+                    Please choose the Task button if you want to try to mentally influence the run<br/>
+<h2>Tasks</h2>
+<i>Directional Differences</i>: Measures shifts in distribution of hits within runs.<br/><br/>
+<u>Top - Bottom</u>: Measures shifts in the balance of hits between the top and bottom halves of the wheel.<br/>
+<u>Left - Right</u>: Tests for lateral bias (complements top-bottom).<br/>
+<u>Top Ends - Center</u>: Measures shifts from the center of the top row towards or away from the 5 spaces at the left and the right.<br/>
+<u>Bottom Ends - Center</u>: Measures shifts from the center of the bottom row towards or away from the 5 spaces at the left and the right. <br/><br/>
+<i>Variance &amp; Distribution</i>:  (Variance, Density, Clustering) Measures key characteristics from sets of data.<br/><br/>
+<u>Variance</u>:  Within-run variance, showing distribution of 38 spins.<br/>
+<u>Density</u>:  Highest frequency for five spaces on the wheel for each run.<br/><br/>
+<i>Specific Targets</i>: (00 cluster and 0 cluster).<br/><br/>
+<u>Sum of 00</u>: Consisting of five spaces on the wheel. Identified as the "00 cluster", (double zero and the two numbers on each side: 13, 1, 00, 27, 10).<br/>
+<u>Sum of 0</u>: Consisting of five spaces on the wheel. Identified as the "0 cluster", (double zero and the two numbers on each side: 9, 28, 0, 2, 14).<br/><br/>
+</p>
+</div>
+</div>
+<div class="table-container">
+<p class="caption">TOTAL TIMES PICKED</p>
+<div id="TotalsTableContainer"></div>
+</div>
+</div>
+<br/><br/>
+<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Difference / Sum</th><th>Significance</th><th>Cumulative P-Value</th><th>Points</th></tr></table></div>
+<script>
   
-					<i>Specific Targets</i>: (00 cluster and 0 cluster).<br><br>
-  						<u>Sum of 00</u>: Consisting of five spaces on the wheel. Identified as the "00 cluster", (double zero and the two numbers on each side: 13, 1, 00, 27, 10).<br>
-  						<u>Sum of 0</u>: Consisting of five spaces on the wheel. Identified as the "0 cluster", (double zero and the two numbers on each side: 9, 28, 0, 2, 14).<br><br>
-                </p>
-            </div>
-        </div>
-        <div class="table-container">
-            <p class="caption">TOTAL TIMES PICKED</p>
-            <div id="TotalsTableContainer"></div>
-        </div>
-    </div>
-    <br><br>
-    
-    <div id="pValueTableContainer"></div>
-
-
-  <script>
-    // Define the variables
     let Totals = new Array(38).fill(0);
+    let selectedOptions = [];
+    let rowsData = [];
+    let allPValues = [];
+    let numRuns = 1;
+    let refData = {}; // should be populated from 10mcols.csv
     let currentBlinkCell = null;
     let lastPValues = [];  // Global variable to store latest P-Values
-    let selectedOptions = [];
-    let rowsData = [];  // ✅ Define globally to store all runs
-    let allPValues = [];  // ✅ Store all runs' p-values globally
-    let numRuns = 1; // Default value
     let pValuesTableMap = {}; // ✅ Global map to store p-values & significance
+    let pointsPerRun = []
 
-    
-    // ✅ Move this to the top so all functions can access it
-const taskMappings = {
-    "Sum of 00": "S00",
-    "Sum of 0": "S0",
-    "Top Ends - Center": "TEC",
-    "Bottom Ends - Center": "BEC",
-    "Top - Bottom": "TB",
-    "Left - Right": "LR",
-    "Variance (Within-Run)": "V",
-    "Density (Top 5 Sum)": "D",
-    "No Task": "NT"
-};
+    const categoryLabels = {
+      topBottomDiff: "Top - Bottom",
+      leftRightDiff: "Left - Right",
+      cDiff: "Center 9 Top - Bottom",
+      zzDiff: "00 - 0",
+      topIndices: "Top",
+      bottomIndices: "Bottom",
+      leftTop: "Left Top",
+      leftBottom: "Left Bottom",
+      rightTop: "Right Top",
+      rightBottom: "Right Bottom",
+      cTop: "Center Top",
+      cBottom: "Center Bottom",
+      zzCluster: "Sum 00",
+      zCluster: "Sum 0",
+      left: "Left",
+      right: "Right",
+      topEnds: "Top Ends",
+      bottomEnds: "Bottom Ends",
+      topCenter: "Top Center",
+      bottomCenter: "Bottom Center",
+      topDiff: "Top Ends - Center",
+      bottomDiff: "Bottom Ends - Center",
+      zeroSums: "Zero Sums Total",
+      Density: "Density (Top 5 Sum)",
+      Variance: "Variance (Within-Run Spread)",
+      varianceDifference: "Variance Difference (Top - Bottom)",
+      UpperLeft: "Upper Left",
+      UpperRight: "Upper Right",
+      LowerLeft: "Lower Left",
+      LowerRight: "Lower Right",
+      maxHits: "Max Hits",
+      maxCounts: "Max Counts"
+    };
 
-
-    // Function to clear all arrays
-    function clearArrays() {
-      Totals = new Array(38).fill(0);
-    }
-        
-        const groupIndices = {
+    const groupIndices = {
       topIndices: [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
       bottomIndices: [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6],
       leftTop: [5,22,34,15,3],
@@ -576,6 +575,238 @@ const taskMappings = {
       LowerLeft: [28,9,26,30,11,7,20,32,17]
     };
 
+    function sumColumns(counts, indices) {
+      return indices.reduce((sum, idx) => sum + (counts[idx] || 0), 0);
+    }
+
+    function calculateDensity(counts) {
+      return counts.slice().sort((a, b) => b - a).slice(0, 5).reduce((sum, val) => sum + val, 0);
+    }
+
+    function calculateVariance(counts) {
+      const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
+      return counts.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / counts.length;
+    }
+
+    function calculateMaxHits(counts) {
+      return Math.max(...counts);
+    }
+
+    function calculateMaxCounts(counts) {
+      const freq = new Array(38).fill(0);
+      counts.forEach(num => freq[num]++);
+      return Math.max(...freq);
+    }
+
+    function calculateVarianceDifference(topCounts, bottomCounts) {
+      return calculateVariance(topCounts) - calculateVariance(bottomCounts);
+    }
+
+    function calculatePointsScore(totals, refData) {
+      let points = 0;
+
+      function safeLookup(category, value) {
+        const values = Object.keys(refData[category] || {}).map(Number);
+        if (!values.length) return 1.0;
+        const closest = values.reduce((a, b) => Math.abs(b - value) < Math.abs(a - value) ? b : a);
+        return refData[category][closest] || 1.0;
+      }
+
+      for (let [key, label] of Object.entries(categoryLabels)) {
+        let value;
+        if (key === "Density") value = calculateDensity(totals);
+        else if (key === "Variance") value = calculateVariance(totals);
+        else if (key === "varianceDifference") value = calculateVarianceDifference(
+          groupIndices.topIndices.map(i => totals[i]),
+          groupIndices.bottomIndices.map(i => totals[i])
+        );
+        else if (key === "maxHits") value = calculateMaxHits(totals);
+        else if (key === "maxCounts") value = calculateMaxCounts(totals);
+        else if (groupIndices[key]) value = sumColumns(totals, groupIndices[key]);
+        else continue;
+
+        const p = safeLookup(label, parseFloat(value.toFixed(6)));
+        if (p > 0) points += 1 / p;
+      }
+
+      return parseFloat(points.toFixed(3));
+    }
+
+    function calculatePointsForRun(pValues) {
+      let points = 0;
+      for (const p of pValues) {
+        const val = parseFloat(p.pValue);
+        if (!isNaN(val) && val > 0) points += 1 / val;
+      }
+      return parseFloat(points.toFixed(6));
+    }
+
+// Extend displayPValues to include Points column
+function displayPValues(newPValues) {
+  const tableContainer = document.getElementById('pValueTableContainer');
+  let table = document.getElementById("pValueTable");
+
+  if (!table) {
+    tableContainer.innerHTML = `
+      <table id="pValueTable" border='1'>
+        <tr>
+          <th>Run</th>
+          <th>Task</th>
+          <th>Difference / Sum</th>
+          <th>Significance</th>
+          <th>Cumulative P-Value</th>
+          <th>Points</th>
+        </tr>
+      </table>
+    `;
+    table = document.getElementById("pValueTable");
+  }
+
+  let rowsHTML = "";
+  const groupedRows = {};
+  const tempPValuesTableMap = {};
+
+  newPValues.forEach(({ run, category, difference, pValue }) => {
+    const numericPValue = parseFloat(pValue);
+    if (!groupedRows[run]) groupedRows[run] = [];
+    groupedRows[run].push({ category, difference, pValue: numericPValue });
+  });
+
+  Object.entries(groupedRows).forEach(([run, rows]) => {
+    let points = 0;
+    const selectedTask = getActiveTask();
+    const sigMatches = [];
+
+    rows.forEach(({ category, difference, pValue }) => {
+      const isZero = parseFloat(difference) === 0;
+
+      if (!isNaN(pValue) && pValue > 0) {
+        points += 1 / pValue;
+      }
+
+      if (!isZero && pValue < 0.05) {
+        sigMatches.push({ category, difference, pValue });
+      }
+    });
+
+    if (sigMatches.length) {
+      sigMatches.forEach(({ category, difference, pValue }, i) => {
+        const isVariance = category.includes("Variance");
+        const formattedDiff = isVariance
+          ? parseFloat(difference).toFixed(3)
+          : Math.round(difference);
+
+        rowsHTML += `<tr style='background-color: yellow; color: black;'>
+          <td>${run}</td>
+          <td>${selectedTask}</td>
+          <td>${formattedDiff}</td>
+          <td>${category}</td>
+          <td>${parseFloat(pValue).toFixed(6)}</td>
+          <td>${i === 0 ? Math.round(points) : ""}</td>
+        </tr>`;
+      });
+    } else {
+      // Not significant or all diffs were zero
+      rowsHTML += `<tr>
+        <td>${run}</td>
+        <td>${selectedTask}</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>${Math.round(points)}</td>
+      </tr>`;
+    }
+
+    pointsPerRun[run] = Math.round(points);
+    tempPValuesTableMap[run] = sigMatches.length ? sigMatches.map(m => m.category) : ["None"];
+  });
+
+  pValuesTableMap = tempPValuesTableMap;
+  table.innerHTML = `<tr>
+    <th>Run</th>
+    <th>Task</th>
+    <th>Difference / Sum</th>
+    <th>Significance</th>
+    <th>Cumulative P-Value</th>
+    <th>Points</th>
+  </tr>${rowsHTML}`;
+}
+
+    
+// Extend exportTotalsToCSV to include Points column
+async function exportTotalsToCSV(array, rowCount, selectedOptions) {
+    let timestamp = getFormattedTimestamp();
+    let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
+    csvContent += `LAST GENERATED ON: ${timestamp}\n\n`;
+
+    if (!Array.isArray(array) || array.length === 0) {
+        console.error("❌ ERROR: No spin data found! Export aborted.");
+        return;
+    }
+
+    let category = generateTaskIdentifier(selectedOptions);
+
+    // Build header: 0 through 39 → then insert "Points" at index 40
+    let headerRow = Array.from({ length: 40 }, (_, i) => i); // 0–39
+    headerRow.push("Points"); // Column 40
+    csvContent += headerRow.join(",") + "\n";
+
+    let activeTask = getActiveTask();
+    let primaryCategory = activeTask !== "NT" ? activeTask : "NT";
+
+    array.forEach((row, rowIndex) => {
+        const runNumber = rowIndex + 1;
+        const significantCategories = pValuesTableMap[runNumber] || [];
+
+        // Set column 38 = task code
+        row[38] = primaryCategory;
+
+        // Insert run number at column 39
+        row[39] = runNumber;
+        // Calculate Points (1/p for all nonzero p-values)
+		const points = pointsPerRun[runNumber] || 0;
+
+        // Build final row
+        let csvRow = [...row];           // Columns 0–39
+        csvRow.push(points);             // Column 40
+        csvRow.push(...significantCategories); // Columns 41+
+
+        csvContent += csvRow.join(",") + "\n";
+    });
+
+    const checksum = await generateChecksum(csvContent);
+    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
+
+    let categoryString = primaryCategory.replace(/[^a-zA-Z0-9-_]/g, "").trim();
+    if (!categoryString) categoryString = "NT";
+
+    const filename = `Sim_${categoryString}_${array.length}_${timestamp}_${obfuscatedChecksum}.csv`;
+    console.log(`✅ Final Filename: ${filename}`);
+    saveFile(csvContent, filename);
+}
+
+    
+    // ✅ Move this to the top so all functions can access it
+const taskMappings = {
+    "Sum of 00": "S00",
+    "Sum of 0": "S0",
+    "Top Ends - Center": "TEC",
+    "Bottom Ends - Center": "BEC",
+    "Top - Bottom": "TB",
+    "Left - Right": "LR",
+    "Variance (Within-Run)": "V",
+    "Density (Top 5 Sum)": "D",
+    "No Task": "NT"
+};
+
+
+    // Function to clear all arrays
+    function clearArrays() {
+      Totals = new Array(38).fill(0);
+    }
+        
+        
+
            // Function to generate a formatted timestamp // 
 function getFormattedTimestamp() {
     const now = new Date();
@@ -589,58 +820,6 @@ function getFormattedTimestamp() {
 }
 
 
-// Function to export Totals array data to CSV format
-async function exportTotalsToCSV(array, rowCount, selectedOptions) {
-    let timestamp = getFormattedTimestamp();
-    let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
-    csvContent += `LAST GENERATED ON: ${timestamp}\n\n`;
-
-    if (!Array.isArray(array) || array.length === 0) {
-        console.error("❌ ERROR: No spin data found! Export aborted.");
-        return;
-    }
-
-    let category = generateTaskIdentifier(selectedOptions); // ✅ Ensures we map selected tasks correctly
-    let headerRow = Array.from({ length: 45 }, (_, i) => i);
-    csvContent += headerRow + "\n";
-
-    let allSignificantCategories = [];
-
-    // ✅ Determine the primary category **before** looping
-    let activeTask = getActiveTask(); // ✅ Get the selected task
-    let primaryCategory = activeTask !== "NT" ? activeTask : "NT"; // ✅ Use NT only if no task is selected
-
-    array.forEach((row, rowIndex) => {
-        let runNumber = rowIndex + 1;
-        let significantCategories = pValuesTableMap[runNumber] || []; // ✅ Get significant categories
-
-        row[38] = primaryCategory; // ✅ Assign properly
-
-        console.log(`✅ Writing row ${runNumber} - Primary Category: ${primaryCategory}, Significant Categories:`, significantCategories);
-
-        let csvRow = row.concat([runNumber], significantCategories);
-        csvContent += csvRow.join(",") + "\n";
-
-        // ✅ Store categories for filename generation, **but don't use them to override NT**
-        allSignificantCategories.push(...significantCategories);
-    });
-
-    const checksum = await generateChecksum(csvContent);
-    const obfuscatedChecksum = getObfuscatedChecksum(checksum);
-
-    // ✅ Use the **active task** for the filename, defaulting to "NT" if no task was selected
-    let categoryString = primaryCategory;
-
-    // ✅ Remove special characters for safety
-    categoryString = categoryString.replace(/[^a-zA-Z0-9-_]/g, "").trim();
-    if (!categoryString) categoryString = "NT"; // ✅ Prevent empty filename
-
-    // ✅ Final filename now correctly reflects only the **selected task**
-    let filename = `Sim_${categoryString}_${array.length}_${timestamp}_${obfuscatedChecksum}.csv`;
-
-    console.log(`✅ Final Filename: ${filename}`);
-    saveFile(csvContent, filename);
-}
 
 /**
  * ✅ Save File to Disk (Download)x
@@ -1007,137 +1186,6 @@ function multiSpin() {
     singleRun(0);
 }
 
-
-function displayPValues(newPValues) {
-    let tableContainer = document.getElementById('pValueTableContainer');
-    let table = document.getElementById("pValueTable");
-
-    if (!table) {
-        tableContainer.innerHTML = `
-            <table id="pValueTable" border='1'>
-                <tr>
-                    <th>Run</th>
-                    <th>Task</th>
-                    <th>Difference / Sum</th>
-                    <th>Significance</th>
-                    <th>Cumulative P-Value</th>
-                </tr>
-            </table>
-        `;
-        table = document.getElementById("pValueTable");
-    }
-
-    let rowsHTML = "";
-    let groupedRows = {};
-    let tempPValuesTableMap = {}; // ✅ Temporary storage for significant categories
-
-    // ✅ Group values by run number and category
-    newPValues.forEach(({ run, category, difference, pValue }) => {
-        let numericPValue = parseFloat(pValue);
-        // let adjustedPValue = (!isNaN(numericPValue)) ? (numericPValue * numRuns).toFixed(6) : "-";
-        let adjustedPValue = numericPValue;
-
-        if (!groupedRows[run]) {
-            groupedRows[run] = {};
-        }
-
-        // ✅ Preserve the negative difference
-        let signedDifference = parseFloat(difference); 
-
-        groupedRows[run][category] = {
-            difference: signedDifference.toFixed(3), // Preserve sign
-            adjustedPValue
-        };
-    });
-
-    // ✅ Process grouped data for each run
-    Object.keys(groupedRows).forEach(run => {
-        let selectedTask = getActiveTask(); // ✅ FIXED: Ensures selected task is used
-        let significanceMatches = [];
-
-        console.log(`🔍 Checking all categories for Run ${run}...`);
-
-        // ✅ Loop through the 8 expected categories
-        const expectedCategories = [
-            "Top - Bottom",
-            "Left - Right",
-            "Top Ends - Center",
-            "Bottom Ends - Center",
-            "Variance (Within-Run Spread)",
-            "Density (Top 5 Sum)",
-            "Sum of 00",
-            "Sum of 0",
-            "Upper Left",
-            "Upper Right",
-            "Lower Right",
-            "Lower Left"
-        ];
-
-        expectedCategories.forEach(category => {
-            if (groupedRows[run][category]) {
-                let { difference, adjustedPValue } = groupedRows[run][category];
-
-                console.log(`   📊 Category: ${category}, Difference / Sum: ${difference}, Adjusted P-Value: ${adjustedPValue}`);
-
-                if (adjustedPValue !== "-" && parseFloat(adjustedPValue) < 0.05) {
-                    console.log(`   ✅ Category ${category} is SIGNIFICANT for Run ${run}!`);
-                    significanceMatches.push(category); // ✅ Store category only
-                }
-            }
-        });
-
-        // ✅ Store significant categories in pValuesTableMap
-        tempPValuesTableMap[run] = significanceMatches.length ? significanceMatches : ["None"]; // ✅ Default to "NT" if empty
-
-        // ✅ Generate multiple rows if multiple significant categories exist
-        if (significanceMatches.length > 0) {
-            significanceMatches.forEach(category => {
-                let difference = groupedRows[run][category]?.difference ?? "-";
-                let adjustedPValue = groupedRows[run][category]?.adjustedPValue ?? "-";
-
-                rowsHTML += `
-                    <tr style='background-color: yellow; color: black;'>
-                        <td>${run}</td>
-                        <td>${selectedTask}</td>
-                        <td>${difference}</td>
-                        <td>${category}</td>
-                        <td>${adjustedPValue}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            // ✅ Display a normal row if no significant categories found
-            let difference = groupedRows[run][selectedTask]?.difference ?? "-";
-            let adjustedPValue = groupedRows[run][selectedTask]?.adjustedPValue ?? "-";
-
-            rowsHTML += `
-                <tr>
-                    <td>${run}</td>
-                    <td>${selectedTask}</td>
-                    <td>${difference}</td>
-                    <td>-</td>
-                    <td>${adjustedPValue}</td>
-                </tr>
-            `;
-        }
-    });
-
-    // ✅ Update global pValuesTableMap after processing all runs
-    pValuesTableMap = tempPValuesTableMap;
-    console.log("✅ Updated pValuesTableMap:", pValuesTableMap);
-
-    // ✅ Update the table
-    table.innerHTML = `<tr>
-                            <th>Run</th>
-                            <th>Task</th>
-                            <th>Difference / Sum</th>
-                            <th>Significance</th>
-                            <th>Cumulative P-Value</th>
-                        </tr>${rowsHTML}`;
-
-    console.log("✅ Finished updating P-Values Display.");
-}
-
 // Function to calculate variance
 function calculateVariance(counts) {
     let n = counts.length;
@@ -1333,9 +1381,97 @@ function applyCellColors(data, isHeader) {
     }
 }
 
+// New function to calculate Points per run and update pValuesTable
+function calculatePointsAndPValues(runFrequencies, runNumber, taskCode, referenceData) {
+    let points = 0;
+    const runEntries = [];
+
+    Object.entries(referenceData).forEach(([category, values]) => {
+        const frequencies = runFrequencies[category];
+        if (!frequencies) return;
+
+        Object.entries(frequencies).forEach(([metric, observed]) => {
+            const ref = values[metric];
+            if (!ref || !ref.cumulativePValue) return;
+
+            const cumulativeP = parseFloat(ref.cumulativePValue);
+            if (!isNaN(cumulativeP) && cumulativeP > 0) {
+                const pointValue = 1 / cumulativeP;
+                points += pointValue;
+                runEntries.push({
+                    run: runNumber,
+                    task: taskCode,
+                    metric: metric,
+                    category: category,
+                    cumulativePValue: cumulativeP.toFixed(6),
+                    pointValue: pointValue.toFixed(6)
+                });
+            }
+        });
+    });
+
+    // Update the pValuesTable with this run's info
+    const table = document.getElementById("pValuesTable");
+    runEntries.forEach((entry, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).textContent = entry.run;
+        row.insertCell(1).textContent = entry.task;
+        row.insertCell(2).textContent = entry.metric;
+        row.insertCell(3).textContent = entry.category;
+        row.insertCell(4).textContent = entry.cumulativePValue;
+        row.insertCell(5).textContent = index === 0 ? points.toFixed(2) : "";
+    });
+
+    return points;
+}
+
+// Add this function to roulette.html
+function processRunResultsWithPoints(runFrequencies, runNumber, taskCode, referenceData) {
+  const pValuesTable = document.getElementById("pValuesTable");
+  let points = 0;
+  let hasWrittenPoints = false;
+
+  for (const category in runFrequencies) {
+    const differences = runFrequencies[category];
+
+    for (const diff of differences) {
+      const referenceCategory = referenceData[category];
+      const match = referenceCategory?.[diff];
+
+      if (match && match.cumulativePValue) {
+        const cumP = parseFloat(match.cumulativePValue);
+        if (!isNaN(cumP) && cumP > 0) {
+          points += 1 / cumP;
+
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td style="text-align: center;">${runNumber}</td>
+            <td style="text-align: center;">${taskCode}</td>
+            <td style="text-align: center;">${diff}</td>
+            <td style="text-align: center;">${category}</td>
+            <td style="text-align: center;">${cumP.toFixed(6)}</td>
+            <td style="text-align: center;">${!hasWrittenPoints ? points.toFixed(2) : ""}</td>
+          `;
+
+          pValuesTable.appendChild(row);
+          hasWrittenPoints = true;
+        }
+      }
+    }
+  }
+
+  return points;
+}
+
+// 🔗 Then call this function at the end of each run with:
+// const points = processRunResultsWithPoints(runFrequencies, currentRunNumber, currentTaskCode, referenceData);
+// And store `points` to append in your CSV export logic as needed.
+
+
 
   </script>
-    <script>
+<script>
     // Modal functionality
     const modal = document.getElementById('instructionsModal');
     const howToUseButton = document.getElementById('howToUseButton');
@@ -1387,5 +1523,5 @@ document.addEventListener('keydown', function(event) {
 
  
   </script>
-</body>
+</div></body>
 </html>

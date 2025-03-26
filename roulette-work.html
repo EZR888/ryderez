@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -1508,18 +1507,24 @@ function togglePValueTable(visible) {
     }
 }
 
-// Add keyboard shortcuts: 'h' (or 'H') to hide, 'u' (or 'U') to unhide
+// Add keyboard shortcuts: Cmd+Shift+- and Cmd+Shift+= (or Ctrl+Shift+- / = on Windows
 document.addEventListener('keydown', function(event) {
-    const key = event.key.toLowerCase(); // Convert key to lowercase for uniformity
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const metaOrCtrl = isMac ? event.metaKey : event.ctrlKey;
 
-    if (key === 'h') {
-        console.log("🔴 Hiding P-Values Table...");
+    // Cmd/Ctrl + Shift + Minus → Hide
+    if (metaOrCtrl && event.shiftKey && event.code === "Minus") {
+        console.log("🔴 Cmd/Ctrl+Shift+- detected: Hiding P-Values Table...");
         togglePValueTable(false);
-    } else if (key === 'u') {
-        console.log("🟢 Unhiding P-Values Table...");
+    }
+
+    // Cmd/Ctrl + Shift + Equal → Unhide
+    else if (metaOrCtrl && event.shiftKey && event.code === "Equal") {
+        console.log("🟢 Cmd/Ctrl+Shift+= detected: Unhiding P-Values Table...");
         togglePValueTable(true);
     }
 });
+
 
  
   </script>

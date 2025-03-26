@@ -2,25 +2,24 @@ import numpy as np
 import pandas as pd
 
 # Constants
-NUM_RUNS = 10_000_000  # Number of sets
-NUM_SPINS = 38  # Spins per run
+NUM_RUNS = 10_000_000
+NUM_SPINS = 38
 
-# Group definitions for analysis
+# Grouped definitions
 group_indices = {
     "Top - Bottom": ([5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
-                      [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6]),
+                     [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6]),
     "Left - Right": ([5,22,34,15,3,24,36,13,1,17,32,20,7,11,30,26,9,28],
-                      [27,10,25,29,12,8,19,31,18,2,14,35,23,4,16,33,21,6]),
-    "Center 9 Top - Bottom": ([24,36,13,1,37,27,10,25,29], 
+                     [27,10,25,29,12,8,19,31,18,2,14,35,23,4,16,33,21,6]),
+    "Center 9 Top - Bottom": ([24,36,13,1,37,27,10,25,29],
                               [30,26,9,28,0,2,14,35,23]),
     "00 - 0": ([13,1,37,27,10], [9,28,0,2,14]),
-    "Top Ends - Center": ([5,22,34,15,3,12,8,19,31,18], 
+    "Top Ends - Center": ([5,22,34,15,3,12,8,19,31,18],
                           [24,36,13,1,37,27,10,25,29]),
-    "Bottom Ends - Center": ([17,32,20,7,11,4,16,3,21,6], 
+    "Bottom Ends - Center": ([17,32,20,7,11,4,16,3,21,6],
                              [30,26,9,28,0,2,14,35,23])
 }
 
-# Single groups to sum without differences
 single_groups = {
     "Top": [5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18],
     "Bottom": [17,32,20,7,11,30,26,9,28,0,2,14,35,23,4,16,33,21,6],
@@ -55,16 +54,7 @@ def calculate_variance(counts):
     return np.var(counts)
 
 def calculate_variance_difference(top_counts, bottom_counts):
-    top_var = np.var(top_counts)
-    bottom_var = np.var(bottom_counts)
-    return top_var - bottom_var
-
-def calculate_max_hits(counts):
-    return np.max(counts, axis=1)
-
-def calculate_max_counts(counts):
-    max_count = np.max(counts, axis=1)
-    return np.bincount(max_count)
+    return np.var(top_counts) - np.var(bottom_counts)
 
 def calculate_differences(spins):
     results = []
@@ -88,24 +78,24 @@ def calculate_differences(spins):
     for val, count in zip(*np.unique(densities, return_counts=True)):
         results.append(("Density (Top 5 Sum)", val, count))
 
-    variances = np.apply_along_axis(calculate_variance, 1, counts)
-    for val, count in zip(*np.unique(np.round(variances, 6), return_counts=True)):
+    variances = np.round(np.apply_along_axis(calculate_variance, 1, counts), 6)
+    for val, count in zip(*np.unique(variances, return_counts=True)):
         results.append(("Variance (Within-Run Spread)", val, count))
 
     top_counts = counts[:, single_groups["Top"]]
     bottom_counts = counts[:, single_groups["Bottom"]]
-    var_diffs = np.array([calculate_variance_difference(t, b) for t, b in zip(top_counts, bottom_counts)])
-    for val, count in zip(*np.unique(np.round(var_diffs, 6), return_counts=True)):
+    var_diffs = np.round(
+        np.array([calculate_variance_difference(t, b) for t, b in zip(top_counts, bottom_counts)]), 6
+    )
+    for val, count in zip(*np.unique(var_diffs, return_counts=True)):
         results.append(("Variance Difference (Top - Bottom)", val, count))
 
     max_hits = np.max(counts, axis=1)
-    unique_hits, freq_hits = np.unique(max_hits, return_counts=True)
-    for val, count in zip(unique_hits, freq_hits):
+    for val, count in zip(*np.unique(max_hits, return_counts=True)):
         results.append(("Max Hits", val, count))
 
     value_counts = np.apply_along_axis(lambda row: np.max(np.bincount(row, minlength=38)), axis=1, arr=spins)
-    unique_counts, freq_counts = np.unique(value_counts, return_counts=True)
-    for val, count in zip(unique_counts, freq_counts):
+    for val, count in zip(*np.unique(value_counts, return_counts=True)):
         results.append(("Max Counts", val, count))
 
     return pd.DataFrame(results, columns=["Category", "Difference", "Observed Frequency"])
@@ -113,7 +103,6 @@ def calculate_differences(spins):
 def calculate_p_values(df):
     df = df.groupby(["Category", "Difference"], as_index=False).sum()
     df["pValue"] = df["Observed Frequency"] / NUM_RUNS
-    df["Difference"] = df["Difference"].astype(float).round(6)
 
     cumulative_p_values = []
 
@@ -126,30 +115,44 @@ def calculate_p_values(df):
         center_row = group[np.isclose(group["Difference"], center)].copy()
 
         below["Cumulative P-Value"] = below["pValue"].cumsum()
-        above["Cumulative P-Value"] = above["pValue"][::-1].cumsum()[::-1]  # reverse for upper tail
-        center_row["Cumulative P-Value"] = 0.0  # or np.nan if you prefer
+        above["Cumulative P-Value"] = above["pValue"][::-1].cumsum()[::-1]
+        center_row["Cumulative P-Value"] = 0.0
 
         group = pd.concat([below, center_row, above]).sort_values("Difference")
         cumulative_p_values.append(group)
 
     final_df = pd.concat(cumulative_p_values).reset_index(drop=True)
-    final_df["pValue"] = final_df["pValue"].astype(float).round(6)
-    final_df["Cumulative P-Value"] = final_df["Cumulative P-Value"].astype(float).round(6)
+    final_df["pValue"] = final_df["pValue"].astype(float).round(8)
+    final_df["Cumulative P-Value"] = final_df["Cumulative P-Value"].astype(float).round(8)
     return final_df
 
+def compute_points_column(df):
+    points_dict = {}
+    for category in df["Category"].unique():
+        sub = df[df["Category"] == category]
+        for _, row in sub.iterrows():
+            key = (row["Category"], row["Difference"])
+            p = row["Cumulative P-Value"]
+            points_dict[key] = 1 / p if p > 0 else 0
+    df["Points"] = df.apply(lambda row: round(points_dict.get((row["Category"], row["Difference"]), 0), 3), axis=1)
+    return df
 
 # Main execution
-print("🚀 Generating spin data...")
+print("Generating spin data...")
 spins = generate_spin_results(NUM_RUNS, NUM_SPINS)
 
-print("🔍 Calculating differences and new stats...")
+print("Calculating differences and new stats...")
 df = calculate_differences(spins)
 
-print("📊 Calculating p-values and cumulative p-values...")
+print("Calculating p-values and cumulative p-values...")
 df = calculate_p_values(df)
 
-df = df[["Category", "Difference", "pValue", "Cumulative P-Value", "Observed Frequency"]]
+print("Calculating Points...")
+df = compute_points_column(df)
 
-output_file = "tesy10mcols.csv"
-df.to_csv(output_file, index=False)
-print(f"✅ {output_file} generated successfully!")
+# Final columns
+df = df[["Category", "Difference", "pValue", "Cumulative P-Value", "Observed Frequency", "Points"]]
+
+df.to_csv("10mcols.csv", index=False)
+print("10mcols.csv generated successfully!")
+

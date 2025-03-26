@@ -431,7 +431,7 @@
 <button class="button button-single" id="singleSpinButton">Wheel</button>
 </div>
 </div>
-<h1 class="lgreen-text">Roulette Wheel Simulator</h1>
+<h1 class="lgreen-text">Roulette Wheel Monte Carlo Simulation</h1>
 <p class="compact-text">Please click the How To Use button above for instructions!</p>
 <div>
 <div class="container">
@@ -651,8 +651,8 @@ function displayPValues(newPValues) {
         <tr>
           <th>Run</th>
           <th>Task</th>
-          <th>Difference / Sum</th>
           <th>Significance</th>
+          <th>Difference / Sum</th>
           <th>Cumulative P-Value</th>
           <th>Points</th>
         </tr>
@@ -698,8 +698,8 @@ function displayPValues(newPValues) {
         rowsHTML += `<tr style='background-color: yellow; color: black;'>
           <td>${run}</td>
           <td>${selectedTask}</td>
-          <td>${formattedDiff}</td>
           <td>${category}</td>
+          <td>${formattedDiff}</td>
           <td>${parseFloat(pValue).toFixed(6)}</td>
           <td>${i === 0 ? Math.round(points) : ""}</td>
         </tr>`;
@@ -724,8 +724,8 @@ function displayPValues(newPValues) {
   table.innerHTML = `<tr>
     <th>Run</th>
     <th>Task</th>
-    <th>Difference / Sum</th>
     <th>Significance</th>
+    <th>Difference / Sum</th>
     <th>Cumulative P-Value</th>
     <th>Points</th>
   </tr>${rowsHTML}`;

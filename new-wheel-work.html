@@ -140,7 +140,7 @@ let spinCount = 0;
 let lastUpdatedIndex = null;
 
 function setup() {
-  let canvasSize = Math.min(windowWidth, windowHeight) * 0.6;
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
   wheelRadius = canvasSize * 0.5;
   let canvas = createCanvas(canvasSize, canvasSize);
   canvas.parent('output');
@@ -157,7 +157,7 @@ function setup() {
 }
 
 function windowResized() {
-  let canvasSize = Math.min(windowWidth, windowHeight) * 0.6;
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
   wheelRadius = canvasSize * 0.5;
   resizeCanvas(canvasSize, canvasSize);
   wheelCenterX = width / 2;

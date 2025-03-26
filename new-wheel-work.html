@@ -295,32 +295,6 @@
     }
 
     /* Media Queries */
-    @media (max-width: 768px) {
-      .wheel-container {
-        padding: 5px;
-        width: 90%; /* Scale down proportionally */
-        height: auto; /* Maintain aspect ratio */
-      }
-
-      .button {
-        font-size: 16px; /* Adjusted font size for medium screens */
-        padding: 8px; /* Adjusted padding for medium screens */
-      }
-
-      table {
-        width: 100%;
-        max-width: none;
-      }
-
-      th, td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      .caption {
-        font-size: 14px;
-      }
-    }
 
     @media (max-width: 480px) {
       .wheel-container {
@@ -380,27 +354,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <div>
-      <div class="framed-section2">
-        <button class="button button-purple" id="howToUseButton">How To Use</button>
-        <button class="button button-sim" id="simButton">Simulator</button>
-        <button id="viewDataButton" class="button">View Data</button>
-        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
-        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
-        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
-        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
-        <button id="fullscreenWheel" class="button button-purple">Wheel</button>
-      </div>
-    </div>
-    <div id="instructionsModal" class="modal">
-      <div class="modal-content">
-        <button class="close-button" id="closeModalButton">&times;</button>
-        <h3>How To Read This Screen</h3>
-        <p>...</p>
-      </div>
-    </div>
-  </div>
+
         
   <div class="flex-frame">  <!-- Flexbox frame added here -->
     <h1 class="lgreen-text">Roulette Wheel</h1>
@@ -418,7 +372,30 @@
       <div id="TotalsTableContainer"></div>
     </div>
   </div> <!-- End of flex-frame -->
+  
   <br><br>
+    <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button id="densityButton" class="button button-LightSteelBlue">Density</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+  
   
   <script>
   
@@ -444,6 +421,11 @@
        // New event listener for the View Stats button
       	document.getElementById('viewStatsButton').addEventListener('click', () => {
         window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
       });
       
         document.getElementById("densityButton").addEventListener("click", () => { 
@@ -473,7 +455,7 @@
     let spinCount = 0;
 
     // Setup function
-window.setup = function() {
+    function setup() {
       let canvas = createCanvas(600, 600);
       canvas.parent('output');
       wheelCenterX = width / 2;
@@ -492,6 +474,10 @@ window.setup = function() {
 
       document.getElementById('saveDataButton').addEventListener('click', () => {
         exportTotalsToCSV(Totals);
+      });
+
+      document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.location.href = 'roulette.html';
       });
       
       // New event listener for the View Data button
@@ -745,32 +731,10 @@ function exportTotalsToCSV(totals, fileNamePrefix = 'Totals') {
 }
 
 
-function clearAndResetTotals() {
+    function clearAndResetTotals() {
       Totals.fill(0);
       populateTotalsTable();
     }
-    
-window.onload = () => {
-  // Hook up buttons only after the DOM is fully ready
-//  document.getElementById('toggleTopBarButton').addEventListener('click', () => {
-//    const section = document.querySelector('.framed-section2');
-//    section.style.display = (section.style.display === 'none') ? 'flex' : 'none';
-//  });
-
-  document.getElementById('fullscreenWheel').addEventListener('click', () => {
-    const output = document.getElementById('output');
-    if (output.requestFullscreen) {
-      output.requestFullscreen();
-    } else if (output.webkitRequestFullscreen) {
-      output.webkitRequestFullscreen();
-    } else if (output.msRequestFullscreen) {
-      output.msRequestFullscreen();
-    }
-  });
-};
-
-
-    
   </script>
   
 </body>

@@ -209,13 +209,20 @@ function draw() {
 
 function drawWheel() {
   const anglePerSlot = TWO_PI / numSlots;
+
   for (let i = 0; i < numSlots; i++) {
     let angleStart = i * anglePerSlot;
     let angleEnd = (i + 1) * anglePerSlot;
 
+    // Set fill color for wedge
     if (slotNumbers[i] === 0 || slotNumbers[i] === '00') fill(0, 128, 0);
     else fill(i % 2 === 0 ? 0 : [255, 0, 0]);
 
+    // Set stroke for thin brown outline
+    stroke(166, 103, 28); // Medium brown (saddle brown)
+    strokeWeight(2);     // Thin stroke
+
+    // Draw wedge
     beginShape();
     vertex(wheelCenterX, wheelCenterY);
     for (let a = angleStart; a <= angleEnd; a += 0.01) {
@@ -225,15 +232,18 @@ function drawWheel() {
     }
     endShape(CLOSE);
 
+    // Draw number text
     let midAngle = (angleStart + angleEnd) / 2;
     let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
     let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
-    fill('lightyellow');
+    noStroke(); // Turn off stroke for text
+    fill('white'); // or 'orange' if you prefer
     textAlign(CENTER, CENTER);
     textSize(22);
     text(slotNumbers[i], textX, textY);
   }
 }
+
 
 function startWheelSpin() {
   if (!isSpinning) {

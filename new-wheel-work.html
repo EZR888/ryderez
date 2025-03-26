@@ -78,11 +78,11 @@
       border-radius: 5px;
       cursor: pointer;
       background-color: #333;
-      color: white;
+      color: lightgreen;
     }
 
     .caption {
-      color: lightgreen;
+      color: yellow;
       margin: 10px 0 5px;
       text-align: center;
       font-weight: bold;
@@ -228,9 +228,9 @@ function drawWheel() {
     let midAngle = (angleStart + angleEnd) / 2;
     let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
     let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
-    fill(255);
+    fill('lightyellow');
     textAlign(CENTER, CENTER);
-    textSize(16);
+    textSize(24);
     text(slotNumbers[i], textX, textY);
   }
 }

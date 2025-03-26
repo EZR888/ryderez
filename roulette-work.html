@@ -501,7 +501,7 @@
 </div>
 </div>
 <br/><br/>
-<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Difference / Sum</th><th>Significance</th><th>Cumulative P-Value</th><th>Points</th></tr></table></div>
+<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Significance</th><th>Difference / Sum</th><th>Cumulative P-Value</th><th>Points</th></tr></table></div>
 <script>
   
     let Totals = new Array(38).fill(0);
@@ -1447,8 +1447,8 @@ function processRunResultsWithPoints(runFrequencies, runNumber, taskCode, refere
           row.innerHTML = `
             <td style="text-align: center;">${runNumber}</td>
             <td style="text-align: center;">${taskCode}</td>
-            <td style="text-align: center;">${diff}</td>
             <td style="text-align: center;">${category}</td>
+            <td style="text-align: center;">${diff}</td>
             <td style="text-align: center;">${cumP.toFixed(6)}</td>
             <td style="text-align: center;">${!hasWrittenPoints ? points.toFixed(2) : ""}</td>
           `;

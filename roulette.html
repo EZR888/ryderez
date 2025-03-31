@@ -551,7 +551,7 @@
 </div>
 </div>
 <br/><br/>
-<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Significance</th><th>Difference / Sum</th><th>Significant Cumulative P-Values</th><th>Points</th></tr></table></div>
+<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr style="background-color: purple; color: white; font-weight: bold; font-size: 18px;"><th style="font-size: 18px;">Run</th><th style="font-size: 18px;">Task</th><th style="font-size: 18px;">Significance</th><th style="font-size: 18px;">Difference / Sum</th><th style="font-size: 18px;">Significant Cumulative P-Values</th><th style="font-size: 18px;">Points</th></tr></table></div>
 <script>
 
   
@@ -704,13 +704,13 @@ function displayPValues(newPValues) {
         tableContainer.innerHTML = `
           <table id="pValueTable" border='1'>
             <thead>
-              <tr>
-                <th>Run</th>
-                <th>Task</th>
-                <th>Significance</th>
-                <th>Difference / Sum</th>
-                <th>Significant Cumulative P-Values</th>
-                <th>Total Points</th>
+              <tr style="background-color: purple; color: white; font-weight: bold;">
+                <th style="font-size: 18px;">Run</th>
+                <th style="font-size: 18px;">Task</th>
+                <th style="font-size: 18px;"Significance</th>
+                <th style="font-size: 18px;">Difference / Sum</th>
+                <th style="font-size: 18px;">Significant Cumulative P-Values</th>
+                <th style="font-size: 18px;">Total Points</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -794,17 +794,13 @@ function displayPValues(newPValues) {
     pValuesTableMap = tempPValuesTableMap;
 
     const meanVarianceRow = `
-        <tr style="background-color: purple; font-weight: bold; color: white;">
-            <td colspan="3" style="text-align: right;">Mean Raw Points per Run:</td>
-            <td colspan="3" style="text-align: left;">${AVERAGE_POINTS_PER_RUN.toFixed(2)}</td>
-        </tr>
-        <tr style="background-color: black; color: white; font-weight: bold;">
-            <th>Run</th>
-            <th>Task</th>
-            <th>Significance</th>
-            <th>Difference / Sum</th>
-            <th>Significant Cumulative P-Values</th>
-            <th>Total Points</th>
+        <tr style="background-color: purple; color: white; font-weight: bold;">
+            <th style="font-size: 18px;">Run</th>
+            <th style="font-size: 18px;">Task</th>
+            <th style="font-size: 18px;">Significance</th>
+            <th style="font-size: 18px;">Difference / Sum</th>
+            <th style="font-size: 18px;">Significant Cumulative P-Values</th>
+            <th style="font-size: 18px;">Total Points</th>
         </tr>`;
 
     tbody.innerHTML = meanVarianceRow + allRowsHTML;

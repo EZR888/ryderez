@@ -854,8 +854,6 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
     }
 
     let category = generateTaskIdentifier(selectedOptions);
-
-    // Build header: 0 through 39 → then insert "Points" at index 40
     let headerRow = Array.from({ length: 40 }, (_, i) => i); // 0–39
     headerRow.push("Points"); // Column 40
     csvContent += headerRow.join(",") + "\n";
@@ -863,34 +861,34 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
     let activeTask = getActiveTask();
     let primaryCategory = activeTask !== "NT" ? activeTask : "NT";
 
+    let totalPointsSum = 0;
+    let totalRuns = array.length;
+
     array.forEach((row, rowIndex) => {
         const runNumber = rowIndex + 1;
         const significantCategories = pValuesTableMap[runNumber] || [];
-
-        // Set column 38 = task code
         row[38] = primaryCategory;
-
-        // Insert run number at column 39
         row[39] = runNumber;
-        // Calculate Points (1/p for all nonzero p-values)
-		const points = pointsPerRun[runNumber] || 0;
-		
-		let formattedPoints = points.toFixed(0);
+        const points = pointsPerRun[runNumber] || 0;
+        totalPointsSum += points;
 
-        // Build final row
-        let csvRow = [...row];           // Columns 0–39
-        csvRow.push(formattedPoints);             // Column 40
-        csvRow.push(...significantCategories); // Columns 41+
-
-        csvContent += csvRow.join(",") + "\n";
+        if (points >= selectedThreshold) {
+            let csvRow = [...row]; // Columns 0–39
+            csvRow.push(points);   // Column 40
+            csvRow.push(...significantCategories); // Columns 41+
+            csvContent += csvRow.join(",") + "\n";
+        }
     });
 
+    let meanPoints = (totalPointsSum / totalRuns).toFixed(2);
+    let variancePoints = VARIANCE_POINTS_PER_RUN.toFixed(2);
+
+    csvContent += `\nMean Points Per Run,${meanPoints}\n`;
+    
     const checksum = await generateChecksum(csvContent);
     const obfuscatedChecksum = getObfuscatedChecksum(checksum);
-
     let categoryString = primaryCategory.replace(/[^a-zA-Z0-9-_]/g, "").trim();
     if (!categoryString) categoryString = "NT";
-
     const filename = `Sim_${categoryString}_${array.length}_${timestamp}_${obfuscatedChecksum}.csv`;
     console.log(`✅ Final Filename: ${filename}`);
     saveFile(csvContent, filename);

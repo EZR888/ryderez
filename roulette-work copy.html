@@ -493,12 +493,12 @@
 </div>
 </div>
 
-<!-- Threshold Indicators Section 
+<!-- Threshold Indicators Section -->
 <div class="framed-section-thresholds">
     <button class="threshold-button yellow">Points ≥ 100 (0.01)</button><br>
     <button class="threshold-button orange">Points ≥ 1,000 (0.001)</button><br>
     <button class="threshold-button red">Points ≥ 10,000 (0.0001)</button>
-</div> -->
+</div>
 
 <!-- Multi-Spin Section -->
 <div class="framed-section">
@@ -517,6 +517,14 @@
 </div>
 </div>
 <center>
+
+<select id="pointsThreshold">
+    <option value="20">20 (p ≈ 0.05)</option>
+    <option value="100">100 yellow (p ≈ 0.01)</option>
+    <option value="1000">1000 orange(p ≈ 0.001)</option>
+    <option value="10000" selected>10000 red (p ≈ 0.0001)</option>
+</select>
+    
 	
 <span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
 <span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br/><br/>
@@ -553,6 +561,10 @@
 <br/><br/>
 <div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Significance</th><th>Difference / Sum</th><th>Significant Cumulative P-Values</th><th>Points</th></tr></table></div>
 <script>
+
+document.getElementById("pointsThreshold").addEventListener("change", () => {
+    applyDynamicHighlighting();
+});
 
   
     let Totals = new Array(38).fill(0);
@@ -798,6 +810,10 @@ function displayPValues(newPValues) {
             <td colspan="3" style="text-align: right;">Mean Raw Points per Run:</td>
             <td colspan="3" style="text-align: left;">${AVERAGE_POINTS_PER_RUN.toFixed(2)}</td>
         </tr>
+        <tr style="background-color: purple; font-weight: bold; color: white;">
+          <td colspan="3" style="text-align: right;">Variance of Raw Points:</td>
+            <td colspan="3" style="text-align: left;">${VARIANCE_POINTS_PER_RUN.toFixed(2)}</td>
+        </tr>
         <tr style="background-color: black; color: white; font-weight: bold;">
             <th>Run</th>
             <th>Task</th>
@@ -813,6 +829,7 @@ function displayPValues(newPValues) {
 
 
 function applyDynamicHighlighting() {
+    const threshold = parseFloat(document.getElementById("pointsThreshold").value);
     const rows = document.querySelectorAll("#pValueTable tbody tr");
 
     rows.forEach(row => {
@@ -854,8 +871,6 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
     }
 
     let category = generateTaskIdentifier(selectedOptions);
-
-    // Build header: 0 through 39 → then insert "Points" at index 40
     let headerRow = Array.from({ length: 40 }, (_, i) => i); // 0–39
     headerRow.push("Points"); // Column 40
     csvContent += headerRow.join(",") + "\n";
@@ -863,34 +878,36 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
     let activeTask = getActiveTask();
     let primaryCategory = activeTask !== "NT" ? activeTask : "NT";
 
+    let totalPointsSum = 0;
+    let totalRuns = array.length;
+    let selectedThreshold = parseInt(document.getElementById("pointsThreshold").value, 10);
+
     array.forEach((row, rowIndex) => {
         const runNumber = rowIndex + 1;
         const significantCategories = pValuesTableMap[runNumber] || [];
-
-        // Set column 38 = task code
         row[38] = primaryCategory;
-
-        // Insert run number at column 39
         row[39] = runNumber;
-        // Calculate Points (1/p for all nonzero p-values)
-		const points = pointsPerRun[runNumber] || 0;
-		
-		let formattedPoints = points.toFixed(0);
+        const points = pointsPerRun[runNumber] || 0;
+        totalPointsSum += points;
 
-        // Build final row
-        let csvRow = [...row];           // Columns 0–39
-        csvRow.push(formattedPoints);             // Column 40
-        csvRow.push(...significantCategories); // Columns 41+
-
-        csvContent += csvRow.join(",") + "\n";
+        if (points >= selectedThreshold) {
+            let csvRow = [...row]; // Columns 0–39
+            csvRow.push(points);   // Column 40
+            csvRow.push(...significantCategories); // Columns 41+
+            csvContent += csvRow.join(",") + "\n";
+        }
     });
+
+    let meanPoints = (totalPointsSum / totalRuns).toFixed(2);
+    let variancePoints = VARIANCE_POINTS_PER_RUN.toFixed(2);
+
+    csvContent += `\nMean Points Per Run,${meanPoints}\n`;
+    csvContent += `Variance of Points Per Run,${variancePoints}\n`;
 
     const checksum = await generateChecksum(csvContent);
     const obfuscatedChecksum = getObfuscatedChecksum(checksum);
-
     let categoryString = primaryCategory.replace(/[^a-zA-Z0-9-_]/g, "").trim();
     if (!categoryString) categoryString = "NT";
-
     const filename = `Sim_${categoryString}_${array.length}_${timestamp}_${obfuscatedChecksum}.csv`;
     console.log(`✅ Final Filename: ${filename}`);
     saveFile(csvContent, filename);
@@ -1636,6 +1653,20 @@ function processRunResultsWithPoints(runFrequencies, runNumber, taskCode, refere
             togglePValueTable(true); // Show
         }
     });
+
+    const pointsDropdown = document.getElementById('pointsThreshold');
+    if (pointsDropdown) {
+        pointsDropdown.addEventListener('change', function () {
+            console.log('Threshold changed!');
+            let tableRows = document.querySelectorAll("#pValueTable tbody tr");
+            tableRows.forEach(row => {
+                let totalPoints = parseFloat(row.getAttribute("data-total-points"));
+                analyzePoints(totalPoints, row);
+            });
+        });
+    } else {
+        console.error("❌ ERROR: Element #pointsThreshold not found!");
+    }
 
     function analyzePoints(totalPoints, rowElement) {
         let standardDeviation = Math.sqrt(VARIANCE_POINTS_PER_RUN);

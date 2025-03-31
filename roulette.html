@@ -411,6 +411,47 @@
     margin-bottom: 5px;
 }
 
+/* Container for threshold buttons */
+.framed-section-thresholds {
+    padding: 10px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+}
+
+/* Base styling for threshold buttons */
+.threshold-button {
+    width: 100%;
+    padding: 20px 0;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    font-size: 19px;
+    cursor: default;
+    text-align: center;
+    min-width: 250px;
+    font-weight: bold;
+}
+
+/* Specific colors for each threshold */
+.threshold-button.yellow {
+    background-color: yellow;
+    min-width: 250px;
+}
+
+.threshold-button.orange {
+    background-color: orange;
+    min-width: 250px;
+}
+
+.threshold-button.red {
+    background-color: red;
+    min-width: 250px;
+}
+
 
   </style>
 <!-- Include jsPDF Library and jsPDF AutoTable Plugin -->
@@ -431,7 +472,7 @@
 <button class="button button-single" id="singleSpinButton">Wheel</button>
 </div>
 </div>
-<h1 class="lgreen-text">Roulette Wheel Simulator</h1>
+<h1 class="lgreen-text">Roulette Wheel Monte Carlo Simulation</h1>
 <p class="compact-text">Please click the How To Use button above for instructions!</p>
 <div>
 <div class="container">
@@ -451,6 +492,14 @@
 <br/>
 </div>
 </div>
+
+<!-- Threshold Indicators Section 
+<div class="framed-section-thresholds">
+    <button class="threshold-button yellow">Points ≥ 100 (0.01)</button><br>
+    <button class="threshold-button orange">Points ≥ 1,000 (0.001)</button><br>
+    <button class="threshold-button red">Points ≥ 10,000 (0.0001)</button>
+</div> -->
+
 <!-- Multi-Spin Section -->
 <div class="framed-section">
 <button class="button button-multi" onclick="multiSpin()">Run Simulation</button>
@@ -468,6 +517,7 @@
 </div>
 </div>
 <center>
+	
 <span id="runNumDisplay" style="color: DarkKhaki; font-size: 24px;">Run Num: </span>
 <span id="spinNumDisplay" style="color: DarkKhaki; font-size: 24px; margin-left: 2ch;">Spin Num: </span><br/><br/>
 </center>
@@ -501,8 +551,9 @@
 </div>
 </div>
 <br/><br/>
-<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Significance</th><th>Difference / Sum</th><th>Cumulative P-Value</th><th>Points</th></tr></table></div>
+<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr><th>Run</th><th>Task</th><th>Significance</th><th>Difference / Sum</th><th>Significant Cumulative P-Values</th><th>Points</th></tr></table></div>
 <script>
+
   
     let Totals = new Array(38).fill(0);
     let selectedOptions = [];
@@ -514,6 +565,10 @@
     let lastPValues = [];  // Global variable to store latest P-Values
     let pValuesTableMap = {}; // ✅ Global map to store p-values & significance
     let pointsPerRun = []
+    
+    // Hardcoded values from reference dataset	
+	const AVERAGE_POINTS_PER_RUN = 512.10;
+	const VARIANCE_POINTS_PER_RUN = 692773421.38;
 
     const categoryLabels = {
       topBottomDiff: "Top - Bottom",
@@ -625,7 +680,7 @@
         else continue;
 
         const p = safeLookup(label, parseFloat(value.toFixed(6)));
-        if (p > 0) points += 1 / p;
+        if (p > 0) points += -Math.log10(p);
       }
 
       return parseFloat(points.toFixed(3));
@@ -642,93 +697,147 @@
 
 // Extend displayPValues to include Points column
 function displayPValues(newPValues) {
-  const tableContainer = document.getElementById('pValueTableContainer');
-  let table = document.getElementById("pValueTable");
+    const tableContainer = document.getElementById('pValueTableContainer');
+    let table = document.getElementById("pValueTable");
 
-  if (!table) {
-    tableContainer.innerHTML = `
-      <table id="pValueTable" border='1'>
-        <tr>
-          <th>Run</th>
-          <th>Task</th>
-          <th>Significance</th>
-          <th>Difference / Sum</th>
-          <th>Cumulative P-Value</th>
-          <th>Points</th>
-        </tr>
-      </table>
-    `;
-    table = document.getElementById("pValueTable");
-  }
-
-  let rowsHTML = "";
-  const groupedRows = {};
-  const tempPValuesTableMap = {};
-
-  newPValues.forEach(({ run, category, difference, pValue }) => {
-    const numericPValue = parseFloat(pValue);
-    if (!groupedRows[run]) groupedRows[run] = [];
-    groupedRows[run].push({ category, difference, pValue: numericPValue });
-  });
-
-  Object.entries(groupedRows).forEach(([run, rows]) => {
-    let points = 0;
-    const selectedTask = getActiveTask();
-    const sigMatches = [];
-
-    rows.forEach(({ category, difference, pValue }) => {
-      const isZero = parseFloat(difference) === 0;
-
-      if (!isNaN(pValue) && pValue > 0) {
-        points += 1 / pValue;
-      }
-
-      if (!isZero && pValue < 0.05) {
-        sigMatches.push({ category, difference, pValue });
-      }
-    });
-
-    if (sigMatches.length) {
-      sigMatches.forEach(({ category, difference, pValue }, i) => {
-        const isVariance = category.includes("Variance");
-        const formattedDiff = isVariance
-          ? parseFloat(difference).toFixed(3)
-          : Math.round(difference);
-
-        rowsHTML += `<tr style='background-color: yellow; color: black;'>
-          <td>${run}</td>
-          <td>${selectedTask}</td>
-          <td>${category}</td>
-          <td>${formattedDiff}</td>
-          <td>${parseFloat(pValue).toFixed(6)}</td>
-          <td>${i === 0 ? Math.round(points) : ""}</td>
-        </tr>`;
-      });
-    } else {
-      // Not significant or all diffs were zero
-      rowsHTML += `<tr>
-        <td>${run}</td>
-        <td>${selectedTask}</td>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
-        <td>${Math.round(points)}</td>
-      </tr>`;
+    if (!table) {
+        tableContainer.innerHTML = `
+          <table id="pValueTable" border='1'>
+            <thead>
+              <tr>
+                <th>Run</th>
+                <th>Task</th>
+                <th>Significance</th>
+                <th>Difference / Sum</th>
+                <th>Significant Cumulative P-Values</th>
+                <th>Total Points</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        `;
+        table = document.getElementById("pValueTable");
     }
 
-    pointsPerRun[run] = Math.round(points);
-    tempPValuesTableMap[run] = sigMatches.length ? sigMatches.map(m => m.category) : ["None"];
-  });
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = ""; // Clear old rows
 
-  pValuesTableMap = tempPValuesTableMap;
-  table.innerHTML = `<tr>
-    <th>Run</th>
-    <th>Task</th>
-    <th>Significance</th>
-    <th>Difference / Sum</th>
-    <th>Cumulative P-Value</th>
-    <th>Points</th>
-  </tr>${rowsHTML}`;
+    const groupedRows = {};
+    const tempPValuesTableMap = {};
+    let allRowsHTML = "";
+
+    newPValues.forEach(({ run, category, difference, pValue }) => {
+        const numericPValue = parseFloat(pValue);
+        if (!groupedRows[run]) groupedRows[run] = [];
+        groupedRows[run].push({ category, difference, pValue: numericPValue });
+    });
+
+    Object.entries(groupedRows).forEach(([run, rows]) => {
+        let rawPoints = 0;
+        const selectedTask = getActiveTask();
+        const significantRows = [];
+
+        rows.forEach(({ category, difference, pValue }) => {
+            if (!isNaN(pValue) && pValue > 0) {
+                rawPoints += 1 / pValue;
+            }
+            if (!isNaN(pValue) && pValue < 0.05 && parseFloat(difference) !== 0) {
+                significantRows.push({ category, difference, pValue });
+            }
+        });
+
+        // Determine row styling
+        let rowColor = "black";
+        let textColor = "white";
+        if (rawPoints >= 10000) {
+            rowColor = "red";
+            textColor = "black";
+        } else if (rawPoints >= 1000) {
+            rowColor = "orange";
+            textColor = "black";
+        } else if (rawPoints >= 100) {
+            rowColor = "yellow";
+            textColor = "black";
+        }
+
+        if (significantRows.length) {
+            significantRows.forEach(({ category, difference, pValue }, i) => {
+                const isVariance = category.includes("Variance");
+                const formattedDiff = isVariance
+                    ? parseFloat(difference).toFixed(3)
+                    : Math.round(difference);
+
+                allRowsHTML += `<tr style="background-color: ${rowColor}; color: ${textColor};">
+                    <td>${run}</td>
+                    <td>${selectedTask}</td>
+                    <td>${category}</td>
+                    <td>${formattedDiff}</td>
+                    <td>${pValue.toFixed(6)}</td>
+                    <td>${i === 0 ? rawPoints.toFixed(2) : ""}</td>
+                </tr>`;
+            });
+        } else {
+            allRowsHTML += `<tr style="background-color: ${rowColor}; color: ${textColor};">
+                <td>${run}</td>
+                <td>${selectedTask}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>${rawPoints.toFixed(2)}</td>
+            </tr>`;
+        }
+
+        pointsPerRun[run] = rawPoints;
+        tempPValuesTableMap[run] = significantRows.length ? significantRows.map(r => r.category) : ["None"];
+    });
+
+    pValuesTableMap = tempPValuesTableMap;
+
+    const meanVarianceRow = `
+        <tr style="background-color: purple; font-weight: bold; color: white;">
+            <td colspan="3" style="text-align: right;">Mean Raw Points per Run:</td>
+            <td colspan="3" style="text-align: left;">${AVERAGE_POINTS_PER_RUN.toFixed(2)}</td>
+        </tr>
+        <tr style="background-color: black; color: white; font-weight: bold;">
+            <th>Run</th>
+            <th>Task</th>
+            <th>Significance</th>
+            <th>Difference / Sum</th>
+            <th>Significant Cumulative P-Values</th>
+            <th>Total Points</th>
+        </tr>`;
+
+    tbody.innerHTML = meanVarianceRow + allRowsHTML;
+    applyDynamicHighlighting();
+}
+
+
+function applyDynamicHighlighting() {
+    const rows = document.querySelectorAll("#pValueTable tbody tr");
+
+    rows.forEach(row => {
+        const pointsCell = row.cells[5];
+        const points = parseFloat(pointsCell?.textContent);
+
+        if (!isNaN(points)) {
+            let rowColor = "black";
+            let textColor = "white";
+
+            if (points >= 10000) {
+                rowColor = "red";
+                textColor = "black";
+            } else if (points >= 1000) {
+                rowColor = "orange";
+                textColor = "black";
+            } else if (points >= 100) {
+                rowColor = "yellow";
+                textColor = "black";
+            }
+
+            row.style.backgroundColor = rowColor;
+            row.style.color = textColor;
+        }
+    });
 }
 
     
@@ -764,10 +873,12 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
         row[39] = runNumber;
         // Calculate Points (1/p for all nonzero p-values)
 		const points = pointsPerRun[runNumber] || 0;
+		
+		let formattedPoints = points.toFixed(0);
 
         // Build final row
         let csvRow = [...row];           // Columns 0–39
-        csvRow.push(points);             // Column 40
+        csvRow.push(formattedPoints);             // Column 40
         csvRow.push(...significantCategories); // Columns 41+
 
         csvContent += csvRow.join(",") + "\n";
@@ -1469,7 +1580,7 @@ function processRunResultsWithPoints(runFrequencies, runNumber, taskCode, refere
 
 
 
-  </script>
+</script>
 <script>
     // Modal functionality
     const modal = document.getElementById('instructionsModal');
@@ -1484,47 +1595,67 @@ function processRunResultsWithPoints(runFrequencies, runNumber, taskCode, refere
       modal.style.display = 'none';
     }
 
-    // Close the modal if clicked outside of the modal content
     window.onclick = function(event) {
       if (event.target === modal) {
         modal.style.display = 'none';
       }
     }
 
-// Hide the p-value table by default when the page loads
-window.addEventListener('load', function() {
-    let tableContainer = document.getElementById('pValueTableContainer');
-    if (tableContainer) {
-        tableContainer.style.display = 'none';
-    }
-});
+    // Hide the p-value table by default when the page loads
+    window.addEventListener('load', function () {
+        let tableContainer = document.getElementById('pValueTableContainer');
+        if (tableContainer) {
+            tableContainer.style.display = 'none';
+        }
 
-// Function to toggle visibility of the p-value table
-function togglePValueTable(visible) {
-    let tableContainer = document.getElementById('pValueTableContainer');
-    if (tableContainer) {
-        tableContainer.style.display = visible ? 'block' : 'none';
-    }
-}
+        // Attach toggleOption listeners to buttons
+        document.querySelectorAll(".toggle-button").forEach(button => {
+            button.addEventListener("click", function () {
+                toggleOption(this);
+            });
+        });
+    });
 
-// Add keyboard shortcuts: Cmd+Shift+- and Cmd+Shift+= (or Ctrl+Shift+- / = on Windows
-document.addEventListener('keydown', function(event) {
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    const metaOrCtrl = isMac ? event.metaKey : event.ctrlKey;
-
-    // Cmd/Ctrl + Shift + Minus → Hide
-    if (metaOrCtrl && event.shiftKey && event.code === "Digit0") {
-        console.log("🔴 Cmd/Ctrl+Shift+) detected: Hiding P-Values Table...");
-        togglePValueTable(false);
+    // Function to toggle visibility of the p-value table
+    function togglePValueTable(visible) {
+        let tableContainer = document.getElementById('pValueTableContainer');
+        if (tableContainer) {
+            tableContainer.style.display = visible ? 'block' : 'none';
+        }
     }
 
-    // Cmd/Ctrl + Shift + Equal → Unhide
-    else if (metaOrCtrl && event.shiftKey && event.code === "Digit9") {
-        console.log("🟢 Cmd/Ctrl+Shift+() detected: Unhiding P-Values Table...");
-        togglePValueTable(true);
-    }
-});
+    // Keyboard shortcuts for toggling table visibility
+    document.addEventListener('keydown', function(event) {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const metaOrCtrl = isMac ? event.metaKey : event.ctrlKey;
 
+        if (metaOrCtrl && event.shiftKey && event.code === "Digit0") {
+            togglePValueTable(false); // Hide
+        } else if (metaOrCtrl && event.shiftKey && event.code === "Digit9") {
+            togglePValueTable(true); // Show
+        }
+    });
+
+    function analyzePoints(totalPoints, rowElement) {
+        let standardDeviation = Math.sqrt(VARIANCE_POINTS_PER_RUN);
+        let zScore = (totalPoints - AVERAGE_POINTS_PER_RUN) / standardDeviation;
+
+        console.log(`Total Points: ${totalPoints}, Z-Score: ${zScore.toFixed(2)}`);
+
+        if (Math.abs(zScore) > 3) {
+            rowElement.style.backgroundColor = "red";
+        } else if (Math.abs(zScore) > 2) {
+            rowElement.style.backgroundColor = "yellow";
+        } else {
+            rowElement.style.backgroundColor = "";
+        }
+
+        let zScoreCell = rowElement.querySelector(".z-score-cell");
+        if (zScoreCell) {
+            zScoreCell.textContent = zScore.toFixed(2);
+        }
+    }
+</script>
 
  
   </script>

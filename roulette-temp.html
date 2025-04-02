@@ -1291,6 +1291,8 @@ function multiSpin() {
                 allPValues.push(...pValues);
                 
 displayPValues(allPValues);
+document.getElementById('pValueTableContainer').style.display = 'block';
+document.getElementById('pValueTableContainer').scrollIntoView({ behavior: 'smooth' });
 
                 if (runIndex < numRuns - 1) {
                      setTimeout(() => singleRun(runIndex + 1), betweenRunDelay); 

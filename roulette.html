@@ -511,7 +511,7 @@
 <input id="spinDelay" style="width: 4ch" type="number" value="0"/><br/><br/>
 
 <label style="color:lightgreen; margin-left: 20px; display: inline-block; width: 150px;">BETWEEN RUN DELAY (ms)</label>
-<input id="betweenRunDelay" style="width: 6ch; margin-right: 30px;" type="number" value="1"/><br><br>
+<input id="betweenRunDelay" style="width: 6ch; margin-right: 30px;" type="number" value="0"/><br><br>
 
 <button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
 
@@ -1289,6 +1289,10 @@ function multiSpin() {
                 selectedOptions = selectedOptions.length ? selectedOptions : ["No Tasks"];
                 let pValues = computePValues(selectedOptions, runIndex);
                 allPValues.push(...pValues);
+                
+displayPValues(allPValues);
+document.getElementById('pValueTableContainer').style.display = 'block';
+document.getElementById('pValueTableContainer').scrollIntoView({ behavior: 'smooth' });
 
                 if (runIndex < numRuns - 1) {
                      setTimeout(() => singleRun(runIndex + 1), betweenRunDelay); 

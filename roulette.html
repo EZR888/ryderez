@@ -348,7 +348,7 @@
     padding: 15px;
     background-color: #222;
     border-radius: 8px;
-    width: 26%; /* Equal width for all sections */
+    width: 42%; /* Equal width for all sections */
     min-height: 250px; /* Ensures they are the same height */
     box-sizing: border-box;
     align-items: center;
@@ -504,11 +504,17 @@
 <div class="framed-section">
 <button id="multiSpinButton" class="button button-multi" onclick="multiSpin()">Run Simulation</button>
 <br/><br/>
-<label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
-<input id="x" style="width: 10ch" type="number" value="1"/><br/><br/>
-<label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
-<input id="spinDelay" style="width: 10ch" type="number" value="0"/><br/><br/>
+<label style="color:lightgreen; margin-left: 20px; display: inline-block; width: 150px;">NUMBER OF RUNS</label>
+<input id="x" style="width: 6ch; margin-right: 30px;" type="number" value="1"/>
+
+<label style="color:lightgreen; display: inline-block; width: 80px;">SPIN DELAY</label>
+<input id="spinDelay" style="width: 4ch" type="number" value="0"/><br/><br/>
+
+<label style="color:lightgreen; margin-left: 20px; display: inline-block; width: 150px;">BETWEEN RUN DELAY (ms)</label>
+<input id="betweenRunDelay" style="width: 6ch; margin-right: 30px;" type="number" value="1"/><br><br>
+
 <button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
+
 <table id="csvTable">
 <thead></thead>
 <tbody></tbody>
@@ -1246,8 +1252,9 @@ function multiSpin() {
 
     numRuns = parseInt(document.getElementById('x').value) || 1;
     let numSpins = 38; 
-    let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
-
+    const spinDelay = Math.max(0, parseInt(document.getElementById('spinDelay').value) * 1000);
+    const betweenRunDelay = Math.max(0, parseInt(document.getElementById('betweenRunDelay').value) * 1000);
+    
     rowsData = [];
     let allTotals = [];
     let allPValues = [];
@@ -1284,7 +1291,7 @@ function multiSpin() {
                 allPValues.push(...pValues);
 
                 if (runIndex < numRuns - 1) {
-                    setTimeout(() => singleRun(runIndex + 1), 100);
+                     setTimeout(() => singleRun(runIndex + 1), betweenRunDelay); 
                 } else {
                     displayPValues(allPValues);
                     setTimeout(() => {

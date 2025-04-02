@@ -348,7 +348,7 @@
     padding: 15px;
     background-color: #222;
     border-radius: 8px;
-    width: 26%; /* Equal width for all sections */
+    width: 43%; /* Equal width for all sections */
     min-height: 250px; /* Ensures they are the same height */
     box-sizing: border-box;
     align-items: center;
@@ -504,11 +504,22 @@
 <div class="framed-section">
 <button id="multiSpinButton" class="button button-multi" onclick="multiSpin()">Run Simulation</button>
 <br/><br/>
-<label style="color:lightgreen; display: inline-block; width: 110px;">NUMBER OF RUNS</label>
-<input id="x" style="width: 10ch" type="number" value="1"/><br/><br/>
-<label style="color:lightgreen; display: inline-block; width: 110px;">SPIN DELAY (seconds)</label>
-<input id="spinDelay" style="width: 10ch" type="number" value="0"/><br/><br/>
+<label style="color:lightgreen; display: inline-block; width: 150px;">NUMBER OF RUNS</label>
+<input id="x" style="width: 6ch; margin-right: 30px;" type="number" value="1"/>
+
+<label style="color:lightgreen; display: inline-block; width: 120px;">SPIN DELAY</label>
+<input id="spinDelay" style="width: 4ch" type="number" value="0"/><br/><br/>
+
+<label style="color:lightgreen; display: inline-block; width: 150px;">BETWEEN RUN DELAY (ms)</label>
+<input id="betweenRunDelay" style="width: 6ch; margin-right: 30px;" type="number" value="1"/>
+
+<label style="color:lightgreen; display: inline-block; width: 120px;">AUTO-RUN</label>
+<input id="autoRunCheckbox" type="checkbox" checked><br/><br/>
+
+
 <button class="button button-clear" onclick="clearTask()">Clear Tasks</button>
+
+
 <table id="csvTable">
 <thead></thead>
 <tbody></tbody>
@@ -565,6 +576,7 @@
     let lastPValues = [];  // Global variable to store latest P-Values
     let pValuesTableMap = {}; // ✅ Global map to store p-values & significance
     let pointsPerRun = []
+    let setRunCounter = 0;
     
     // Hardcoded values from reference dataset	
 	const AVERAGE_POINTS_PER_RUN = 512.10;
@@ -696,34 +708,16 @@
     }
 
 // Extend displayPValues to include Points column
-function displayPValues(newPValues) {
-    const tableContainer = document.getElementById('pValueTableContainer');
-    let table = document.getElementById("pValueTable");
+function displayPValues(newPValues, appendMode = false) {
+    const table = document.getElementById("pValueTable");
+    const tbody = table.querySelector("tbody");
 
-    if (!table) {
-        tableContainer.innerHTML = `
-          <table id="pValueTable" border='1'>
-            <thead>
-              <tr style="background-color: purple; color: white; font-weight: bold;">
-                <th style="font-size: 18px;">Run</th>
-                <th style="font-size: 18px;">Task</th>
-                <th style="font-size: 18px;"Significance</th>
-                <th style="font-size: 18px;">Difference / Sum</th>
-                <th style="font-size: 18px;">Significant Cumulative P-Values</th>
-                <th style="font-size: 18px;">Total Points</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        `;
-        table = document.getElementById("pValueTable");
+    if (!appendMode) {
+        tbody.innerHTML = "";
     }
 
-    const tbody = table.querySelector("tbody");
-    tbody.innerHTML = ""; // Clear old rows
-
     const groupedRows = {};
-    const tempPValuesTableMap = {};
+    let tempPValuesTableMap = {};
     let allRowsHTML = "";
 
     newPValues.forEach(({ run, category, difference, pValue }) => {
@@ -738,27 +732,16 @@ function displayPValues(newPValues) {
         const significantRows = [];
 
         rows.forEach(({ category, difference, pValue }) => {
-            if (!isNaN(pValue) && pValue > 0) {
-                rawPoints += 1 / pValue;
-            }
-            if (!isNaN(pValue) && pValue < 0.05 && parseFloat(difference) !== 0) {
+            if (!isNaN(pValue) && pValue > 0) rawPoints += 1 / pValue;
+            if (pValue < 0.05 && parseFloat(difference) !== 0) {
                 significantRows.push({ category, difference, pValue });
             }
         });
 
-        // Determine row styling
-        let rowColor = "black";
-        let textColor = "white";
-        if (rawPoints >= 10000) {
-            rowColor = "red";
-            textColor = "black";
-        } else if (rawPoints >= 1000) {
-            rowColor = "orange";
-            textColor = "black";
-        } else if (rawPoints >= 100) {
-            rowColor = "yellow";
-            textColor = "black";
-        }
+        let rowColor = "black", textColor = "white";
+        if (rawPoints >= 10000) { rowColor = "red"; textColor = "black"; }
+        else if (rawPoints >= 1000) { rowColor = "orange"; textColor = "black"; }
+        else if (rawPoints >= 100) { rowColor = "yellow"; textColor = "black"; }
 
         if (significantRows.length) {
             significantRows.forEach(({ category, difference, pValue }, i) => {
@@ -791,21 +774,12 @@ function displayPValues(newPValues) {
         tempPValuesTableMap[run] = significantRows.length ? significantRows.map(r => r.category) : ["None"];
     });
 
-    pValuesTableMap = tempPValuesTableMap;
+    pValuesTableMap = { ...pValuesTableMap, ...tempPValuesTableMap };
 
-    const meanVarianceRow = `
-        <tr style="background-color: purple; color: white; font-weight: bold;">
-            <th style="font-size: 18px;">Run</th>
-            <th style="font-size: 18px;">Task</th>
-            <th style="font-size: 18px;">Significance</th>
-            <th style="font-size: 18px;">Difference / Sum</th>
-            <th style="font-size: 18px;">Significant Cumulative P-Values</th>
-            <th style="font-size: 18px;">Total Points</th>
-        </tr>`;
-
-    tbody.innerHTML = meanVarianceRow + allRowsHTML;
+    tbody.insertAdjacentHTML("beforeend", allRowsHTML);
     applyDynamicHighlighting();
 }
+
 
 
 function applyDynamicHighlighting() {
@@ -1241,64 +1215,96 @@ function toggleOption(button) {
     console.log("Selected Options:", selectedOptions); // Debugging log
 }
 
+let manualRunCounter = 0; // Global counter for manual runs
+
 function multiSpin() {
-    document.getElementById('multiSpinButton').disabled = true; // ⛔ Disable while running
+    const tableBody = document.getElementById("pValueTable").querySelector("tbody");
+    const autoRunSet = document.getElementById('autoRunCheckbox').checked;
 
+    // Prevent multiple triggers
+    document.getElementById('multiSpinButton').disabled = true;
+
+    if (!autoRunSet) {
+        if (setRunCounter === 0) {
+            tableBody.innerHTML = ""; // Clear table only at start of manual set
+            rowsData = [];
+            allPValues = [];
+        }
+    } else {
+        tableBody.innerHTML = ""; // Always clear for auto mode
+        setRunCounter = 0;
+        rowsData = [];
+        allPValues = [];
+    }
+
+    const numSpins = 38;
+    const spinDelay = Math.max(0, parseInt(document.getElementById('spinDelay').value) * 1000);
+    const betweenRunDelay = Math.max(0, parseInt(document.getElementById('betweenRunDelay').value) * 1000);
     numRuns = parseInt(document.getElementById('x').value) || 1;
-    let numSpins = 38; 
-    let spinDelay = parseInt(document.getElementById('spinDelay').value) * 100;
 
-    rowsData = [];
-    let allTotals = [];
-    let allPValues = [];
-
-    function singleRun(runIndex) {
+    function runSingleSpin() {
         clearArrays();
         document.getElementById('TotalsTableContainer').innerHTML = '';
         let spinCount = 0;
 
         function spin() {
             if (spinCount < numSpins) {
-                setTimeout(function () {
-                    let c1 = getRandomInt(38);
-                    Totals[c1] += 1;
+                setTimeout(() => {
+                    const c1 = getRandomInt(38);
+                    Totals[c1]++;
                     document.getElementById('spinNumDisplay').innerHTML = `Spin Num: <span class="zero-highlight">${spinCount + 1}</span>`;
-                    document.getElementById('runNumDisplay').innerHTML = `Run Num:  <span class="zero-highlight">${runIndex + 1}</span>`;
+                    document.getElementById('runNumDisplay').innerHTML = `Run Num: <span class="zero-highlight">${setRunCounter + 1}</span>`;
                     populateTotalsTable(c1, spinCount === numSpins - 1);
                     spinCount++;
-                    setTimeout(spin, spinDelay);
-                }, 0);
+                    spin();
+                }, spinDelay);
             } else {
-                const totalSpins = Totals.reduce((a, b) => a + b, 0);
-                if (totalSpins !== 38) {
-                    console.warn(`⚠️ Corrupted run detected (total = ${totalSpins}). Aborting run ${runIndex + 1}.`);
-                    document.getElementById('multiSpinButton').disabled = false;
+                const total = Totals.reduce((a, b) => a + b, 0);
+                if (total !== 38) {
+                    console.warn(`⚠️ Skipping corrupt run (${total} spins)`);
                     return;
                 }
 
-                allTotals.push([...Totals]);
-                rowsData.push([...Totals]);
+                const thisRunTotals = [...Totals];
+                const thisRunPValues = computePValues(selectedOptions.length ? selectedOptions : ["No Tasks"], setRunCounter);
 
-                selectedOptions = selectedOptions.length ? selectedOptions : ["No Tasks"];
-                let pValues = computePValues(selectedOptions, runIndex);
-                allPValues.push(...pValues);
+                thisRunPValues.forEach(p => {
+                    const scaled = Math.min(1, parseFloat(p.pValue) * numRuns);
+                    p.pValue = scaled.toFixed(6);
+                });
 
-                if (runIndex < numRuns - 1) {
-                    setTimeout(() => singleRun(runIndex + 1), 100);
-                } else {
-                    displayPValues(allPValues);
+                rowsData.push(thisRunTotals);
+                allPValues.push(...thisRunPValues);
+                displayPValues(thisRunPValues, true); // Append mode
+
+                setRunCounter++;
+
+                if (setRunCounter >= numRuns) {
                     setTimeout(() => {
                         exportTotalsToCSV(rowsData, allPValues, rowsData.length, selectedOptions);
-                    }, 500); 
-                    endMultiSpin();
-                    document.getElementById('multiSpinButton').disabled = false; // ✅ Re-enable
+                        endMultiSpin();
+
+                        // ✅ Show alert and reload page
+                        setTimeout(() => {
+                            alert("✅ Set Completed! Please pause for 5 minutes before starting a new set.");
+                            location.reload();
+                        }, 300);
+                    }, 500);
+                } else if (autoRunSet) {
+                    setTimeout(runSingleSpin, betweenRunDelay);
+                } else {
+                    // ✅ Manual mode: re-enable Run button for next manual click
+                    document.getElementById('multiSpinButton').disabled = false;
                 }
             }
         }
+
         spin();
     }
-    singleRun(0);
+
+    runSingleSpin();
 }
+
 
 // Function to calculate variance
 function calculateVariance(counts) {

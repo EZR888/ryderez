@@ -1,150 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Roulette Psi Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: lightgreen;
-            margin: 20px;
-        }
-        h1 {
-            color: violet;
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #555;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #222;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #111;
-        }
-        .highlight {
-            background-color: darkred !important;
-            color: white;
-            font-weight: bold;
-        }
-        input[type="file"] {
-            margin-bottom: 20px;
-        }
-        .file-info {
-            margin-bottom: 10px;
-            color: orange;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Roulette Psi Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: lightgreen;
+      margin: 20px;
+    }
+    h1 {
+      color: violet;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #111;
+    }
+    .highlight {
+      background-color: darkred !important;
+      color: white;
+      font-weight: bold;
+    }
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+    .file-info {
+      margin-bottom: 10px;
+      color: orange;
+    }
+  </style>
 </head>
 <body>
-    <h1>Roulette Psi Dashboard</h1>
-    <input type="file" id="fileInput" multiple accept=".csv">
-    <div id="fileInfo" class="file-info"></div>
-    <table id="summaryTable">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Filename</th>
-                <th>Task</th>
-                <th>Date</th>
-                <th>Runs</th>
-                <th>Max Points</th>
-                <th>Avg Points</th>
-                <th>Anomalies (Z > 2.5 or Pts > 1000)</th>
-                <th>Significant Categories</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <script>
-        function extractTimestamp(filename) {
-            const match = filename.match(/_(\d{6})_(\d{2})_(\d{2})_(\d{2})_/);
-            if (!match) {
-                console.warn(`⚠️ Timestamp not found in filename: ${filename}`);
-                return 0;
+  <h1>Roulette Psi Dashboard</h1>
+  <input type="file" id="fileInput" multiple accept=".csv">
+  <div id="fileInfo" class="file-info"></div>
+  <table id="summaryTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Filename</th>
+        <th>Task</th>
+        <th>Date</th>
+        <th>Runs</th>
+        <th>Max Points</th>
+        <th>Avg Points</th>
+        <th>Anomalies (Z > 2.5 or Pts > 1000)</th>
+        <th>Significant Categories</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    function extractTimestamp(filename) {
+      const match = filename.match(/_(\d{6})_(\d{2})_(\d{2})_(\d{2})_/);
+      if (!match) return 0;
+      const [_, datePart, hour, minute, second] = match;
+      const year = "20" + datePart.slice(4, 6);
+      const month = datePart.slice(0, 2);
+      const day = datePart.slice(2, 4);
+      return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).getTime();
+    }
+
+    document.getElementById('fileInput').addEventListener('change', handleFiles);
+
+    function handleFiles(event) {
+      const files = Array.from(event.target.files);
+      const tbody = document.querySelector('#summaryTable tbody');
+      tbody.innerHTML = '';
+      let fileCounter = 0;
+
+      const fileSummaries = files.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const content = e.target.result;
+            const rows = content.split('\n').filter(r => r.trim() && !r.includes('GENERATED'));
+            const metadataLine = rows.find(line => line.includes("Sim_"));
+
+            let task = "NT", date = "--", numRuns = 0;
+            let maxPoints = 0, totalPoints = 0, anomalyCount = 0;
+            let significantCategories = new Set();
+
+            const filename = file.name;
+            const filenameParts = filename.split('_');
+            if (filenameParts.length >= 4) {
+              task = filenameParts[1];
+              numRuns = parseInt(filenameParts[2]);
+              date = filenameParts[3];
             }
-            const [_, datePart, hour, minute, second] = match;
-            const year = "20" + datePart.slice(4, 6);
-            const month = datePart.slice(0, 2);
-            const day = datePart.slice(2, 4);
-            return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).getTime();
-        }
 
-        document.getElementById('fileInput').addEventListener('change', handleFiles);
-
-        function handleFiles(event) {
-            const files = Array.from(event.target.files);
-            const tbody = document.querySelector('#summaryTable tbody');
-            tbody.innerHTML = '';
-            let fileCounter = 0;
-
-            files.sort((a, b) => extractTimestamp(a.name) - extractTimestamp(b.name));
-
-            files.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const content = e.target.result;
-                    const rows = content.split('\n').filter(r => r.trim() && !r.includes('GENERATED'));
-                    const metadataLine = rows.find(line => line.includes("Sim_"));
-
-                    let task = "NT", date = "--", numRuns = 0;
-                    let maxPoints = 0, totalPoints = 0, anomalyCount = 0;
-                    let sigCategories = new Set();
-
-                    const filename = file.name;
-                    const filenameParts = filename.split('_');
-                    if (filenameParts.length >= 4) {
-                        task = filenameParts[1];
-                        numRuns = parseInt(filenameParts[2]);
-                        date = filenameParts[3];
-                    }
-
-                    rows.forEach((line, i) => {
-                        const cols = line.split(',');
-                        if (cols.length >= 41) {
-                            const points = parseFloat(cols[40]);
-                            if (!isNaN(points)) {
-                                totalPoints += points;
-                                if (points > maxPoints) maxPoints = points;
-                                if (points > 1000) {
-                                    anomalyCount++;
-                                    cols.slice(41).forEach(cat => {
-                                        if (cat.trim()) sigCategories.add(cat.trim());
-                                    });
-                                }
-                            }
-                        }
-                    });
-
-                    const avgPoints = totalPoints / numRuns;
-                    const row = document.createElement('tr');
-                    if (anomalyCount > 0) row.classList.add('highlight');
-
-                    row.innerHTML = `
-                        <td>${++fileCounter}</td>
-                        <td>${filename}</td>
-                        <td>${task}</td>
-                        <td>${date}</td>
-                        <td>${numRuns}</td>
-                        <td>${maxPoints.toFixed(2)}</td>
-                        <td>${avgPoints.toFixed(2)}</td>
-                        <td>${anomalyCount}</td>
-                        <td>${sigCategories.size > 0 ? Array.from(sigCategories).join('; ') : '-'}</td>
-                    `;
-                    tbody.appendChild(row);
-                };
-                reader.readAsText(file);
+            rows.forEach(line => {
+              const cols = line.split(',');
+              if (cols.length >= 41) {
+                const points = parseFloat(cols[40]);
+                if (!isNaN(points)) {
+                  totalPoints += points;
+                  if (points > maxPoints) maxPoints = points;
+                  if (points > 1000) anomalyCount++;
+                  cols.slice(41).forEach(sig => {
+                    if (sig && /[A-Za-z]/.test(sig)) significantCategories.add(sig);
+                  });
+                }
+              }
             });
-        }
-    </script>
+
+            resolve({
+              filename,
+              timestamp: extractTimestamp(filename),
+              task,
+              date,
+              numRuns,
+              maxPoints,
+              avgPoints: totalPoints / numRuns,
+              anomalyCount,
+              significantCategories: Array.from(significantCategories).join('; ') || "-"
+            });
+          };
+          reader.readAsText(file);
+        });
+      });
+
+      Promise.all(fileSummaries).then(summaries => {
+        summaries.sort((a, b) => a.timestamp - b.timestamp);
+        summaries.forEach(summary => {
+          const row = document.createElement('tr');
+          if (summary.anomalyCount > 0) row.classList.add('highlight');
+          row.innerHTML = `
+            <td>${++fileCounter}</td>
+            <td>${summary.filename}</td>
+            <td>${summary.task}</td>
+            <td>${summary.date}</td>
+            <td>${summary.numRuns}</td>
+            <td>${summary.maxPoints.toFixed(2)}</td>
+            <td>${summary.avgPoints.toFixed(2)}</td>
+            <td>${summary.anomalyCount}</td>
+            <td>${summary.significantCategories}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

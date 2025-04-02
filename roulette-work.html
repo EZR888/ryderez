@@ -668,35 +668,82 @@
       return calculateVariance(topCounts) - calculateVariance(bottomCounts);
     }
 
-    function calculatePointsScore(totals, refData) {
-      let points = 0;
+function calculatePointsScore(totals, refData) {
+    let totalPoints = 0;
 
-      function safeLookup(category, value) {
-        const values = Object.keys(refData[category] || {}).map(Number);
-        if (!values.length) return 1.0;
-        const closest = values.reduce((a, b) => Math.abs(b - value) < Math.abs(a - value) ? b : a);
-        return refData[category][closest] || 1.0;
-      }
+    function safeGetPoints(category, value) {
+        const categoryData = refData[category];
+        if (!categoryData) {
+            console.warn(`⚠️ No refData for category: ${category}`);
+            return 0;
+        }
 
-      for (let [key, label] of Object.entries(categoryLabels)) {
-        let value;
-        if (key === "Density") value = calculateDensity(totals);
-        else if (key === "Variance") value = calculateVariance(totals);
-        else if (key === "varianceDifference") value = calculateVarianceDifference(
-          groupIndices.topIndices.map(i => totals[i]),
-          groupIndices.bottomIndices.map(i => totals[i])
+        const differences = Object.keys(categoryData).map(Number);
+        if (differences.length === 0) return 0;
+
+        const closest = differences.reduce((a, b) =>
+            Math.abs(b - value) < Math.abs(a - value) ? b : a
         );
-        else if (key === "maxHits") value = calculateMaxHits(totals);
-        else if (key === "maxCounts") value = calculateMaxCounts(totals);
-        else if (groupIndices[key]) value = sumColumns(totals, groupIndices[key]);
-        else continue;
 
-        const p = safeLookup(label, parseFloat(value.toFixed(6)));
-        if (p > 0) points += -Math.log10(p);
-      }
+        const entry = categoryData[closest];
+        if (entry && typeof entry.points === "number" && isFinite(entry.points)) {
+            return entry.points;
+        }
 
-      return parseFloat(points.toFixed(3));
+        return 0;
     }
+
+    for (let [key, label] of Object.entries(categoryLabels)) {
+        let value;
+
+        if (key === "Density") {
+            value = calculateDensity(totals);
+        } else if (key === "Variance") {
+            value = parseFloat(calculateVariance(totals));
+        } else if (key === "varianceDifference") {
+            const top = groupIndices.topIndices.map(i => totals[i]);
+            const bottom = groupIndices.bottomIndices.map(i => totals[i]);
+            value = calculateVarianceDifference(top, bottom);
+        } else if (key === "maxHits") {
+            value = calculateMaxHits(totals);
+        } else if (key === "maxCounts") {
+            value = calculateMaxCounts(totals);
+        } else if (groupIndices[key]) {
+            value = sumColumns(totals, groupIndices[key]);
+        } else if (["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff", "topDiff", "bottomDiff"].includes(key)) {
+            switch (key) {
+                case "topBottomDiff":
+                    value = sumColumns(totals, groupIndices.topIndices) - sumColumns(totals, groupIndices.bottomIndices);
+                    break;
+                case "leftRightDiff":
+                    value = sumColumns(totals, groupIndices.left) - sumColumns(totals, groupIndices.right);
+                    break;
+                case "cDiff":
+                    value = sumColumns(totals, groupIndices.cTop) - sumColumns(totals, groupIndices.cBottom);
+                    break;
+                case "zzDiff":
+                    value = sumColumns(totals, groupIndices.zzCluster) - sumColumns(totals, groupIndices.zCluster);
+                    break;
+                case "topDiff":
+                    value = sumColumns(totals, groupIndices.topEnds) - sumColumns(totals, groupIndices.topCenter);
+                    break;
+                case "bottomDiff":
+                    value = sumColumns(totals, groupIndices.bottomEnds) - sumColumns(totals, groupIndices.bottomCenter);
+                    break;
+            }
+        } else {
+            continue; // Unknown key
+        }
+
+        value = parseFloat(value);
+        if (!isNaN(value)) {
+            totalPoints += safeGetPoints(label, parseFloat(value.toFixed(6)));
+        }
+    }
+
+    return parseFloat(totalPoints.toFixed(3));
+}
+
 
     function calculatePointsForRun(pValues) {
       let points = 0;
@@ -727,16 +774,19 @@ function displayPValues(newPValues, appendMode = false) {
     });
 
     Object.entries(groupedRows).forEach(([run, rows]) => {
-        let rawPoints = 0;
         const selectedTask = getActiveTask();
         const significantRows = [];
 
         rows.forEach(({ category, difference, pValue }) => {
-            if (!isNaN(pValue) && pValue > 0) rawPoints += 1 / pValue;
             if (pValue < 0.05 && parseFloat(difference) !== 0) {
                 significantRows.push({ category, difference, pValue });
             }
         });
+
+        // ✅ Use refData-based Points score
+        const runIndex = parseInt(run, 10) - 1;
+        const totals = rowsData[runIndex] || [];
+        const rawPoints = calculatePointsScore(totals, refData);
 
         let rowColor = "black", textColor = "white";
         if (rawPoints >= 10000) { rowColor = "red"; textColor = "black"; }
@@ -756,7 +806,7 @@ function displayPValues(newPValues, appendMode = false) {
                     <td>${category}</td>
                     <td>${formattedDiff}</td>
                     <td>${pValue.toFixed(6)}</td>
-                    <td>${i === 0 ? rawPoints.toFixed(2) : ""}</td>
+                    <td>${i === 0 ? rawPoints.toFixed(3) : ""}</td>
                 </tr>`;
             });
         } else {
@@ -766,7 +816,7 @@ function displayPValues(newPValues, appendMode = false) {
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td>${rawPoints.toFixed(2)}</td>
+                <td>${rawPoints.toFixed(3)}</td>
             </tr>`;
         }
 
@@ -779,7 +829,6 @@ function displayPValues(newPValues, appendMode = false) {
     tbody.insertAdjacentHTML("beforeend", allRowsHTML);
     applyDynamicHighlighting();
 }
-
 
 
 function applyDynamicHighlighting() {
@@ -812,7 +861,7 @@ function applyDynamicHighlighting() {
 
     
 // Extend exportTotalsToCSV to include Points column
-async function exportTotalsToCSV(array, rowCount, selectedOptions) {
+async function exportTotalsToCSV(array, pValues, rowCount, selectedOptions) {
     let timestamp = getFormattedTimestamp();
     let csvContent = "THIS FILE IS GENERATED AUTOMATICALLY. DO NOT EDIT.\n";
     csvContent += `LAST GENERATED ON: ${timestamp}\n\n`;
@@ -824,9 +873,8 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
 
     let category = generateTaskIdentifier(selectedOptions);
 
-    // Build header: 0 through 39 → then insert "Points" at index 40
     let headerRow = Array.from({ length: 40 }, (_, i) => i); // 0–39
-    headerRow.push("Points"); // Column 40
+    headerRow.push("Points");
     csvContent += headerRow.join(",") + "\n";
 
     let activeTask = getActiveTask();
@@ -836,20 +884,17 @@ async function exportTotalsToCSV(array, rowCount, selectedOptions) {
         const runNumber = rowIndex + 1;
         const significantCategories = pValuesTableMap[runNumber] || [];
 
-        // Set column 38 = task code
+        // Set column 38 = task code, column 39 = run number
         row[38] = primaryCategory;
-
-        // Insert run number at column 39
         row[39] = runNumber;
-        // Calculate Points (1/p for all nonzero p-values)
-		const points = pointsPerRun[runNumber] || 0;
-		
-		let formattedPoints = points.toFixed(0);
 
-        // Build final row
+        // ✅ Use refData-based point score
+        const points = calculatePointsScore(row, refData);
+        let formattedPoints = points.toFixed(3);
+
         let csvRow = [...row];           // Columns 0–39
-        csvRow.push(formattedPoints);             // Column 40
-        csvRow.push(...significantCategories); // Columns 41+
+        csvRow.push(formattedPoints);    // Column 40
+        csvRow.push(...significantCategories); // Column 41+
 
         csvContent += csvRow.join(",") + "\n";
     });
@@ -1024,9 +1069,6 @@ function getRandomInt(max) {
 
 
 function computePValues(selectedOptions, runIndex) {
-    let pValues = [];
-
-    // ✅ Define the 8 expected categories
     const expectedCategories = [
         "Top - Bottom",
         "Left - Right",
@@ -1042,8 +1084,7 @@ function computePValues(selectedOptions, runIndex) {
         "Lower Right"
     ];
 
-    // ✅ Compute differences for ALL 12 expected categories
-    let categoryDifferences = {
+    const categoryDifferences = {
         "Top - Bottom": sumColumns(Totals, groupIndices.topIndices) - sumColumns(Totals, groupIndices.bottomIndices),
         "Left - Right": sumColumns(Totals, groupIndices.left) - sumColumns(Totals, groupIndices.right),
         "Top Ends - Center": sumColumns(Totals, groupIndices.topEnds) - sumColumns(Totals, groupIndices.topCenter),
@@ -1053,41 +1094,36 @@ function computePValues(selectedOptions, runIndex) {
         "Upper Left": sumColumns(Totals, groupIndices.UpperLeft),
         "Upper Right": sumColumns(Totals, groupIndices.UpperRight),
         "Lower Left": sumColumns(Totals, groupIndices.LowerLeft),
-        "Lower Right": sumColumns(Totals, groupIndices.LowerRight)
+        "Lower Right": sumColumns(Totals, groupIndices.LowerRight),
+        "Variance (Within-Run Spread)": calculateVariance(Totals),
+        "Density (Top 5 Sum)": calculateDensity(Totals)
     };
 
-    // ✅ Compute Variance & Density separately
-    categoryDifferences["Variance (Within-Run Spread)"] = calculateVariance(Totals);
-    categoryDifferences["Density (Top 5 Sum)"] = calculateDensity(Totals);
+    const pValues = [];
 
-    // ✅ Compute P-values for ALL 8 categories
-	expectedCategories.forEach(category => {
-    let difference = categoryDifferences[category];
+    expectedCategories.forEach(category => {
+        let difference = categoryDifferences[category];
 
-    // ✅ Ensure difference is a valid number
-    if (difference === undefined || difference === null || isNaN(difference)) {
-        console.warn(`⚠️ WARNING: Difference for '${category}' is invalid! Defaulting to 0.`);
-        difference = 0;
-    }
+        if (difference === undefined || difference === null || isNaN(difference)) {
+            console.warn(`⚠️ WARNING: Difference for '${category}' is invalid! Defaulting to 0.`);
+            difference = 0;
+        }
 
-    let pValue = lookupPValue(category, difference);
+        let rawPValue = lookupPValue(category, difference);
+        if (isNaN(rawPValue)) {
+            console.warn(`⚠️ WARNING: P-Value for '${category}' is invalid! Defaulting to 1.0.`);
+            rawPValue = 1.0;
+        }
 
-    // ✅ Ensure p-value is valid
-    if (pValue === undefined || isNaN(pValue)) {
-        console.warn(`⚠️ WARNING: P-Value for '${category}' is invalid! Defaulting to 1.0.`);
-        pValue = 1.0;
-    }
-
-    pValues.push({
-        run: runIndex + 1,
-        category: category,
-        difference: parseFloat(difference).toFixed(3), // ✅ Now always a valid number
-        pValue: parseFloat(pValue).toFixed(6),
+        const scaledP = Math.min(1, rawPValue * numRuns); // Adjust for intentional set
+        pValues.push({
+            run: runIndex + 1,
+            category: category,
+            difference: parseFloat(difference).toFixed(3),
+            pValue: scaledP // Keep as number for accurate downstream calculations
+        });
     });
-});
 
-
-    console.log(`✅ Computed P-Values for Run ${runIndex + 1}:`, pValues);
     return pValues;
 }
 
@@ -1125,34 +1161,108 @@ async function loadReferenceData() {
     }
 }
 
-
-// Call function on page load
-window.addEventListener('load', loadReferenceData);
-
-function parseCSVToRefData(csvText, numRuns = 1) {
+function parseCSVToRefData(csvText) {
     const lines = csvText.split("\n");
     const refData = {};
 
     for (let line of lines) {
         const columns = line.split(",");
-        if (columns.length < 4) continue; // Ensure the line has enough columns
+        if (columns.length < 6) continue;
 
         const category = columns[0].trim();
         const diff = parseFloat(columns[1].trim());
-        const pVal = parseFloat(columns[2].trim()); // Regular p-value (unused now)
-        const cumPVal = parseFloat(columns[3].trim()); // Extract cumulative p-value
+        const points = parseFloat(columns[5].trim());
 
-        if (isNaN(diff) || isNaN(cumPVal)) continue; // Skip bad data
+        if (!category || isNaN(diff) || isNaN(points)) continue;
 
         if (!refData[category]) {
             refData[category] = {};
         }
 
-        // Multiply the cumulative p-value by the number of runs
-        refData[category][diff] = Math.min(cumPVal * numRuns, 1); // Ensure it doesn't exceed 1
+        refData[category][diff] = { points };
     }
 
     return refData;
+}
+
+
+// Call function on page load
+window.addEventListener('load', loadReferenceData);
+
+function calculatePointsScore(totals, refData) {
+    let totalPoints = 0;
+
+    function safeGetPoints(category, value) {
+        const categoryData = refData[category];
+        if (!categoryData) {
+            console.warn(`⚠️ No refData for category: ${category}`);
+            return 0;
+        }
+
+        const differences = Object.keys(categoryData).map(Number);
+        if (differences.length === 0) return 0;
+
+        const closest = differences.reduce((a, b) =>
+            Math.abs(b - value) < Math.abs(a - value) ? b : a
+        );
+
+        const entry = categoryData[closest];
+        if (entry && typeof entry.points === "number" && isFinite(entry.points)) {
+            return entry.points;
+        }
+
+        return 0;
+    }
+
+    for (let [key, label] of Object.entries(categoryLabels)) {
+        let value;
+
+        if (key === "Density") {
+            value = calculateDensity(totals);
+        } else if (key === "Variance") {
+            value = parseFloat(calculateVariance(totals));
+        } else if (key === "varianceDifference") {
+            const top = groupIndices.topIndices.map(i => totals[i]);
+            const bottom = groupIndices.bottomIndices.map(i => totals[i]);
+            value = calculateVarianceDifference(top, bottom);
+        } else if (key === "maxHits") {
+            value = calculateMaxHits(totals);
+        } else if (key === "maxCounts") {
+            value = calculateMaxCounts(totals);
+        } else if (groupIndices[key]) {
+            value = sumColumns(totals, groupIndices[key]);
+        } else if (["topBottomDiff", "leftRightDiff", "cDiff", "zzDiff", "topDiff", "bottomDiff"].includes(key)) {
+            switch (key) {
+                case "topBottomDiff":
+                    value = sumColumns(totals, groupIndices.topIndices) - sumColumns(totals, groupIndices.bottomIndices);
+                    break;
+                case "leftRightDiff":
+                    value = sumColumns(totals, groupIndices.left) - sumColumns(totals, groupIndices.right);
+                    break;
+                case "cDiff":
+                    value = sumColumns(totals, groupIndices.cTop) - sumColumns(totals, groupIndices.cBottom);
+                    break;
+                case "zzDiff":
+                    value = sumColumns(totals, groupIndices.zzCluster) - sumColumns(totals, groupIndices.zCluster);
+                    break;
+                case "topDiff":
+                    value = sumColumns(totals, groupIndices.topEnds) - sumColumns(totals, groupIndices.topCenter);
+                    break;
+                case "bottomDiff":
+                    value = sumColumns(totals, groupIndices.bottomEnds) - sumColumns(totals, groupIndices.bottomCenter);
+                    break;
+            }
+        } else {
+            continue; // Unknown key
+        }
+
+        value = parseFloat(value);
+        if (!isNaN(value)) {
+            totalPoints += safeGetPoints(label, parseFloat(value.toFixed(6)));
+        }
+    }
+
+    return parseFloat(totalPoints.toFixed(3));
 }
 
 
@@ -1221,17 +1331,16 @@ function multiSpin() {
     const tableBody = document.getElementById("pValueTable").querySelector("tbody");
     const autoRunSet = document.getElementById('autoRunCheckbox').checked;
 
-    // Prevent multiple triggers
     document.getElementById('multiSpinButton').disabled = true;
 
     if (!autoRunSet) {
         if (setRunCounter === 0) {
-            tableBody.innerHTML = ""; // Clear table only at start of manual set
+            tableBody.innerHTML = "";
             rowsData = [];
             allPValues = [];
         }
     } else {
-        tableBody.innerHTML = ""; // Always clear for auto mode
+        tableBody.innerHTML = "";
         setRunCounter = 0;
         rowsData = [];
         allPValues = [];
@@ -1268,14 +1377,13 @@ function multiSpin() {
                 const thisRunTotals = [...Totals];
                 const thisRunPValues = computePValues(selectedOptions.length ? selectedOptions : ["No Tasks"], setRunCounter);
 
-                thisRunPValues.forEach(p => {
-                    const scaled = Math.min(1, parseFloat(p.pValue) * numRuns);
-                    p.pValue = scaled.toFixed(6);
-                });
+                // ✅ Compute proper Points score using all 33 categories
+                const pointsScore = calculatePointsScore(thisRunTotals, refData);
+                pointsPerRun[setRunCounter + 1] = pointsScore;
 
                 rowsData.push(thisRunTotals);
                 allPValues.push(...thisRunPValues);
-                displayPValues(thisRunPValues, true); // Append mode
+                displayPValues(thisRunPValues, true);
 
                 setRunCounter++;
 
@@ -1283,8 +1391,6 @@ function multiSpin() {
                     setTimeout(() => {
                         exportTotalsToCSV(rowsData, allPValues, rowsData.length, selectedOptions);
                         endMultiSpin();
-
-                        // ✅ Show alert and reload page
                         setTimeout(() => {
                             alert("✅ Set Completed! Please pause for 5 minutes before starting a new set.");
                             location.reload();
@@ -1293,7 +1399,6 @@ function multiSpin() {
                 } else if (autoRunSet) {
                     setTimeout(runSingleSpin, betweenRunDelay);
                 } else {
-                    // ✅ Manual mode: re-enable Run button for next manual click
                     document.getElementById('multiSpinButton').disabled = false;
                 }
             }

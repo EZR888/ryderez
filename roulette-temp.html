@@ -554,10 +554,38 @@
 <div class="table-container">
 <p class="caption">TOTAL TIMES PICKED</p>
 <div id="TotalsTableContainer"></div>
+
+
 </div>
 </div>
 <br/><br/>
-<div id="pValueTableContainer"><table border="1" id="pValueTable"><tr style="background-color: purple; color: white; font-weight: bold; font-size: 18px;"><th style="font-size: 18px;">Run</th><th style="font-size: 18px;">Task</th><th style="font-size: 18px;">Significance</th><th style="font-size: 18px;">Difference / Sum</th><th style="font-size: 18px;">Significant Cumulative P-Values</th><th style="font-size: 18px;">Points</th></tr></table></div>
+<div id="pValueTableContainer">
+
+
+<div id="legend" style="margin-top: 20px; font-size: 16px; text-align: center;">
+  <strong style="color: white;">🎯 Points Threshold Legend:</strong><br><br>
+  <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+    <div style="background-color: green; color: white; padding: 8px 12px; border-radius: 6px;">
+      ✅ Green: 0–537 (Expected)
+    </div>
+    <div style="background-color: yellow; color: black; padding: 8px 12px; border-radius: 6px;">
+      🟡 Yellow: 538–999
+    </div>
+    <div style="background-color: orange; color: black; padding: 8px 12px; border-radius: 6px;">
+      🟠 Orange: 1,000–1,702
+    </div>
+    <div style="background-color: red; color: black; padding: 8px 12px; border-radius: 6px;">
+      🔴 Red: 1,703–3,770
+    </div>
+    <div style="background-color: darkred; color: white; padding: 8px 12px; border-radius: 6px;">
+      🟣 Dark Red: 3,771+
+    </div>
+  </div>
+</div>
+<br>
+
+
+<table border="1" id="pValueTable"><tr style="background-color: purple; color: white; font-weight: bold; font-size: 18px;"><th style="font-size: 18px;">Run</th><th style="font-size: 18px;">Task</th><th style="font-size: 18px;">Significance</th><th style="font-size: 18px;">Difference / Sum</th><th style="font-size: 18px;">Significant Cumulative P-Values</th><th style="font-size: 18px;">Points</th></tr></table></div>
 <script>
 
   
@@ -753,18 +781,25 @@ function displayPValues(newPValues) {
         });
 
         // Determine row styling
-        let rowColor = "black";
-        let textColor = "white";
-        if (rawPoints >= 10000) {
-            rowColor = "red";
-            textColor = "black";
-        } else if (rawPoints >= 1000) {
-            rowColor = "orange";
-            textColor = "black";
-        } else if (rawPoints >= 100) {
-            rowColor = "yellow";
-            textColor = "black";
-        }
+let rowColor = "black";
+let textColor = "white";
+
+if (rawPoints >= 3771) {
+    rowColor = "darkred";
+    textColor = "white";
+} else if (rawPoints >= 1703) {
+    rowColor = "red";
+    textColor = "black";
+} else if (rawPoints >= 1000) {
+    rowColor = "orange";
+    textColor = "black";
+} else if (rawPoints >= 538) {
+    rowColor = "yellow";
+    textColor = "black";
+} else {
+    rowColor = "green";
+    textColor = "white";
+}
 
         if (significantRows.length) {
             significantRows.forEach(({ category, difference, pValue }, i) => {

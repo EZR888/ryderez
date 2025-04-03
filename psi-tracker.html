@@ -495,6 +495,14 @@
       margin-bottom: 10px;
       color: orange;
     }
+    
+#summaryTable thead tr.table-header-bold th {
+  background-color: lightyellow !important;
+  color: slategray !important;
+  font-size: 20px !important; /* 18pt = 24px */
+  text-align: center !important;
+}
+
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -530,24 +538,24 @@
     <div style="background-color: darkred; color: white; padding: 6px 12px; border-radius: 5px;">🟣 Dark Red: 3,771+</div>
   </div>
 </div>
-
   <div id="fileInfo" class="file-info"></div>
+  
   <table id="summaryTable">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Filename</th>
-        <th>Task</th>
-        <th>Date</th>
-        <th>Runs</th>
-        <th>Max Points</th>
-        <th>Avg Points</th>
-        <th>Anomalies (Z > 2.5 or Pts > 1000)</th>
-        <th>Significant Categories</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <thead>
+    <tr class="table-header-bold">
+      <th>#</th>
+      <th>Filename</th>
+      <th>Task</th>
+      <th>Date</th>
+      <th>Runs</th>
+      <th>Max Points</th>
+      <th>Avg Points</th>
+      <th>Anomalies (Pts > 1000)</th>
+      <th>Significant Categories</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
   <script>
   
           document.addEventListener('DOMContentLoaded', function() {

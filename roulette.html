@@ -165,10 +165,10 @@
       font-size: 56px;
     } 
      
-    #viewDataButton {
-      background-color: lightgray; 
-      color: black !important;
-    }  
+        .button-lightyellow {
+      		background-color: lightyellow !important;
+      		color: black !important;
+    	}
 
     .button-purple:hover {
       background-color: darkviolet;
@@ -317,6 +317,14 @@
 	  background-color: LightSteelBlue;
 	  color: black !important;
 	}
+	.button-Thistle {
+	  background-color: Thistle !important;
+      color: black !important;
+    }
+    .button-DarkRed {
+      background-color: DarkRed;
+      color: white;
+    }
     
     .zero-highlight {
     color: yellow; /* Change this color as needed */
@@ -464,7 +472,8 @@
 <div class="framed-section2">
 <button class="button button-purple" id="howToUseButton">How To Use</button>
 <button class="button button-sim" id="simButton">Simulator</button>
-<button class="button" id="viewDataButton">View Data</button>
+<button class="button button-Thistle" id="viewDataButton">View Data</button>
+<button class="button button-lightyellow" id="psiDash">PSI Dash</button>
 <button class="button button-DarkSeaGreen" id="viewPValueButton">P-Values</button>
 <button class="button button-salmon" id="viewFreqDistButton">Freq Dist</button>
 <button class="button button-DarkKhaki" id="viewStatsButton">Totals</button>
@@ -1054,7 +1063,11 @@ async function validateChecksum(file) {
 }
 
 
-
+       	// Event listener for the Simulator button
+    	document.getElementById('psiDash').addEventListener('click', () => {
+        window.open('psi-tracker.html', '_blank');
+      }); 
+      
        	// Event listener for the Simulator button
     	document.getElementById('simButton').addEventListener('click', () => {
         window.open('roulette.html', '_blank');

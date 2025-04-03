@@ -75,10 +75,6 @@
       background-color: purple;
       color: white;
     }
-    #viewDataButton {
-      background-color: lightgray;
-      color: black !important;
-    }
     .header-text {
       color: lightgreen;
       font-size: 48px;
@@ -126,6 +122,10 @@
       color: black;
       cursor: pointer;
     }
+    .button-Thistle {
+	  background-color: Thistle !important;
+      color: black !important;
+    }
     .button-DarkKhaki {
       background-color: DarkKhaki;
       color: black !important;
@@ -138,6 +138,10 @@
       background-color: salmon;
       color: black !important;
     }
+            .button-lightyellow {
+      		background-color: lightyellow !important;
+      		color: black !important;
+    	}
     .button-single {
       background-color: violet;
       color: black;
@@ -335,7 +339,8 @@
       <div class="framed-section2">
         <button class="button button-purple" id="howToUseButton">How To Use</button>
         <button class="button button-sim" id="simButton">Simulator</button>
-        <button id="viewDataButton" class="button">View Data</button>
+		<button class="button button-Thistle" id="viewDataButton">View Data</button>
+		<button class="button button-lightyellow" id="psiDash">PSI Dash</button>
         <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
         <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
         <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
@@ -379,7 +384,7 @@
 
 <script>
     
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Check if elements exist before adding event listeners
     let simButton = document.getElementById('simButton');
     if (simButton) {
@@ -394,6 +399,16 @@
             window.open('view-data.html', '_blank');
         });
     }
+    
+    
+       	// Event listener for the Simulator button
+    let psiDashButton = document.getElementById('psiDash');
+    if (psiDashButton) {
+        psiDashButton.addEventListener('click', () => {
+        window.open('psi-tracker.html', '_blank');
+      });
+    } 
+      
 
     let viewPValueButton = document.getElementById('viewPValueButton');
     if (viewPValueButton) {

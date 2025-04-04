@@ -71,18 +71,18 @@
     }
 
     .button {
-      font-size: 1rem;
+      font-size: 2rem;
       padding: 8px 12px;
       margin: 4px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      background-color: #333;
-      color: lightgreen;
+      background-color: DarkRed;
+      color: white;
     }
 
     .caption {
-      color: yellow;
+      color: orange;
       margin: 10px 0 5px;
       text-align: center;
       font-weight: bold;
@@ -122,11 +122,11 @@
 
   <div class="wheel-wrapper">
     <div id="output"></div>
+    <br>
     <div class="button-container">
-      <button id="startButton" class="button">Spin</button>
-      <button id="saveDataButton" class="button">Save Data</button>
-      <button id="resetButton" class="button">Reset Count</button>
+      <button id="startButton" class="button">SPIN</button>
     </div>
+    <br><br<br<br<br>
     <div class="caption"><span id="spinCounter">SPIN 0</span></div>
   </div>
 
@@ -161,9 +161,7 @@ function setup() {
   slotAngle = 360 / numSlots;
 
   document.getElementById('startButton').onclick = () => { startWheelSpin(); updateSpinCounter(); };
-  document.getElementById('resetButton').onclick = () => { resetSpinCounter(); clearAndResetTotals(); };
-  document.getElementById('saveDataButton').onclick = () => { exportTotalsToCSV(Totals); };
-
+ 
   loadAndPlaySound();
   populateTotalsTable();
 }

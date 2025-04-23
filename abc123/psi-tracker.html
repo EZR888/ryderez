@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Roulette Psi Dashboard</title>
+  <style>
+  
+  body {
+  margin: 0;
+  background-color: black;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+    
+    .lgreen-text {
+      color: lightgreen !important;
+      text-align: center;
+      font-size: 56px;
+    } 
+    
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 50px;
+  box-sizing: border-box;
+  margin-top: 10px; /* ⬅ Ensures proper vertical spacing */
+}
+
+.framed-section3 {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Matches the other pages */
+  flex-wrap: wrap;
+  padding: 12px 18px; /* ✅ Matches other pages */
+  border: 2px solid lightgreen;
+  border-radius: 10px;
+  background-color: black;
+  margin: 0px 0 9px 0; /* ✅ Moves it up slightly to match the others */
+  width: 98%; /* ✅ Adjust width to match the other pages */
+  max-width: 900px; /* ✅ Ensures same max width */
+}
+
+    .framed-section2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px;
+      border: 2px solid lightgreen;
+      border-radius: 10px;
+      background-color: black;
+      margin: 0px 0 9px 0; /* ✅ Moves it up slightly to match the others */
+
+    }
+
+.button {
+  font-size: 94%; /* ✅ Standardizes font size */
+  padding: 6px 12px; /* ✅ Matches the button size across all pages */
+  margin: 5px; /* ✅ Keeps spacing consistent */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+	
+    .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    }
+
+    .button-single {
+        background-color: salmon;
+        color: black;
+    }
+
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+
+    .table-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      overflow-x: auto; /* Enable horizontal scrolling if necessary */
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed; /* Ensures consistent column sizing */
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 12px; /* Adjust padding for better fit */
+      text-align: center;
+      box-sizing: border-box; /* Include padding and border in element's width and height */
+      word-wrap: break-word; /* Ensure text wraps properly */
+      min-height: 50px; /* Ensure rows have a minimum height */
+      min-width: 40px; /* Ensure columns have a minimum width */
+    }
+    th {
+      color: white;
+      font-size: 14px; /* Adjust font size */
+    }
+    .green-header {
+      background-color: green;
+      color: white;
+      font-size: 18px;
+    }
+    .black-header {
+      background-color: black;
+      color: white;
+      font-size: 18px;
+    }
+    .red-header {
+      background-color: red;
+      color: white;
+      font-size: 18px;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .caption {
+      text-align: center;
+      font-weight: bold;
+      color: lightgreen;
+      display: block;
+      margin-bottom: 20px;
+      font-size: 20px; /* Adjust font size */
+    }
+    td.numeric {
+      color: black;
+      font-weight: bold;
+      background-color: lightgray;
+    }
+    @keyframes blink {
+      0% { background-color: white; }
+      50% { background-color: lightgray; }
+      100% { background-color: white; }
+    }
+    @keyframes yellowBlink {
+      0% { background-color: yellow; }
+      50% { background-color: lightgray; }
+      100% { background-color: yellow; }
+    }
+    .blinking {
+      animation: blink 1s linear infinite;
+    }
+    .yellow-blinking {
+      animation: yellowBlink 1s linear infinite;
+    }
+    .black {
+      background-color: lightgray;
+    }
+
+    .lred-text {
+      color: violet;
+      text-align: center;
+      font-size: 56px;
+    } 
+     
+	.button-Thistle {
+	  background-color: Thistle !important;
+      color: black !important;
+    }
+
+    .button-purple:hover {
+      background-color: darkviolet;
+    }
+    
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+
+    .button-run {
+      background-color: red;
+    }
+
+    .button-run:hover {
+      background-color: darkred;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 1500px;
+      text-align: left;
+      color: black;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }	
+    /* Media Queries for responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      .caption {
+        font-size: 18px; /* Adjust font size */
+      }
+      table {
+        font-size: 12px; /* Adjust font size */
+      }
+      th, td {
+        padding: 8px; /* Adjust padding */
+        min-width: 40px; /* Minimum width for smaller screens */
+      }
+    }
+    @media (min-width: 769px) {
+      .container {
+        padding: 20px;
+      }
+      .caption {
+        font-size: 24px; /* Increase font size */
+      }
+    }
+    
+        .button-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+    }
+    
+    .button-container2 {
+    display: flex;
+    justify-content: center; /* Centers buttons horizontally */
+    gap: 10px; /* Adds spacing between buttons */
+}
+
+    .framed-section {
+        border: 2px solid lightgreen;
+        padding: 15px;
+        background-color: #222;
+        border-radius: 8px;
+        width: 45%; /* Adjust as needed to fit your layout */
+        box-sizing: border-box;
+    }
+        
+    /* Button Styles */
+    .button-run {
+      background-color: red;
+      color: white;
+    }
+    .button-run:hover {
+      background-color: darkred;
+    }
+    .button-multi {
+      background-color: red;
+      color: white;
+    }
+    .button-clear {
+      background-color: green;
+      color: white;
+    }
+    .button-multi:hover {
+      background-color: darkgreen;
+    }
+
+    .button-lightyellow {
+      background-color: lightyellow !important;
+    }
+    
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+	.button-LightSteelBlue {
+	  background-color: LightSteelBlue;
+	  color: black !important;
+	}
+    
+    .zero-highlight {
+    color: yellow; /* Change this color as needed */
+    font-weight: bold; /* Optional: Make it stand out more */
+	}
+	
+	/* Style for toggle buttons */
+	.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 10px;
+    margin: 5px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+	}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: lightgreen !important;
+}
+
+/* Ensure all sections have the same width and height */
+.framed-section {
+    border: 2px solid lightgreen;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 8px;
+    width: 42%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+}
+
+.framed-section-tasks {
+    border: 2px solid lightgreen;
+    background-color: #222;
+    border-radius: 8px;
+    width: 37%; /* Equal width for all sections */
+    min-height: 250px; /* Ensures they are the same height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center contents vertically */
+    box-sizing: border-box;
+}
+
+/* Ensure the button container evenly distributes sections */
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1100px;
+    justify-items: center;
+}
+
+/* Make toggle button container a grid */
+.toggle-button-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 5px;
+    width: 100%;
+    justify-items: center;
+}
+
+/* Style for toggle buttons */
+.toggle-button {
+    background-color: Thistle;
+    color: black;
+    font-size: 16px;
+    padding: 8px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+}
+
+/* Active state when button is selected */
+.toggle-button.active {
+    background-color: purple !important;
+    color: white;
+}
+.compact-text {
+    color: yellow;
+    line-height: 1.0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Container for threshold buttons */
+.framed-section-thresholds {
+    padding: 10px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+}
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    }
+/* Base styling for threshold buttons */
+.threshold-button {
+    width: 100%;
+    padding: 20px 0;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    font-size: 19px;
+    cursor: default;
+    text-align: center;
+    min-width: 250px;
+    font-weight: bold;
+}
+
+/* Specific colors for each threshold */
+.threshold-button.yellow {
+    background-color: yellow;
+    min-width: 250px;
+}
+
+.threshold-button.orange {
+    background-color: orange;
+    min-width: 250px;
+}
+
+.threshold-button.red {
+    background-color: red;
+    min-width: 250px;
+}
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #111;
+    }
+    .highlight {
+      background-color: darkred !important;
+      color: white;
+      font-weight: bold;
+    }
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+    .file-info {
+      margin-bottom: 10px;
+      color: orange;
+    }
+    
+#summaryTable thead tr.table-header-bold th {
+  background-color: lightyellow !important;
+  color: slategray !important;
+  font-size: 20px !important; /* 18pt = 24px */
+  text-align: center !important;
+}
+
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+<div>
+<div class="framed-section2">
+<button class="button button-purple" id="howToUseButton">How To Use</button>
+<button class="button button-sim" id="simButton">Simulator</button>
+<button class="button button-Thistle" id="viewDataButton">View Data</button>
+<button class="button button-lightyellow" id="psiDash">PSI Dash</button>
+<button class="button button-DarkSeaGreen" id="viewPValueButton">P-Values</button>
+<button class="button button-salmon" id="viewFreqDistButton">Freq Dist</button>
+<button class="button button-DarkKhaki" id="viewStatsButton">Totals</button>
+<button class="button button-LightSteelBlue" id="densityButton">Density</button>
+<button class="button button-single" id="singleSpinButton">Wheel</button>
+</div>
+</div>
+
+<h1 class="lgreen-text">Roulette Psi Dashboard</h1>
+<p class="compact-text">Please click the How To Use button above for instructions!</p>
+<div>
+  <input type="file" id="fileInput" multiple accept=".csv"> <div style="margin-top: 20px; text-align: center; font-size: 16px;">
+  <strong style="color: white;">🎯 Points Legend:</strong><br><br>
+  <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+    <div style="background-color: green; color: white; padding: 6px 12px; border-radius: 5px;">✅ Green: 0–537</div>
+    <div style="background-color: yellow; color: black; padding: 6px 12px; border-radius: 5px;">🟡 Yellow: 538–999</div>
+    <div style="background-color: orange; color: black; padding: 6px 12px; border-radius: 5px;">🟠 Orange: 1,000–1,702</div>
+    <div style="background-color: red; color: white; padding: 6px 12px; border-radius: 5px;">🔴 Red: 1,703–3,770</div>
+    <div style="background-color: darkred; color: white; padding: 6px 12px; border-radius: 5px;">🟣 Dark Red: 3,771+</div>
+  </div>
+</div>
+  <div id="fileInfo" class="file-info"></div>
+  
+  <table id="summaryTable">
+  <thead>
+    <tr class="table-header-bold">
+      <th>#</th>
+      <th>Filename</th>
+      <th>Task</th>
+      <th>Date</th>
+      <th>Runs</th>
+      <th>Max Points</th>
+      <th>Avg Points</th>
+      <th>Anomalies (Pts > 1000)</th>
+      <th>Significant Categories</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+  <script>
+  
+          document.addEventListener('DOMContentLoaded', function() {
+    // Check if elements exist before adding event listeners
+    let simButton = document.getElementById('simButton');
+    if (simButton) {
+        simButton.addEventListener('click', () => {
+            window.open('roulette.html', '_blank');
+        });
+    }
+
+    let viewDataButton = document.getElementById('viewDataButton');
+    if (viewDataButton) {
+        viewDataButton.addEventListener('click', () => {
+            window.open('view-data.html', '_blank');
+        });
+    }
+    
+       	// Event listener for the Simulator button
+    let psiDashButton = document.getElementById('psiDash');
+    if (psiDashButton) {
+        psiDashButton.addEventListener('click', () => {
+        window.open('psi-tracker.html', '_blank');
+      });
+    } 
+
+    let viewPValueButton = document.getElementById('viewPValueButton');
+    if (viewPValueButton) {
+        viewPValueButton.addEventListener('click', () => {
+            window.open('pvalues.html', '_blank');
+        });
+    }
+
+    let viewFreqDistButton = document.getElementById('viewFreqDistButton');
+    if (viewFreqDistButton) {
+        viewFreqDistButton.addEventListener('click', () => {
+            window.open('xfreq.html', '_blank');
+        });
+    }
+
+    let viewStatsButton = document.getElementById('viewStatsButton');
+    if (viewStatsButton) {
+        viewStatsButton.addEventListener('click', () => {
+            window.open('totals.html', '_blank');
+        });
+    }
+
+    let singleSpinButton = document.getElementById('singleSpinButton');
+    if (singleSpinButton) {
+        singleSpinButton.addEventListener('click', () => {
+            window.open('new-wheel.html', '_blank');
+        });
+    }
+    
+    let densityButton = document.getElementById('densityButton');
+    if (densityButton) {
+        densityButton.addEventListener('click', () => {
+            window.open('sort.html', '_blank');
+        });
+    }
+    
+});
+  
+  function getPointsColor(points) {
+  if (points >= 3771) return 'darkred';     // Top 1%
+  if (points >= 1703) return 'red';         // 95–99th
+  if (points >= 1000) return 'orange';      // 94–95th
+  if (points >= 538)  return 'yellow';      // 90–94th
+  return 'green';                           // < 90th
+}
+
+    function extractTimestamp(filename) {
+      const match = filename.match(/_(\d{6})_(\d{2})_(\d{2})_(\d{2})_/);
+      if (!match) return 0;
+      const [_, datePart, hour, minute, second] = match;
+      const year = "20" + datePart.slice(4, 6);
+      const month = datePart.slice(0, 2);
+      const day = datePart.slice(2, 4);
+      return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`).getTime();
+    }
+
+    document.getElementById('fileInput').addEventListener('change', handleFiles);
+
+    function handleFiles(event) {
+      const files = Array.from(event.target.files);
+      const tbody = document.querySelector('#summaryTable tbody');
+      tbody.innerHTML = '';
+      let fileCounter = 0;
+
+      const fileSummaries = files.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const content = e.target.result;
+            const rows = content.split('\n').filter(r => r.trim() && !r.includes('GENERATED'));
+            const metadataLine = rows.find(line => line.includes("Sim_"));
+
+            let task = "NT", date = "--", numRuns = 0;
+            let maxPoints = 0, totalPoints = 0, anomalyCount = 0;
+            let significantCategories = new Set();
+
+            const filename = file.name;
+            const filenameParts = filename.split('_');
+            if (filenameParts.length >= 4) {
+              task = filenameParts[1];
+              numRuns = parseInt(filenameParts[2]);
+              date = filenameParts[3];
+            }
+
+            rows.forEach(line => {
+              const cols = line.split(',');
+              if (cols.length >= 41) {
+                const points = parseFloat(cols[40]);
+                if (!isNaN(points)) {
+                  totalPoints += points;
+                  if (points > maxPoints) maxPoints = points;
+                  if (points > 1000) anomalyCount++;
+                  cols.slice(41).forEach(sig => {
+                    if (sig && /[A-Za-z]/.test(sig)) significantCategories.add(sig);
+                  });
+                }
+              }
+            });
+
+            resolve({
+              filename,
+              timestamp: extractTimestamp(filename),
+              task,
+              date,
+              numRuns,
+              maxPoints,
+              avgPoints: totalPoints / numRuns,
+              anomalyCount,
+              significantCategories: Array.from(significantCategories).join('; ') || "-"
+            });
+          };
+          reader.readAsText(file);
+        });
+      });
+
+      Promise.all(fileSummaries).then(summaries => {
+        summaries.sort((a, b) => a.timestamp - b.timestamp);
+        summaries.forEach(summary => {
+          const row = document.createElement('tr');
+row.style.backgroundColor = getPointsColor(summary.maxPoints);
+row.style.color = ['yellow', 'orange'].includes(getPointsColor(summary.maxPoints)) ? 'black' : 'white';
+//row.style.fontWeight = 'bold';
+          row.innerHTML = `
+            <td>${++fileCounter}</td>
+            <td>${summary.filename}</td>
+            <td>${summary.task}</td>
+            <td>${summary.date}</td>
+            <td>${summary.numRuns}</td>
+            <td>${summary.maxPoints.toFixed(2)}</td>
+            <td>${summary.avgPoints.toFixed(2)}</td>
+            <td>${summary.anomalyCount}</td>
+            <td>${summary.significantCategories}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

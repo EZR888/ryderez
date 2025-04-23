@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette P-Values</title>
+    <style>
+    
+    .framed-buttons {
+        border: 2px solid lightblue; /* Frame color */
+        padding: 15px;
+        background-color: #f9f9f9; /* Light background for contrast */
+        border-radius: 10px; /* Rounded corners */
+        display: inline-flex; /* Inline layout for buttons */
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        justify-content: space-around; /* Space between buttons */
+    }
+    
+        
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+     
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }   
+    body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+    }
+    .container h1 {
+            margin: 0;
+    }
+
+    .button {
+        font-size: 120%; /* 20% larger than 60% */
+        padding: 6px 12px; /* Increased padding by 20% */
+        margin: 5px; /* Keeps consistent spacing */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .button:hover {
+        opacity: 0.8; /* Slight transparency on hover */
+    }
+
+    .button-single {
+        background-color: salmon;
+        color: black;
+    }
+
+    .button-purple {
+        background-color: purple;
+        color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray; 
+      color: black !important;
+    }  
+
+    .button-purple:hover {
+      background-color: darkviolet;
+    }
+    
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+
+        .header-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .header-text {
+            color: lightgreen;
+            font-size: 48px;
+        }
+
+        .results-container {
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            background-color: #333;
+            border-radius: 10px;
+        }
+
+        .results-container h3 {
+            color: lightgreen;
+            margin-bottom: 10px;
+        }
+
+        .results-container p {
+            color: white;
+            margin: 5px 0;
+        }
+
+        #explanation {
+            border: 1px solid lightgreen;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #222;
+            border-radius: 5px;
+            color: white;
+        }
+
+        #topContributors {
+            color: white;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            color: black;
+            background-color: lightgreen;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+
+        input[type="file"]:hover {
+            background-color: white;
+            color: black;
+            cursor: pointer;
+        }
+            .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+        background-color: violet;
+        color: black;
+    }
+    .button-sim {
+        background-color: orange;
+        color: black;
+    }
+    .framed-section2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 2px solid lightgreen;
+            border-radius: 10px;
+            background-color: black;
+            margin: 10px 0;
+    }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div>
+            <div class="framed-section2">
+                <button class="button button-purple" id="howToUseButton">How To Use</button>
+                <button class="button button-sim" id="simButton">Simulator</button>
+                <button id="viewDataButton" class="button">View Data</button>
+                <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+                <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+                <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+                <button class="button button-single" id="singleSpinButton">Wheel</button>
+            </div>
+        </div>
+        <br>
+        
+               <!-- Instructions Modal -->
+        <div id="instructionsModal" class="modal">
+            <div class="modal-content">
+                <button class="close-button" id="closeModalButton">&times;</button>
+                <h3>How To Read This Screen</h3>
+                <p>TBD<br><br>
+                   TBD<br><br>
+                   TBD<br><br>
+                </p>
+            </div>
+        </div>
+</div>        
+
+    <div class="header-container">
+        <h1 class="header-text">Data Analysis</h1>
+    </div>
+    <div class="results-container">
+        <input type="file" id="fileInput" accept=".csv" multiple>
+        <button id="saveButton" style="display:none;" class="button-sim">Save Results</button>
+
+        <h3>Results:</h3>    
+        <p><b><span style="color: salmon;">Total Spins: </span></b><span id="totalSpins"></span></p>
+        <p><b><span style="color: salmon;">Chi-Square Value: </span></b><span id="chiSquare"></span></p>
+        <p><b><span style="color: salmon;">P-Value: </span></b><span id="pValue"></span></p>
+        <p><b><span style="color: salmon;">Conclusion: </span></b><span id="conclusion"></span></b></p>
+    
+        <h3>Explanation</h3>
+        <div id="explanation">
+            <!-- Explanation text will be dynamically added here -->
+        </div>
+
+        <h3>Top Contributors to Chi-Square</h3>
+        <div id="topContributors"></div>
+    </div>
+    
+<script>
+    
+       	// Event listener for the Simulator button
+    	document.getElementById('simButton').addEventListener('click', () => {
+        window.open('roulette.html', '_blank');
+      });
+      
+        // New event listener for the View Data button
+      	document.getElementById('viewDataButton').addEventListener('click', () => {
+        window.open('view-data.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewPValueButton').addEventListener('click', () => {
+        window.open('pvalues.html', '_blank');
+      });
+      
+        // New event listener for the View P-Value button
+      	document.getElementById('viewFreqDistButton').addEventListener('click', () => {
+        window.open('xfreq.html', '_blank');
+      });
+       // New event listener for the View Stats button
+      	document.getElementById('viewStatsButton').addEventListener('click', () => {
+        window.open('view-stats.html', '_blank');
+      });
+
+       	// Event listener for the Simulator button
+    	document.getElementById('singleSpinButton').addEventListener('click', () => {
+        window.open('new-wheel.html', '_blank');
+      });
+      
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const files = event.target.files;
+    let allCSVData = ""; 
+    let filesRead = 0;
+
+    if (files.length === 0) {
+        alert("No files selected.");
+        return;
+    }
+    
+    processedFileNames = [...files].map(file => file.name); // Store filenames for later use
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file || !file.name.endsWith('.csv')) {
+            alert(`File "${file.name}" is not a valid .csv file and will be skipped.`);
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+            continue;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            allCSVData += e.target.result + "\n"; 
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+        };
+        reader.onerror = function() {
+            alert(`Error reading file: ${file.name}`);
+            filesRead++;
+            if (filesRead === files.length) {
+                processConcatenatedCSVData(allCSVData);
+            }
+        };
+        reader.readAsText(file);
+    }
+});
+
+function processConcatenatedCSVData(csvData) {
+    const rows = csvData.trim().split("\n");
+    const dataRows = [];
+
+    rows.forEach(row => {
+        const values = row.split(",").map(value => value.trim());
+
+        // Detect and skip all header rows that match 0-37 or 1-38 pattern
+        const isHeader = values.length >= 38 && values.every((val, idx) => Number(val) === idx || Number(val) === idx + 1);
+        if (isHeader) {
+            console.log("Header row detected and skipped:", row);
+            return; 
+        }
+
+        // Convert values to numbers, replacing null/empty with 0
+        const numericValues = values.map(val => {
+            if (val === "" || isNaN(val)) {
+                return 0; 
+            }
+            return Number(val);
+        });
+
+        // Handle different column cases (38 or 39 columns)
+        if (numericValues.length === 39) {
+            numericValues.shift();  // Remove the first column
+        }
+
+        if (numericValues.length === 38) {
+            dataRows.push(numericValues);
+        } else {
+            console.warn("Invalid row length detected and skipped:", row);
+        }
+    });
+
+    console.log("Data Rows Before Processing:", dataRows);
+
+    processData(dataRows);
+    
+    document.getElementById('saveButton').style.display = 'block';  // Show save button after processing
+
+}
+
+function processData(rows) {
+    let observed = Array(38).fill(0);
+    let totalSpins = 0;
+
+    rows.forEach(row => {
+        row.forEach((value, colIndex) => {
+            if (!isNaN(value)) {
+                observed[colIndex] += value;  
+                totalSpins += value;          
+            }
+        });
+    });
+
+    finalizeResults(observed, totalSpins, 38);
+}
+
+// Save results function
+document.getElementById('saveButton').addEventListener('click', function() {
+    let outputText = "Processed File:\n" + processedFileNames.join(", ") + "\n\n";
+    
+    // Capture displayed content
+    const explanation = document.getElementById("explanation").innerText;
+    const topContributors = document.getElementById("topContributors").innerText;
+    const totalSpins = document.getElementById("totalSpins").textContent;
+    const chiSquare = document.getElementById("chiSquare").textContent;
+    const pValue = document.getElementById("pValue").textContent;
+    const conclusion = document.getElementById("conclusion").textContent;
+
+    outputText += "Chi-Square Analysis Results:\n";
+    outputText += `Total Spins: ${totalSpins}\n`;
+    outputText += `Chi-Square Value: ${chiSquare}\n`;
+    outputText += `P-Value: ${pValue}\n`;
+    outputText += `Conclusion: ${conclusion}\n\n`;
+
+    outputText += "Significant Contributors:\n" + topContributors + "\n\n";
+    outputText += "Explanation:\n" + explanation + "\n";
+
+    // Convert to Blob and trigger download
+    const blob = new Blob([outputText], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "pvalueOutput.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+function processCSVData(csvText, fileName) {
+            const rows = csvText.trim().split("\n");
+
+            if (rows.length <= 1) {
+                alert("The CSV file does not contain enough data.");
+                return;
+            }
+
+// const dataRows = rows.slice(1).map(row => row.split(",").map(Number));
+
+            // If filename starts with "SaveCSV", skip the header row (process from row 0)
+            let startRowIndex = fileName.startsWith("SaveCSV") ? 0 : 1;
+            const dataRows = rows.slice(startRowIndex).map(row => row.split(",").map(Number));
+
+            // If the file starts with SaveCSV, treat it as 39 columns and ignore the first column
+            let totalColumns = rows[0].split(",").length;
+            if (fileName.startsWith("SaveCSV")) {
+                totalColumns = 39;  // Set columns to 39 for this case
+                dataRows.forEach((row, index) => {
+                    dataRows[index] = row.slice(1);  // Ignore the first column (index 0)
+                });
+            }
+
+            if (totalColumns !== 38 && totalColumns !== 39) {
+                alert(`Expected 38 or 39 columns, but found ${totalColumns}. Please check your file.`);
+                return;
+            }
+
+            // Initialize observed array to track observed frequency
+            const observed = Array(38).fill(0);  // We only track 38 columns now
+            let totalSpins = 0;
+
+            // Process each row of data
+            dataRows.forEach(row => {
+                row.forEach((value, colIndex) => {
+                    if (!isNaN(value)) {
+                        observed[colIndex] += value;  // Add observed value for the column
+                        totalSpins += value;          // Add to the total spins
+                    }
+                });
+            });
+
+            finalizeResults(observed, totalSpins, 38);  // Only process 38 columns for final analysis
+        }
+
+function finalizeResults(observed, totalSpins, totalColumns) {
+    const expectedFreq = totalSpins / totalColumns;
+    const expected = Array(totalColumns).fill(expectedFreq);
+
+    let chiSquare = 0;
+    const contributions = [];
+    observed.forEach((obs, i) => {
+        const exp = expected[i];
+        const contribution = Math.pow(obs - exp, 2) / exp;
+        chiSquare += contribution;
+
+        contributions.push({ number: i + 1, contribution, observed: obs, expected: exp });
+    });
+
+    contributions.sort((a, b) => b.contribution - a.contribution);
+
+    const threshold = 3.84;
+    const significantContributors = contributions.filter(c => c.contribution > threshold);
+
+    const degreesOfFreedom = totalColumns - 1;
+    const pValue = 1 - jStat.chisquare.cdf(chiSquare, degreesOfFreedom);
+
+    const significanceLevel = 0.05;
+    const conclusion = pValue < significanceLevel
+        ? "There is evidence of intentional influence."
+        : "There is no evidence of intentional influence.";
+
+    // Display results
+    document.getElementById("totalSpins").textContent = totalSpins;
+    document.getElementById("chiSquare").textContent = chiSquare.toFixed(3);
+    document.getElementById("pValue").textContent = pValue.toFixed(3);
+    document.getElementById("conclusion").textContent = conclusion;
+
+    // Change color of "Conclusion" text if intentional influence is detected
+    if (pValue < significanceLevel) {
+        document.getElementById("conclusion").style.color = "yellow";
+    } else {
+        document.getElementById("conclusion").style.color = "white";
+    }
+
+    // Display top contributors and change color if intentional influence is detected
+    const topContributorsText = significantContributors.map(c =>
+        `Number ${c.number - 1}: Observed = ${c.observed}, Expected = ${c.expected.toFixed(2)}, Contribution = ${c.contribution.toFixed(2)}`
+    ).join("<br>");
+    const topContributorsDiv = document.getElementById("topContributors");
+    topContributorsDiv.innerHTML = topContributorsText;
+
+    if (pValue < significanceLevel) {
+        topContributorsDiv.style.color = "yellow";
+    } else {
+        topContributorsDiv.style.color = "lightgreen";
+    }
+}
+
+
+</script>
+    
+        <script>
+    // Modal functionality
+    const modal = document.getElementById('instructionsModal');
+    const howToUseButton = document.getElementById('howToUseButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+
+    howToUseButton.onclick = function() {
+      modal.style.display = 'flex';
+    }
+
+    closeModalButton.onclick = function() {
+      modal.style.display = 'none';
+    }
+
+    // Close the modal if clicked outside of the modal content
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+  
+</body>
+</html>

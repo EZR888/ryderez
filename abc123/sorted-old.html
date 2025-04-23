@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorted Table Visualization</title>
+<style>
+    
+    .framed-buttons {
+      border: 2px solid lightblue;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
+      text-align: center;
+      color: black;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .container h1 {
+      margin: 0;
+    }
+    .button {
+      font-size: 120%;
+      padding: 6px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .button:hover {
+      opacity: 0.8;
+    }
+    .button-single {
+      background-color: salmon;
+      color: black;
+    }
+    .button-purple {
+      background-color: purple;
+      color: white;
+    }
+    #viewDataButton {
+      background-color: lightgray;
+      color: black !important;
+    }
+    .header-text {
+      color: lightgreen;
+      font-size: 48px;
+      display: block; /* Ensures it's on its own line */
+      text-align: center;
+      margin-bottom: 10px; /* Adds space below */
+    }
+    .results-container {
+      border: 2px solid white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 800px;
+      background-color: #333;
+      border-radius: 10px;
+    }
+    .results-container h3 {
+      color: lightgreen;
+      margin-bottom: 10px;
+    }
+    .results-container p {
+      color: white;
+      margin: 5px 0;
+    }
+    #explanation {
+      border: 1px solid lightgreen;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #222;
+      border-radius: 5px;
+      color: white;
+    }
+    #topContributors {
+      color: white;
+    }
+    input[type="file"] {
+      color: black;
+      background-color: lightgreen;
+      padding: 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+    input[type="file"]:hover {
+      background-color: lightgray;
+      color: black;
+      cursor: pointer;
+    }
+    .button-DarkKhaki {
+      background-color: DarkKhaki;
+      color: black !important;
+    }
+    .button-DarkSeaGreen {
+      background-color: DarkSeaGreen;
+      color: black !important;
+    }
+    .button-salmon {
+      background-color: salmon;
+      color: black !important;
+    }
+    .button-single {
+      background-color: violet;
+      color: black;
+    }
+    .button-sim {
+      background-color: orange;
+      color: black;
+    }
+    .framed-section2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px;
+      border: 2px solid lightgreen;
+      border-radius: 10px;
+      background-color: black;
+      margin: 10px 0;
+    }
+    
+    
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 16px;
+        }
+
+        .button-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px;
+        }
+        #savePdfButton {
+            background-color: purple;
+            color: white;
+        }
+        #reverseSortButton {
+            background-color: blue;
+            color: white;
+        }
+        #accessSim {
+            background-color: slategray;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+            table-layout: fixed; /* Enforce fixed width for columns */
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        th {
+            color: white;
+            background-color: green;
+        }
+        td {
+            background-color: lightgray;
+        }
+        /* Adjust width for Original # and Sorted # columns */
+        td.original-number, th.original-number {
+            width: 40px;
+            background-color: slategray;
+            color: white;
+        }
+        td.sorted-number, th.sorted-number {
+            width: 40px;
+            background-color: red;
+            color: white;
+        }
+        /* Set a uniform width for other columns */
+        td.other-number, th.other-number {
+            width: 18px;
+        }
+
+.header-wrapper {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px; /* Ensures spacing after the header */
+}
+
+.header-text {
+    color: lightgreen;
+    font-size: 48px;
+    margin: 0; /* Prevents default margin issues */
+    padding-bottom: 10px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; /* Centers elements */
+    align-items: center; /* Ensures vertical alignment */
+    gap: 40px; /* Adjust the spacing between elements */
+    flex-wrap: wrap; /* Prevents overflow */
+}
+
+.header-container input[type="file"] {
+    flex: 1; /* Allows it to shrink properly */
+    width: 300px; /* Prevents excessive width */
+    max-width: 300px; /* Limits width */
+    height: 26px; /* Matches button height */
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.header-container button {
+    height: 40px; /* Matches input height */
+    font-size: 16px;
+    padding: 5px 15px;
+}
+
+
+ .results-container {
+    border: 2px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 100%; /* Ensure full width */
+    background-color: #333;
+    border-radius: 10px;
+    display: flex; /* Use flexbox to ensure it wraps content */
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: auto; /* Prevent overflow clipping */
+}
+
+.results-container h3 {
+    color: lightgreen;
+    margin-bottom: 10px;
+}
+
+.results-container table {
+    width: 100%; /* Ensures table stretches inside container */
+    border-collapse: collapse;
+    min-width: max-content; /* Prevents table from shrinking inside container */
+}
+#frequencyTable th {
+    border: 1px solid lightgray; 
+    padding: 8px;
+    text-align: center;
+    font-weight: bold; /* Keep headers bold */
+    background-color: black;
+    color: salmon;
+}
+
+#frequencyTable td {
+    border: 1px solid lightgray; 
+    padding: 6px;
+    text-align: center;
+    font-weight: normal; /* ✅ Ensures data cells are NOT bold */
+    background-color: black;
+    color: lightgray;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px; /* Adds space below the heading */
+}
+
+/* Add this CSS to the <style> section */
+.highlight-row {
+    color: yellow !important;
+    font-weight: bold !important;
+}
+</style>
+
+    <!-- Include jsPDF and jsPDF AutoTable from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    // Check if elements exist before adding event listeners
+    let simButton = document.getElementById('simButton');
+    if (simButton) {
+        simButton.addEventListener('click', () => {
+            window.open('roulette.html', '_blank');
+        });
+    }
+
+    let viewDataButton = document.getElementById('viewDataButton');
+    if (viewDataButton) {
+        viewDataButton.addEventListener('click', () => {
+            window.open('view-data.html', '_blank');
+        });
+    }
+
+    let viewPValueButton = document.getElementById('viewPValueButton');
+    if (viewPValueButton) {
+        viewPValueButton.addEventListener('click', () => {
+            window.open('pvalues.html', '_blank');
+        });
+    }
+
+    let viewFreqDistButton = document.getElementById('viewFreqDistButton');
+    if (viewFreqDistButton) {
+        viewFreqDistButton.addEventListener('click', () => {
+            window.open('xfreq.html', '_blank');
+        });
+    }
+
+    let viewStatsButton = document.getElementById('viewStatsButton');
+    if (viewStatsButton) {
+        viewStatsButton.addEventListener('click', () => {
+            window.open('view-stats.html', '_blank');
+        });
+    }
+
+    let singleSpinButton = document.getElementById('singleSpinButton');
+    if (singleSpinButton) {
+        singleSpinButton.addEventListener('click', () => {
+            window.open('new-wheel.html', '_blank');
+        });
+    }
+});
+      
+    document.addEventListener('DOMContentLoaded', function() {
+
+        let rowData = [];
+
+        function loadCSV(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const csvData = e.target.result;
+                parseCSVAndGenerateTable(csvData);
+            };
+
+            reader.readAsText(file);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', loadCSV);
+
+        function parseCSVAndGenerateTable(csvData) {
+            const rows = csvData.trim().split("\n").map((row, index) => {
+                return { originalIndex: index + 1, data: row.split(",").map(value => Number(value) || value) };
+            });
+
+            let headers = rows.shift().data;
+            let hasRowHeaders = false;
+            if (headers[0] === "#") {
+                hasRowHeaders = true;
+            }
+
+            if (hasRowHeaders) {
+                rowData = rows.map(row => ({ originalIndex: row.originalIndex, data: row.data.slice(1) }));
+            } else {
+                rowData = rows;
+            }
+
+            // Sort each row’s data in descending order
+            rowData.forEach(row => row.data.sort((a, b) => b - a));
+
+            // Sort rows lexicographically (compare row data element by element)
+            rowData.sort((rowA, rowB) => {
+                for (let i = 0; i < rowA.data.length; i++) {
+                    if (rowA.data[i] !== rowB.data[i]) {
+                        return rowB.data[i] - rowA.data[i];
+                    }
+                }
+                return 0;
+            });
+
+            generateTable();
+            generateFrequencyTable();  // ✅ Generate frequency table after sorting
+        }
+
+function generateTable() {
+    let tableContainer = document.getElementById('tableContainer');
+    if (!tableContainer) {
+        console.error("Error: #tableContainer not found.");
+        return;
+    }
+
+    let tableHtml = '<table id="csvTable"><thead><tr>';
+    tableHtml += `<th class="original-number">Orig #</th><th class="sorted-number">Sort #</th>`;
+
+    for (let i = 0; i < rowData[0].data.length; i++) {
+        tableHtml += `<th class="other-number">${i + 1}</th>`;
+    }
+
+    tableHtml += '</tr></thead><tbody>';
+
+    rowData.forEach((row, rowIndex) => {
+        tableHtml += '<tr>';
+        tableHtml += `<td class="original-number"><strong>${row.originalIndex}</strong></td>`;
+        tableHtml += `<td class="sorted-number"><strong>${rowIndex + 1}</strong></td>`;
+
+        row.data.forEach(cell => {
+            tableHtml += `<td class="other-number">${cell === "0" ? '' : cell}</td>`;
+        });
+
+        tableHtml += '</tr>';
+    });
+
+    tableHtml += '</tbody></table>';
+    tableContainer.innerHTML = tableHtml;
+}
+
+function calculateRowStatistics(rowData) {
+    return rowData.map(row => {
+        let values = row.data.slice(2, 7); // Get only columns 3-7
+        let validValues = values.filter(num => !isNaN(num)); // Remove NaNs
+        let n = validValues.length;
+
+        if (n === 0) return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
+
+        let mean = validValues.reduce((a, b) => a + b, 0) / n;
+        let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+        let stdDev = Math.sqrt(variance);
+        let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
+        let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
+
+        return {
+            mean: mean.toFixed(4),
+            variance: variance.toFixed(4),
+            stdDev: stdDev.toFixed(4),
+            skewness: M3.toFixed(4),
+            kurtosis: (M4 - 3).toFixed(4)
+        };
+    });
+}
+
+
+function generateFrequencyTable() {
+    let frequencyContainer = document.getElementById('frequencyContainer');
+    if (!frequencyContainer) {
+        console.error("Error: #frequencyContainer not found.");
+        return;
+    }
+
+    if (!rowData.length) {
+        console.warn("No data available for frequency table.");
+        return;
+    }
+
+    let sumCounts = {};
+    let allSums = [];
+
+    rowData.forEach((row, index) => {
+        let selectedValues = row.data.slice(0, 5);
+        let sum = selectedValues.reduce((acc, num) => acc + (isNaN(num) ? 0 : num), 0);
+
+        sumCounts[sum] = (sumCounts[sum] || 0) + 1;
+        allSums.push(sum);
+    });
+
+    let sortedSums = Object.keys(sumCounts)
+        .map(Number)
+        .sort((a, b) => b - a);
+
+    let totalRows = rowData.length;
+    let cumulativeCounts = 0;
+    let cumulativeProbabilities = {};
+
+    sortedSums.forEach(sum => {
+        cumulativeCounts += sumCounts[sum];
+        cumulativeProbabilities[sum] = (cumulativeCounts / totalRows).toFixed(6);
+    });
+
+    let freqTableHtml = `
+    <table id="frequencyTable" border='1' style="border-collapse: collapse; width: 60%; margin-top: 10px;">
+    <thead>
+        <tr>    
+            <th style="padding: 8px; color: salmon; background-color: black;">Sum</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">Frequency</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">P-Value</th>
+            <th style="padding: 8px; color: salmon; background-color: black;">Cumulative</th>
+        </tr>
+    </thead>
+    <tbody>`;
+
+    sortedSums.forEach(sum => {
+        let pValue = (sumCounts[sum] / totalRows).toFixed(6);
+        let cumulativePValue = cumulativeProbabilities[sum];
+
+        // ✅ If cumulative p-value < 0.05, apply yellow text and bold **to all columns in the row**
+        let cellStyle = (parseFloat(cumulativePValue) < 0.05) 
+            ? "color: yellow; font-weight: bold;" 
+            : "color: lightgray;";
+
+        freqTableHtml += `
+            <tr>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${sum}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${sumCounts[sum]}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${pValue}</td>
+                <td style="padding: 6px; text-align: center; ${cellStyle}">${cumulativePValue}</td>
+            </tr>`;
+    });
+
+    freqTableHtml += `</tbody></table>`;
+
+    frequencyContainer.innerHTML = freqTableHtml;
+}
+
+function calculateDescriptiveStatistics(values) {
+    let validValues = values.filter(num => !isNaN(num)); // Remove NaN values
+    let n = validValues.length;
+
+    if (n === 0) {
+        return { mean: "N/A", variance: "N/A", stdDev: "N/A", skewness: "N/A", kurtosis: "N/A" };
+    }
+
+    let mean = validValues.reduce((a, b) => a + b, 0) / n;
+    let variance = validValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+    let stdDev = Math.sqrt(variance);
+    let M3 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
+    let M4 = validValues.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 4), 0) / n;
+
+    return {
+        mean: mean.toFixed(4),
+        variance: variance.toFixed(4),
+        stdDev: stdDev.toFixed(4),
+        skewness: M3.toFixed(4),
+        kurtosis: (M4 - 3).toFixed(4) // Adjusting for excess kurtosis
+    };
+}
+
+
+        document.getElementById('reverseSortButton').addEventListener('click', function() {
+            rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
+            generateTable();
+            generateFrequencyTable();
+        });
+
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
+
+            const table = document.querySelector('#csvTable');
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+            const data = Array.from(table.querySelectorAll('tbody tr')).map(tr =>
+                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+            );
+
+            const timestamp = getFormattedTimestamp();
+            const rowCount = data.length;
+            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
+
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 15,
+                theme: 'grid',
+                margin: { top: 15, left: 6, right: 6, bottom: 10 },
+                styles: { fontSize: 8, cellPadding: 2, fontStyle: 'bold', halign: 'center' },
+                headStyles: { fontSize: 7, textColor: [255, 255, 255], fillColor: [0, 128, 0], halign: 'center' }
+            });
+
+            doc.save(filename);
+        });
+
+        function getFormattedTimestamp() {
+            const now = new Date();
+            return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+    });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            let rowData = [];
+
+            function loadCSV(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const csvData = e.target.result;
+                    parseCSVAndGenerateTable(csvData);
+                };
+
+                reader.readAsText(file);
+            }
+
+            document.getElementById('fileInput').addEventListener('change', loadCSV);
+
+            function parseCSVAndGenerateTable(csvData) {
+                const rows = csvData.trim().split("\n").map((row, index) => {
+                    return { originalIndex: index + 1, data: row.split(",").map(value => Number(value) || value) }; // Convert to numbers
+                });
+
+                let headers = rows.shift().data;
+                let hasRowHeaders = false;
+                if (headers[0] === "#") {
+                    hasRowHeaders = true;
+                }
+
+                if (hasRowHeaders) {
+                    rowData = rows.map(row => ({ originalIndex: row.originalIndex, data: row.data.slice(1) }));
+                } else {
+                    rowData = rows;
+                }
+
+                // Sort each row’s data in descending order
+                rowData.forEach(row => row.data.sort((a, b) => b - a));
+
+                // Sort rows lexicographically (compare row data element by element)
+                rowData.sort((rowA, rowB) => {
+                    for (let i = 0; i < rowA.data.length; i++) {
+                        if (rowA.data[i] !== rowB.data[i]) {
+                            return rowB.data[i] - rowA.data[i];
+                        }
+                    }
+                    return 0;
+                });
+
+                generateTable();
+            }
+
+            function generateTable() {
+                let tableHtml = '<table id="csvTable"><thead><tr>';
+                tableHtml += `<th class="original-number">Orig #</th><th class="sorted-number">Sort #</th>`;
+
+                for (let i = 0; i < rowData[0].data.length; i++) {
+                    tableHtml += `<th class="other-number">${i + 1}</th>`;
+                }
+
+                tableHtml += '</tr></thead><tbody>';
+
+                rowData.forEach((row, rowIndex) => {
+                    tableHtml += '<tr>';
+                    // Add the original line number
+                    tableHtml += `<td class="original-number"><strong>${row.originalIndex}</strong></td>`;
+                    // Add the sorted line number with red background
+                    tableHtml += `<td class="sorted-number"><strong>${rowIndex + 1}</strong></td>`;
+
+                    row.data.forEach(cell => {
+                        tableHtml += `<td class="other-number">${cell === "0" ? '' : cell}</td>`;
+                    });
+
+                    tableHtml += '</tr>';
+                });
+
+                tableHtml += '</tbody></table>';
+                document.getElementById('tableContainer').innerHTML = tableHtml;
+            }
+
+            document.getElementById('reverseSortButton').addEventListener('click', function() {
+                rowData = rowData.map(row => ({ originalIndex: row.originalIndex, data: row.data.reverse() }));
+                generateTable();
+            });
+
+            // Save to PDF logic
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
+
+            const table = document.querySelector('#csvTable');
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+            const data = Array.from(table.querySelectorAll('tbody tr')).map((tr) =>
+                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+            );
+
+            const timestamp = getFormattedTimestamp();
+            const rowCount = data.length;
+            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
+
+            const baseFontSize = 8;
+            const headerFontSize = baseFontSize * 0.9;
+            const cellFontSize = baseFontSize * 1.1;
+
+            const columnCount = headers.length;
+            const pageWidth = doc.internal.pageSize.width - 20;
+            const otherColumnWidth = 7; // Width for other columns (enough for 2 digits + padding)
+            const fixedColumnWidth = 11; // 60% of the current width for fixed columns
+
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 15,
+                theme: 'grid',
+                margin: { top: 15, left: 6, right: 6, bottom: 10 },
+                styles: {
+                    fontSize: cellFontSize,
+                    cellPadding: 2,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                },
+                headStyles: {
+                    fontSize: headerFontSize,
+                    textColor: [255, 255, 255],
+                    fillColor: [0, 128, 0],
+                    halign: 'center',
+                },
+                columnStyles: {
+                    0: { cellWidth: fixedColumnWidth, fillColor: [112, 128, 144], textColor: [255, 255, 255] }, // Fixed width for Original # (slategray)
+                    1: { cellWidth: fixedColumnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Fixed width for Sorted #
+                    ...Array.from({ length: columnCount - 2 }, (_, i) => i + 2).reduce((acc, i) => {
+                        acc[i] = { cellWidth: otherColumnWidth }; // Width for other columns
+                        return acc;
+                    }, {})
+                },
+                didDrawPage: function (data) {
+                    doc.setFontSize(12);
+                    const titleX = 14;
+                    const titleY = 10;
+                    doc.text(filename.replace('.pdf', ''), titleX, titleY);
+                }
+            });
+
+            doc.save(filename);
+        });
+
+            function getFormattedTimestamp() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+            }
+        });
+    </script>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="framed-section2">
+        <button class="button button-purple" id="howToUseButton">How To Use</button>
+        <button class="button button-sim" id="simButton">Simulator</button>
+        <button id="viewDataButton" class="button">View Data</button>
+        <button id="viewPValueButton" class="button button-DarkSeaGreen">P-Values</button>
+        <button id="viewFreqDistButton" class="button button-salmon">Freq Dist</button>
+        <button id="viewStatsButton" class="button button-DarkKhaki">Totals</button>
+        <button class="button button-single" id="singleSpinButton">Wheel</button>
+      </div>
+    </div>
+    <br />
+    <div id="instructionsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalButton">&times;</button>
+        <h3>How To Read This Screen</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+  
+<div class="header-wrapper">
+    <h1 class="header-text">Column Sorting</h1>
+</div>
+<div class="header-container">
+    <input type="file" id="fileInput" accept=".csv">
+    <button id="reverseSortButton">Reverse Sort</button>
+    <button id="savePdfButton">Save to PDF</button>
+</div>  
+        <div class="results-container">
+    		<h3>Frequency Distribution (Sum of first 5 columns)</h3>
+    		<div id="frequencyContainer"></div>  <!-- Ensures frequency table exists -->
+    		</div>
+		</div>
+		<div class="results-container">
+    		<h3>Sorted Table</h3>
+    		<div id="tableContainer"></div>  <!-- This ensures the script finds it -->
+    		</div>
+    	</div>  
+    
+    
+</body>
+</html>

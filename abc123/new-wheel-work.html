@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roulette Wheel</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: black;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .table-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 100px;
+      overflow-y: auto;
+      height: 90vh;
+      margin: 0 80px; /* Add horizontal space from wheel */
+    }
+
+    .table-side table {
+      font-size: 18px;
+      border-collapse: collapse;
+    }
+
+    #output {
+      width: auto;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wheel-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .button {
+        font-size: 120%; /* 20% larger than 60% */
+        padding: 6px 12px; /* Increased padding by 20% */
+        margin: 5px; /* Keeps consistent spacing */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .caption {
+      color: yellow;
+      margin: 10px 0 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    th, td {
+      border: 1px solid white;
+      padding: 4px;
+      text-align: center;
+      color: white;
+    }
+
+    .red-header { background-color: red; }
+    .black-header { background-color: black; }
+    .green-header { background-color: green; }
+
+    .red { background-color: #331111; }
+    .black { background-color: #222; }
+    .green { background-color: #004400; }
+    
+    .blink-yellow {
+  animation: yellowBlink 1s step-start infinite;
+}
+
+@keyframes yellowBlink {
+  0% { background-color: yellow; }
+  50% { background-color: black; }
+  100% { background-color: yellow; }
+}
+
+
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="table-side left-table"></div>
+
+  <div class="wheel-wrapper">
+    <div id="output"></div>
+    <div class="button-container">
+      <button id="startButton" class="button">Spin</button>
+      <button id="saveDataButton" class="button">Save Data</button>
+      <button id="resetButton" class="button">Reset Count</button>
+    </div>
+    <div class="caption"><span id="spinCounter">SPIN 0</span></div>
+  </div>
+
+  <div class="table-side right-table"></div>
+</div>
+
+<script>
+let wheelRadius;
+let wheelCenterX;
+let wheelCenterY;
+let ballRadius = 14;
+let ballX, ballY, ballSpeed, ballAngle;
+let ballFriction = 0.9945;
+let isSpinning = false;
+let minSpeed = 0.85;
+let finalIndex, winningNumber;
+let numSlots = 38;
+let slotNumbers = [6, 21, 33, 16, 4, 23, 35, 14, 2, 0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, '00', 27, 10, 25, 29, 12, 8, 19, 31, 18];
+let slotAngle;
+let wheelSound, soundLoaded = false;
+let Totals = new Array(38).fill(0);
+let spinCount = 0;
+let lastUpdatedIndex = null;
+
+function setup() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
+  wheelRadius = canvasSize * 0.5;
+  let canvas = createCanvas(canvasSize, canvasSize);
+  canvas.parent('output');
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+  slotAngle = 360 / numSlots;
+
+  document.getElementById('startButton').onclick = () => { startWheelSpin(); updateSpinCounter(); };
+  document.getElementById('resetButton').onclick = () => { resetSpinCounter(); clearAndResetTotals(); };
+  document.getElementById('saveDataButton').onclick = () => { exportTotalsToCSV(Totals); };
+
+  loadAndPlaySound();
+  populateTotalsTable();
+}
+
+function windowResized() {
+  let canvasSize = Math.min(windowWidth, windowHeight) * 0.72;
+  wheelRadius = canvasSize * 0.5;
+  resizeCanvas(canvasSize, canvasSize);
+  wheelCenterX = width / 2;
+  wheelCenterY = height / 2;
+}
+
+function draw() {
+  background(0);
+  fill(0);
+  ellipse(wheelCenterX, wheelCenterY, wheelRadius * 2.05);
+  drawWheel();
+
+  if (isSpinning) {
+    ballAngle += ballSpeed;
+    ballSpeed *= ballFriction;
+
+    if (ballSpeed < minSpeed) {
+      isSpinning = false;
+      finalIndex = calculateSlotIndex();
+      winningNumber = slotNumbers[finalIndex];
+      moveBallToWinningSlot();
+      if (wheelSound) wheelSound.stop();
+      if (winningNumber !== undefined) {
+        let index = slotNumbers.indexOf(winningNumber);
+        Totals[index]++;
+        populateTotalsTable();
+      }
+    }
+
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(ballAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(ballAngle));
+  }
+
+  fill(255);
+  ellipse(ballX, ballY, ballRadius * 2);
+}
+
+function drawWheel() {
+  const anglePerSlot = TWO_PI / numSlots;
+
+  for (let i = 0; i < numSlots; i++) {
+    let angleStart = i * anglePerSlot;
+    let angleEnd = (i + 1) * anglePerSlot;
+
+    // Set fill color for wedge
+    if (slotNumbers[i] === 0 || slotNumbers[i] === '00') fill(0, 128, 0);
+    else fill(i % 2 === 0 ? 0 : [255, 0, 0]);
+
+    // Set stroke for thin brown outline
+    stroke(166, 103, 28); // Medium brown (saddle brown)
+    strokeWeight(2);     // Thin stroke
+
+    // Draw wedge
+    beginShape();
+    vertex(wheelCenterX, wheelCenterY);
+    for (let a = angleStart; a <= angleEnd; a += 0.01) {
+      let x = wheelCenterX + wheelRadius * cos(a);
+      let y = wheelCenterY + wheelRadius * sin(a);
+      vertex(x, y);
+    }
+    endShape(CLOSE);
+
+    // Draw number text
+    let midAngle = (angleStart + angleEnd) / 2;
+    let textX = wheelCenterX + (wheelRadius - 30) * cos(midAngle);
+    let textY = wheelCenterY + (wheelRadius - 30) * sin(midAngle);
+    noStroke(); // Turn off stroke for text
+    fill('white'); // or 'orange' if you prefer
+    textAlign(CENTER, CENTER);
+    textSize(22);
+    text(slotNumbers[i], textX, textY);
+  }
+}
+
+
+function startWheelSpin() {
+  if (!isSpinning) {
+    if (soundLoaded) wheelSound.play();
+    isSpinning = true;
+    ballAngle = random(0, 360);
+    ballSpeed = random(5, 10);
+  }
+}
+
+function calculateSlotIndex() {
+  let normalizedAngle = (ballAngle % 360 + 360) % 360;
+  let anglePerSlot = 360 / numSlots;
+  return Math.floor(normalizedAngle / anglePerSlot) % numSlots;
+}
+
+function moveBallToWinningSlot() {
+  if (!isSpinning) {
+    let centerAngle = (finalIndex + 0.5) * slotAngle;
+    let correctedAngle = (360 - centerAngle + 360) % 360;
+    ballX = wheelCenterX + (wheelRadius - ballRadius) * cos(radians(correctedAngle));
+    ballY = wheelCenterY + (wheelRadius - ballRadius) * sin(radians(correctedAngle));
+  }
+}
+
+function updateSpinCounter() {
+  spinCount++;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function resetSpinCounter() {
+  spinCount = 0;
+  document.getElementById('spinCounter').innerText = 'SPIN ' + spinCount;
+}
+
+function clearAndResetTotals() {
+  Totals.fill(0);
+  populateTotalsTable();
+}
+
+function loadAndPlaySound() {
+  wheelSound = new Howl({
+    src: ['wheel-ball.wav'],
+    loop: true,
+    onload: () => soundLoaded = true
+  });
+}
+
+function exportTotalsToCSV(totals) {
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}`;
+  const slotMap = [...Array(37).keys(), '00'];
+  const header = slotMap.join(',');
+  const row = slotMap.map(n => totals[slotNumbers.indexOf(n)] || 0).join(',');
+  const csvContent = `data:text/csv;charset=utf-8,${header}\n${row}`;
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `Totals-${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function populateTotalsTable() {
+  const left = document.querySelector('.left-table');
+  const right = document.querySelector('.right-table');
+  left.innerHTML = '';
+  right.innerHTML = '';
+
+  const highlightList = [14, 2, 0, 28, 9, 13, 1, '00', 27, 10];
+
+  const makeVerticalTable = (start, end) => {
+    const table = document.createElement('table');
+
+    for (let i = start; i < end; i++) {
+      const row = table.insertRow();
+      const cellLabel = row.insertCell();
+      const cellValue = row.insertCell();
+
+      // Set number label
+      cellLabel.innerText = slotNumbers[i];
+
+      // Determine value or placeholder
+      const value = Totals[i] > 0 ? Totals[i] : '&nbsp;&nbsp;&nbsp;&nbsp;';
+      cellValue.innerHTML = value;
+
+      // Assign classes for headers and data cells
+      const headerClass = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
+        ? 'green-header'
+        : i % 2 === 0 ? 'black-header' : 'red-header';
+
+      const baseColor = (slotNumbers[i] === 0 || slotNumbers[i] === '00')
+        ? 'green'
+        : i % 2 === 0 ? 'black' : 'red';
+
+      cellLabel.className = headerClass;
+      cellValue.className = baseColor;
+
+      // Optional yellow highlight
+      if (highlightList.includes(slotNumbers[i])) {
+        cellValue.classList.add('highlight-yellow');
+      }
+
+      // Add blinking effect to the most recent update
+      if (i === finalIndex) {
+        cellValue.classList.add('blink-yellow');
+      } else if (lastUpdatedIndex !== null && i === lastUpdatedIndex) {
+        cellValue.classList.remove('blink-yellow');
+      }
+    }
+
+    return table;
+  };
+
+  const half = Math.ceil(slotNumbers.length / 2);
+  left.appendChild(makeVerticalTable(0, half));
+  right.appendChild(makeVerticalTable(half, slotNumbers.length));
+
+  lastUpdatedIndex = finalIndex;
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Odds Calculator</title>
+</head>
+<body>
+    <h1>Roulette Odds Calculator</h1>
+
+    <label for="adjacentNumbers">Number of Adjacent Numbers:</label>
+    <input type="number" id="adjacentNumbers" min="1" max="36" value="5">
+
+    <label for="hits">Number of Hits:</label>
+    <input type="number" id="hits" min="0" max="38" value="2">
+
+    <label for="totalSpins">Total Spins:</label>
+    <input type="number" id="totalSpins" min="1" max="1000" value="38">
+
+    <button onclick="calculateOdds()">Calculate Odds</button>
+
+    <p id="result"></p>
+
+    <script>
+        function calculateOdds() {
+            const adjacentNumbers = parseInt(document.getElementById("adjacentNumbers").value);
+            const hits = parseInt(document.getElementById("hits").value);
+            const totalSpins = parseInt(document.getElementById("totalSpins").value);
+
+            const odds = calculateRouletteOdds(adjacentNumbers, hits, totalSpins);
+            document.getElementById("result").textContent = "Odds: " + odds.toExponential(10);
+        }
+
+        function calculateRouletteOdds(numAdjacent, hits, totalSpins) {
+            const wheelSize = 38;
+            const singleSpinProb = numAdjacent / wheelSize;
+
+            // Use binomial distribution to calculate the probability
+            const binomialProb = binomialCoefficient(totalSpins, hits) *
+                                 Math.pow(singleSpinProb, hits) *
+                                 Math.pow(1 - singleSpinProb, totalSpins - hits);
+
+            return binomialProb;
+        }
+
+        function binomialCoefficient(n, k) {
+            if (k > n || k < 0) return 0;
+            if (k === 0 || k === n) return 1;
+
+            let coefficient = 1;
+            for (let i = 1; i <= k; i++) {
+                coefficient *= (n - (k - i)) / i;
+            }
+            return coefficient;
+        }
+    </script>
+</body>
+</html>

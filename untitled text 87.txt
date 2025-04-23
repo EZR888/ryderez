@@ -1,0 +1,26 @@
+AI Therepist
+
+Avatar
+Text to speech
+ - accented voice
+ - drive CBT protocols
+ - model: platfrom for Phd's, 
+ - Dr. Joe sessions with pateints
+  - need CBT
+  - offload
+  - depressions, ptsd, and anxiety
+  - lect one of the above, like anxiety
+  - Dr. sets up parameters and guarlrails
+  - Schedules AI Tereapist
+  - competition
+  
+  How to train an AI model
+  Python scripts
+  10 sessions, 45 minutes each
+  AI bot has to drive the  sessions
+  
+3 hour video
+ - What models are
+ Transformers
+ how to train midel
+ 

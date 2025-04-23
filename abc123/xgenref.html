@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate 10M Rows</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: lightgreen;
+      text-align: center;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: salmon;
+      color: black;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .progress {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generate 10M Rows</h1>
+    <button id="startButton" class="button">Start Generation</button>
+    <div id="progress" class="progress"></div>
+  </div>
+  
+  <script>
+document.getElementById("startButton").addEventListener("click", () => {
+    const worker = new Worker("csvWorker.js");
+    const progressDiv = document.getElementById("progress");
+
+    progressDiv.innerHTML = "Starting...";
+    worker.postMessage({ totalRows: 10000000, chunkSize: 100000 });
+
+    worker.onmessage = function (e) {
+        if (e.data.type === "progress") {
+            progressDiv.innerHTML = `Generated: ${e.data.generatedRows.toLocaleString()} rows`;
+        } else if (e.data.type === "done") {
+            progressDiv.innerHTML = "✅ 10M rows generated and downloading...";
+
+            // Download Top CSV
+            const linkTop = document.createElement("a");
+            linkTop.href = URL.createObjectURL(e.data.csvBlobTop);
+            linkTop.download = "10m_top.csv";
+            document.body.appendChild(linkTop);
+            linkTop.click();
+            document.body.removeChild(linkTop);
+
+            // Download Bottom CSV
+            const linkBottom = document.createElement("a");
+            linkBottom.href = URL.createObjectURL(e.data.csvBlobBottom);
+            linkBottom.download = "10m_bottom.csv";
+            document.body.appendChild(linkBottom);
+            linkBottom.click();
+            document.body.removeChild(linkBottom);
+        }
+    };
+
+    worker.onerror = function (error) {
+        progressDiv.innerHTML = "❌ Error occurred! Check console.";
+        console.error("Worker Error:", error);
+    };
+});
+
+  </script>
+</body>
+</html>

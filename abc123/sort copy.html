@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorted Table Visualization</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px; /* Add padding around the body */
+            font-size: 16px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 10px; /* Smaller margin on the left and right (approx. 1/2 inch on the left) */
+        }
+        .button-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-right: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px;
+        }
+        #savePdfButton {
+            background-color: purple;
+            color: white;
+        }
+        #reverseSortButton {
+            background-color: blue;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid red;
+            color: black;
+            font-family: Arial, sans-serif;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            width: 20px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        th {
+            color: white;
+            background-color: green;
+        }
+        td {
+            background-color: lightgray;
+        }
+        /* Make the row headers (line numbers) bold and white */
+        td:first-child {
+            font-weight: bold;
+            background-color: red;
+            color: white;
+        }
+    </style>
+
+    <!-- Add jsPDF and jsPDF AutoTable from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.18/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Column Sorting</h1>
+        <div class="button-group">
+            <input type="file" id="fileInput" />
+            <button id="reverseSortButton">Reverse Sort</button>
+            <button id="savePdfButton">Save to PDF</button>
+        </div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+        let rowData = [];
+
+        function loadCSV(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const csvData = e.target.result;
+                parseCSVAndGenerateTable(csvData);
+            };
+
+            reader.readAsText(file);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', loadCSV);
+
+        function parseCSVAndGenerateTable(csvData) {
+            const rows = csvData.trim().split("\n").map(row => row.split(","));
+
+            // Remove and check the first row (header row)
+            let headers = rows.shift();
+            let hasRowHeaders = false;
+            if (headers[0] === "#") {
+                hasRowHeaders = true; // Detect row headers, first column is line numbers
+            }
+
+            // Convert rows to numbers where applicable
+            rowData = rows.map(row => row.map(value => Number(value) || value));
+
+            // If there are row headers, remove the first column from each row before sorting
+            if (hasRowHeaders) {
+                rowData = rowData.map(row => row.slice(1)); // Remove the first column
+            }
+
+            // Sort each row by highest to lowest value (skip the line numbers if any)
+            rowData.forEach(row => row.sort((a, b) => b - a));
+
+            // Sort rows by the highest value in each row
+            rowData.sort((rowA, rowB) => Math.max(...rowB) - Math.max(...rowA));
+
+            generateTable();
+        }
+
+        function generateTable() {
+            // Create the HTML table and add a new header row with column numbers
+            let tableHtml = '<table id="csvTable"><thead><tr>';
+
+            // Add the new line number column header
+            tableHtml += `<th>#</th>`;
+
+            // Add column headers dynamically
+            for (let i = 0; i < rowData[0].length; i++) {
+                tableHtml += `<th>${i + 1}</th>`;
+            }
+
+            tableHtml += '</tr></thead><tbody>';
+
+            // Add sorted rows back to the table with new line numbers
+            rowData.forEach((row, rowIndex) => {
+                tableHtml += '<tr>';
+                // Add new line numbers in the first column, with bold text
+                tableHtml += `<td><strong>${rowIndex + 1}</strong></td>`;
+
+                // Add the sorted row data, replace "0" with empty space
+                row.forEach(cell => {
+                    tableHtml += `<td>${cell === "0" ? '' : cell}</td>`;
+                });
+
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+
+            document.getElementById('tableContainer').innerHTML = tableHtml;
+        }
+
+        // Reverse the order of columns when the button is clicked
+        document.getElementById('reverseSortButton').addEventListener('click', function() {
+            rowData = rowData.map(row => row.reverse()); // Reverse the columns
+            generateTable(); // Regenerate the table
+        });
+
+        // Save table content as PDF
+        document.getElementById('savePdfButton').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
+
+            const table = document.querySelector('#csvTable');
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+            const data = Array.from(table.querySelectorAll('tbody tr')).map((tr) =>
+                Array.from(tr.querySelectorAll('td')).map(td => td.innerText)
+            );
+
+            const timestamp = getFormattedTimestamp();
+            const rowCount = data.length;
+            const filename = `Sorted_Table_${rowCount}_${timestamp}.pdf`;
+
+            const baseFontSize = 8;
+            const headerFontSize = baseFontSize * 0.9;
+            const cellFontSize = baseFontSize * 1.1;
+
+            const columnCount = headers.length;
+            const pageWidth = doc.internal.pageSize.width - 20;
+            const columnWidth = pageWidth / columnCount;
+
+            doc.setFontSize(12);
+            doc.text(filename.replace('.pdf', ''), 14, 15);
+
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: 20,
+                theme: 'grid',
+                margin: { top: 10, left: 10, right: 10, bottom: 5 },
+                styles: {
+                    fontSize: cellFontSize,
+                    cellPadding: 2,
+                    fontStyle: 'bold',
+                    halign: 'center',
+                },
+                headStyles: {
+                    fontSize: headerFontSize,
+                    textColor: [255, 255, 255],
+                    fillColor: [0, 128, 0],
+                    halign: 'center',
+                },
+                columnStyles: {
+                    0: { cellWidth: columnWidth, fillColor: [255, 0, 0], textColor: [255, 255, 255] }, // Red background, white text for row headers
+                    ...Array.from({ length: columnCount - 1 }, (_, i) => i + 1).reduce((acc, i) => {
+                        acc[i] = { cellWidth: columnWidth };
+                        return acc;
+                    }, {})
+                }
+            });
+
+            doc.save(filename);
+        });
+
+        // Helper function to get formatted timestamp
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+        }
+    </script>
+</body>
+</html>

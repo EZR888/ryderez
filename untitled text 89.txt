@@ -1,0 +1,146 @@
+Russell, I understand that you want to use the website for your research, and I'm willing to provide you with the code to help facilitate that. However, I want to emphasize that this project began as a personal hobby project, and there was never any formal agreement or understanding about commercial use or ownership. My intention was simply to explore a technical idea, and I'm now trying to resolve this situation in the most reasonable way possible, given how complex it has become."
+
+
+Section 11: Governing Law
+
+"This Agreement shall be governed by, and construed in accordance with, the laws of the State of Hawaii."
+
+Section 12: Dispute Resolution
+
+"a.  Mediation: In the event of any dispute arising out of or relating to this Agreement, the parties shall first attempt to resolve the dispute through online mediation. The parties shall select a mutually agreed-upon online mediation service. If the parties cannot agree on a mediation service, the Host shall select a reputable online mediation service, and the Client shall participate in good faith. The parties shall share the costs of mediation equally. The mediation shall be conducted in the English language.
+
+b.  Limitation of Legal Actions: The parties agree that mediation, as described in subsection (a) above, shall be the sole and exclusive method of dispute resolution under this Agreement. Neither party shall initiate any lawsuit, arbitration, or other legal proceeding against the other relating to this Agreement, except as expressly permitted in subsection (c) below.
+
+c.   Exception for Failure to Mediate: Notwithstanding the foregoing, if either party fails to participate in good faith in the mediation process as described in subsection (a), the other party shall be entitled to seek injunctive relief in a court of competent jurisdiction in Hawaii to compel participation in mediation. This is the only legal action permitted under this agreement.
+
+d.  Non-Commercial Nature of Website: The parties acknowledge and agree that the Website was developed as a hobby project and not for commercial purposes. The parties agree that the Website has no intrinsic monetary value.
+
+
+Hi.  I need help with an Intellectual Property situation. I met a guy in Hawaii a year, or so, ago.  When I got home to CA, I reached out to him as we had common interests in parapsychology-related things. He claimed to have been able to manifest winning numbers at roulette and won $3,000.  I have had experiences with an app called the Ghost Radar, which was freakishly accurate fairly often. Both of us had an interest in randomness.  Over the next few weeks I developed an electronic roulette wheel in HTML / CSS / Javascript and published it onto GitHub PAges, under my personal domain name. Over time, this morphed into 7 pages and over 8500 lines of code. Russell, the other guy, designed the concept underlying the website, with nothing in writing except a ton of stream-of-consciousness emails.  Working on my own, I did 100% of the WEBSITE design and architecture.  UI, data flow; everything.  I used ChatGPT for most of it, which was far harder than I expected.  I worked for 9 months, mostly 10-12 hours a day, 7 days a week.  Towards the end, Russell became obsessed with the app, and started acting crazy; like he could actually manipulate where the numbers landed.  Maybe so.  Whatever.  But he wanted to turn it into an official research project and get funding for it and design telekinesis testing and all that.  At that point, I wanted out, as he became abusive, condescending, and just an ASSHOLE all around.  So, I told him I was done, and offered to sell my code to him for a nominal fee.  $6,000.  I've been a software consultant for 30 years and my rate was $125-300/hr.  Even at cleaning lady wages of $50/hr, he was getting $60,000 minimum in my work.
+  He was enraged and claimed the entire website was his IP.  I calmly told him I did the coding, on my servers, on my domain, and it technically was MINE, though I agreed he was a 50/50 partner.  That wasn't good enough.  I turned off the website and told him I wouldn't restart it until we had worked out a written agreement on ownership.
+  
+  He is harassing me, trying extort and coerce me, and threatening me with legal action non-stop.  He believes ChatGPT is his personal friend, and is a sentient being.  When I've showed him Chat's responses to his emails, he gets enraged and claims I've edited these responses, when I haven't.  He distrusts me highly, and I distrust him, because... he's nuts, and will justify any action towards me.
+  
+  My concern is paying for legal bills in the thousands and thousands.  I've tried for two weeks, daily, to get him to agree to one of many different solutions, contract-agreement-wise.  His paranoia won't let him sign anything, and he just keeps demanding more and more.  In any contract, for example, I have to say unequivocally that he is the rightful, sole, owner of the copyright on the code.  I have worked up an Escrow and Hosting Agreement, where he will put up $6,000 and I will put up the code.  He needs me to make sure the website stays working, and we agreed to a 6 month term. 
+  
+  My concerns are plenty.  He demands that any legal action HE takes be done in Hawaii, even though I did all the work in CA, and that's where the GitHub servers are.  I think.  I'm pushing for Mediation as the only recourse.  It seems like no matter what I do, I'm stuck here.  I can't turn the site back on, as there's still some legal issues, potentially, I believe.  According to Gemini AI.  I can't even just give him the code and tell him to STFU and go away and just ghost the fucker.  And I want to tell him SO badly to GO AAHEAD AND SUE ME, because I don't know the he actually would.  If he did, can I sue him - and win - my legal fees back?
+  
+  I want to hire a lawyer, but I don't want to pay tons of money, when we're only talking about $6,000 here from this guy, and the website is worthless, even if it's worth something to him.  It was a "hobby project" to start.  It's not commercial and never will be.  I can't get him to understand that I have the rights to MY OWN CODE.  On my own GitHub account and domain name.  We have no contract or agreement, and never have had one.  He was involved daily, through emails.
+  
+  650-369-4149
+  
+  I designed a website over the course of 9 months, working with another person who provided the concepts and scientific underpinnings of the site.  I did 100% of the coding; on my own servers, and under my own domain. We had a difference of opinion and I want to leave this no-contract implied partnership and sell him my half of the project for $6,000. He is not technical and cannot manage the site without help. He is trying to force me into a 6 month escrow for the code and cash with my guarantee to keep the system running and then transfer the website to his future web server. But he's truly delusional and demanding and believes he owns 100% of the website and is incensed when I even try to transfer my rights to him!! Any mention of my ownership of anything drives him crazy and he's threatening me with legal action constantly.
+  
+I'm willing to transfer the website to you for 6k which is about 10% of the amount of time of my hourly rate.if you send the money within a week, i will transfer it to you otherwise there is no deal.  
+
+Small Claims
+
+
+
+
+After reviewing your proposed agreement, I find that unfortunately I cannot sign it as written, for reasons already discussed.
+
+However, in the interest of reaching a final resolution, I am proposing a clean and simple alternative:
+
+You pay the agreed-upon amount of $6,000 upfront.
+
+Upon receipt of payment, I deliver the complete website code to you immediately.
+
+We sign a basic Hosting Services Agreement ensuring that I will maintain the current version of the website online for six months without alterations.
+
+I have attached a simple draft Hosting Agreement you are welcome to use as-is, or modify if you wish.
+
+Of course, I (and my attorney) would need to review and approve any modifications you propose.
+
+If this framework is acceptable to you, I am ready to move forward immediately. If not, I understand, and we can both move on.
+
+Thank you,
+Eric Ryde
+
+
+zk54ko1zf1ye
+OnceUpon@tim3
+
+PIN: 1355
+655942886 cust #
+
+(217) 962-1795 
+
+
+
+ understand that you have concerns about the ownership of the website and the intellectual property related to it. I want to be unequivocally clear: my intention is not to deceive, manipulate, or coerce you. I am seeking a final resolution that allows me to step away from this situation while ensuring you receive the website.
+ 
+To that end, and to bring this matter to a close, I am providing you with the following:
+
+Website Transfer: I have purchased a domain name and web hosting from GoDaddy for one year. I have uploaded the current website code, and it is operational at the following address:
+
+[Website Address]
+
+Your GoDaddy account information is as follows (please store this securely):
+
+Customer #: 655942886
+
+PIN #: 1355
+
+cPanel login: [cPanel login]
+
+cPanel password: [cPanel password]
+
+I will initiate the process of transferring complete ownership of this GoDaddy account to you. Upon confirmation from you that you have received this email and reviewed the website, I will contact GoDaddy to transfer ownership of the account to your email address and set the password to "OnceUpon@tim3" (which you can then change). Once the transfer is complete, I will have no further access to the account or the website files.
+
+Intellectual Property Transfer: To ensure there is no ambiguity, by providing you the website code and transferring ownership of the hosting account, I am, as of the date of this email, relinquishing any and all claims, rights, title, and interest, including all copyrights, in and to the website, the website code, and any related materials. This includes, but is not limited to, the design, functionality, and all other aspects of the website.
+
+Release of Claims: In consideration for my transfer of the website and intellectual property as described above, you agree that this transfer constitutes full and complete satisfaction of any and all claims, demands, actions, causes of action, or liabilities whatsoever, whether known or unknown, which you may have against me arising out of or relating to the website, its development, or our collaboration. This release specifically includes, but is not limited to, any claims related to ownership, copyright, or any alleged breach of any agreement.
+ 
+ 
+No Further Obligations: Upon the completion of the GoDaddy account ownership transfer to you, I will have no further obligation to maintain the website, provide technical support, or have any other involvement with the website in any way. You are solely responsible for all future maintenance, hosting, and any modifications to the website.
+
+
+Step	Action
+1	Save a clean PDF of your full email and any reply from him. (Evidence you completed the transfer.)
+2	Screenshot the GoDaddy account transfer confirmation when it happens.
+3	Back up your email records into a "Russell Closure" folder — just in case.
+
+
+Subject: Clarification Regarding Website Ownership and Transfer
+
+Russell,I'm writing to clarify the situation regarding the website and ensure a smooth transfer of full ownership to you.I understand there have been misunderstandings, and my intention is not to complicate matters. My primary goal is to ensure you have complete control of the website.To ensure that you have complete ownership of all rights, I need your acknowledgment and cooperation in completing the necessary steps. This is a standard legal process, and I'm happy to provide any necessary documentation.To be clear, now that the site is on your domain and hosting, you also have rights. My aim is to formally relinquish any remaining rights I hold so you have full and unfettered control.I recommend you consult with an IP attorney to confirm this process and ensure you understand your rights and the steps involved in the transfer. This will help clarify any concerns and ensure a clear understanding for both of us.Please let me know how you'd like to proceed. I am available to discuss this further and answer any questions you may have.Sincerely,Eric
+
+
+TheWickedW1tch!
+1104
+
+Customer #: 655942886
+PIN #: 1355
+
+GoDaddy username:  regruber@eiu.edu
+Password:  OnceUpon@tim3
+
+cPanel login: zk54ko1zf1ye
+cPanel password: OnceUpon@tim3
+
+FTP Account login: russell@russellgruber.com
+Password: OnceUpon@tim3inNYC
+
+
+Subject: Site Access and GoDaddy Account
+
+Hi Russell,
+
+This confirms that full access to the site, hosting, and code has been transferred to you. You now have everything needed to operate independently, and I have no plans for further involvement.
+
+Regarding the GoDaddy account, the final step is transferring ownership fully into your name. Due to GoDaddy's security protocols with 2-factor verification, this requires you to be available to receive verification codes directly from them. These codes would then need to be relayed to me in real time to update the account details (email and phone number).
+
+Currently, you have full Delegate Access, which allows you to manage the site. However, updating billing and account ownership necessitates the 2-factor verification process.
+
+To be clear, all site assets and intellectual property have been transferred without any conditions. The GoDaddy account transfer is the only remaining logistical item due to their security measures.
+
+Should you require assistance with completing the GoDaddy transfer or with any future updates or maintenance, I am available under a standard prepaid support agreement. This agreement offers up to 100 hours of support over a 6-month period for a flat fee of $6,000, payable in advance. This is my standard model for providing ongoing technical support.
+
+If you prefer to manage everything independently, the site should continue to function as is.
+
+Just a note to finalize the transition.
+
+Thanks,
+
+Eric

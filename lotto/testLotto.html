@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lotto Wheel Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: lightgreen;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      background-color: darkgreen;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: green;
+    }
+    input[type="number"], input[type="text"] {
+      width: 40px;
+      text-align: center;
+      font-size: 16px;
+      margin: 2px;
+    }
+    #top18Inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+    .modal-content {
+      background-color: #222;
+      margin: 5% auto;
+      padding: 20px;
+      border: 2px solid lightgreen;
+      width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+      border-radius: 8px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      margin: 0;
+    }
+    ol {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Lotto Wheel Generator</h1>
+
+  <h2>Load Dataset</h2>
+  <button onclick="loadCSV('lotto_39.csv', 39)">Load 39 Numbers</button>
+  <button onclick="loadCSV('lotto_69.csv', 69)">Load 69 Numbers</button>
+
+  <h2>Top 18 Numbers (Editable)</h2>
+  <div id="top18Inputs"></div>
+
+  <h2>Wheel Settings</h2>
+  <label># Sets to Generate:</label>
+  <input type="number" id="setCountChoice" value="6" min="1" max="100"><br><br>
+
+  <button onclick="generateWheelSets()">🎯 Generate Wheel</button>
+
+  <div id="progressInfo"></div>
+
+  <div style="margin-top:20px;">
+    <label>Pick Best Sets (Enter How Many):</label>
+    <input type="number" id="bestSetCount" value="5" min="1" max="100">
+    <button onclick="pickBestSets()">✨ Pick Best Sets</button>
+  </div>
+
+  <div id="latestDrawingComment" style="margin-top:20px;"></div>
+  <div id="recentDrawsContainer"></div>
+  <div id="skipFrequencyContainer"></div>
+
+</div>
+
+<!-- Modal -->
+<div id="setsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Generated Sets</h2>
+      <button onclick="closeModal()">✖️</button>
+    </div>
+    <div id="wheelOutput"></div>
+    <br>
+    <button onclick="saveGeneratedSets()">💾 Save Sets</button>
+    <button onclick="closeModal()">✅ Continue</button>
+  </div>
+</div>
+
+<script>
+let fullData = [];
+let top18 = [];
+let pastDrawings = [];
+let skipDataGlobal = {};
+let referenceData = {};
+let totalNumbersGlobal = 39;
+let generatedSets = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const top18Div = document.getElementById('top18Inputs');
+  for (let i = 0; i < 18; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = i+1;
+    top18Div.appendChild(inp);
+  }
+  loadReferenceData();
+});
+
+function loadCSV(filename, totalNumbers) {
+  alert("Load CSV feature not connected yet in this sample.");
+}
+
+function loadReferenceData() {
+  // Dummy pre-fill for now (no fetch to keep this self-contained)
+  referenceData = {
+    "Consecutive Pairs": {0:0.2, 1:0.1, 2:0.05, 3:0.01},
+    "Low - High": { -20: 0.1, -15: 0.05, -10: 0.02, -5: 0.01, 0: 0.005},
+    "Spread": {20:0.2, 30:0.1, 40:0.05, 50:0.02},
+    "Sum": {100:0.02, 120:0.01, 140:0.005}
+  };
+}
+
+function generateWheelSets() {
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
+                    .map(inp => parseInt(inp.value.trim(), 10))
+                    .filter(n => !isNaN(n) && n >= 1 && n <= totalNumbersGlobal);
+  if (nums.length < 5) {
+    alert("Enter at least 5 numbers.");
+    return;
+  }
+
+  top18 = nums;
+  const setCount = parseInt(document.getElementById('setCountChoice').value, 10) || 6;
+  generatedSets = [];
+
+  for (let i = 0; i < setCount; i++) {
+    const combo = [...top18].sort(() => Math.random()-0.5).slice(0,5).sort((a,b) => a-b);
+    const points = calculateRawPoints(combo);
+    generatedSets.push({ combo, points });
+  }
+
+  showModal();
+}
+
+function calculateRawPoints(combo) {
+  let total = 0;
+  const sorted = [...combo].sort((a,b) => a-b);
+  const consecutive = sorted.filter((n,i)=>i<4&&sorted[i+1]-n===1).length;
+  const lowHigh = sorted[0] - sorted[4];
+  const spread = sorted[4] - sorted[0];
+  const sum = sorted.reduce((a,b)=>a+b,0);
+
+  const stats = [
+    { category:"Consecutive Pairs", value:consecutive },
+    { category:"Low - High", value:lowHigh },
+    { category:"Spread", value:spread },
+    { category:"Sum", value:sum }
+  ];
+
+  stats.forEach(({category,value}) => {
+    const p = referenceData[category]?.[value];
+    if (p && p > 0) total += 1/p;
+  });
+
+  return total;
+}
+
+function showModal() {
+  const modal = document.getElementById('setsModal');
+  const wheelOut = document.getElementById('wheelOutput');
+  modal.style.display = 'block';
+  wheelOut.innerHTML = '<ol>' + 
+    generatedSets.map(({combo, points}) => 
+      `<li style="color:${getPointColor(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`
+    ).join('') + '</ol>';
+}
+
+function closeModal() {
+  document.getElementById('setsModal').style.display = 'none';
+}
+
+function getPointColor(points) {
+  if (points < 400) return 'lightgreen';
+  if (points < 800) return 'yellow';
+  if (points < 1200) return 'orange';
+  return 'red';
+}
+
+function saveGeneratedSets() {
+  if (!generatedSets.length) {
+    alert("No sets to save!");
+    return;
+  }
+  const text = generatedSets.map(({combo, points}) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
+  const blob = new Blob([text], {type:'text/plain'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'generated_sets.txt';
+  link.click();
+}
+
+function pickBestSets() {
+  if (!generatedSets.length) {
+    alert("No sets generated yet!");
+    return;
+  }
+
+  const howMany = parseInt(document.getElementById('bestSetCount').value, 10) || 5;
+  generatedSets.sort((a,b)=>a.points-b.points);
+  generatedSets = generatedSets.slice(0,howMany);
+
+  alert(`✅ Picked best ${howMany} sets.`);
+  showModal(); // Refresh view
+}
+</script>
+
+</body>
+</html>

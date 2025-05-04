@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lotto Combined Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: lightgreen;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .left-panel, .right-panel {
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .left-panel {
+      width: 55%;
+      border-right: 1px solid #555;
+    }
+    .right-panel {
+      width: 45%;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      background-color: darkgreen;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: green;
+    }
+    input[type="number"], input[type="text"] {
+      width: 40px;
+      text-align: center;
+      font-size: 16px;
+      margin: 2px;
+    }
+    #top18Inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .red-dot, .orange-dot {
+      width: 14px;
+      height: 14px;
+      margin: auto;
+      border-radius: 50%;
+    }
+    .red-dot {
+      background-color: red;
+    }
+    .orange-dot {
+      background-color: orange;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 10px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #666;
+      text-align: center;
+      width: 30px;
+      height: 30px;
+      color: white;
+    }
+    th {
+      background-color: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="left-panel">
+    <h1>Lotto Wheel Generator</h1>
+
+    <h3>Load Dataset</h3>
+    <button onclick="loadCSV('lotto_39.csv', 39)">Load 39 Numbers</button>
+    <button onclick="loadCSV('lotto_69.csv', 69)">Load 69 Numbers</button>
+
+    <h3>Top Numbers (Editable)</h3>
+    <div id="top18Inputs"></div>
+
+    <h3>Wheel Settings</h3>
+    <label># Sets to Generate:</label>
+    <input type="number" id="setCountChoice" value="6" min="1" max="100"><br><br>
+
+    <button onclick="generateWheelSets()">🎯 Generate Wheel</button>
+    <button onclick="pickBestSets()">✨ Pick Best Sets</button>
+    <button onclick="exportGeneratedSets()">⬇️ Export Generated Sets</button>
+
+
+    <div id="wheelOutput"></div>
+    <div id="progressInfo"></div>
+
+    <h2>Hits Table (Last 25 Drawings)</h2>
+    <div id="latestDrawingComment"></div>
+    <div id="recentDrawsContainer"></div>
+
+    <h2>Skip Frequency Table</h2>
+    <div id="skipFrequencyContainer"></div>
+  </div>
+
+  <div class="right-panel">
+    <h2>Update Past Sets</h2>
+    <div id="newDrawingInputs">
+      <input type="text" id="new1">
+      <input type="text" id="new2">
+      <input type="text" id="new3">
+      <input type="text" id="new4">
+      <input type="text" id="new5">
+    </div>
+    <br>
+    <button onclick="addNewDrawing()">➕ Save New Drawing</button>
+    <button onclick="downloadPastSets()">⬇️ Download Past Sets</button>
+    <div id="addStatus" style="margin-top: 10px;"></div>
+    
+    
+  </div>
+</div>
+
+<script>
+// 🟢 Globals
+let fullData = [];
+let totalNumbersGlobal = 39;
+let top18 = [];
+let pastDrawings = [];
+let skipDataGlobal = {};
+let sinceMap = {};
+let generatedSets = [];
+
+// 🟢 LocalStorage load on page start
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('lottoPastSets');
+  if (saved) {
+    fullData = JSON.parse(saved);
+    totalNumbersGlobal = parseInt(localStorage.getItem('lottoTotalNumbers')) || 39;
+    processLoadedData();
+  }
+
+  // Build Top18 Inputs
+  const top18Div = document.getElementById('top18Inputs');
+  for (let i = 0; i < 18; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = i+1;
+    top18Div.appendChild(inp);
+  }
+});
+
+// 🟢 Load CSV
+function loadCSV(filename, totalNumbers) {
+  fetch(filename + '?t=' + Date.now())
+    .then(response => response.text())
+    .then(text => {
+      fullData = text.trim().split('\n').map(line => line.split(',').map(Number));
+      totalNumbersGlobal = totalNumbers;
+
+      localStorage.setItem('lottoPastSets', JSON.stringify(fullData));
+      localStorage.setItem('lottoTotalNumbers', totalNumbers);
+
+      processLoadedData();
+    })
+    .catch(err => alert('Error loading file: ' + err));
+}
+
+function processLoadedData() {
+  const drawingNumbers = fullData.map(row => parseInt(row[0]));
+
+  const data = fullData.map(row => row.slice(1).map(Number))
+                       .filter(row => row.every(n => !isNaN(n)));
+
+  skipDataGlobal = buildSkipTable(data, totalNumbersGlobal, drawingNumbers);
+
+  pastDrawings = fullData.filter(row => row.length >= 6)
+                         .map(row => row.slice(1, 6).sort((a, b) => a - b).join(','));
+
+  renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
+  renderSkipFrequency();
+}
+
+// 🟢 Save New Drawing
+function addNewDrawing() {
+  const nums = [1,2,3,4,5].map(i => document.getElementById('new'+i).value.trim()).map(Number);
+  if (nums.some(isNaN)) {
+    alert("Please enter 5 valid numbers!");
+    return;
+  }
+  const latestDraw = fullData.length > 0 ? fullData[0][0] + 1 : 1;
+  fullData.unshift([latestDraw, ...nums]);
+  document.getElementById('new1').value = '';
+  document.getElementById('new2').value = '';
+  document.getElementById('new3').value = '';
+  document.getElementById('new4').value = '';
+  document.getElementById('new5').value = '';
+  document.getElementById('addStatus').innerHTML = `✅ Drawing #${latestDraw} added.`;
+
+  // Save
+  localStorage.setItem('lottoPastSets', JSON.stringify(fullData));
+  localStorage.setItem('lottoTotalNumbers', totalNumbersGlobal);
+
+  processLoadedData();
+}
+
+// 🟢 Download Past Sets
+function downloadPastSets() {
+  if (fullData.length === 0) {
+    alert("No past data loaded!");
+    return;
+  }
+  const csv = fullData.map(row => row.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'past_lotto_' + totalNumbersGlobal + '.csv';
+  link.click();
+}
+
+// 🟢 Export Generated Sets
+function exportGeneratedSets() {
+  if (generatedSets.length === 0) {
+    alert("No generated sets!");
+    return;
+  }
+  const text = generatedSets.map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
+  const blob = new Blob([text], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'generated_sets_' + totalNumbersGlobal + '.txt';
+  link.click();
+}
+
+// 🟢 Build Skip Table
+function buildSkipTable(data, totalNumbers, drawingNumbers) {
+  const skipTable = Array.from({ length: totalNumbers + 1 }, () => Array(26).fill(0));
+  const lastSeen = Array(totalNumbers + 1).fill(null);
+
+  for (let drawIndex = 0; drawIndex < data.length; drawIndex++) {
+    const currentDraw = new Set(data[drawIndex]);
+    for (let num = 1; num <= totalNumbers; num++) {
+      if (currentDraw.has(num)) {
+        if (lastSeen[num] !== null) {
+          const skip = drawIndex - lastSeen[num] - 1;
+          if (skip >= 1 && skip <= 25) {
+            skipTable[num][skip]++;
+          }
+        }
+        lastSeen[num] = drawIndex;
+      }
+    }
+  }
+  return { skipTable };
+}
+
+// 🟢 Render Recent Draws (Hits)
+function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
+  const container = document.getElementById('recentDrawsContainer');
+  const comment = document.getElementById('latestDrawingComment');
+  comment.textContent = `Latest drawing #${latestDrawingNumber}`;
+
+  const draws = data.slice(0, 25);
+  while (draws.length < 25) draws.push([]);
+
+  sinceMap = {};
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbers; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    let found = false;
+    for (let col = 0; col < 25; col++) {
+      const cell = document.createElement('td');
+      if (draws[col] && draws[col].includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'red-dot';
+        cell.appendChild(dot);
+        if (!found) {
+          sinceMap[number] = col + 1;
+          found = true;
+        }
+      }
+      row.appendChild(cell);
+    }
+    if (!found) {
+      sinceMap[number] = 26;
+    }
+    table.appendChild(row);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+// 🟢 Render Skip Table
+function renderSkipFrequency() {
+  const container = document.getElementById('skipFrequencyContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    for (let i = 1; i <= 25; i++) {
+      const cell = document.createElement('td');
+      const val = skipDataGlobal.skipTable[number]?.[i] || 0;
+      cell.textContent = val > 0 ? val : '';
+      row.appendChild(cell);
+    }
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+}
+
+</script>
+
+</body>
+</html>

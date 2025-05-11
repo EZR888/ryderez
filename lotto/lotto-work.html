@@ -2276,7 +2276,7 @@ function generateWheel(sourceNumbers, pastDrawings, setSize, numSets) {
     progressDiv.innerHTML = `
       <div style="color: red;">🔥 Skipped ${skippedDueToPastDrawings5} sets (5/5 match)</div>
       <div style="color: orange;">🚫 Skipped ${skippedDueToBadSum} sets (bad sum)</div>
-      <div style="color: purple;">⛔ Skipped ${skippedDueToHighPoints} sets (score > ${maxPointsAllowed})</div>
+      <div style="color: violet;">⛔ Skipped ${skippedDueToHighPoints} sets (score > ${maxPointsAllowed})</div>
       <div style="color: lightgreen;">✅ 3-number combos covered: ${seenCombos.size} / ${totalCombosNeeded}</div>
     `;
 

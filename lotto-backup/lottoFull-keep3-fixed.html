@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lotto Combined Viewer</title>
+<style>
+ /* ==========  Global layout / colours  ========== */
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    padding:20px;
+    background:#000;
+    color:lightgreen;
+}
+.container{display:flex;height:100vh}
+
+/* ---------- buttons ---------- */
+button{
+    margin:12px;
+    padding:9px 9px;
+    background: salmon;          /* dark-green #064d06 */
+    color:#fff;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    border-radius:4px;
+}
+button:hover{background:slategray}
+
+/* ---------- headings ---------- */
+h2{margin:0 0 8px;color:violet}
+h3{margin:0 0 15px}
+
+/* ---------- inputs ---------- */
+input[type="number"],
+input[type="text"]{
+    width:40px;
+    text-align:center;
+    font-size:16px;
+    margin:2px;
+    background:#fffbcc;          /* light-yellow */
+}
+
+/* ---------- top-numbers input strip ---------- */
+#top18Inputs {
+    display: none;
+}
+
+
+/* ---------- table styling ---------- */
+table{
+    border-collapse:collapse;
+    margin-top:10px;
+    width:100%;
+    background:#000;
+}
+th,td{
+    border:1px solid #666;
+    width:30px;height:30px;
+    text-align:center;
+    color:lightgray;
+}
+th{background:#333;color:#fff}
+
+.selected-top-skip{background:#ff0!important;color:#000;font-weight:bold}
+.top18-selected   {background:orange!important;color:#000;font-weight:bold}
+.missed-over-25   {background:red!important;color:#fff;font-weight:bold}
+.red-dot,.orange-dot{
+    width:14px;height:14px;border-radius:50%;margin:auto
+}
+.red-dot   {background:red}
+.orange-dot{background:orange}
+table tr:hover{background:#444}
+
+#skipFrequencyContainer td{font-size:17px}
+#newDrawingInputs{margin-left:12px}
+
+/* ==========  Modal  ========== */
+.modal{
+    display:none;position:fixed;z-index:1;left:0;top:0;width:100%;height:100%;
+    overflow:auto;background:rgba(0,0,0,.4);
+}
+.modal-content{
+    background:#000;color:lightgreen;padding:20px;border:1px solid #888;
+    width:54%;max-height:80vh;overflow-y:auto;
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+}
+.close-button{
+    float:right;font-size:28px;font-weight:bold;color:#aaa;cursor:pointer
+}
+.close-button:hover{color:#fff;text-decoration:none}
+
+/* ---------- modal footer (Generate / Export buttons) ---------- */
+.modal-footer{
+    margin:18px 0 8px;display:flex;gap:16px;justify-content:center
+}
+
+/* ==========  Powerball picker block  ========== */
+#load1Button{display:none}              /* hidden until 69-number game loaded */
+
+#pbBlock{
+    display:none;                       /* shown only for 26-number game     */
+    gap:6px;margin:12px 0 8px 12px;
+    align-items:center
+}
+#pbBlock input{
+    width:36px;background:#fffbcc
+}
+
+/* ==========  Items hidden until data have loaded  ========== */
+#newDrawingInputs,
+#top18Inputs,
+#generateWheelButton,
+button[onclick="exportGeneratedSets()"],
+button[onclick="exportBestSets()"],
+button[onclick="updateReverseHitsTop18()"]{display:none}
+#newDrawingInputs>button{display:none}   /* those “Save / Download” buttons   */
+                
+button img{
+    width:150px;          /* pick a size that suits your artwork -- */
+    height:auto;          /*   or set both width & height           */
+    display:block;        /* removes the small baseline gap         */
+    pointer-events:none;  /* so clicks go to <button>, not the <img>*/
+}
+
+/* OPTIONAL – darken on hover exactly as before                    */
+button:hover img{
+    filter:brightness(1.15);   /* make the PNG a bit brighter on hover */
+}
+
+button.active{
+    outline:3px solid gold;          /* bright border        */
+    outline-offset:2px;              /* little gap           */
+    filter:brightness(1.25);         /* make PNG pop a bit   */
+    /* you can tweak / add a drop-shadow etc. if you prefer  */
+}
+
+/* ---------- image buttons ---------- */
+.gameBtn{
+    background:#000;          /* black behind the PNG  */
+    padding:10px;             /* keep a little space   */
+    border:none;
+    cursor:pointer;
+    border-radius:6px;
+    margin:12px;
+}
+.gameBtn:hover      img{filter:brightness(1.2);}  /* “light up” on hover   */
+.gameBtn.active     {
+    outline:3px solid gold;
+    outline-offset:2px;
+    filter:brightness(1.25);
+}
+
+/* keep the old style for any other text buttons */
+button:not(.gameBtn){
+    background:#064d06;
+}
+
+input.dimmed {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#top18Inputs > div {
+    display: inline-block;
+}
+
+  </style>
+</head>
+<body>
+<h1>Lotto Wheel Generator</h1>
+<h2>Load a Lotto Dataset</h2>
+<button class="gameBtn" id="powerball">
+<img alt="Load 69-number game" src="powerball.png"/>
+</button>
+<button class="gameBtn" id="load1Button">
+<img alt="Load PB-only game" src="power.png"/>
+</button>
+<button class="gameBtn" id="load39Button">
+<img alt="Load 39-number game" src="fantasy5.png"/>
+</button>
+<div id="pbBlock">
+<h3 style="margin:0 6px 0 0;">Pick Powerball Number</h3>
+<input/><input/><input/><input/><input/>
+</div>
+<br/><br/>
+<h2>Top Numbers (Editable)</h2>
+<div id="top18Inputs"></div>
+<button onclick="updateReverseHitsTop18()">🔄 Update Hits Table</button>
+<button id="generateWheelButton" style="display:none">🎯 Generate Wheel</button>
+<button id="quick12Button" style="display:none">⚡ 12‑Number Quick</button>
+<br/><br/>
+<div class="modal" id="wheelModal"><div class="modal-content">
+<span class="close-button">×</span>
+<h2>Generated Wheel Sets</h2>
+<div id="modalWheelOutput" style="white-space:pre-wrap"></div>
+<div style="margin-top:10px">
+<label style="color:lightgreen">How many sets to generate? </label>
+<input id="modalSetCountChoice" max="100" min="1" style="width:50px;font-size:16px;background:#333;color:#fff" type="number" value="6"/>
+<br/>
+<label style="color:lightgreen">Show Best Sets: </label>
+<input id="modalBestSetCount" min="1" style="width:50px;font-size:16px;background:#333;color:#fff" type="number" value="5"/>
+</div>
+<div class="modal-footer">
+<button id="generateSetsModalButton">🎯 Generate Sets</button>
+<button id="pickBestSetsModal">✨ Pick Best</button>
+<button id="exportAllBtn">⬇️ Export All</button>
+<button id="exportBestBtn">⬇️ Export Best</button>
+</div>
+</div></div>
+<div id="wheelOutput" style="display: none;"></div>
+<div id="hitsTableSection" style="display: none;">
+<h2>Hits Table (Last 25 Drawings)</h2>
+<div id="latestDrawingComment" style="margin-bottom: 10px; font-weight: bold;"></div>
+<div id="recentDrawsContainer"></div>
+</div>
+<h2>Hits Table</h2>
+<h3>Last 25 Drawings and Top Skip Numbers Highlighted</h3>
+<div id="reverseHitsContainer"></div>
+<br/>
+<h2>Skip Frequency Table</h2>
+<h3>Number of Drawings Between Hits</h3>
+<div id="skipFrequencyContainer"></div>
+<script>
+
+let fullData = [];
+let top18 = [];
+let pastDrawings = [];
+let totalNumbersGlobal = 39, generatedSets=[];
+let skipDataGlobal={}, sinceMap={}, referenceData={};
+let top18From69 = [];
+let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
+
+
+const qs  = sel => document.querySelector(sel);
+const qsa = sel => Array.from(document.querySelectorAll(sel));
+
+/* ── BUTTON VISIBILITY LOGIC ───────────────────────────────────── */
+const btn39 = qs('#load39Button'),
+      btn69 = qs('#powerball'),
+      btn1  = qs('#load1Button'),
+      pbBlk = qs('#pbBlock');
+      
+const closeButton = document.querySelector('.close-button');
+const wheelModal = document.getElementById('wheelModal');
+const continueButton = document.getElementById('continueButton');
+const saveButtonModal = document.getElementById('saveGeneratedSetsModal');
+const pickBestSetsButtonModal = document.getElementById('pickBestSetsModal');
+
+let skipDataFrom69 = {};
+
+btn69.onclick = () => {
+  loadCSVFile('lotto_69.txt', 69, () => {
+    generateTopNumbersAndRender(true);  // Save top18From69
+    // Also save full supporting data for reuse
+    pastDrawingsFrom69 = [...pastDrawings];
+    skipDataFrom69 = JSON.parse(JSON.stringify(skipDataGlobal));
+    sinceMapFrom69 = { ...sinceMap };
+    fullDataFrom69 = [...fullData];
+
+    btn1.style.display = 'inline-block';
+    hidePBblock();
+    highlight(btn69);
+    qs('#generateWheelButton').style.display = 'none';
+    qs('#quick12Button').style.display = 'none';
+  });
+};
+
+btn1.onclick = () => {
+  showPBblock();
+  highlight(btn1);
+  totalNumbersGlobal = 26;
+  qs('#generateWheelButton').style.display = 'inline-block';
+// Save current edits (if any) before switching modes
+  top18From69 = Array.from(document.querySelectorAll('#top18Inputs input'))
+  .map(input => parseInt(input.value.trim(), 10))
+  .filter(n => !isNaN(n) && n >= 1);
+  // 🟠 Restore cached 69-number context
+  fullData = [...fullDataFrom69];
+  skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
+  sinceMap = { ...sinceMapFrom69 };
+  pastDrawings = [...pastDrawingsFrom69];
+  top18 = [...top18From69];  // ✅ reset top18 to full list of 18
+  console.log('🟢 Loaded top18From69:', top18);
+
+  // 🟢 Inject UI from top18 (which now has all 18 numbers)
+  const top18InputsDiv = document.getElementById('top18Inputs');
+  top18InputsDiv.innerHTML = '';
+  for (let i = 0; i < top18.length; i++) {
+    if (i === 12) {
+      const divider = document.createElement('div');
+      divider.style.borderLeft = '3px solid red';
+      divider.style.margin = '0 6px';
+      divider.style.height = '34px';
+      divider.style.alignSelf = 'center';
+      top18InputsDiv.appendChild(divider);
+    }
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = top18[i];
+    top18InputsDiv.appendChild(inp);
+  }
+
+  console.log('✅ Injected top18 inputs:', top18InputsDiv.innerHTML);
+  console.log('🧪 Total input fields:', document.querySelectorAll('#top18Inputs input').length);
+  if (top18InputsDiv.querySelectorAll('input').length < 18) {
+    console.warn('⚠️ Less than 18 input fields detected after injection!');
+  }
+
+  updateReverseHitsTop18();  // ✅ correctly updates based on all 18
+rehighlightSkipTableFromTop18();  // ✅ reapply highlight classes to 69-style chart
+
+};
+
+
+
+btn39.onclick = () => {
+  loadCSVFile('lotto_39.txt', 39, () => {
+    generateTopNumbersAndRender(false); // don't save top18From69
+    btn1.style.display = 'none';
+    hidePBblock();
+    highlight(btn39);
+    qs('#generateWheelButton').style.display = 'inline-block';
+    qs('#quick12Button').style.display = 'inline-block';
+  });
+};
+
+
+function highlight(btn){
+    [btn39, btn69, btn1].forEach(b => b.classList.toggle('active', b === btn));
+}
+
+function hidePBblock(){
+    pbBlk.style.display = 'none';
+    qsa('#pbBlock input').forEach(inp => inp.value = '');
+}
+
+function showPBblock(){
+  pbBlk.style.display='flex';
+  const pool  = Array.from({length:26}, (_,i) => i+1);
+  const picks = [];
+  while (picks.length < 5) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picks.push( pool.splice(idx,1)[0] );
+  }
+  qsa('#pbBlock input').forEach((inp,i) => inp.value = picks[i] ?? '');
+}
+
+/* ── MODAL BUTTONS ─────────────────────────────────────────────── */
+qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
+qs('.close-button').onclick      = ()=> qs('#wheelModal').style.display='none';
+window.onclick = e=>{ if(e.target.id==='wheelModal') qs('#wheelModal').style.display='none'; };
+
+qs('#generateSetsModalButton').onclick = generateWheelSets;
+qs('#pickBestSetsModal')     .onclick = ()=> pickBestSets(true);
+qs('#exportAllBtn')          .onclick = ()=> doExport('all');
+qs('#exportBestBtn')         .onclick = ()=> doExport('best');
+
+/* ── EXPORT LOGIC ──────────────────────────────────────────────── */
+function doExport(mode){
+    if(!generatedSets.length){ alert('Generate sets first!'); return; }
+
+    const allCount  = +qs('#modalSetCountChoice').value||1;
+    const bestCount = +qs('#modalBestSetCount').value||1;
+    let list = [...generatedSets];
+
+    if(mode==='best'){
+        list.sort((a,b)=>a.points-b.points);
+        list = list.slice(0,bestCount);
+    }else{
+        list = list.slice(0,allCount);
+    }
+
+    /* figure out bonus-ball pool */
+    // grab PB inputs and keep only 1-26
+	const pbInputs = qsa('#pbBlock input')
+      	.map(inp => parseInt(inp.value, 10))
+      	.filter(n => n >= 1 && n <= 26);
+	const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
+
+    const lines = list.map(({combo},idx)=>{
+        let out = `${idx+1}.  ${combo.join(', ')}`;
+        if(needPB){
+            const pb = pbInputs.length
+                        ? pbInputs[Math.floor(Math.random()*pbInputs.length)]
+                        : Math.floor(Math.random()*26)+1;
+            out += '  '+pb;
+        }
+        return out;
+    }).join('\n');
+
+    const blob=new Blob([lines],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download = (mode==='best'?'best_':'all_')+`sets_${totalNumbersGlobal}.txt`;
+    a.click();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('load39Button').addEventListener('click', function() {
+    loadCSVFile('lotto_39.txt', 39);
+  });
+  document.getElementById('powerball').addEventListener('click', function() {
+    loadCSVFile('lotto_69.txt', 69);
+  });
+  document.getElementById('load1Button').addEventListener('click', function() {
+    loadCSVFile('lotto_1.txt', 26);
+  });
+
+    // Get the "Generate Wheel" button OUTSIDE the modal and add listener to show the modal
+    const showModalButton = document.getElementById('generateWheelButton');
+    if (showModalButton) {
+        showModalButton.addEventListener('click', function() {
+            document.getElementById('wheelModal').style.display = "block";
+        });
+    }
+
+    // Add event listener for the "Generate Sets" button INSIDE the modal
+    const generateSetsButtonModal = document.getElementById('generateSetsModalButton');
+    if (generateSetsButtonModal) {
+        generateSetsButtonModal.addEventListener('click', generateWheelSets);
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            wheelModal.style.display = "none";
+        });
+    }
+
+    if (continueButton) {
+        continueButton.addEventListener('click', function() {
+            wheelModal.style.display = "none";
+            // Optionally, you could clear the modal's content here if needed
+        });
+    }
+
+    if (saveButtonModal) {
+        saveButtonModal.addEventListener('click', saveGeneratedSetsToText);
+    }
+
+    // Event listener for the "Pick Best Sets" button in the modal
+    if (pickBestSetsButtonModal) {
+        pickBestSetsButtonModal.addEventListener('click', function() {
+            pickBestSets(true); // Display best sets within the modal
+        });
+    }
+
+    // Optional: Close modal if user clicks outside of it
+    window.addEventListener('click', function(event) {
+        if (event.target == wheelModal) {
+            wheelModal.style.display = "none";
+        }
+    });
+});
+
+function loadReferenceData() {
+  fetch('lotto10mcols.csv?t=' + Date.now())
+    .then(response => response.text())
+    .then(csv => {
+      const lines = csv.trim().split('\n');
+      const headers = lines[0].split(',');
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        const category = row[0].trim();
+        const diff = parseInt(row[1]);
+        const cumP = parseFloat(row[3]);
+
+        if (!referenceData[category]) {
+          referenceData[category] = {};
+        }
+        referenceData[category][diff] = cumP;
+      }
+
+      console.log('✅ Reference data loaded:', referenceData);
+    })
+    .catch(error => {
+      console.error('❌ Failed to load reference data:', error);
+    });
+}
+
+// Call it when page loads
+window.addEventListener('DOMContentLoaded', function() {
+  loadReferenceData();
+});
+
+document.getElementById('quick12Button').addEventListener('click', function () {
+    // ✅ Save current edited Top 18 before running Quick
+    top18From69 = Array.from(document.querySelectorAll('#top18Inputs input'))
+        .map(inp => parseInt(inp.value.trim(), 10))
+        .filter(n => !isNaN(n) && n >= 1)
+        .sort((a, b) => a - b);
+    const allInputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+    const topInputs = allInputs
+        .map(inp => parseInt(inp.value.trim(), 10))
+        .filter(n => !isNaN(n));
+
+    if (topInputs.length < 12) {
+        alert('Need at least 12 valid numbers in the Top Numbers inputs.');
+        return;
+    }
+
+    const fixedPattern = [
+        [0, 1, 2, 3, 4], [0, 1, 5, 6, 7], [0, 2, 5, 8, 9],
+        [0, 3, 6, 8, 10], [1, 2, 6, 9, 10], [1, 3, 5, 9, 11]
+    ];
+
+    let bestOrder = null;
+    let bestScore = Infinity;
+
+	const tryCount = 10000;
+    for (let i = 0; i < tryCount; i++) {
+        const shuffled = topInputs.slice(0, 12).sort(() => 0.5 - Math.random());
+        let totalScore = 0;
+        for (const indexes of fixedPattern) {
+            const combo = indexes.map(i => shuffled[i]);
+            totalScore += calculateRawPointsForSet(combo);
+        }
+        if (totalScore < bestScore) {
+            bestScore = totalScore;
+            bestOrder = shuffled.slice(0, 12);
+        }
+    }
+
+    // Update Top18 inputs with best order
+    allInputs.forEach((inp, idx) => {
+        if (idx < 12) {
+            inp.value = bestOrder[idx];
+            inp.classList.remove('dimmed');
+        } else {
+            inp.classList.add('dimmed');
+        }
+    });
+
+    // Hide modal controls for Quick Mode
+    document.getElementById('generateSetsModalButton').style.display = 'none';
+    document.getElementById('pickBestSetsModal').style.display = 'none';
+    document.getElementById('modalSetCountChoice').style.display = 'none';
+    document.getElementById('modalBestSetCount').style.display = 'none';
+    document.getElementById('exportBestBtn').style.display = 'none';
+    document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
+
+    // Build fixed sets and score them
+    const fixedSets = fixedPattern.map(indexes => indexes.map(i => bestOrder[i]));
+    generatedSets = fixedSets.map(combo => ({
+        combo,
+        points: calculateRawPointsForSet(combo)
+    }));
+
+    // Show output in modal
+    const modal = document.getElementById('wheelModal');
+    const output = document.getElementById('modalWheelOutput');
+    const progress = document.getElementById('progressInfo');
+
+    let html = '<ol>';
+    generatedSets.forEach(({ combo, points }) => {
+        html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+    });
+    html += `</ol><p style="color:orange; font-weight:bold;">  Total Score: ${bestScore.toFixed(1)} pts</p>`;
+
+    output.innerHTML = html;
+    if (progress) progress.innerHTML = '';
+    modal.style.display = 'block';
+});
+
+
+function renderFixedSetsToModal() {
+    const modal = document.getElementById('wheelModal');
+    const output = document.getElementById('modalWheelOutput');
+    const progress = document.getElementById('progressInfo');
+
+    // Hide modal buttons and inputs
+    document.getElementById('generateSetsModalButton').style.display = 'none';
+    document.getElementById('pickBestSetsModal').style.display = 'none';
+    document.getElementById('modalSetCountChoice').style.display = 'none';
+    document.getElementById('modalBestSetCount').style.display = 'none';
+
+    // Populate modal content
+    let html = '<ol>';
+    generatedSets.forEach(({ combo, points }) => {
+        html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+    });
+    html += '</ol>';
+    output.innerHTML = html;
+
+    if (progress) progress.innerHTML = '';
+    modal.style.display = 'block';
+}
+
+function resetModalControls() {
+    document.getElementById('generateSetsModalButton').style.display = 'inline-block';
+    document.getElementById('pickBestSetsModal').style.display = 'inline-block';
+    document.getElementById('modalSetCountChoice').style.display = 'inline-block';
+    document.getElementById('modalBestSetCount').style.display = 'inline-block';
+    document.getElementById('exportBestBtn').style.display = 'inline-block';
+
+    const labels = document.querySelectorAll('#wheelModal label');
+    labels.forEach(label => label.style.display = 'inline-block');
+
+    // 🔄 Reset dimmed inputs
+    document.querySelectorAll('#top18Inputs input.dimmed').forEach(inp => inp.classList.remove('dimmed'));
+
+    // Clear output areas
+    const output = document.getElementById('modalWheelOutput');
+    const progress = document.getElementById('progressInfo');
+    if (output) output.innerHTML = '';
+    if (progress) progress.innerHTML = '';
+}
+
+
+closeButton.addEventListener('click', function() {
+    resetModalControls();
+    wheelModal.style.display = "none";
+});
+
+window.addEventListener('click', function(event) {
+    if (event.target == wheelModal) {
+        resetModalControls();
+        wheelModal.style.display = "none";
+    }
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+    loadReferenceData();  // already present
+    resetModalControls(); // <-- add this
+});
+
+
+function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
+  fetch(filename + '?t=' + Date.now())
+    .then(response => response.text())
+    .then(text => {
+      fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
+      const drawingNumbers = fullData.map(row => parseInt(row[0]));
+
+      const data = fullData.map(row => row.slice(1).map(n => parseInt(n)))
+        .filter(row => row.every(n => !isNaN(n)));
+
+      totalNumbersGlobal = totalNumbers;
+      skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+
+      pastDrawings = fullData.filter(row => row.length >= 6)
+        .map(row => row.slice(1, 6).map(n => parseInt(n)).sort((a, b) => a - b).join(','));
+
+      renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+
+      const quick12Btn = document.getElementById('quick12Button');
+      if (quick12Btn) {
+        quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
+      }
+
+      const genBtn = document.getElementById('generateWheelButton');
+      if (genBtn) {
+        genBtn.style.display = (totalNumbers === 69) ? 'none' : 'inline-block';
+      }
+
+      document.getElementById('top18Inputs').style.display = 'flex';
+      const exportAllButton = document.querySelector('button[onclick="exportGeneratedSets()"]');
+      if (exportAllButton) exportAllButton.style.display = 'inline-block';
+      const exportBestButton = document.querySelector('button[onclick="exportBestSets()"]');
+      if (exportBestButton) exportBestButton.style.display = 'inline-block';
+      const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
+      if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
+      document.getElementById('reverseHitsContainer').style.display = 'block';
+      document.getElementById('skipFrequencyContainer').style.display = 'block';
+
+      if (typeof callback === 'function') {
+        callback();
+      }
+    })
+    .catch(error => {
+      console.error('Failed to load file:', error);
+      alert('Error loading the file.');
+    });
+}
+
+function buildSkipTable(data, totalNumbers, drawingNumbers) {
+  const skipTable = Array.from({ length: totalNumbers + 1 }, () => Array(26).fill(0));
+  const lastSeen = Array(totalNumbers + 1).fill(null);
+
+  for (let drawIndex = 0; drawIndex < data.length; drawIndex++) {
+    const currentDraw = new Set(data[drawIndex]);
+    for (let num = 1; num <= totalNumbers; num++) {
+      if (currentDraw.has(num)) {
+        if (lastSeen[num] !== null) {
+          const skip = drawIndex - lastSeen[num] - 1;
+          if (skip >= 1 && skip <= 25) {
+            skipTable[num][skip]++;
+          }
+        }
+        lastSeen[num] = drawIndex;
+      }
+    }
+  }
+  return { skipTable };
+}
+
+function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
+  const container = document.getElementById('recentDrawsContainer');
+  const comment = document.getElementById('latestDrawingComment');
+  comment.textContent = `The latest drawing on file is drawing # ${latestDrawingNumber}, shown in column 1.`;
+
+  const draws = data.slice(0, 25);
+  while (draws.length < 25) draws.push([]);
+  
+  sinceMap = {};
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbers; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    let found = false;
+    for (let col = 0; col < 25; col++) {
+      const cell = document.createElement('td');
+      if (draws[col] && draws[col].includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'red-dot';
+        cell.appendChild(dot);
+        if (!found) {
+          sinceMap[number] = col + 1;
+          found = true;
+        }
+      }
+      row.appendChild(cell);
+    }
+    if (!found) {
+      sinceMap[number] = 26;
+    }
+    table.appendChild(row);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+function rehighlightSkipTableFromTop18() {
+    const table = document.querySelector('#skipFrequencyContainer table');
+    if (!table) return;
+
+    const rows = table.querySelectorAll('tr');
+    rows.forEach(row => {
+        const num = parseInt(row.querySelector('th')?.textContent, 10);
+        row.querySelectorAll('td').forEach((cell, i) => {
+            const val = parseInt(cell.textContent.trim());
+            cell.classList.remove('selected-top-skip', 'top18-selected', 'hit');
+
+            if (val > 0) {
+                cell.classList.add('hit');
+            }
+            if (sinceMap[num] === i + 1) {
+                cell.classList.add('selected-top-skip');
+            }
+        });
+
+        if (top18.includes(num)) {
+            row.querySelectorAll('td').forEach(cell => {
+                if (cell.classList.contains('selected-top-skip')) {
+                    cell.classList.remove('selected-top-skip');
+                    cell.classList.add('top18-selected');
+                }
+            });
+        }
+    });
+}
+
+
+function generateTopNumbersAndRender(isPowerball69 = false) {
+
+  const container = document.getElementById('skipFrequencyContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  const highlighted = [];
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    for (let i = 1; i <= 25; i++) {
+      const cell = document.createElement('td');
+      const val = skipDataGlobal.skipTable[number]?.[i] || 0;
+      cell.textContent = val > 0 ? val : '';
+
+      if (sinceMap[number] === i) {
+        cell.classList.add('selected-top-skip');
+        highlighted.push({ number, val });
+      } else if (val > 0) {
+        cell.classList.add('hit');
+      }
+      row.appendChild(cell);
+    }
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+
+  console.log('🔍 Highlighted (pre-sort):', highlighted.map(h => `#${h.number} → ${h.val}`));
+  highlighted.sort((a, b) => b.val - a.val);
+  top18 = highlighted.slice(0, 18).map(obj => obj.number).sort((a, b) => a - b);
+  console.log('✅ Final top18:', top18);
+
+  const top18InputsDiv = document.getElementById('top18Inputs');
+  top18InputsDiv.innerHTML = '';
+  for (let i = 0; i < top18.length; i++) {
+    if (i === 12) {
+      const divider = document.createElement('div');
+      divider.style.borderLeft = '3px solid red';
+      divider.style.margin = '0 6px';
+      divider.style.height = '34px';
+      divider.style.alignSelf = 'center';
+      top18InputsDiv.appendChild(divider);
+    }
+
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = top18[i];
+    top18InputsDiv.appendChild(inp);
+  }
+
+  const allRows = table.querySelectorAll('tr');
+  allRows.forEach(row => {
+    const num = parseInt(row.querySelector('th')?.textContent, 10);
+    if (top18.includes(num)) {
+      row.querySelectorAll('td').forEach(cell => {
+        if (cell.classList.contains('selected-top-skip')) {
+          cell.classList.remove('selected-top-skip');
+          cell.classList.add('top18-selected');
+        }
+      });
+    }
+  });
+
+  renderReverseHitsTable();
+
+  if (isPowerball69) {
+    top18From69 = [...top18];
+    fullDataFrom69 = [...fullData];
+    skipDataGlobalFrom69 = JSON.parse(JSON.stringify(skipDataGlobal));
+    sinceMapFrom69 = { ...sinceMap };
+    pastDrawingsFrom69 = [...pastDrawings];
+    console.log('✅ Saved top18From69:', top18From69);
+  }
+}
+
+
+function getColorForPoints(points) {
+    if (points < 400) return 'lightgreen';
+    if (points < 800) return 'yellow';
+    if (points < 1200) return 'orange';
+    return 'red';
+}
+
+function calculateRawPointsForSet(numbers) { // 👈 Moved up here
+    let totalPoints = 0;
+    const sorted = [...numbers].sort((a, b) => a - b);
+    const consecutivePairs = sorted.filter((n, i) => i < 4 && sorted[i + 1] - n === 1).length;
+    const lowHigh = sorted[0] - sorted[4];
+    const spread = sorted[4] - sorted[0];
+    const sum = sorted.reduce((a, b) => a + b, 0);
+    const lookup = [
+        { category: "Consecutive Pairs", value: consecutivePairs },
+        { category: "Low - High", value: lowHigh },
+        { category: "Spread", value: spread },
+        { category: "Sum", value: sum }
+    ];
+    lookup.forEach(({ category, value }) => {
+        const p = referenceData[category]?.[value];
+        if (p && p > 0) {
+            totalPoints += 1 / p;
+        }
+    });
+    return totalPoints;
+}
+
+function reapply69State() {
+    highlight(btn69);
+    totalNumbersGlobal = 69;
+    hidePBblock();
+
+    fullData = [...fullDataFrom69];
+    skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
+    sinceMap = { ...sinceMapFrom69 };
+    pastDrawings = [...pastDrawingsFrom69];
+    top18 = [...top18From69];
+
+    console.log('🟢 Reapplying top18From69:', top18);
+
+    // Inject UI
+    const top18InputsDiv = document.getElementById('top18Inputs');
+    top18InputsDiv.innerHTML = '';
+    for (let i = 0; i < top18.length; i++) {
+        if (i === 12) {
+            const divider = document.createElement('div');
+            divider.style.borderLeft = '3px solid red';
+            divider.style.margin = '0 6px';
+            divider.style.height = '34px';
+            divider.style.alignSelf = 'center';
+            top18InputsDiv.appendChild(divider);
+        }
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = top18[i];
+        top18InputsDiv.appendChild(inp);
+    }
+
+    updateReverseHitsTop18(); // Reflect changes in Hits chart
+    renderSkipFrequency();    // Refresh skip table
+}
+
+
+function generateWheelSets() {
+
+console.log("🔎 Generate Wheel Context:");
+console.log("top18:", top18);
+console.log("totalNumbersGlobal:", totalNumbersGlobal);
+console.log("pastDrawings.length:", pastDrawings.length);
+console.log("fullData.length:", fullData.length);
+console.log("skipDataGlobal:", skipDataGlobal);
+console.log("sinceMap:", sinceMap);
+
+    const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+const numbersToUse = top18Inputs
+  .map(input => parseInt(input.value.trim(), 10))
+  .filter(x => !isNaN(x) && x >= 1);
+console.log("🧪 Parsed top18 inputs:", numbersToUse);
+
+
+    if (numbersToUse.length === 0) {
+        alert('Please enter valid numbers in the Top 18 Numbers section.');
+        return;
+    }
+
+    top18 = numbersToUse.sort((a, b) => a - b);
+
+    // Ensure progressDiv exists *before* calling generateWheel
+    const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
+    progressDiv.innerHTML = ''; // Clear any previous progress
+
+    // Get the number of sets to generate from the modal input
+    const setsToGenerateInput = document.getElementById('modalSetCountChoice');
+    const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
+
+    const wheelSets = generateWheel(top18, pastDrawings, 5, setsToGenerate);
+
+    generatedSets = wheelSets.map(({ combo }) => ({ combo, points: calculateRawPointsForSet(combo) }));
+
+    const modalWheelOutput = document.getElementById('modalWheelOutput');
+    const wheelModal = document.getElementById('wheelModal');
+
+    if (generatedSets.length === 0) {
+        modalWheelOutput.innerHTML = '<p>No valid sets generated. Try different numbers or sets.</p>';
+        wheelModal.style.display = "block"; // Show even if no sets
+        return;
+    }
+
+    let outputHtml = '<ol>';
+    generatedSets.forEach(({ combo, points }) => {
+        const color = getColorForPoints(points);
+        outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+    });
+    outputHtml += '</ol>';
+    modalWheelOutput.innerHTML = outputHtml;
+    wheelModal.style.display = "block"; // Show the modal
+
+    // renderReverseHitsTable(); <----- REMOVED THIS LINE
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const closeButton = document.querySelector('.close-button');
+    const wheelModal = document.getElementById('wheelModal');
+    const continueButton = document.getElementById('continueButton');
+    const saveButtonModal = document.getElementById('saveGeneratedSetsModal');
+    const pickBestSetsButtonModal = document.getElementById('pickBestSetsModal'); // New button
+
+    if (closeButton) {
+closeButton.addEventListener('click', function () {
+    resetModalControls();
+    wheelModal.style.display = "none";
+
+    if (totalNumbersGlobal === 26) {
+        reapply69State();
+    }
+});
+    }
+
+    if (continueButton) {
+        continueButton.addEventListener('click', function() {
+            wheelModal.style.display = "none";
+            // Optionally, you could clear the modal's content here if needed
+        });
+    }
+
+    if (saveButtonModal) {
+        saveButtonModal.addEventListener('click', saveGeneratedSetsToText);
+    }
+
+    // Event listener for the "Pick Best Sets" button in the modal
+    if (pickBestSetsButtonModal) {
+        pickBestSetsButtonModal.addEventListener('click', function() {
+            pickBestSets(true); // Display best sets within the modal
+        });
+    }
+
+window.addEventListener('click', function (event) {
+    if (event.target == wheelModal) {
+        resetModalControls();
+        wheelModal.style.display = "none";
+
+        if (totalNumbersGlobal === 26) {
+            reapply69State();
+        }
+    }
+});
+
+
+    // Remove the event listener for the old "Pick Best Sets" button outside the modal
+    const oldPickBestSetsButton = document.querySelector('button[onclick="pickBestSets()"]');
+    if (oldPickBestSetsButton) {
+        oldPickBestSetsButton.removeAttribute('onclick');
+        // You might want to remove the button element entirely if you don't need it anymore
+        // oldPickBestSetsButton.remove();
+    }
+});
+
+function saveGeneratedSetsToText() {
+    if (!generatedSets.length) {
+        alert("No generated sets to save!");
+        return;
+    }
+
+    /* is this the single-number game (the file you load with “Load 1 Numbers”)? */
+    const singleNumberGame = (totalNumbersGlobal === 26);
+
+    let text;
+
+    if (singleNumberGame) {
+        /* grab whatever is currently in the Top-Numbers inputs */
+        const bonusPool = Array.from(document.querySelectorAll('#top18Inputs input'))
+              .map(inp => parseInt(inp.value.trim(), 10))
+              .filter(n => !isNaN(n));
+
+        if (bonusPool.length === 0) {
+            alert("No numbers found in the Top Numbers inputs!");
+            return;
+        }
+
+        /* each set gets ONE random pick (duplicates allowed) */
+        text = generatedSets.map(({ combo }) => {
+            const bonus = bonusPool[Math.floor(Math.random() * bonusPool.length)];
+            return `${combo.join(', ')}  ${bonus}`;   // two spaces before the bonus
+        }).join('\n');
+    } else {
+        /* legacy format with points */
+        text = generatedSets
+               .map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`)
+               .join('\n');
+    }
+
+    /* save to txt */
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `generated_sets_${totalNumbersGlobal}.txt`;
+    link.click();
+}
+
+function pickBestSets(displayInModal = false) {
+    if (!generatedSets.length) {
+        alert("No wheel sets have been generated yet!");
+        return;
+    }
+
+    const bestSetCountInput = document.getElementById('modalBestSetCount');
+    const bestCount = parseInt(bestSetCountInput.value, 10) || 5;
+
+    // Sort by score ascending (lowest points first)
+    generatedSets.sort((a, b) => a.points - b.points);
+
+    // Pick the best sets
+    const bestSets = generatedSets.slice(0, bestCount);
+
+    const outputContainer = displayInModal ? document.getElementById('modalWheelOutput') : document.getElementById('wheelOutput');
+    let newHtml = '<h3>Best ' + bestSets.length + ' Sets:</h3><ol>' + bestSets.map(({ combo, points }) =>
+        `<li style="color:${getColorForPoints(points)}; font-weight: bold;">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`
+    ).join('') + '</ol>';
+
+    outputContainer.innerHTML = newHtml;
+
+    if (!displayInModal) {
+        const wheelModal = document.getElementById('wheelModal');
+        wheelModal.style.display = "none"; // Hide the modal after displaying best sets outside
+    }
+}
+
+function processLoadedData() {
+  const drawingNumbers = fullData.map(row => parseInt(row[0]));
+
+  const data = fullData.map(row => row.slice(1).map(Number))
+                       .filter(row => row.every(n => !isNaN(n)));
+
+  skipDataGlobal = buildSkipTable(data, totalNumbersGlobal, drawingNumbers);
+
+  pastDrawings = fullData.filter(row => row.length >= 6)
+                         .map(row => row.slice(1, 6).sort((a, b) => a - b).join(','));
+
+  renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
+  renderSkipFrequency();
+}
+
+// 🟢 Render Skip Table
+function renderSkipFrequency() {
+  const container = document.getElementById('skipFrequencyContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    for (let i = 1; i <= 25; i++) {
+      const cell = document.createElement('td');
+      const val = skipDataGlobal.skipTable[number]?.[i] || 0;
+      cell.textContent = val > 0 ? val : '';
+      row.appendChild(cell);
+    }
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+}
+
+
+function generateWheel(sourceNumbers, pastDrawings, setSize, numSets) {
+  const wheel = [];
+  const used = new Set();
+  const seenCombos = new Set();
+  let skippedDueToPastDrawings4 = 0;
+  let skippedDueToPastDrawings5 = 0;
+  let skippedDueToBadSum = 0;
+  let attempts = 0;
+
+  const totalCombosNeeded = combination(sourceNumbers.length, 3);
+
+  // 🔒 Sanity check for unexpected combo counts
+  if (totalCombosNeeded < 20 || totalCombosNeeded > 3000) {
+    console.warn(`⚠️ Suspicious totalCombosNeeded: ${totalCombosNeeded} from ${sourceNumbers.length} numbers`);
+  }
+
+  // 70% dynamic range based on number pool
+  const minPossibleSum = sourceNumbers.slice(0, 5).reduce((a, b) => a + b, 0);
+  const maxPossibleSum = sourceNumbers.slice(-5).reduce((a, b) => a + b, 0);
+  const span = maxPossibleSum - minPossibleSum;
+  const minSumAllowed = minPossibleSum + span * 0.15;
+  const maxSumAllowed = minPossibleSum + span * 0.85;
+
+  const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
+  progressDiv.innerHTML = '';
+
+  while (wheel.length < numSets && attempts < 50000) {
+    const combo = [...sourceNumbers].sort(() => 0.5 - Math.random()).slice(0, setSize).sort((a, b) => a - b);
+    const comboKey = combo.join(',');
+
+    if (used.has(comboKey)) {
+      attempts++;
+      continue;
+    }
+
+    // Sum check
+    const sum = combo.reduce((a, b) => a + b, 0);
+    if (sum < minSumAllowed || sum > maxSumAllowed) {
+      skippedDueToBadSum++;
+      attempts++;
+      continue;
+    }
+
+    // Past draw overlap check
+    let conflict = false;
+    for (let i = 0; i < pastDrawings.length; i++) {
+      const past = pastDrawings[i].split(',').map(Number);
+      const overlap = combo.filter(n => past.includes(n));
+      if (overlap.length === 4) {
+        skippedDueToPastDrawings4++;
+        conflict = true;
+        break;
+      } else if (overlap.length === 5) {
+        skippedDueToPastDrawings5++;
+        conflict = true;
+        break;
+      }
+    }
+
+    if (conflict) {
+      attempts++;
+      continue;
+    }
+
+    used.add(comboKey);
+
+    const threeCombos = getAllCombinations(combo, 3);
+    for (const c of threeCombos) {
+      seenCombos.add(c.join(','));
+    }
+
+    wheel.push({ combo });
+
+    // Update progress
+    progressDiv.innerHTML = `
+      <div style="color: yellow;">⚡ Skipped ${skippedDueToPastDrawings4} sets (4/5 matches)</div>
+      <div style="color: red;">🔥 Skipped ${skippedDueToPastDrawings5} sets (5/5 matches)</div>
+      <div style="color: orange;">🚫 Skipped ${skippedDueToBadSum} sets (bad sum outside 70% range)</div>
+      <div style="color: lightgreen;">✅ 3-number combos covered: ${seenCombos.size} / ${totalCombosNeeded}</div>
+    `;
+
+    if (seenCombos.size >= totalCombosNeeded * 0.95) {
+      const doneMessage = document.createElement('div');
+      doneMessage.innerHTML = '🎯 95% of 3-combos covered!';
+      doneMessage.style.color = 'lime';
+      progressDiv.appendChild(doneMessage);
+    }
+  }
+
+  return wheel;
+}
+
+
+
+// Estimate simple % coverage for budget table
+function estimateCoverage(numSets, totalNumbers) {
+  const combosPerSet = combination(5, 3); // 5 pick 3 = 10 combos per set
+  const totalCombos = combination(totalNumbers, 3);
+  const coverage = (numSets * combosPerSet) / totalCombos * 100;
+  return coverage.toFixed(1);
+}
+
+function getAllCombinations(array, size) {
+  const results = [];
+  function helper(start, combo) {
+    if (combo.length === size) {
+      results.push(combo);
+      return;
+    }
+    for (let i = start; i < array.length; i++) {
+      helper(i + 1, combo.concat(array[i]));
+    }
+  }
+  helper(0, []);
+  return results;
+}
+
+function combination(n, k) {
+  if (k > n) return 0;
+  let result = 1;
+  for (let i = 0; i < k; i++) {
+    result *= (n - i) / (i + 1);
+  }
+  return Math.round(result);
+}
+
+function createProgressInfoDiv() {
+    const div = document.createElement('div');
+    div.id = 'progressInfo';
+    div.style.marginTop = '15px';
+    div.style.fontSize = '16px';
+    const modalContent = document.querySelector('#wheelModal .modal-content');
+    if (modalContent) {
+        modalContent.insertBefore(div, document.getElementById('modalWheelOutput'));
+    }
+    return div;
+}
+
+function calculateCoveragePercent(numNumbers, setsGenerated) {
+  const totalCombos = combination(numNumbers, 3);  // total 3-number combos possible
+  const combosCovered = setsGenerated * combination(5, 3);  // each 5-number set covers 10 combos
+  let percent = Math.min(100, (combosCovered / totalCombos) * 100);
+  return percent.toFixed(1);
+}
+
+
+function renderReverseHitsTable() {
+  const container = document.getElementById('reverseHitsContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 25; i >= 1; i--) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  headerRow.appendChild(document.createElement('th')).textContent = 'Top';
+  table.appendChild(headerRow);
+
+  const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    for (let i = 24; i >= 0; i--) {
+      const cell = document.createElement('td');
+      if (draws[i] && draws[i].includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'red-dot';
+        cell.appendChild(dot);
+      }
+      row.appendChild(cell);
+    }
+
+    const topCell = document.createElement('td');
+    if (top18.includes(number)) {
+      const dot = document.createElement('div');
+      dot.className = 'orange-dot';
+      topCell.appendChild(dot);
+    }
+    row.appendChild(topCell);
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+}
+
+function updateReverseHitsTop18() {
+    // ✅ Only reapply 69-number context if we're in 1-number mode
+    if (totalNumbersGlobal === 26) {
+        fullData = [...fullDataFrom69];
+        skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
+        sinceMap = { ...sinceMapFrom69 };
+        pastDrawings = [...pastDrawingsFrom69];
+    }
+
+    // Refresh the top18 from current input values
+    const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+    top18 = top18Inputs.map(input => parseInt(input.value.trim(), 10))
+                       .filter(x => !isNaN(x) && x >= 1)
+                       .sort((a, b) => a - b);
+
+    // Also update the saved Top 18 (in case they close modal later)
+    if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) {
+        top18From69 = [...top18];
+    }
+
+    renderReverseHitsTable();
+    renderSkipFrequency();
+    rehighlightSkipTableFromTop18();  // <-- Restore highlight styles
+}
+
+
+// 🟢 Export Generated Sets
+function exportGeneratedSets() {
+  if (generatedSets.length === 0) {
+    alert("No generated sets!");
+    return;
+  }
+  const text = generatedSets.map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
+  const blob = new Blob([text], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'generated_sets_' + totalNumbersGlobal + '.txt';
+  link.click();
+}
+
+function exportBestSets() {
+    if (!generatedSets.length) {
+        alert("No generated sets!");
+        return;
+    }
+
+    const bestCount = parseInt(document.getElementById('bestSetCount').value, 10) || 5;
+
+    const bestSets = generatedSets.slice(0, bestCount);
+
+    if (bestSets.length === 0) {
+        alert("No best sets available!");
+        return;
+    }
+
+    const text = bestSets.map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `best_sets_${bestCount}_${totalNumbersGlobal}.txt`;
+    link.click();
+}
+
+
+
+
+
+let historicalReference = {};
+let simulatedReference = {};
+
+function loadReferenceData(filename, target = 'historical') {
+  fetch(filename + '?t=' + Date.now())
+    .then(response => response.text())
+    .then(csv => {
+      const lines = csv.trim().split('\n');
+      const headers = lines[0].split(',');
+
+      const ref = {};
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        const category = row[0].trim();
+        const val = row[1].trim();
+        const pval = parseFloat(row[3]); // Use column index 3
+
+        if (!ref[category]) {
+          ref[category] = {};
+        }
+        ref[category][val] = pval;
+      }
+
+      if (target === 'historical') {
+        historicalReference = ref;
+        console.log('✅ Loaded historical reference data');
+      } else {
+        simulatedReference = ref;
+        console.log('✅ Loaded simulated reference data');
+      }
+    })
+    .catch(error => console.error('❌ Failed to load reference data:', error));
+}
+
+function calculateDualScoredPoints(numbers) {
+  let totalPoints = { historical: 0, simulated: 0 };
+
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const consecutivePairs = sorted.filter((n, i) => i < 4 && sorted[i + 1] - n === 1).length;
+  const lowHigh = sorted[0] - sorted[4];
+  const spread = sorted[4] - sorted[0];
+  const sum = sorted.reduce((a, b) => a + b, 0);
+  const oddEven = numbers.reduce((acc, n) => acc + (n % 2 === 1 ? 1 : -1), 0);
+
+  const metrics = [
+    { category: "Consecutive Pairs", value: consecutivePairs },
+    { category: "Low - High", value: lowHigh },
+    { category: "Spread", value: spread },
+    { category: "Sum", value: sum },
+    { category: "Odd - Even", value: oddEven }
+  ];
+
+  for (const { category, value } of metrics) {
+    const valStr = String(value);
+    const h = historicalReference[category]?.[valStr];
+    const s = simulatedReference[category]?.[valStr];
+    if (h && h > 0) totalPoints.historical += 1 / h;
+    if (s && s > 0) totalPoints.simulated += 1 / s;
+  }
+
+  return {
+    best: Math.min(totalPoints.historical, totalPoints.simulated),
+    source: totalPoints.simulated < totalPoints.historical ? 'simulated' : 'historical'
+  };
+}
+
+function getColorForDualPoints(score, source) {
+  if (source === 'simulated') return 'violet';
+  if (score < 400) return 'lightgreen';
+  if (score < 800) return 'yellow';
+  if (score < 1200) return 'orange';
+  return 'red';
+}
+
+// Patch generateWheelSets to use dual scoring
+const originalGenerateWheelSets = generateWheelSets;
+generateWheelSets = function() {
+  const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const numbersToUse = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(x => !isNaN(x) && x >= 1 && x <= totalNumbersGlobal);
+
+  if (numbersToUse.length === 0) {
+    alert('Please enter valid numbers in the Top 18 Numbers section.');
+    return;
+  }
+
+  top18 = numbersToUse.sort((a, b) => a - b);
+
+  const setsToGenerateInput = document.getElementById('modalSetCountChoice');
+  const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
+
+  const wheelSets = generateWheel(top18, pastDrawings, 5, setsToGenerate);
+
+  generatedSets = wheelSets.map(({ combo }) => {
+    const { best, source } = calculateDualScoredPoints(combo);
+    return { combo, points: best, source };
+  });
+
+  const modalWheelOutput = document.getElementById('modalWheelOutput');
+  const wheelModal = document.getElementById('wheelModal');
+
+  if (generatedSets.length === 0) {
+    modalWheelOutput.innerHTML = '<p>No valid sets generated. Try different numbers or sets.</p>';
+    wheelModal.style.display = "block";
+    return;
+  }
+
+  let outputHtml = '<ol>';
+  generatedSets.forEach(({ combo, points, source }) => {
+    const color = getColorForDualPoints(points, source);
+    outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+  });
+  outputHtml += '</ol>';
+  modalWheelOutput.innerHTML = outputHtml;
+  wheelModal.style.display = "block";
+};
+</script>
+</body>
+</html>

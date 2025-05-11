@@ -781,30 +781,25 @@ const maxPoints = sorted[cutoffIndex];
   ctx.font = '14px Arial';
   ctx.textBaseline = 'middle';
 
-  recentPoints.forEach((pts, i) => {
-    const y = i * (barHeight + spacing);
-const logPts = Math.log10(pts + 1);  // +1 to avoid log(0)
-const logMax = Math.log10(maxPoints + 1);
-const barWidth = (logPts / logMax) * (canvasWidth - 150);
+recentPoints.forEach((pts, i) => {
+  const y = i * (barHeight + spacing);
+  const logPts = Math.log10(pts + 1);
+  const logMax = Math.log10(maxPoints + 1);
+  const barWidth = (logPts / logMax) * (canvasWidth - 150);
 
-    // Color based on thresholds
-    ctx.fillStyle = pts > 1200 ? 'red' :
-                    pts > 800  ? 'orange' :
-                    pts > 400  ? 'yellow' :
-                                 'lightgreen';
+  ctx.fillStyle = pts > 1200 ? 'red' :
+                  pts > 800  ? 'orange' :
+                  pts > 400  ? 'yellow' :
+                               'lightgreen';
 
-    ctx.fillRect(140, y, barWidth, barHeight);
-    if (pts > maxPoints) {
-  ctx.fillStyle = 'red';
-  ctx.fillText('⚠️ capped', 150 + barWidth + 60, y + barHeight / 2);
-}
-
-
-    // Label with drawing index and points
-    ctx.fillStyle = 'white';
-    ctx.fillText(`Draw ${points.length - i}:`, 10, y + barHeight / 2);
-    ctx.fillText(`${pts.toFixed(1)} pts`, 150 + barWidth, y + barHeight / 2);
-  });
+  ctx.fillRect(140, y, barWidth, barHeight);
+  
+  const offset = (totalNumbersGlobal === 39) ? 70 :
+                 (totalNumbersGlobal === 69) ? 260 : 0;
+  ctx.fillStyle = 'white';
+  ctx.fillText(`Draw ${points.length - i + offset}:`, 10, y + barHeight / 2);
+  ctx.fillText(`${pts.toFixed(1)} pts`, 150 + barWidth, y + barHeight / 2);
+});
 }
 
 

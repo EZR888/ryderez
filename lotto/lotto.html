@@ -8,7 +8,7 @@
  /* ==========  Global layout / colours  ========== */
 body{
     font-family:Arial,Helvetica,sans-serif;
-    padding:20px;
+    padding:10px;
     background: #086d22;
     color:lightgreen;
 }
@@ -124,13 +124,19 @@ table tr:hover{background:#444}
 }
 
 /* ==========  Items hidden until data have loaded  ========== */
+/* ==========  Items hidden until data have loaded  ========== */
 #newDrawingInputs,
 #top18Inputs,
-#generateWheelButton,
 button[onclick="exportGeneratedSets()"],
 button[onclick="exportBestSets()"],
-button[onclick="updateReverseHitsTop18()"]{display:none}
-#newDrawingInputs>button{display:none}   /* those “Save / Download” buttons   */
+button[onclick="updateReverseHitsTop18()"] {
+  display: none;
+}
+
+#newDrawingInputs > button {
+  display: none;
+}
+
                 
 button img{
     width:150px;          /* pick a size that suits your artwork -- */
@@ -256,11 +262,91 @@ h3{margin:0 0 15px;color: gold}
   margin-left: 4px;
 }
 
+#splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: green;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#splashImage {
+  max-width: 90%;
+  max-height: 80vh;
+}
+
+#splashText {
+  margin-top: 20px;
+  color: gold;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+
   </style>
 </head>
 <body>
 
-<h1>Lotto Wheel Generator</h1>
+<div id="splashScreen">
+<!-- 🔥 Main Title + Subtitle Section -->
+<div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+  <h1 style="
+    font-family: 'Comic Sans MS', cursive;
+    font-style: italic;
+    font-size: 64px;
+    color: gold;
+    margin-bottom: 12px;
+    text-shadow: 2px 2px 4px black;
+  ">
+    The Winning Edge
+  </h1>
+  <div style="
+    font-size: 24px;
+    color: lime;
+    font-family: 'Arial', sans-serif;
+    font-weight: 300;
+    text-shadow: 1px 1px 2px #000;
+  ">
+    Statistically Optimized Lotto Picks
+      <br><br><br>
+  </div>
+</div>
+
+<div id="splashText">Loading your luck...</div><br><br>
+  <img src="potogold.gif" alt="Loading your luck..." id="splashImage">
+  
+</div>
+
+<!-- 🔥 Main Title + Subtitle Section -->
+<div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+  <h1 style="
+    font-family: 'Comic Sans MS', cursive;
+    font-style: italic;
+    font-size: 64px;
+    color: gold;
+    margin-bottom: 12px;
+    text-shadow: 2px 2px 4px black;
+  ">
+    The Winning Edge
+  </h1>
+  <div style="
+    font-size: 24px;
+    color: lime;
+    font-family: 'Arial', sans-serif;
+    font-weight: 300;
+    text-shadow: 1px 1px 2px #000;
+  ">
+    Statistically Optimized Lotto Picks
+  </div>
+</div>
+
 <br>
 <h2>Load a Lotto Dataset</h2>
 
@@ -273,7 +359,7 @@ h3{margin:0 0 15px;color: gold}
 </button>
 
 <button id="load39Button" class="gameBtn">
-    <img src="fantasy5.png" alt="Load 39-number game">
+    <img src="Fantasy5.png" alt="Load 39-number game">
 </button>
 <span id="lastDrawingDisplay" style="font-weight: bold; margin-left: 30px; font-size: 24px;">
   <span style="color: gold;">Last Drawing #:</span>
@@ -299,12 +385,14 @@ h3{margin:0 0 15px;color: gold}
 </button>
 <br><br>
 
-    <h2>Top Numbers (Editable)</h2>
+<h2 id="top18Label">Top Numbers (Editable)</h2>
     <div id="top18Inputs"></div>
 <button id="updateHitsBtn" class="button button-single">🔄 Update Hits Table</button>
-
+<button id="autoPickTopBtn" class="button button-single">
+  🧠 Auto-Pick Top Numbers
+</button>
 <button id="saveTop18Button" class="button button-single">💾 Save Top #'s</button>
-<button id="loadTop18Button" class="button button-single">📂 Load Top #'s</button>
+<button id="loadTop18Button" class="button button-single">📂 Load Top #'s</button><br>
 
 <div id="loadTop18Modal" class="modal">
     <div class="modal-content">
@@ -434,12 +522,28 @@ btn69.onclick = () => {
     }
 
     hidePBblock();
-    highlight(btn69);
-    qs('#generateWheelButton').style.display = 'none';
+	qs('#generateWheelButton').style.display = 'inline-block';
     qs('#quick12Button').style.display = 'none';
     qs('#checkNumbersButton').style.display = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
+        highlight(btn69);
+    
+    // ✅ Show Top18-related controls again when returning to 69 mode
+document.getElementById('top18Inputs').style.display = 'flex';
+const label = document.getElementById('top18Label');
+if (label) label.style.display = 'block';
+
+[
+  'updateHitsBtn',
+  'autoPickTopBtn',
+  'saveTop18Button',
+  'loadTop18Button'
+].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'inline-block';
+});
+
 
     const pbSpan = document.getElementById('checkPBSpan');
     if (pbSpan) pbSpan.style.display = 'inline';
@@ -449,53 +553,57 @@ btn69.onclick = () => {
 };
 
 btn1.onclick = () => {
-  document.getElementById('showHistogramBtn').style.display = 'none';
+  highlight(btn1);
+  totalNumbersGlobal = 26;
+  activeGameMode = 26;
 
   showPBblock();
-  highlight(btn1);
-  totalNumbersGlobal = 69;
-  activeGameMode = 26;
-  qs('#generateWheelButton').style.display = 'inline-block';
+  qs('#generateWheelButton').style.display = 'none';
   qs('#checkNumbersButton').style.display = 'none';
+  document.getElementById('showHistogramBtn').style.display = 'none';
 
   const checkPBSpan = document.getElementById('checkPBSpan');
   if (checkPBSpan) checkPBSpan.style.display = 'none';
 
-  // Save current edits before switching
-  top18From69 = Array.from(document.querySelectorAll('#top18Inputs input'))
-    .map(input => parseInt(input.value.trim(), 10))
-    .filter(n => !isNaN(n) && n >= 1);
+  // ✅ Hide Top 18 label and input row
+  document.getElementById('top18Inputs').style.display = 'none';
+  const label = document.getElementById('top18Label');
+  if (label) label.style.display = 'none';
+  
+    // Hide all Top18-related inputs and buttons
+  document.getElementById('top18Inputs').style.display = 'none';
+  document.getElementById('updateHitsBtn').style.display = 'none';
+  document.getElementById('autoPickTopBtn').style.display = 'none';
+  document.getElementById('saveTop18Button').style.display = 'none';
+  document.getElementById('loadTop18Button').style.display = 'none';
+  document.getElementById('top18Label').style.display = 'none';
 
-  // Restore cached 69-number context
-  fullData = [...fullDataFrom69];
-  skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
-  sinceMap = { ...sinceMapFrom69 };
-  pastDrawings = [...pastDrawingsFrom69];
-  top18 = [...top18From69];
-
-  console.log('🟢 Loaded top18From69:', top18);
-
-  // Inject UI inputs
-  const top18InputsDiv = document.getElementById('top18Inputs');
-  top18InputsDiv.innerHTML = '';
-  for (let i = 0; i < top18.length; i++) {
-    if (i === 12) {
-      const divider = document.createElement('div');
-      divider.style.borderLeft = '3px solid red';
-      divider.style.margin = '0 6px';
-      divider.style.height = '34px';
-      divider.style.alignSelf = 'center';
-      top18InputsDiv.appendChild(divider);
+  // ✅ Load the 1-number data fresh
+  loadCSVFile('lotto_1.txt', 26, () => {
+    // 🔄 Recalculate top18 based on the skip table
+    const highlighted = [];
+    for (let number = 1; number <= totalNumbersGlobal; number++) {
+      const val = skipDataGlobal.skipTable[number]?.reduce((a, b) => a + b, 0) || 0;
+      highlighted.push({ number, val });
     }
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.value = top18[i];
-    top18InputsDiv.appendChild(inp);
-  }
+    highlighted.sort((a, b) => b.val - a.val);
+    top18 = highlighted.slice(0, 18).map(x => x.number).sort((a, b) => a - b);
 
-  console.log('✅ Injected top18 inputs:', top18InputsDiv.innerHTML);
-  updateReverseHitsTop18();
-  rehighlightSkipTableFromTop18();
+    // ⬇️ Fill input fields anyway, for consistency (even if hidden)
+    const top18InputsDiv = document.getElementById('top18Inputs');
+    top18InputsDiv.innerHTML = '';
+    for (let i = 0; i < top18.length; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.value = top18[i];
+      top18InputsDiv.appendChild(inp);
+    }
+
+    console.log('🔁 Recalculated 1-number Top 18:', top18);
+
+    updateReverseHitsTop18(); // ✅ This fills in the Top column
+    rehighlightSkipTableFromTop18();
+  });
 };
 
 btn39.onclick = () => {
@@ -510,6 +618,22 @@ btn39.onclick = () => {
     qs('#checkNumbersButton').style.display = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
+    
+    // ✅ Show Top18-related controls again when returning to 69 mode
+document.getElementById('top18Inputs').style.display = 'flex';
+const label = document.getElementById('top18Label');
+if (label) label.style.display = 'block';
+
+[
+  'updateHitsBtn',
+  'autoPickTopBtn',
+  'saveTop18Button',
+  'loadTop18Button'
+].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'inline-block';
+});
+
     
     const checkPBSpan = document.getElementById('checkPBSpan');
     if (checkPBSpan) checkPBSpan.style.display = 'none';
@@ -554,6 +678,73 @@ window.addEventListener('click', (event) => {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const closeAutoBtn = document.getElementById('closeAutoPickModal');
+  if (closeAutoBtn) {
+    closeAutoBtn.addEventListener('click', () => {
+      document.getElementById('autoPickModal').style.display = 'none';
+    });
+  }
+
+  const runAutoBtn = document.getElementById('runAutoPick');
+  if (runAutoBtn) {
+    runAutoBtn.addEventListener('click', () => {
+      const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
+      const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+
+      const recentDraws = fullData.slice(0, weeks).map(row => row.slice(1).map(Number));
+      const freqMap = {};
+
+      recentDraws.forEach(draw => {
+        draw.forEach(num => {
+          if (!isNaN(num)) freqMap[num] = (freqMap[num] || 0) + 1;
+        });
+      });
+
+      const topNums = Object.entries(freqMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, count)
+        .map(([num]) => parseInt(num, 10))
+        .sort((a, b) => a - b);
+
+      const topInputsDiv = document.getElementById('top18Inputs');
+      topInputsDiv.innerHTML = '';
+
+      topNums.forEach((num, i) => {
+        if (i === 12) {
+          const divider = document.createElement('div');
+          divider.style.borderLeft = '3px solid red';
+          divider.style.margin = '0 6px';
+          divider.style.height = '34px';
+          divider.style.alignSelf = 'center';
+          topInputsDiv.appendChild(divider);
+        }
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = num;
+        topInputsDiv.appendChild(inp);
+      });
+
+      top18 = [...topNums];
+      if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) {
+        top18From69 = [...topNums];
+      }
+
+      updateReverseHitsTop18();
+      document.getElementById('autoPickModal').style.display = 'none';
+    });
+  }
+
+  const showAutoBtn = document.getElementById('autoPickTopBtn');
+  if (showAutoBtn) {
+    showAutoBtn.addEventListener('click', () => {
+      document.getElementById('autoPickModal').style.display = 'block';
+    });
+  }
+});
+
+
+
 function drawHistogram(points) {
   const maxToShow = 500;
   const recentPoints = points.slice(-maxToShow).reverse(); // latest at top
@@ -590,30 +781,25 @@ const maxPoints = sorted[cutoffIndex];
   ctx.font = '14px Arial';
   ctx.textBaseline = 'middle';
 
-  recentPoints.forEach((pts, i) => {
-    const y = i * (barHeight + spacing);
-const logPts = Math.log10(pts + 1);  // +1 to avoid log(0)
-const logMax = Math.log10(maxPoints + 1);
-const barWidth = (logPts / logMax) * (canvasWidth - 150);
+recentPoints.forEach((pts, i) => {
+  const y = i * (barHeight + spacing);
+  const logPts = Math.log10(pts + 1);
+  const logMax = Math.log10(maxPoints + 1);
+  const barWidth = (logPts / logMax) * (canvasWidth - 150);
 
-    // Color based on thresholds
-    ctx.fillStyle = pts > 1200 ? 'red' :
-                    pts > 800  ? 'orange' :
-                    pts > 400  ? 'yellow' :
-                                 'lightgreen';
+  ctx.fillStyle = pts > 1200 ? 'red' :
+                  pts > 800  ? 'orange' :
+                  pts > 400  ? 'yellow' :
+                               'lightgreen';
 
-    ctx.fillRect(140, y, barWidth, barHeight);
-    if (pts > maxPoints) {
-  ctx.fillStyle = 'red';
-  ctx.fillText('⚠️ capped', 150 + barWidth + 60, y + barHeight / 2);
-}
-
-
-    // Label with drawing index and points
-    ctx.fillStyle = 'white';
-    ctx.fillText(`Draw ${points.length - i}:`, 10, y + barHeight / 2);
-    ctx.fillText(`${pts.toFixed(1)} pts`, 150 + barWidth, y + barHeight / 2);
-  });
+  ctx.fillRect(140, y, barWidth, barHeight);
+  
+  const offset = (totalNumbersGlobal === 39) ? 70 :
+                 (totalNumbersGlobal === 69) ? 260 : 0;
+  ctx.fillStyle = 'white';
+  ctx.fillText(`Draw ${points.length - i + offset}:`, 10, y + barHeight / 2);
+  ctx.fillText(`${pts.toFixed(1)} pts`, 150 + barWidth, y + barHeight / 2);
+});
 }
 
 
@@ -639,21 +825,21 @@ function saveTop18Numbers() {
     const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
     const numbers = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(n => !isNaN(n));
 
-//    if (numbers.length !== 18) {
-//        alert('Please ensure all 18 Top Number fields are filled.');
- //       return;
- //   }
-
     const date = new Date();
     const datePart = date.toISOString().slice(0, 10);
+
+    // 🔍 Get the selected coverage value (5, 12, or 18)
+    let coverage = document.querySelector('input[name="coverage"]:checked')?.value || numbers.length;
+    coverage = parseInt(coverage, 10);
+
     let filename = '';
 
     if (totalNumbersGlobal === 69) {
-        filename = `topPB_${datePart}.txt`;
+        filename = `topPB_${coverage}_${datePart}.txt`;
     } else if (totalNumbersGlobal === 39) {
-        filename = `topF5_${datePart}.txt`;
+        filename = `topF5_${coverage}_${datePart}.txt`;
     } else {
-        filename = `top_${datePart}.txt`; // Default case if game mode isn't 39 or 69
+        filename = `top_${coverage}_${datePart}.txt`; // fallback
     }
 
     const text = numbers.join(',');
@@ -821,8 +1007,8 @@ function doExport(mode){
     const blob=new Blob([lines],{type:'text/plain'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
-const prefix = totalNumbersGlobal === 39 ? 'f5' : (totalNumbersGlobal === 26 ? 'pwb' : 'x');
-const draw = latestDrawingNumber || '00000';
+const prefix = totalNumbersGlobal === 39 ? 'f5' : (totalNumbersGlobal === 26 || 69 ? 'pwb' : 'x');
+const draw = latestDrawingNumber + 1 || '00000';
 a.download = `${mode}_sets_${prefix}_${draw}.txt`;
     a.click();
 }
@@ -868,86 +1054,43 @@ document.getElementById("checkNumbersButton").onclick = function () {
       const drawLabel = document.getElementById("drawNumberLabel");
       if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
 
-      // Extract first line's numbers as the winning draw
-      const firstLine = lines[0];
-      const nums = firstLine.match(/\d+/g)?.map(Number).filter(n => !isNaN(n));
-      if (!nums || nums.length < 5) {
-        alert("Could not extract 5 winning numbers from first line.");
-        return;
-      }
+      // ✅ Load winning numbers from lotto file
+      const lottoFile = (mode === "pwb") ? "lotto_69.txt" : "lotto_39.txt";
+      fetch(lottoFile + "?t=" + Date.now())
+        .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
+        .then(text => {
+          const line = text.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
+          if (!line) throw new Error("Drawing number not found in lotto file");
 
-      // Display the numbers in the modal
-      const winDisplay = document.getElementById("winningNumbersDisplay");
-      winDisplay.textContent = nums.slice(0, 5).join(", ");
+          const parts = line.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+          const nums = parts.slice(1, 6); // skip draw number
+          let pb = null;
 
-      const pb = (mode === "pwb" && nums.length >= 6) ? nums[5] : null;
-      const pbDisplay = document.getElementById("winningPBDisplay");
-      if (pbDisplay) {
-        pbDisplay.textContent = pb ? `+ PB: ${pb}` : "";
-      }
+          if (mode === "pwb") {
+            // 🔍 Fetch matching Powerball
+            fetch("lotto_1.txt?t=" + Date.now())
+              .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
+              .then(pbText => {
+                const pbLine = pbText.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
+                if (!pbLine) throw new Error("Matching Powerball not found for draw #" + drawNumber);
+                const pbParts = pbLine.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                pb = pbParts[1]; // second column = Powerball
 
-      // Clear old match results
-      const matchDiv = document.getElementById("matchResults");
-      matchDiv.innerHTML = "";
-
-      // Check each line against the winning numbers
-      let foundMatch = false;
-      for (const line of lines) {
-        const parts = line.trim().split(/\s{2,}/); // splits on double spaces
-        if (parts.length < 1) return;
-        const numberPart = parts[0].replace(/^\d+\.\s*/, '').replace(/\s/g, '');
-        const picks = numberPart.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
-        if (!picks || picks.length < 5) continue;
-
-        const matchCount = picks.filter(n => nums.includes(n)).length;
-        const hasPB = mode === "pwb" && pb !== null;
-        const pbMatch = hasPB && picks.includes(pb);
-
-        let tier = "", color = "";
-        if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
-        else if (matchCount === 5)            { tier = "5";       color = "red"; }
-        else if (matchCount === 4 && pbMatch) { tier = "4 + PB";  color = "orange"; }
-        else if (matchCount === 4)            { tier = "4";       color = "orange"; }
-        else if (matchCount === 3 && pbMatch) { tier = "3 + PB";  color = "yellow"; }
-        else if (matchCount === 3)            { tier = "3";       color = "yellow"; }
-        else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
-        else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
-        else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
-
-        if (tier) {
-          foundMatch = true;
-          const div = document.createElement("div");
-          div.textContent = `${line.trim()} ➔ ${tier}`;
-          div.style.color = color;
-          matchDiv.appendChild(div);
-        }
-      }
-
-      if (!foundMatch) {
-        const div = document.createElement("div");
-        div.textContent = "No matches were found.";
-        div.style.color = "yellow";
-        matchDiv.appendChild(div);
-      }
-
-      // Load prize table TXT
-      const prizeFile = `${mode}_${drawNumber}.txt`;
-      fetch(prizeFile + "?t=" + Date.now())
-        .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
-        .then(text => renderPrizeTable(text))
+                // ✅ Call checker now that PB is available
+                checkAgainstSets(lines, nums, pb, mode, drawNumber);
+              })
+              .catch(err => {
+                alert(err);
+                console.error("⚠️ Powerball fetch error:", err);
+              });
+          } else {
+            checkAgainstSets(lines, nums, null, mode, drawNumber);
+          }
+        })
         .catch(err => {
-          console.warn("⚠️ Prize file error:", err);
-          const prizeTableDiv = document.getElementById("prizeTable");
-          prizeTableDiv.innerHTML = `<p style="color: orange;">${err}</p>`;
+          alert(err);
+          console.error("⚠️ Lotto file fetch error:", err);
         });
-
-      // Finally show the modal
-      const modal = document.getElementById("checkNumbersModal");
-      if (modal) {
-        modal.style.display = "block";
-      } else {
-        console.warn("⚠️ checkNumbersModal not found in DOM.");
-      }
     };
 
     reader.readAsText(file);
@@ -955,6 +1098,87 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
   fileInput.click();
 };
+
+function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
+  const winDisplay = document.getElementById("winningNumbersDisplay");
+  if (winDisplay) winDisplay.textContent = nums.join(", ");
+
+const pbDisplay = document.getElementById("winningPBDisplay");
+if (pbDisplay) {
+  if (mode === "pwb" && pb !== null) {
+    pbDisplay.textContent = `+ PB: ${pb}`;
+    pbDisplay.style.display = "inline";  // in case it’s hidden
+  } else {
+    pbDisplay.textContent = "";
+    pbDisplay.style.display = "none";  // hide it if not used
+  }
+}
+
+  const matchDiv = document.getElementById("matchResults");
+  matchDiv.innerHTML = "";
+  let foundMatch = false;
+
+  for (const line of lines) {
+    const cleanLine = line.replace(/^\d+\.\s*/, '');
+    const numbers = cleanLine.match(/\d+/g)?.map(Number).filter(n => !isNaN(n));
+    if (!numbers || numbers.length < 5) continue;
+
+    const picks = numbers.slice(0, 5);
+    const bonus = (mode === "pwb" && numbers.length >= 6) ? numbers[5] : null;
+
+    const matchCount = picks.filter(n => nums.includes(n)).length;
+    const pbMatch = (mode === "pwb" && pb !== null && bonus === pb);
+
+    let tier = "", color = "";
+    if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
+    else if (matchCount === 5)            { tier = "5";       color = "red"; }
+    else if (matchCount === 4 && pbMatch) { tier = "4 + PB";  color = "orange"; }
+    else if (matchCount === 4)            { tier = "4";       color = "orange"; }
+    else if (matchCount === 3 && pbMatch) { tier = "3 + PB";  color = "yellow"; }
+    else if (matchCount === 3)            { tier = "3";       color = "yellow"; }
+    else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
+    else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
+    else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
+
+    if (tier) {
+      foundMatch = true;
+      const div = document.createElement("div");
+      div.textContent = `${picks.join(', ')}${pbMatch ? ' + PB' : ''} ➔ ${tier}`;
+      div.style.color = color;
+      matchDiv.appendChild(div);
+    }
+  }
+
+  if (!foundMatch) {
+    const div = document.createElement("div");
+    div.textContent = "No matches were found.";
+    div.style.color = "yellow";
+    matchDiv.appendChild(div);
+  }
+
+  // ✅ Load prize table
+  const prizeFile = `${mode}_${drawNumber}.txt`;
+  fetch(prizeFile + "?t=" + Date.now())
+    .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
+    .then(text => renderPrizeTable(text))
+    .catch(err => {
+      console.warn("⚠️ Prize file error:", err);
+      const prizeTableDiv = document.getElementById("prizeTable");
+      prizeTableDiv.innerHTML = `<p style="color: orange;">${err}</p>`;
+    });
+
+  // ✅ Show modal (after everything is ready)
+  const modal = document.getElementById("checkNumbersModal");
+  if (modal) {
+    modal.style.display = "block";
+  } else {
+    console.warn("⚠️ checkNumbersModal not found in DOM.");
+  }
+  
+  console.log("✅ Winning PB:", pb);
+
+}
+
 
 function renderPrizeTable(csvText) {
   const lines = csvText.trim().split("\n");
@@ -1424,11 +1648,14 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
             const quick12Btn = document.getElementById('quick12Button');
             if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
 
-            const genBtn = document.getElementById('generateWheelButton');
-            if (genBtn) genBtn.style.display = (totalNumbers === 69) ? 'none' : 'inline-block';
+const genBtn = document.getElementById('generateWheelButton');
+if (genBtn) {
+  genBtn.style.display = (totalNumbers === 69 || totalNumbers === 39) ? 'inline-block' : 'none';
+}
+
 
             const topInputs = document.getElementById('top18Inputs');
-            if (topInputs) topInputs.style.display = 'flex';
+if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
 
             const exportAllButton = document.querySelector('button[onclick="exportGeneratedSets()"]');
             if (exportAllButton) exportAllButton.style.display = 'inline-block';
@@ -2153,13 +2380,13 @@ function renderReverseHitsTable() {
       row.appendChild(cell);
     }
 
-    const topCell = document.createElement('td');
-    if (top18.includes(number)) {
-      const dot = document.createElement('div');
-      dot.className = 'orange-dot';
-      topCell.appendChild(dot);
-    }
-    row.appendChild(topCell);
+const topCell = document.createElement('td');
+if (totalNumbersGlobal !== 26 && top18.includes(number)) {
+    const dot = document.createElement('div');
+    dot.className = 'orange-dot';
+    topCell.appendChild(dot);
+}
+row.appendChild(topCell);
     table.appendChild(row);
   }
 
@@ -2167,13 +2394,6 @@ function renderReverseHitsTable() {
 }
 
 function updateReverseHitsTop18() {
-    // ✅ Only reapply 69-number context if we're in 1-number mode
-    if (totalNumbersGlobal === 26) {
-        fullData = [...fullDataFrom69];
-        skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
-        sinceMap = { ...sinceMapFrom69 };
-        pastDrawings = [...pastDrawingsFrom69];
-    }
 
     // Refresh the top18 from current input values
     const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
@@ -2317,6 +2537,27 @@ window.addEventListener('click', event => {
   }
 });
 
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('powerball')?.click();
+});
+
+window.addEventListener('load', function() {
+  // Hide splash screen after 3.5 seconds
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+      splash.style.opacity = 0;
+      splash.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => splash.remove(), 500); // then remove from DOM
+    }
+
+    // Auto-click the 69 button (if you want that too)
+    const btn69 = document.getElementById('powerball');
+    if (btn69) btn69.click();
+  }, 3800); // adjust duration to match your GIF length
+});
+
+
 </script>
 
 
@@ -2350,10 +2591,14 @@ window.addEventListener('click', event => {
             
       <!-- Left Side: Winning Numbers + Match Results -->
       <div style="flex: 1;">
-        <div id="checkInputFields">
-          <label style="font-size: 20px; font-weight: bold; color: orange;">Winning Numbers:</label><br>
-          <div id="winningNumbersDisplay" style="display: flex; gap: 10px; margin-top: 6px; font-size: 20px; color: gold;"></div>
-        </div>
+<div id="checkInputFields">
+  <label style="font-size: 20px; font-weight: bold; color: orange;">Winning Numbers:</label><br>
+  <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+    <div id="winningNumbersDisplay" style="display: flex; gap: 10px; font-size: 20px; color: gold;"></div>
+    <div id="winningPBDisplay" style="font-size: 20px; color: gold;"></div>
+  </div>
+</div>
+
         <br>
         <div id="matchResults" style="margin-top: 10px; font-weight: bold;"></div>
       </div>
@@ -2369,6 +2614,26 @@ window.addEventListener('click', event => {
     <span id="closeHistogramModal" class="close-button" style="top: 10px; right: 14px;">&times;</span>
     <h2 style="margin-top: 0; color: lightgreen;">Points Per Drawing (Latest on Top)</h2>
     <div id="histogramContent"></div>
+  </div>
+</div>
+
+<div id="autoPickModal" class="modal">
+  <div class="modal-content" style="width: 400px; max-width: 90%;">
+    <span class="close-button" id="closeAutoPickModal">&times;</span>
+    <h2>Auto-Pick Top Numbers</h2>
+    
+    <label for="weeksInput">Number of Weeks (max 25):</label>
+    <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
+
+    <label>Select Coverage:</label><br>
+    <input type="radio" name="coverage" value="5" id="coverage5" checked>
+    <label for="coverage5">Top 5</label><br>
+    <input type="radio" name="coverage" value="12" id="coverage12" checked>
+    <label for="coverage12">Top 12</label><br>
+    <input type="radio" name="coverage" value="18" id="coverage18">
+    <label for="coverage18">Top 18</label><br><br>
+
+    <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
   </div>
 </div>
 

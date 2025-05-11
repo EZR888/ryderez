@@ -1,6 +1,8 @@
 import os
 import re
 import csv
+import subprocess
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
@@ -112,4 +114,17 @@ def fetch_lotto_data(game_key):
 # Run both games
 for game in GAME_CONFIG:
     fetch_lotto_data(game)
+
+def git_upload():
+    try:
+        os.chdir(OUTPUT_DIR)
+        subprocess.run(["git", "add", "lotto_*.txt", "pwb_*.txt", "f5_*.txt"], check=True, shell=True)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        subprocess.run(f'git commit -m "🤖 Auto-update on {now}"', check=True, shell=True)
+        subprocess.run("git push origin main", check=True, shell=True)
+        print("✅ Changes pushed to GitHub.")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Git error: {e}")
+
+git_upload()
 

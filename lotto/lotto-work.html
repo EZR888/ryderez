@@ -359,7 +359,7 @@ h3{margin:0 0 15px;color: gold}
 </button>
 
 <button id="load39Button" class="gameBtn">
-    <img src="fantasy5.png" alt="Load 39-number game">
+    <img src="Fantasy5.png" alt="Load 39-number game">
 </button>
 <span id="lastDrawingDisplay" style="font-weight: bold; margin-left: 30px; font-size: 24px;">
   <span style="color: gold;">Last Drawing #:</span>
@@ -830,21 +830,21 @@ function saveTop18Numbers() {
     const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
     const numbers = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(n => !isNaN(n));
 
-//    if (numbers.length !== 18) {
-//        alert('Please ensure all 18 Top Number fields are filled.');
- //       return;
- //   }
-
     const date = new Date();
     const datePart = date.toISOString().slice(0, 10);
+
+    // 🔍 Get the selected coverage value (5, 12, or 18)
+    let coverage = document.querySelector('input[name="coverage"]:checked')?.value || numbers.length;
+    coverage = parseInt(coverage, 10);
+
     let filename = '';
 
     if (totalNumbersGlobal === 69) {
-        filename = `topPB_${datePart}.txt`;
+        filename = `topPB_${coverage}_${datePart}.txt`;
     } else if (totalNumbersGlobal === 39) {
-        filename = `topF5_${datePart}.txt`;
+        filename = `topF5_${coverage}_${datePart}.txt`;
     } else {
-        filename = `top_${datePart}.txt`; // Default case if game mode isn't 39 or 69
+        filename = `top_${coverage}_${datePart}.txt`; // fallback
     }
 
     const text = numbers.join(',');
@@ -2631,6 +2631,8 @@ window.addEventListener('load', function() {
     <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
 
     <label>Select Coverage:</label><br>
+    <input type="radio" name="coverage" value="5" id="coverage5" checked>
+    <label for="coverage5">Top 5</label><br>
     <input type="radio" name="coverage" value="12" id="coverage12" checked>
     <label for="coverage12">Top 12</label><br>
     <input type="radio" name="coverage" value="18" id="coverage18">

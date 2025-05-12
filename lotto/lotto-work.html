@@ -1139,11 +1139,12 @@ if (pbDisplay) {
     else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
     else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
     else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
+    else if (mode === "f5" && matchCount === 2) { tier = "2"; color = "lightblue";}
 
     if (tier) {
       foundMatch = true;
       const div = document.createElement("div");
-      div.textContent = `${picks.join(', ')}${pbMatch ? ' + PB' : ''} ➔ ${tier}`;
+	  div.textContent = `${picks.join(', ')} ➔ Matched ${tier}`;
       div.style.color = color;
       matchDiv.appendChild(div);
     }

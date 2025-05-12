@@ -71,6 +71,15 @@ def fetch_lotto_data(game_key):
         if len(winning_numbers) != 6:
             print("❌ Expected 6 Powerball numbers but got:", winning_numbers)
             return
+
+        # ✅ Check if draw_number already exists in lotto_69.txt
+        if os.path.exists(LOTTO_69):
+            with open(LOTTO_69, 'r', encoding='utf-8') as f:
+                first_line = f.readline().strip()
+                if first_line.startswith(draw_number + ','):
+                    print(f"⚠️ Draw #{draw_number} already exists in lotto_69.txt. Skipping.")
+                    return
+
         main_numbers = winning_numbers[:5]
         powerball = winning_numbers[5]
         prepend_line_to_file(LOTTO_69, f"{draw_number}," + ",".join(main_numbers))
@@ -118,11 +127,25 @@ for game in GAME_CONFIG:
 def git_upload():
     try:
         os.chdir(OUTPUT_DIR)
-        subprocess.run(["git", "add", "lotto_*.txt", "pwb_*.txt", "f5_*.txt"], check=True, shell=True)
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Stage the files first
+        subprocess.run("git add lotto_*.txt pwb_*.txt f5_*.txt", check=True, shell=True)
+        
+        # Check if anything is staged before committing
+        result = subprocess.run("git diff --cached --quiet", shell=True)
+        if result.returncode == 0:
+            print("⚠️ No changes to commit.")
+            return
+
+        # Now commit
         subprocess.run(f'git commit -m "🤖 Auto-update on {now}"', check=True, shell=True)
-        subprocess.run("git push origin main", check=True, shell=True)
-        print("✅ Changes pushed to GitHub.")
+        print("✅ Changes committed.")
+
+        # Push to remote
+        subprocess.run("git push", check=True, shell=True)
+        print("🚀 Changes pushed to GitHub.")
+
     except subprocess.CalledProcessError as e:
         print(f"❌ Git error: {e}")
 

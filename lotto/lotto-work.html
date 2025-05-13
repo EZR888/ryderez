@@ -1033,7 +1033,7 @@ function doExport(mode){
     a.href=URL.createObjectURL(blob);
 const prefix = totalNumbersGlobal === 39 ? 'f5' : (totalNumbersGlobal === 26 || 69 ? 'pwb' : 'x');
 const draw = latestDrawingNumber + 1 || '00000';
-a.download = `${mode}_sets_${prefix}_${draw}.txt`;
+a.download = `${mode}_${prefix}_${draw}.txt`;
     a.click();
 }
 

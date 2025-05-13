@@ -822,34 +822,58 @@ function setupHistogramListener() {
 }
 
 function saveTop18Numbers() {
-    const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-    const numbers = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(n => !isNaN(n));
+  /* ── 1. Collect numbers from the Hits table’s Top column ────────── */
+  const numbers = [];
+  const rows = document.querySelectorAll('#reverseHitsContainer table tr');
 
-    const date = new Date();
-    const datePart = date.toISOString().slice(0, 10);
+  // skip header row (index 0)
+  rows.forEach((row, idx) => {
+    if (idx === 0) return;                                    // header
+    const topCell = row.querySelector('td:last-child');
+    if (!topCell) return;
 
-    // 🔍 Get the selected coverage value (5, 12, or 18)
-    let coverage = document.querySelector('input[name="coverage"]:checked')?.value || numbers.length;
-    coverage = parseInt(coverage, 10);
-
-    let filename = '';
-
-    if (totalNumbersGlobal === 69) {
-        filename = `topPB_${coverage}_${datePart}.txt`;
-    } else if (totalNumbersGlobal === 39) {
-        filename = `topF5_${coverage}_${datePart}.txt`;
-    } else {
-        filename = `top_${coverage}_${datePart}.txt`; // fallback
+    // any dot → this number is in the Top list
+    if (topCell.querySelector('.orange-dot, .blue-dot')) {
+      const th = row.querySelector('th');
+      const num = th ? parseInt(th.textContent, 10) : NaN;
+      if (!isNaN(num)) numbers.push(num);
     }
+  });
 
-    const text = numbers.join(',');
+  const count   = numbers.length;                 // 5, 12, 18 … or error
+  const allowed = [5, 12, 18];
 
-    const blob = new Blob([text], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
+  if (!allowed.includes(count)) {
+    alert(`The Hits table currently shows ${count || 'no'} numbers in the ‘Top’ column.\n` +
+          `Please make sure it’s exactly 5, 12, or 18 before saving.`);
+    return;                                       // stop – nothing saved
+  }
+
+  /* ── 2. Work out the next drawing number ─────────────────────────── */
+  const nextDraw =
+    (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+      ? latestDrawingNumber + 1
+      : '00000';                                  // fallback if not loaded
+
+  /* ── 3. Build the filename ───────────────────────────────────────── */
+  let filename;
+  if (totalNumbersGlobal === 69) {
+    filename = `topPB_${count}_${nextDraw}.txt`;
+  } else if (totalNumbersGlobal === 39) {
+    filename = `topF5_${count}_${nextDraw}.txt`;
+  } else {
+    filename = `top_${count}_${nextDraw}.txt`;    // PB-only / misc.
+  }
+
+  /* ── 4. Save the file ────────────────────────────────────────────── */
+  const blob = new Blob([numbers.join(',')], { type: 'text/plain' });
+  const link = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: filename
+  });
+  link.click();
 }
+
 
 function handleTop18FileSelect(event) {
     const file = event.target.files[0];
@@ -1139,11 +1163,12 @@ if (pbDisplay) {
     else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
     else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
     else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
+    else if (mode === "f5" && matchCount === 2) { tier = "2"; color = "lightblue";}
 
     if (tier) {
       foundMatch = true;
       const div = document.createElement("div");
-      div.textContent = `${picks.join(', ')}${pbMatch ? ' + PB' : ''} ➔ ${tier}`;
+	  div.textContent = `${picks.join(', ')} ➔ Matched ${tier}`;
       div.style.color = color;
       matchDiv.appendChild(div);
     }
@@ -2626,11 +2651,11 @@ window.addEventListener('load', function() {
     <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
 
     <label>Select Coverage:</label><br>
-    <input type="radio" name="coverage" value="5" id="coverage5" checked>
+    <input type="radio" name="coverage" value="5" id="coverage5">
     <label for="coverage5">Top 5</label><br>
-    <input type="radio" name="coverage" value="12" id="coverage12" checked>
+    <input type="radio" name="coverage" value="12" id="coverage12">
     <label for="coverage12">Top 12</label><br>
-    <input type="radio" name="coverage" value="18" id="coverage18">
+    <input type="radio" name="coverage" value="18" id="coverage18" checked>
     <label for="coverage18">Top 18</label><br><br>
 
     <button id="runAutoPick" class="button button-purple">🎯 Generate</button>

@@ -731,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       updateReverseHitsTop18();
-      document.getElementById('autoPickModal').style.display = 'none';
+      document.getElementById('exportAutoTopBtn').style.display = 'inline-block';
     });
   }
 
@@ -739,6 +739,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (showAutoBtn) {
     showAutoBtn.addEventListener('click', () => {
       document.getElementById('autoPickModal').style.display = 'block';
+      
+          // ✅ Hide the export button when modal is opened
+    document.getElementById('exportAutoTopBtn').style.display = 'none';
     });
   }
 });
@@ -2451,6 +2454,26 @@ function exportGeneratedSets() {
   link.click();
 }
 
+document.getElementById('exportAutoTopBtn').addEventListener('click', () => {
+  const weeks = document.getElementById('weeksInput').value || '00';
+  const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
+  const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
+  const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB' : (totalNumbersGlobal === 39) ? 'auto_topF5' : 'auto_topX';
+
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const numbers = inputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
+  const sorted = numbers.sort((a, b) => a - b);
+  const content = sorted.join(', ');
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${prefix}_${weeks}_${coverage}_${nextDraw}.txt`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+
+
 function exportBestSets() {
     if (!generatedSets.length) {
         alert("No generated sets!");
@@ -2647,7 +2670,7 @@ window.addEventListener('load', function() {
     <span class="close-button" id="closeAutoPickModal">&times;</span>
     <h2>Auto-Pick Top Numbers</h2>
     
-    <label for="weeksInput">Number of Weeks (max 25):</label>
+    <label for="weeksInput">Number of Drawings (max 25):</label>
     <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
 
     <label>Select Coverage:</label><br>
@@ -2659,6 +2682,7 @@ window.addEventListener('load', function() {
     <label for="coverage18">Top 18</label><br><br>
 
     <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
+    <button id="exportAutoTopBtn" class="button button-single">⬇️ Export Auto Top</button>
   </div>
 </div>
 

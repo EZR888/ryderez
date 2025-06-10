@@ -678,6 +678,43 @@ window.addEventListener('click', (event) => {
   }
 });
 
+window.onload = function () {
+  const exportBtn = document.getElementById('exportAutoTopBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+    
+  const weeks = document.getElementById('weeksInput').value || '00';
+  const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
+  const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
+  const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB' :
+                 (totalNumbersGlobal === 39) ? 'auto_topF5' : 'auto_topX';
+
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const numbers = inputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
+  const sorted = numbers.sort((a, b) => a - b);
+  const content = sorted.join(', ');
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${prefix}_${weeks}_${coverage}_${nextDraw}.txt`;
+
+  // ✅ Trigger the download
+  document.body.appendChild(link);
+  link.click();
+
+  // ✅ Clean up and close modal safely after short delay
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    link.remove();
+    document.getElementById('autoPickModal').style.display = 'none';
+  }, 100);
+});
+  }
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');
   if (closeAutoBtn) {
@@ -1033,7 +1070,7 @@ function doExport(mode){
     a.href=URL.createObjectURL(blob);
 const prefix = totalNumbersGlobal === 39 ? 'f5' : (totalNumbersGlobal === 26 || 69 ? 'pwb' : 'x');
 const draw = latestDrawingNumber + 1 || '00000';
-a.download = `${mode}_${prefix}_${draw}.txt`;
+a.download = `${mode}_sets_${prefix}_${draw}.txt`;
     a.click();
 }
 
@@ -2647,7 +2684,7 @@ window.addEventListener('load', function() {
     <span class="close-button" id="closeAutoPickModal">&times;</span>
     <h2>Auto-Pick Top Numbers</h2>
     
-    <label for="weeksInput">Number of Drawings (max 25):</label>
+    <label for="weeksInput">Number of Weeks (max 25):</label>
     <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
 
     <label>Select Coverage:</label><br>
@@ -2659,7 +2696,24 @@ window.addEventListener('load', function() {
     <label for="coverage18">Top 18</label><br><br>
 
     <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
-    <button id="exportAutoTopBtn" class="button button-single">⬇️ Export Auto Top</button>
+  </div>
+</div>
+
+<div id="autoPickModal">
+  <div class="modal-field">
+    <label for="weeksInput">Number of Drawings:</label>
+    <input type="number" id="weeksInput" ... />
+  </div>
+  <div class="modal-field">
+    <label for="coverageInput">Coverage:</label>
+    <input type="number" id="coverageInput" ... />
+  </div>
+  <!-- ... other modal content ... -->
+  <div class="modal-actions">
+    <button id="autoPickBtn" class="btn btn-primary">Auto-Pick Top Numbers</button>
+    <!-- Insert the new Export button: -->
+    <button id="exportTopNumsBtn" class="btn btn-secondary">Export</button>
+    <button class="btn btn-close" data-dismiss="modal">Close</button>
   </div>
 </div>
 

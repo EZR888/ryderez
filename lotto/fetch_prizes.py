@@ -17,7 +17,7 @@ LOTTO_39 = os.path.join(OUTPUT_DIR, "lotto_39.txt")
 # Game URLs and filename prefixes
 GAME_CONFIG = {
     "powerball": {
-        "url": "https://www.calottery.com/en/draw-games/powerball",
+        "url": "https://www.calottery.com/en/draw-games/powerball#section-content-2-3",
         "prefix": "pwb_"
     },
     "fantasy5": {

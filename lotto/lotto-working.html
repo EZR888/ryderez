@@ -587,7 +587,7 @@ btn1.onclick = () => {
       highlighted.push({ number, val });
     }
     highlighted.sort((a, b) => b.val - a.val);
-    top18 = highlighted.slice(0, 18).map(x => x.number).sort((a, b) => a - b);
+    top18 = highlighted.slice(0, 12).map(x => x.number).sort((a, b) => a - b);
 
     // ⬇️ Fill input fields anyway, for consistency (even if hidden)
     const top18InputsDiv = document.getElementById('top18Inputs');
@@ -1887,7 +1887,7 @@ function generateTopNumbersAndRender(isPowerball69 = false) {
 
     console.log('🔍 Highlighted (pre-sort):', highlighted.map(h => `#${h.number} → ${h.val}`));
     highlighted.sort((a, b) => b.val - a.val);
-    top18 = highlighted.slice(0, 18).map(obj => obj.number).sort((a, b) => a - b);
+    top18 = highlighted.slice(0, 12).map(obj => obj.number).sort((a, b) => a - b);
     console.log('✅ Final top18:', top18);
 
     const top18InputsDiv = document.getElementById('top18Inputs');

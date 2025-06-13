@@ -391,7 +391,6 @@ h3{margin:0 0 15px;color: gold}
 <button id="autoPickTopBtn" class="button button-single">
   🧠 Auto-Pick Top Numbers
 </button>
-<button id="saveTop18Button" class="button button-single">💾 Save Top #'s</button>
 <button id="loadTop18Button" class="button button-single">📂 Load Top #'s</button><br>
 
 <div id="loadTop18Modal" class="modal">
@@ -472,6 +471,88 @@ h3{margin:0 0 15px;color: gold}
 <h2>Skip Frequency Table</h2>
 <h3>Number of Drawings Between Hits</h3>
 <div id="skipFrequencyContainer"></div>
+
+
+
+<!-- ✅ Check Winning Numbers Modal -->
+<div id="checkNumbersModal" class="modal">
+  <div class="modal-content" style="width: 60%; max-width: none;">
+<span class="close-button close-check">&times;</span>
+<h2>Check Your Numbers</h2>
+<br>
+<div style="display: flex; gap: 40px;">
+
+  <!-- Left Side: Prize Table -->
+  <div style="flex: 1;">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+  <label style="font-size: 20px; font-weight: bold; color: orange;">Prize Table</label>
+  <div id="drawNumberLabel" style="color: lightyellow; font-size: 18px;"></div>
+</div>
+    <table id="prizeTable" style="width: 100%; border-collapse: collapse; color: lightgreen;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid gray; padding: 6px;">Match Tier</th>
+          <th style="border: 1px solid gray; padding: 6px;">Winners</th>
+          <th style="border: 1px solid gray; padding: 6px;">Prize</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <br><br>
+  </div>
+
+            
+      <!-- Left Side: Winning Numbers + Match Results -->
+      <div style="flex: 1;">
+<div id="checkInputFields">
+  <label style="font-size: 20px; font-weight: bold; color: orange;">Winning Numbers:</label><br>
+  <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+    <div id="winningNumbersDisplay" style="display: flex; gap: 10px; font-size: 20px; color: gold;"></div>
+    <div id="winningPBDisplay" style="font-size: 20px; color: gold;"></div>
+  </div>
+</div>
+
+        <br>
+        <div id="matchResults" style="margin-top: 10px; font-weight: bold;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 🔳 Scrolling Histogram Modal -->
+<div id="histogramModal" class="modal">
+  <div class="modal-content" style="max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+    <span id="closeHistogramModal" class="close-button" style="top: 10px; right: 14px;">&times;</span>
+    <h2 style="margin-top: 0; color: lightgreen;">Points Per Drawing (Latest on Top)</h2>
+    <div id="histogramContent"></div>
+  </div>
+</div>
+
+<div id="autoPickModal" class="modal">
+  <div class="modal-content" style="width: 400px; max-width: 90%;">
+    <span class="close-button" id="closeAutoPickModal">&times;</span>
+    <h2>Auto-Pick Top Numbers</h2>
+    
+    <label for="weeksInput">Number of Weeks (max 25):</label>
+    <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
+
+    <label>Select Coverage:</label><br>
+    <input type="radio" name="coverage" value="5" id="coverage5">
+    <label for="coverage5">Top 5</label><br>
+    <input type="radio" name="coverage" value="12" id="coverage12">
+    <label for="coverage12">Top 12</label><br>
+    <input type="radio" name="coverage" value="18" id="coverage18" checked>
+    <label for="coverage18">Top 18</label><br><br>
+
+    <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
+	<button id="saveTop18Button"
+        	class="button button-single"
+        	style="display:none;">💾 Save Top #'s</button>
+
+  </div>
+</div>
 
 <script>
 
@@ -768,13 +849,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       updateReverseHitsTop18();
-      document.getElementById('autoPickModal').style.display = 'none';
+      document.getElementById('saveTop18Button').style.display = 'inline-block';
     });
   }
 
   const showAutoBtn = document.getElementById('autoPickTopBtn');
   if (showAutoBtn) {
     showAutoBtn.addEventListener('click', () => {
+      document.getElementById('saveTop18Button').style.display = 'none';
       document.getElementById('autoPickModal').style.display = 'block';
     });
   }
@@ -890,16 +972,21 @@ function saveTop18Numbers() {
   const nextDraw =
     (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
       ? latestDrawingNumber + 1
-      : '00000';                                  // fallback if not loaded
+      : '00000';   
+      
+  /* ── 2 ½.  Grab the “Number of weeks” value (if the field exists) ── */
+  const weeksField = document.getElementById('weeksInput');
+  // default “00” if the modal isn’t open or value is missing
+  const weeksVal   = weeksField ? (weeksField.value.padStart(2,'0') || '00') : '00';                               // fallback if not loaded
 
   /* ── 3. Build the filename ───────────────────────────────────────── */
   let filename;
   if (totalNumbersGlobal === 69) {
-    filename = `topPB_${count}_${nextDraw}.txt`;
+    filename = `topPB_${count}_${weeksVal}_${nextDraw}.txt`;
   } else if (totalNumbersGlobal === 39) {
-    filename = `topF5_${count}_${nextDraw}.txt`;
+    filename = `topF5_${count}_${weeksVal}_${nextDraw}.txt`;
   } else {
-    filename = `top_${count}_${nextDraw}.txt`;    // PB-only / misc.
+    filename = `top_${count}_${weeksVal}_${nextDraw}.txt`;    // PB-only / misc.
   }
 
   /* ── 4. Save the file ────────────────────────────────────────────── */
@@ -2621,101 +2708,6 @@ window.addEventListener('load', function() {
 
 
 </script>
-
-
-<!-- ✅ Check Winning Numbers Modal -->
-<div id="checkNumbersModal" class="modal">
-  <div class="modal-content" style="width: 60%; max-width: none;">
-<span class="close-button close-check">&times;</span>
-<h2>Check Your Numbers</h2>
-<br>
-<div style="display: flex; gap: 40px;">
-
-  <!-- Left Side: Prize Table -->
-  <div style="flex: 1;">
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-  <label style="font-size: 20px; font-weight: bold; color: orange;">Prize Table</label>
-  <div id="drawNumberLabel" style="color: lightyellow; font-size: 18px;"></div>
-</div>
-    <table id="prizeTable" style="width: 100%; border-collapse: collapse; color: lightgreen;">
-      <thead>
-        <tr>
-          <th style="border: 1px solid gray; padding: 6px;">Match Tier</th>
-          <th style="border: 1px solid gray; padding: 6px;">Winners</th>
-          <th style="border: 1px solid gray; padding: 6px;">Prize</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <br><br>
-  </div>
-
-            
-      <!-- Left Side: Winning Numbers + Match Results -->
-      <div style="flex: 1;">
-<div id="checkInputFields">
-  <label style="font-size: 20px; font-weight: bold; color: orange;">Winning Numbers:</label><br>
-  <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
-    <div id="winningNumbersDisplay" style="display: flex; gap: 10px; font-size: 20px; color: gold;"></div>
-    <div id="winningPBDisplay" style="font-size: 20px; color: gold;"></div>
-  </div>
-</div>
-
-        <br>
-        <div id="matchResults" style="margin-top: 10px; font-weight: bold;"></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-<!-- 🔳 Scrolling Histogram Modal -->
-<div id="histogramModal" class="modal">
-  <div class="modal-content" style="max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
-    <span id="closeHistogramModal" class="close-button" style="top: 10px; right: 14px;">&times;</span>
-    <h2 style="margin-top: 0; color: lightgreen;">Points Per Drawing (Latest on Top)</h2>
-    <div id="histogramContent"></div>
-  </div>
-</div>
-
-<div id="autoPickModal" class="modal">
-  <div class="modal-content" style="width: 400px; max-width: 90%;">
-    <span class="close-button" id="closeAutoPickModal">&times;</span>
-    <h2>Auto-Pick Top Numbers</h2>
-    
-    <label for="weeksInput">Number of Weeks (max 25):</label>
-    <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
-
-    <label>Select Coverage:</label><br>
-    <input type="radio" name="coverage" value="5" id="coverage5">
-    <label for="coverage5">Top 5</label><br>
-    <input type="radio" name="coverage" value="12" id="coverage12">
-    <label for="coverage12">Top 12</label><br>
-    <input type="radio" name="coverage" value="18" id="coverage18" checked>
-    <label for="coverage18">Top 18</label><br><br>
-
-    <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
-  </div>
-</div>
-
-<div id="autoPickModal">
-  <div class="modal-field">
-    <label for="weeksInput">Number of Drawings:</label>
-    <input type="number" id="weeksInput" ... />
-  </div>
-  <div class="modal-field">
-    <label for="coverageInput">Coverage:</label>
-    <input type="number" id="coverageInput" ... />
-  </div>
-  <!-- ... other modal content ... -->
-  <div class="modal-actions">
-    <button id="autoPickBtn" class="btn btn-primary">Auto-Pick Top Numbers</button>
-    <!-- Insert the new Export button: -->
-    <button id="exportTopNumsBtn" class="btn btn-secondary">Export</button>
-    <button class="btn btn-close" data-dismiss="modal">Close</button>
-  </div>
-</div>
 
 
 </body>

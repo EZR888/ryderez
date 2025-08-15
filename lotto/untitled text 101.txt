@@ -1,0 +1,108 @@
+Hospital Dental Low Speed Handpiece Loop 01
+Drill
+Servo
+
+
+https://app.soundstripe.com/sound-effects/89386
+
+https://app.soundstripe.com/sound-effects/89233
+
+https://app.soundstripe.com/sound-effects/89436
+https://app.soundstripe.com/sound-effects/91838
+
+
+https://app.soundstripe.com/sound-effects/67960  -good
+
+https://app.soundstripe.com/sound-effects/67956
+
+https://app.soundstripe.com/sound-effects/67953 - maybe
+
+
+
+
+https://app.soundstripe.com/sound-effects/67957
+
+https://app.soundstripe.com/sound-effects/67952
+
+https://app.soundstripe.com/sound-effects/67954
+https://app.soundstripe.com/sound-effects/67958 - very close
+https://app.soundstripe.com/sound-effects/67956
+https://app.soundstripe.com/sound-effects/67953
+https://app.soundstripe.com/sound-effects/67957
+
+Peak frequency (dominant "eeee" tone): ~2402 Hz
+
+Low threshold (≥50% of peak): ~1236 Hz
+
+High threshold (≥50% of peak): ~2588 Hz
+
+Bandwidth (width above 50% energy): ~1353 Hz
+
+
+
+
+My pure sine high tone is 2450.
+
+The frequency range for the hum (“ssshhh”) component, after removing the pure tone:
+
+Low frequency threshold (≥50% energy): 1236 Hz
+High frequency threshold (≥50% energy): 1823 Hz
+Bandwidth: 587 Hz
+
+
+
+Here are the frequency characteristics for Rec-1_hybrid_tinnitus.wav:
+
+Peak frequency: ~2661 Hz
+Low threshold (≥50% peak energy): ~2588 Hz
+High threshold (≥50% peak energy): ~2724 Hz
+Bandwidth: ~135 Hz
+
+For the noise/hum portion of Rec-1_hybrid_tinnitus.wav after removing the peak tone:
+
+Low frequency threshold (≥50% energy): ~2588 Hz
+High frequency threshold (≥50% energy): ~2748 Hz
+Bandwidth: ~160 Hz
+
+
+https://www.soundsnap.com/nature_pond_crickets_bull_frog_01_sfxbible_ss00070
+
+https://www.soundsnap.com/crickets_ambience_night_countryside_mediterranean_03
+
+https://www.soundsnap.com/city_crickets_night_some_traffic_01_wav
+
+
+https://www.soundsnap.com/surface_mine_conveyor_belt_long_belt_conveyor_04_sprinkler_system_close_wav
+
+https://www.soundsnap.com/kaib_amb_cu_gas_hiss_high_pitch_000205_wav
+
+-------
+
+https://artlist.io/sfx/track/emf-adam-audio-a5x-speaker-low-frequency-hum-with-high-pitch-tone/25103
+
+https://artlist.io/sfx/track/ex-machina---refrigerator-constant-tone-electromagnetic-hum/83862 - low but maybe can be upped
+
+https://artlist.io/sfx/track/cinematic-drones---spaceship-corridor-humming/96964 - low but maybe can be upped
+
+
+https://artlist.io/sfx/track/empty-rooms---engine-room-loop-high-whir-rotation/90119  - close
+
+https://artlist.io/sfx/track/action-time---spaceship-cockpit-/123133 - low but maybe can be upped
+
+Peak frequency: approximately 1154 Hz
+
+Low threshold (≥50% peak energy): approximately 778 Hz
+
+High threshold (≥50% peak energy): approximately 1615 Hz
+
+Bandwidth: approximately 837 Hz
+
+
+
+
+
+
+
+
+
+

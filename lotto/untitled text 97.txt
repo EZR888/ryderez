@@ -18,11 +18,10 @@ After drawing
    - Show winnings
  - Check against past drawings
  
+So, we currently use a point system to help whittle down the number of 5 number sets we want to use.  The points are based on a 10 million run reference set.  But... would it be better to use the past history as the reference set?  In the case of the 39 number game, we have over 11,000 sets  of 5 numbers.  We could run those 11,000 sets through the point calculator, as it were, and come up with a "signature".  Each of the 4 categories we run through would have the points averaged for each category.  Then we'd run a simulation of the same number of runs, plus a few hundred, and keep running it until we get a set of category averages that is very close to the past history averages.  This new set would be the reference set.  Basically, we're sort of trying to find a seed from the existing data and use it as the seed for the reference set, hoping the trajectory is about the same for future sets.  What do you think? 
  
- carfax
  
- Call MErcedes Financial
-  - wire funds
+ 
 
 To sell a car with a loan in California and transfer the title, you'll need to first satisfy the lien on the vehicle, which means paying off the outstanding loan balance. The lender holding the lien will then release the title to the new owner once the loan is paid in full. You'll then need to complete the title transfer process with the California DMV. 
 Here's a more detailed breakdown:
@@ -287,6 +286,11 @@ Drop any table into the `WHEELS` object and you’re done.
   your current random coverage is almost as good.
 
 Enjoy wheeling without hand‑copying!
+--------------
+
+1680 - 1780 - 1880
+
+
 
 
 

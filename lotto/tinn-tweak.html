@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tinnitus Freq Tweeq</title>
+  <title>Tinnitus Tone Lab — Web App</title>
   <style>
     :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#87f; --warn:#ffb86b; --danger:#ff6b6b; }
     *{ box-sizing:border-box; }
@@ -107,8 +107,7 @@
 
       <div class="col-12">
         <div class="row" style="margin-top:10px">
-          <button id="playBtn" class="btn primary">▶︎ Play / Monitor</button>
-          <button id="stopBtn" class="btn">■ Stop</button>
+          <button id="playToggleBtn" class="btn primary">▶︎ Play / Monitor</button>
           <div class="hr" style="flex:1"></div>
           <button id="exportBtn" class="btn">⬇︎ Export WAV</button>
           <span class="small">Files include settings in the filename.</span>
@@ -139,7 +138,7 @@
 
   // ---------- Helpers ----------
   const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
-  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','playBtn','stopBtn','exportBtn']);
+  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','playToggleBtn','exportBtn']);
 
   function linkPair(rangeEl, numEl, {min=null,max=null}={}){
     const sync = (src,dst)=>{ dst.value = src.value; };
@@ -239,8 +238,22 @@
     return { start, stop };
   }
 
-  // ---------- Live Playback ----------
+  // ---------- Live Playback (toggle button) ----------
   let liveCtx = null; let liveCtrl = null; let liveStopTimer = null;
+
+  function updatePlayButton(playing){
+    const btn = E.playToggleBtn;
+    if(!btn) return;
+    if(playing){
+      btn.textContent = '■ Stop';
+      btn.classList.remove('primary');
+      btn.classList.add('warn');
+    } else {
+      btn.textContent = '▶︎ Play / Monitor';
+      btn.classList.remove('warn');
+      btn.classList.add('primary');
+    }
+  }
 
   async function play(){
     if(liveCtx){ await stop(); }
@@ -248,20 +261,26 @@
     liveCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: p.sr });
     liveCtrl = buildGraph(liveCtx, p);
     liveCtrl.start(liveCtx.currentTime);
+    updatePlayButton(true);
     // Auto-stop after duration (so you don't forget it's playing)
     clearTimeout(liveStopTimer);
     liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 100);
   }
+
   async function stop(){
     if(!liveCtx) return;
     try{ liveCtrl?.stop(liveCtx.currentTime + 0.01); }catch(_){ }
     await new Promise(r=>setTimeout(r,50));
     liveCtx.close();
     liveCtx = null; liveCtrl = null; clearTimeout(liveStopTimer);
+    updatePlayButton(false);
   }
 
-  E.playBtn.addEventListener('click', play);
-  E.stopBtn.addEventListener('click', stop);
+  async function togglePlay(){
+    if(liveCtx){ await stop(); } else { await play(); }
+  }
+
+  E.playToggleBtn.addEventListener('click', togglePlay);
 
   // ---------- Offline Export to WAV ----------
   function floatToWavBlob(chData, sr){

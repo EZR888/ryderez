@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tinnitus Tone Lab — Web App</title>
+  <style>
+    :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#87f; --warn:#ffb86b; --danger:#ff6b6b; }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
+    .wrap{ max-width:1100px; margin:24px auto 80px; padding:0 16px; }
+    .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    h1{ font-size:24px; margin:0; letter-spacing:0.3px; }
+    .card{ background:var(--panel); border:1px solid #222630; border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 8px 30px rgba(0,0,0,.3); }
+    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .col-6{ grid-column: span 6; }
+    .col-12{ grid-column: span 12; }
+    .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    label{ font-size:13px; color:var(--muted); }
+    input[type="range"]{ width: 260px; }
+    input[type="number"]{ width: 110px; padding:6px 8px; border-radius:10px; border:1px solid #2a2f3a; background:#0e1117; color:var(--text); }
+    .btn{ padding:10px 14px; border-radius:12px; border:1px solid #2a2f3a; background:#0f1320; color:var(--text); cursor:pointer; transition: all .15s ease; }
+    .btn:hover{ transform: translateY(-1px); border-color:#394253; }
+    .btn.primary{ background: linear-gradient(135deg, #1b5cff, #21b6ff); border-color: transparent; }
+    .btn.warn{ background: linear-gradient(135deg, #ff9f1a, #ff5f6d); border-color:transparent; }
+    .badge{ padding:4px 8px; border-radius:999px; font-size:12px; background:#11161f; border:1px solid #2a2f3a; color:var(--muted); }
+    .small{ font-size:12px; color:var(--muted); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .hr{ height:1px; background:#232733; margin:12px 0; border-radius:1px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>🎧 Tinnitus Tone Lab — Web App</h1>
+    <div class="badge">v0.1 • Offline, single-file</div>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <div class="col-12">
+        <div class="row">
+          <label>Sample rate</label>
+          <select id="sr" class="btn">
+            <option value="48000" selected>48,000 Hz</option>
+            <option value="44100">44,100 Hz</option>
+          </select>
+          <label>Duration (s)</label>
+          <input id="duration" type="number" value="10" min="1" max="600" step="1" />
+          <span class="small">Tip: keep exports ≤120s for testing; therapy-length files are heavy in browsers.</span>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <h3 style="margin:6px 0 8px">Pitch & Bandwidth</h3>
+        <div class="row">
+          <label for="freq">Frequency (Hz)</label>
+          <input type="range" id="freq" min="100" max="16000" step="1" value="8000" />
+          <input type="number" id="freqNum" min="20" max="22000" step="1" value="8000" />
+        </div>
+        <div class="row">
+          <label for="bw">Bandwidth (Hz)</label>
+          <input type="range" id="bw" min="0" max="4000" step="10" value="400" />
+          <input type="number" id="bwNum" min="0" max="20000" step="10" value="400" />
+          <span class="small">(Band-pass width; larger = noisier)</span>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <h3 style="margin:6px 0 8px">Mix & Timbre</h3>
+        <div class="row">
+          <label for="toneMix">Tone mix</label>
+          <input type="range" id="toneMix" min="0" max="1" step="0.01" value="0.6" />
+          <input type="number" id="toneMixNum" min="0" max="1" step="0.01" value="0.6" />
+        </div>
+        <div class="row">
+          <label for="noiseMix">Noise mix</label>
+          <input type="range" id="noiseMix" min="0" max="1" step="0.01" value="0.4" />
+          <input type="number" id="noiseMixNum" min="0" max="1" step="0.01" value="0.4" />
+          <span class="small">(We normalize tone+noise so overall level stays sane)</span>
+        </div>
+        <div class="row">
+          <label for="mufFc">Muffle cutoff (Hz)</label>
+          <input type="range" id="mufFc" min="0" max="16000" step="50" value="6500" />
+          <input type="number" id="mufFcNum" min="0" max="20000" step="10" value="6500" />
+          <span class="small">0 = off</span>
+        </div>
+        <div class="row">
+          <label for="mufOrder">Muffle order</label>
+          <input type="range" id="mufOrder" min="1" max="6" step="1" value="2" />
+          <input type="number" id="mufOrderNum" min="1" max="8" step="1" value="2" />
+        </div>
+      </div>
+
+      <div class="col-12">
+        <h3 style="margin:6px 0 8px">Click‑Train / Choppiness (optional)</h3>
+        <div class="row">
+          <label for="onMs">Slice ON (ms)</label>
+          <input type="range" id="onMs" min="0" max="20" step="1" value="0" />
+          <input type="number" id="onMsNum" min="0" max="200" step="1" value="0" />
+          <label for="offMs">Slice OFF (ms)</label>
+          <input type="range" id="offMs" min="0" max="40" step="1" value="0" />
+          <input type="number" id="offMsNum" min="0" max="500" step="1" value="0" />
+          <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="row" style="margin-top:10px">
+          <button id="playToggleBtn" class="btn primary">▶︎ Play / Monitor</button>
+          <div class="hr" style="flex:1"></div>
+          <button id="exportBtn" class="btn">⬇︎ Export WAV</button>
+          <span class="small">Files include settings in the filename.</span>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="small">QOL shortcuts: <span class="badge">Shift+Drag</span> on sliders for finer control • Values are mirrored between slider & number boxes.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:6px 0 8px">Notes</h3>
+    <ul class="small">
+      <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
+      <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
+      <li><b>Click‑train</b> schedules precise ON/OFF gain steps (sample‑accurate) for choppy/raspy percepts.</li>
+      <li>For therapy exports, consider generating the <i>exact match</i> you like here, then using a DAW to build longer files if your browser chokes on very long renders.</li>
+    </ul>
+    <div class="card">
+    <h3 style="margin:6px 0 8px">Analyze WAV/MP3 → Detect Slice Timing</h3>
+    <div class="row" style="gap:12px; align-items:flex-start; flex-wrap:wrap;">
+      <input id="fileInput" type="file" accept="audio/wav,audio/x-wav,audio/mpeg,audio/mp3,audio/ogg,audio/flac,audio/mp4" class="btn" />
+      <button id="analyzeBtn" class="btn">🔎 Analyze</button>
+      <div id="anStatus" class="small"></div>
+    </div>
+    <div class="grid" style="margin-top:10px">
+      <div class="col-12">
+        <canvas id="envCanvas" width="900" height="180" style="width:100%; background:#0b0e13; border:1px solid #232733; border-radius:10px"></canvas>
+      </div>
+      <div class="col-12">
+        <div id="anResults" class="mono small"></div>
+      </div>
+    </div>
+    <div class="small" style="margin-top:8px; color:var(--muted)">Tip: provide 10–20 s of audio recorded straight from the device/earbud chain. 48 kHz+ sample rate preferred. If the file uses heavy AGC/compression, estimates may be biased; I’ll tell you if I detect that.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------- Helpers ----------
+  const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
+  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','playToggleBtn','exportBtn']);
+
+  function linkPair(rangeEl, numEl, {min=null,max=null}={}){
+    const sync = (src,dst)=>{ dst.value = src.value; };
+    rangeEl.addEventListener('input', ()=>sync(rangeEl, numEl));
+    numEl.addEventListener('input', ()=>{
+      if(min!==null) numEl.value = Math.max(min, +numEl.value);
+      if(max!==null) numEl.value = Math.min(max, +numEl.value);
+      sync(numEl, rangeEl);
+    });
+    // init
+    sync(rangeEl, numEl);
+  }
+
+  linkPair(E.freq, E.freqNum, {min:20, max:22000});
+  linkPair(E.bw, E.bwNum, {min:0, max:20000});
+  linkPair(E.toneMix, E.toneMixNum, {min:0, max:1});
+  linkPair(E.noiseMix, E.noiseMixNum, {min:0, max:1});
+  linkPair(E.mufFc, E.mufFcNum, {min:0, max:22000});
+  linkPair(E.mufOrder, E.mufOrderNum, {min:1, max:8});
+  linkPair(E.onMs, E.onMsNum, {min:0, max:200});
+  linkPair(E.offMs, E.offMsNum, {min:0, max:500});
+
+  function getParams(){
+    const toneMix = +E.toneMixNum.value; const noiseMix = +E.noiseMixNum.value; const mixSum = Math.max(1e-9, toneMix + noiseMix);
+    return {
+      sr: +E.sr.value,
+      duration: Math.max(0.1, +E.duration.value),
+      freq: Math.max(20, +E.freqNum.value),
+      bw: Math.max(0, +E.bwNum.value),
+      toneMix: toneMix / mixSum,
+      noiseMix: noiseMix / mixSum,
+      mufFc: Math.max(0, +E.mufFcNum.value),
+      mufOrder: Math.max(1, Math.round(+E.mufOrderNum.value)),
+      onMs: Math.max(0, +E.onMsNum.value),
+      offMs: Math.max(0, +E.offMsNum.value)
+    };
+  }
+
+  // ---------- Audio graph builders ----------
+  function buildGraph(ctx, p, forOffline=false){
+    // Tone Oscillator
+    const osc = new OscillatorNode(ctx, { type:'sine', frequency: p.freq });
+    const toneGain = new GainNode(ctx, { gain: p.toneMix });
+    osc.connect(toneGain);
+
+    // Noise source (white -> bandpass)
+    const noiseBuf = ctx.createBuffer(1, Math.max(1, Math.floor(p.sr * 2)), p.sr); // 2s loop
+    const data = noiseBuf.getChannelData(0);
+    for(let i=0;i<data.length;i++){ data[i] = (Math.random()*2-1); }
+    const noise = new AudioBufferSourceNode(ctx, { buffer: noiseBuf, loop: true });
+
+    // Band-pass using biquad; Q ~= f0/BW (protect from 0 and insane values)
+    const bp = new BiquadFilterNode(ctx, { type:'bandpass', frequency: p.freq, Q: Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001) });
+    const noiseGain = new GainNode(ctx, { gain: p.noiseMix });
+    noise.connect(bp).connect(noiseGain);
+
+    // Mix
+    const mix = new GainNode(ctx, { gain: 0.98 });
+    toneGain.connect(mix);
+    noiseGain.connect(mix);
+
+    // Muffle: chain N lowpasses when enabled
+    let chainHead = mix;
+    if(p.mufFc > 0){
+      for(let i=0;i<p.mufOrder;i++){
+        const lp = new BiquadFilterNode(ctx, { type:'lowpass', frequency: p.mufFc, Q: 0.707 });
+        chainHead.connect(lp);
+        chainHead = lp;
+      }
+    }
+
+    // Gating (click-train)
+    const gate = new GainNode(ctx, { gain: 1.0 });
+    chainHead.connect(gate);
+
+    // Destination
+    gate.connect(ctx.destination);
+
+    // Start/stop helpers
+    function scheduleGate(){
+      if(p.onMs <= 0){ gate.gain.setValueAtTime(1.0, 0); return; }
+      const on = p.onMs / 1000; const off = p.offMs / 1000; const period = Math.max(1e-4, on + off);
+      const total = p.duration;
+      let t = 0;
+      gate.gain.cancelScheduledValues(0);
+      while(t < total){
+        gate.gain.setValueAtTime(1.0, t);
+        const tOff = t + on;
+        if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); }
+        t += period;
+      }
+    }
+
+    function start(at=0){ osc.start(at); noise.start(at); scheduleGate(); }
+    function stop(at){ try{ osc.stop(at); noise.stop(at); } catch(_){} }
+
+    return { start, stop };
+  }
+
+  // ---------- Live Playback ----------
+  let liveCtx = null; let liveCtrl = null; let liveStopTimer = null;
+
+  async function play(){
+    if(liveCtx){ await stop(); }
+    const p = getParams();
+    liveCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: p.sr });
+    liveCtrl = buildGraph(liveCtx, p);
+    liveCtrl.start(liveCtx.currentTime);
+    updatePlayButton(true);
+    // Auto-stop after duration (so you don't forget it's playing)
+    clearTimeout(liveStopTimer);
+    liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 100);
+  }
+  async function stop(){
+    if(!liveCtx) return;
+    try{ liveCtrl?.stop(liveCtx.currentTime + 0.01); }catch(_){ }
+    await new Promise(r=>setTimeout(r,50));
+    liveCtx.close();
+    liveCtx = null; liveCtrl = null; clearTimeout(liveStopTimer);
+    updatePlayButton(false);
+  }
+
+  function updatePlayButton(playing){
+    const btn = E.playToggleBtn;
+    if(!btn) return;
+    if(playing){
+      btn.textContent = '■ Stop';
+      btn.classList.remove('primary');
+      btn.classList.add('warn');
+    } else {
+      btn.textContent = '▶︎ Play / Monitor';
+      btn.classList.remove('warn');
+      btn.classList.add('primary');
+    }
+  }
+  async function togglePlay(){
+    if(liveCtx){ await stop(); } else { await play(); }
+  }
+  E.playToggleBtn.addEventListener('click', togglePlay);
+
+  // ---------- Offline Export to WAV ----------
+  function floatToWavBlob(chData, sr){
+    const numFrames = chData.length;
+    const buffer = new ArrayBuffer(44 + numFrames*2);
+    const view = new DataView(buffer);
+    const writeStr = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+
+    // RIFF header
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + numFrames*2, true);
+    writeStr(8, 'WAVE');
+    writeStr(12,'fmt ');
+    view.setUint32(16, 16, true);     // PCM chunk size
+    view.setUint16(20, 1, true);      // audio format = PCM
+    view.setUint16(22, 1, true);      // channels
+    view.setUint32(24, sr, true);     // sample rate
+    view.setUint32(28, sr*2, true);   // byte rate
+    view.setUint16(32, 2, true);      // block align
+    view.setUint16(34, 16, true);     // bits per sample
+    writeStr(36,'data');
+    view.setUint32(40, numFrames*2, true);
+
+    // samples
+    let offset = 44;
+    for(let i=0;i<numFrames;i++){
+      // soft clip and scale
+      const s = Math.max(-1, Math.min(1, chData[i] * 0.98));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      offset += 2;
+    }
+    return new Blob([view], { type:'audio/wav' });
+  }
+
+  async function exportWav(){
+    const p = getParams();
+    if(p.duration > 1800){ alert('Please keep duration ≤ 1800s (30 min). Long renders may fail in some browsers.'); return; }
+    const offCtx = new OfflineAudioContext(1, Math.ceil(p.sr * p.duration), p.sr);
+    const ctrl = buildGraph(offCtx, p, true);
+    ctrl.start(0);
+    const rendered = await offCtx.startRendering();
+    const ch = rendered.getChannelData(0);
+    const blob = floatToWavBlob(ch, p.sr);
+
+    const tag = `f${Math.round(p.freq)}_bw${Math.round(p.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p.mufFc)}o${p.mufOrder}_slice${Math.round(p.onMs)}x${Math.round(p.offMs)}_${p.duration}s_${p.sr}sr`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `tinnitus_${tag}.wav`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }
+
+  E.exportBtn.addEventListener('click', exportWav);
+
+  // ---------- Analyzer (WAV/MP3 → slice timing) ----------
+  const fileInput = document.getElementById('fileInput');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const anStatus = document.getElementById('anStatus');
+  const envCanvas = document.getElementById('envCanvas');
+  const anResults = document.getElementById('anResults');
+
+  function drawEnvelope(canvas, env, sr, secsToShow=1.0){
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#0b0e13'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = '#6ee7ff'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    const N = Math.min(env.length, Math.floor(sr*secsToShow));
+    const step = Math.max(1, Math.floor(N / canvas.width));
+    let x=0; const mid = canvas.height-10;
+    for(let i=0;i<N;i+=step){
+      const y = mid - env[i] * (canvas.height-20);
+      if(x===0) ctx.moveTo(0,y); else ctx.lineTo(x,y);
+      x++;
+    }
+    ctx.stroke();
+  }
+
+  function movingAverage(arr, win){
+    const out = new Float32Array(arr.length);
+    let sum = 0; let k = 0;
+    for(let i=0;i<arr.length;i++){
+      sum += arr[i];
+      if(i>=win) sum -= arr[i-win];
+      out[i] = sum / Math.min(i+1, win);
+    }
+    return out;
+  }
+
+  function autocorr(x, minLag, maxLag){
+    const out = new Float32Array(maxLag-minLag+1);
+    for(let lag=minLag; lag<=maxLag; lag++){
+      let s=0;
+      for(let i=0;i<x.length-lag;i++) s += x[i]*x[i+lag];
+      out[lag-minLag] = s;
+    }
+    return out;
+  }
+
+  function estimateGate(env, sr){
+    // Normalize
+    let max=1e-12; for(let i=0;i<env.length;i++) if(Math.abs(env[i])>max) max=Math.abs(env[i]);
+    for(let i=0;i<env.length;i++) env[i]/=max;
+
+    // Smooth envelope: rectified signal then lowpass via moving average (2 ms)
+    const win = Math.max(1, Math.floor(sr*0.002));
+    const sm = movingAverage(env, win);
+
+    // Autocorr over 2–200 ms
+    const minLag = Math.max(1, Math.floor(sr*0.002));
+    const maxLag = Math.floor(sr*0.200);
+    const ac = autocorr(sm, minLag, maxLag);
+
+    // Find best peak
+    let best = 0, bestIdx = 0;
+    for(let i=0;i<ac.length;i++){ if(ac[i]>best){ best=ac[i]; bestIdx=i; } }
+    const lag = minLag + bestIdx;
+    const period_s = lag / sr;
+    const freq_hz = 1/period_s;
+
+    // Threshold for ON/OFF: mid between 50th and 90th percentile
+    const copy = Array.from(sm);
+    copy.sort((a,b)=>a-b);
+    const p50 = copy[Math.floor(copy.length*0.5)] || 0.0;
+    const p90 = copy[Math.floor(copy.length*0.9)] || 1.0;
+    const th = p50 + 0.35*(p90 - p50);
+
+    // Scan segments for ON/OFF durations near detected period
+    let onDur = [], offDur = [], curOn=false, count=0;
+    for(let i=0;i<sm.length;i++){
+      const v = sm[i] >= th;
+      if(i===0){ curOn = v; count=1; continue; }
+      if(v===curOn){ count++; }
+      else {
+        const ms = 1000 * (count / sr);
+        if(curOn) onDur.push(ms); else offDur.push(ms);
+        curOn = v; count=1;
+      }
+    }
+    if(count>0){ const ms = 1000 * (count / sr); (curOn?onDur:offDur).push(ms); }
+
+    function stats(a){
+      if(a.length===0) return {mean:0, sd:0, n:0};
+      const m = a.reduce((p,c)=>p+c,0)/a.length;
+      const v = a.reduce((p,c)=>p+(c-m)*(c-m),0)/(a.length||1);
+      return {mean:m, sd:Math.sqrt(v), n:a.length};
+    }
+
+    const onS = stats(onDur); const offS = stats(offDur);
+    const duty = (onS.mean) / Math.max(1e-9, (onS.mean + offS.mean));
+    const period_ms_est = onS.mean + offS.mean;
+
+    // Confidence heuristic: how close autocorr-based period (ms) is to ON+OFF estimate
+    const period_ms_ac = 1000*period_s;
+    const closeness = Math.abs(period_ms_ac - period_ms_est);
+
+    return {
+      freq_hz, period_ms_ac, period_ms_est, duty,
+      on_ms: onS.mean, on_sd: onS.sd, off_ms: offS.mean, off_sd: offS.sd,
+      n_on:onS.n, n_off:offS.n, threshold: th, closeness_ms:closeness
+    };
+  }
+
+  analyzeBtn.addEventListener('click', async ()=>{
+    anResults.textContent='';
+    if(!fileInput.files || !fileInput.files[0]){ anStatus.textContent = 'Choose a file first.'; return; }
+    const f = fileInput.files[0];
+    anStatus.textContent = 'Decoding…';
+    try{
+      const arrayBuf = await f.arrayBuffer();
+      const tmpCtx = new (window.AudioContext||window.webkitAudioContext)();
+      const audioBuf = await tmpCtx.decodeAudioData(arrayBuf);
+      tmpCtx.close();
+
+      // Pick the strongest channel
+      const nCh = audioBuf.numberOfChannels;
+      let data = audioBuf.getChannelData(0);
+      if(nCh>1){
+        let max0=0, max1=0;
+        for(let i=0;i<data.length;i++){ const a=Math.abs(data[i]); if(a>max0) max0=a; }
+        const ch1 = audioBuf.getChannelData(1);
+        for(let i=0;i<ch1.length;i++){ const a=Math.abs(ch1[i]); if(a>max1) max1=a; }
+        data = (max1>max0) ? ch1 : data;
+      }
+
+      // Rectify for envelope
+      const rect = new Float32Array(data.length);
+      for(let i=0;i<data.length;i++) rect[i] = Math.abs(data[i]);
+
+      const sr = audioBuf.sampleRate;
+      const res = estimateGate(rect, sr);
+      drawEnvelope(envCanvas, rect, sr, 1.0);
+
+      const confNote = res.closeness_ms < 0.5 ? 'high' : (res.closeness_ms < 2 ? 'medium' : 'low');
+
+      anResults.innerHTML = `
+        <div>Estimated gating frequency: <b>${res.freq_hz.toFixed(2)} Hz</b></div>
+        <div>Period (ACF): <b>${res.period_ms_ac.toFixed(2)} ms</b> • Period (ON+OFF): <b>${res.period_ms_est.toFixed(2)} ms</b> • agreement: <b>${res.closeness_ms.toFixed(2)} ms</b> (${confNote} confidence)</div>
+        <div>ON: <b>${res.on_ms.toFixed(2)} ms</b> (sd ${res.on_sd.toFixed(2)}; n=${res.n_on}) • OFF: <b>${res.off_ms.toFixed(2)} ms</b> (sd ${res.off_sd.toFixed(2)}; n=${res.n_off})</div>
+        <div>Duty cycle: <b>${(res.duty*100).toFixed(1)}%</b> • Threshold used: ${res.threshold.toFixed(3)} • Sample rate: ${sr} Hz</div>
+      `;
+      anStatus.textContent = `Analyzed ${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`;
+
+      if(res.duty<0.02 || res.duty>0.98){
+        anResults.innerHTML += `<div style="color:var(--warn)">Warning: duty cycle near 0%/100%. If this wasn't intended, device AGC or heavy compression may be flattening the envelope.</div>`;
+      }
+    }catch(err){
+      console.error(err);
+      anStatus.textContent = 'Could not decode this file in-browser. Try WAV/MP3/OGG/FLAC, or upload here for offline analysis.';
+    }
+  });
+})();
+</script>
+</body>
+</html>

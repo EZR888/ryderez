@@ -9,7 +9,7 @@
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
     .wrap{ max-width:1100px; margin:24px auto 80px; padding:0 16px; }
-    .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
     h1{ font-size:24px; margin:0; letter-spacing:0.3px; }
     .card{ background:var(--panel); border:1px solid #222630; border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 8px 30px rgba(0,0,0,.3); }
     .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
@@ -23,118 +23,230 @@
     .btn:hover{ transform: translateY(-1px); border-color:#394253; }
     .btn.primary{ background: linear-gradient(135deg, #1b5cff, #21b6ff); border-color: transparent; }
     .btn.warn{ background: linear-gradient(135deg, #ff9f1a, #ff5f6d); border-color:transparent; }
+    .btn.tab{ background:#0f1320; }
+    .btn.tab.active{ background: linear-gradient(135deg, #232a3b, #1e2634); border-color:#394253; }
     .badge{ padding:4px 8px; border-radius:999px; font-size:12px; background:#11161f; border:1px solid #2a2f3a; color:var(--muted); }
     .small{ font-size:12px; color:var(--muted); }
     .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     .hr{ height:1px; background:#232733; margin:12px 0; border-radius:1px; }
+    .hidden{ display:none; }
+    .guide h2, .guide h3 { margin: 12px 0 6px; }
+    .guide p, .guide li { color: var(--text); line-height: 1.5; }
+    .guide code { background:#0e1117; border:1px solid #2a2f3a; border-radius:8px; padding:0 6px; }
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="header">
     <h1>🎧 Tinnitus Freq Finder</h1>
-    <div class="badge">v0.1 • Offline, single-file</div>
+    <div class="badge">v0.2 • Offline, single-file</div>
   </div>
 
-  <div class="card">
-    <div class="grid">
-      <div class="col-12">
-        <div class="row">
-          <label>Sample rate</label>
-          <select id="sr" class="btn">
-            <option value="48000" selected>48,000 Hz</option>
-            <option value="44100">44,100 Hz</option>
-          </select>
-          <label>Duration (s)</label>
-          <input id="duration" type="number" value="10" min="1" max="600" step="1" />
-          <span class="small">Tip: keep exports ≤120s for testing; therapy-length files are heavy in browsers.</span>
-        </div>
-      </div>
+  <div class="row" style="gap:8px; margin-bottom:10px">
+    <button id="tabAppBtn" class="btn tab active">Freq Finder</button>
+    <button id="tabGuideBtn" class="btn tab">User Guide</button>
+  </div>
 
-      <div class="col-6">
-        <h3 style="margin:6px 0 8px">Pitch & Bandwidth</h3>
-        <div class="row">
-          <label for="freq">Frequency (Hz)</label>
-          <input type="range" id="freq" min="100" max="16000" step="1" value="8000" />
-          <input type="number" id="freqNum" min="20" max="22000" step="1" value="8000" />
+  <!-- TAB: APP -->
+  <section id="tabApp" class="tabpage">
+    <div class="card">
+      <div class="grid">
+        <div class="col-12">
+          <div class="row">
+            <label>Sample rate</label>
+            <select id="sr" class="btn">
+              <option value="48000" selected>48,000 Hz</option>
+              <option value="44100">44,100 Hz</option>
+            </select>
+            <label>Duration (s)</label>
+            <input id="duration" type="number" value="10" min="1" max="600" step="1" />
+            <span class="small">Tip: keep exports ≤120s for testing; therapy-length files are heavy in browsers.</span>
+          </div>
         </div>
-        <div class="row">
-          <label for="bw">Bandwidth (Hz)</label>
-          <input type="range" id="bw" min="0" max="4000" step="10" value="400" />
-          <input type="number" id="bwNum" min="0" max="20000" step="10" value="400" />
-          <span class="small">(Band-pass width; larger = noisier)</span>
-        </div>
-      </div>
 
-      <div class="col-6">
-        <h3 style="margin:6px 0 8px">Mix & Timbre</h3>
-        <div class="row">
-          <label for="toneMix">Tone mix</label>
-          <input type="range" id="toneMix" min="0" max="1" step="0.01" value="0.6" />
-          <input type="number" id="toneMixNum" min="0" max="1" step="0.01" value="0.6" />
+        <div class="col-6">
+          <h3 style="margin:6px 0 8px">Pitch & Bandwidth</h3>
+          <div class="row">
+            <label for="freq">Frequency (Hz)</label>
+            <input type="range" id="freq" min="100" max="16000" step="1" value="8000" />
+            <input type="number" id="freqNum" min="20" max="22000" step="1" value="8000" />
+          </div>
+          <div class="row">
+            <label for="bw">Bandwidth (Hz)</label>
+            <input type="range" id="bw" min="0" max="4000" step="10" value="400" />
+            <input type="number" id="bwNum" min="0" max="20000" step="10" value="400" />
+            <span class="small">(Band-pass width; larger = noisier)</span>
+          </div>
         </div>
-        <div class="row">
-          <label for="noiseMix">Noise mix</label>
-          <input type="range" id="noiseMix" min="0" max="1" step="0.01" value="0.4" />
-          <input type="number" id="noiseMixNum" min="0" max="1" step="0.01" value="0.4" />
-          <span class="small">(We normalize tone+noise so overall level stays sane)</span>
-        </div>
-        <div class="row">
-          <label for="mufFc">Muffle cutoff (Hz)</label>
-          <input type="range" id="mufFc" min="0" max="16000" step="50" value="6500" />
-          <input type="number" id="mufFcNum" min="0" max="20000" step="10" value="6500" />
-          <span class="small">0 = off</span>
-        </div>
-        <div class="row">
-          <label for="mufOrder">Muffle order</label>
-          <input type="range" id="mufOrder" min="1" max="6" step="1" value="2" />
-          <input type="number" id="mufOrderNum" min="1" max="8" step="1" value="2" />
-        </div>
-      </div>
 
-      <div class="col-12">
-        <h3 style="margin:6px 0 8px">Click‑Train / Choppiness (optional)</h3>
-        <div class="row">
-          <label for="onMs">Slice ON (ms)</label>
-          <input type="range" id="onMs" min="0" max="20" step="1" value="0" />
-          <input type="number" id="onMsNum" min="0" max="200" step="1" value="0" />
-          <label for="offMs">Slice OFF (ms)</label>
-          <input type="range" id="offMs" min="0" max="40" step="1" value="0" />
-          <input type="number" id="offMsNum" min="0" max="500" step="1" value="0" />
-          <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
+        <div class="col-6">
+          <h3 style="margin:6px 0 8px">Mix & Timbre</h3>
+          <div class="row">
+            <label for="toneMix">Tone mix</label>
+            <input type="range" id="toneMix" min="0" max="1" step="0.01" value="0.6" />
+            <input type="number" id="toneMixNum" min="0" max="1" step="0.01" value="0.6" />
+          </div>
+          <div class="row">
+            <label for="noiseMix">Noise mix</label>
+            <input type="range" id="noiseMix" min="0" max="1" step="0.01" value="0.4" />
+            <input type="number" id="noiseMixNum" min="0" max="1" step="0.01" value="0.4" />
+            <span class="small">(We normalize tone+noise so overall level stays sane)</span>
+          </div>
+          <div class="row">
+            <label for="mufFc">Muffle cutoff (Hz)</label>
+            <input type="range" id="mufFc" min="0" max="16000" step="50" value="6500" />
+            <input type="number" id="mufFcNum" min="0" max="20000" step="10" value="6500" />
+            <span class="small">0 = off</span>
+          </div>
+          <div class="row">
+            <label for="mufOrder">Muffle order</label>
+            <input type="range" id="mufOrder" min="1" max="6" step="1" value="2" />
+            <input type="number" id="mufOrderNum" min="1" max="8" step="1" value="2" />
+          </div>
         </div>
-      </div>
 
-      <div class="col-12">
-        <div class="row" style="margin-top:10px">
-          <button id="playToggleBtn" class="btn primary">▶︎ Play / Monitor</button>
-          <div class="hr" style="flex:1"></div>
-          <button id="exportBtn" class="btn">⬇︎ Export WAV</button>
-          <span class="small">Files include settings in the filename.</span>
+        <div class="col-12">
+          <h3 style="margin:6px 0 8px">Click‑Train / Choppiness (optional)</h3>
+          <div class="row">
+            <label for="onMs">Slice ON (ms)</label>
+            <input type="range" id="onMs" min="0" max="20" step="1" value="0" />
+            <input type="number" id="onMsNum" min="0" max="200" step="1" value="0" />
+            <label for="offMs">Slice OFF (ms)</label>
+            <input type="range" id="offMs" min="0" max="40" step="1" value="0" />
+            <input type="number" id="offMsNum" min="0" max="500" step="1" value="0" />
+            <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
+          </div>
         </div>
-      </div>
 
-      <div class="col-12">
-        <div class="small">QOL shortcuts: <span class="badge">Shift+Drag</span> on sliders for finer control • Values are mirrored between slider & number boxes.</div>
-      </div>
+        <div class="col-12">
+          <div class="row" style="margin-top:10px">
+            <button id="playToggleBtn" class="btn primary">▶︎ Play / Monitor</button>
+            <div class="hr" style="flex:1"></div>
+            <button id="exportBtn" class="btn">⬇︎ Export WAV</button>
+            <span class="small">Files include settings in the filename.</span>
+          </div>
+        </div>
 
+        <div class="col-12">
+          <div class="small">QOL shortcuts: <span class="badge">Shift+Drag</span> on sliders for finer control • Values are mirrored between slider & number boxes.</div>
+        </div>
+
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h3 style="margin:6px 0 8px">Notes</h3>
-    <ul class="small">
-      <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
-      <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
-      <li><b>Click‑train</b> schedules precise ON/OFF gain steps (sample‑accurate) for choppy/raspy percepts.</li>
-      <li>For therapy exports, consider generating the <i>exact match</i> you like here, then using a DAW to build longer files if your browser chokes on very long renders.</li>
-    </ul>
-  </div>
+    <div class="card">
+      <h3 style="margin:6px 0 8px">Notes</h3>
+      <ul class="small">
+        <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
+        <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
+        <li><b>Click‑train</b> schedules precise ON/OFF gain steps (sample‑accurate) for choppy/raspy percepts.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TAB: GUIDE -->
+  <section id="tabGuide" class="tabpage hidden">
+    <div class="card guide">
+      <h2>Tinnitus Freq Finder — User Guide</h2>
+      <h3>0) What it is</h3>
+      <ul>
+        <li>Plays a <b>tone + band‑limited noise</b> centered at your chosen frequency</li>
+        <li>Adds optional <b>muffle</b> (treble roll‑off)</li>
+        <li>Adds optional <b>slice/gating</b> (ON/OFF ms) for choppy/raspy percepts</li>
+        <li>Exports <b>16‑bit WAV</b> files you can use elsewhere</li>
+      </ul>
+      <hr class="hr" />
+
+      <h3>1) Setup (60 seconds)</h3>
+      <ol>
+        <li>Save this file (e.g., <code>tinnitus_freq_finder.html</code>).</li>
+        <li>Open in <b>Chrome</b> or <b>Edge</b> (best). Safari/Firefox usually work, but can be slower with long renders.</li>
+        <li>Use decent headphones/earbuds or monitors. <b>Start at low volume.</b></li>
+      </ol>
+      <p class="small"><i>Browsers block auto‑play. You must click <b>Play / Monitor</b> to hear anything.</i></p>
+
+      <h3>2) Quick Start (2 minutes)</h3>
+      <ol>
+        <li>Set <b>Sample rate</b> (48,000 Hz is fine).</li>
+        <li>Set <b>Duration</b> (10–30 s for testing; render longer only when exporting).</li>
+        <li>Set <b>Frequency</b> near your perceived tone (e.g., 8000 Hz).</li>
+        <li>Set <b>Bandwidth</b>: 0–400 narrow/clean; 600–1200 broader/muffled; >1500 hissier.</li>
+        <li>Adjust <b>Tone mix</b> vs <b>Noise mix</b> (auto‑normalized): tonal 0.7/0.3; muffled 0.3/0.7.</li>
+        <li>If dull/muffled, enable <b>Muffle</b>: cutoff 5–7 kHz, order 2–4.</li>
+        <li>If choppy/raspy, enable <b>Slice</b>: try <b>ON 2 ms / OFF 8 ms</b>.</li>
+        <li>Click <b>Play / Monitor</b>. The button turns red <b>Stop</b> while playing and flips back when done.</li>
+        <li>When it blends with your tinnitus best, click <b>Export WAV</b>.</li>
+      </ol>
+
+      <h3>3) Controls Cheat Sheet</h3>
+      <ul>
+        <li><b>Frequency (Hz)</b>: center pitch.</li>
+        <li><b>Bandwidth (Hz)</b>: width around the center (≈ <code>Q = f0 / BW</code>). Bigger = noisier.</li>
+        <li><b>Tone/Noise mix</b>: relative weights (keeps overall level sane).</li>
+        <li><b>Muffle</b>: smooth high‑frequency roll‑off; higher order = more “under a pillow.”</li>
+        <li><b>Slice ON/OFF (ms)</b>: amplitude gating; ON>0 enables it. Duty ≈ <code>ON / (ON+OFF)</code>.</li>
+        <li><b>Duration</b>: playback length and export length.</li>
+      </ul>
+      <p class="small">Fine control: <b>Shift+drag</b> sliders.</p>
+
+      <h3>4) Recommended Starting Presets</h3>
+      <ul>
+        <li><b>Clean, tonal</b>: Freq≈guess; BW 200–400; Tone 0.7 / Noise 0.3; Muffle off; Slice off.</li>
+        <li><b>Muffled</b>: BW 600–1200; Tone 0.3 / Noise 0.7; Muffle cutoff 5–7 kHz, Order 2–4; Slice off.</li>
+        <li><b>Choppy/raspy</b>: Start from “Muffled,” then Slice <b>2/8 ms</b>. Try 3/7, 4/6, 1/9 if 2/8 isn’t right.</li>
+        <li><b>Very high‑pitch hiss</b>: Freq near your pitch; BW 1200–2000; Tone 0.2 / Noise 0.8; Muffle cutoff 7–10 kHz, Order 1–2.</li>
+      </ul>
+
+      <h3>5) Finding a Perceptual Match (fast workflow)</h3>
+      <ol>
+        <li><b>Coarse pass</b>: sweep Frequency (±5–10%), BW at 400, 800, 1200.</li>
+        <li><b>Character pass</b>: adjust Tone/Noise and Muffle to get timbre right.</li>
+        <li><b>Texture pass</b>: if choppy, add Slice (start 2/8 ms) and tweak ON/OFF.</li>
+        <li>Export a 30–60 s candidate. If it still matches, export therapy length.</li>
+      </ol>
+
+      <h3>6) Exporting WAVs</h3>
+      <ul>
+        <li>16‑bit PCM mono at chosen sample rate.</li>
+        <li>Very long renders (10–30 min) can be heavy. If it fails, export a short loop and stitch it in a DAW.</li>
+        <li>Filenames encode all settings.</li>
+      </ul>
+
+      <h3>7) Troubleshooting</h3>
+      <ul>
+        <li><b>No sound</b>: you must click Play / Monitor; also check tab/system volume.</li>
+        <li><b>Distortion</b>: turn down output; the app has headroom but your DAC can still clip.</li>
+        <li><b>Export fails</b>: reduce Duration; export a short loop and stitch in a DAW.</li>
+        <li><b>Firefox sluggish</b>: use Chrome/Edge.</li>
+        <li><b>iOS</b>: use a desktop browser for exporting long files.</li>
+      </ul>
+
+      <h3>8) Safety & Protocol</h3>
+      <ul>
+        <li><b>Volume</b>: start low. Don’t blast your ears.</li>
+        <li><b>Rules</b>: follow the protocol.</li>
+      </ul>
+    </div>
+  </section>
 </div>
 
 <script>
 (function(){
   'use strict';
+  // Tabs
+  const tabAppBtn = document.getElementById('tabAppBtn');
+  const tabGuideBtn = document.getElementById('tabGuideBtn');
+  const tabApp = document.getElementById('tabApp');
+  const tabGuide = document.getElementById('tabGuide');
+  function showTab(which){
+    const app = which==='app';
+    tabApp.classList.toggle('hidden', !app);
+    tabGuide.classList.toggle('hidden', app);
+    tabAppBtn.classList.toggle('active', app);
+    tabGuideBtn.classList.toggle('active', !app);
+  }
+  tabAppBtn.addEventListener('click', ()=>showTab('app'));
+  tabGuideBtn.addEventListener('click', ()=>showTab('guide'));
 
   // ---------- Helpers ----------
   const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
@@ -280,7 +392,7 @@
     if(liveCtx){ await stop(); } else { await play(); }
   }
 
-  E.playToggleBtn.addEventListener('click', togglePlay);
+  document.getElementById('playToggleBtn').addEventListener('click', togglePlay);
 
   // ---------- Offline Export to WAV ----------
   function floatToWavBlob(chData, sr){
@@ -333,7 +445,8 @@
     setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
   }
 
-  E.exportBtn.addEventListener('click', exportWav);
+  document.getElementById('exportBtn').addEventListener('click', exportWav);
+
 })();
 </script>
 </body>

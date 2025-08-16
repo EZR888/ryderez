@@ -5,15 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tinnitus Freq Finder</title>
   <style>
-    :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#87f; --warn:#ffb86b; --danger:#ff6b6b; }
+    :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#8a7bff; --warn:#ffb86b; --danger:#ff6b6b; }
     *{ box-sizing:border-box; }
     html,body{ height:100%; margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
     .wrap{ max-width:1100px; margin:24px auto 80px; padding:0 16px; }
     .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-    h1{ font-size:24px; margin:0; letter-spacing:0.3px; background: linear-gradient(90deg,#6ee7ff,#8a7bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    h1{ font-size:26px; margin:0; letter-spacing:0.3px; background: linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .card{ background:var(--panel); border:1px solid #222630; border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 8px 30px rgba(0,0,0,.3); }
     .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .col-4{ grid-column: span 4; }
     .col-6{ grid-column: span 6; }
+    .col-8{ grid-column: span 8; }
     .col-12{ grid-column: span 12; }
     .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     label{ font-size:13px; color:var(--muted); }
@@ -34,13 +36,27 @@
     .guide h2, .guide h3 { margin: 12px 0 6px; }
     .guide p, .guide li { color: var(--text); line-height: 1.5; }
     .guide code { background:#0e1117; border:1px solid #2a2f3a; border-radius:8px; padding:0 6px; }
+    .pill{ padding:4px 10px; border-radius:999px; font-size:12px; border:1px solid #2a2f3a; }
+    .pill.ok{ background:#0f1b12; color:#a1f0b1; border-color:#234d2f; }
+    .pill.warn{ background:#2a1a12; color:#ffcf9a; border-color:#5a3a1d; }
+    .pill.danger{ background:#2a1518; color:#ff9aa5; border-color:#5a1f2b; }
+    .led{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px; background:#24303d; border:1px solid #35465a; box-shadow: inset 0 0 6px rgba(0,0,0,.4); }
+    .led.green{ background:#2be38a; box-shadow:0 0 12px rgba(43,227,138,.45); }
+    .led.yellow{ background:#ffd166; box-shadow:0 0 12px rgba(255,209,102,.35); }
+    .led.red{ background:#ff6b6b; box-shadow:0 0 12px rgba(255,107,107,.35); }
+    .toast{ padding:8px 12px; border-radius:10px; border:1px solid #3a2a2a; background:#1a1212; color:#ffb4b4; font-size:12px; }
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="header">
     <h1>🎧 Tinnitus Freq Finder</h1>
-    <div class="badge">v0.2 • Offline, single-file</div>
+    <div class="row">
+      <div id="peakLed" class="led"></div>
+      <div id="peakText" class="small">Peak OK</div>
+      <div class="badge" id="todayBadge">Today: 0 min</div>
+      <div class="badge" id="hfPadBadge" style="display:none">HF pad −6 dB</div>
+    </div>
   </div>
 
   <div class="row" style="gap:8px; margin-bottom:10px">
@@ -60,8 +76,8 @@
               <option value="44100">44,100 Hz</option>
             </select>
             <label>Duration (s)</label>
-            <input id="duration" type="number" value="10" min="1" max="600" step="1" />
-            <span class="small">Tip: keep exports ≤120s for testing; therapy-length files are heavy in browsers.</span>
+            <input id="duration" type="number" value="10" min="1" max="1800" step="1" />
+            <span class="small">Tip: test with 10–30s; long exports are heavy.</span>
           </div>
         </div>
 
@@ -91,7 +107,7 @@
             <label for="noiseMix">Noise mix</label>
             <input type="range" id="noiseMix" min="0" max="1" step="0.01" value="0.4" />
             <input type="number" id="noiseMixNum" min="0" max="1" step="0.01" value="0.4" />
-            <span class="small">(We normalize tone+noise so overall level stays sane)</span>
+            <span class="small">(Tone+Noise auto-normalized)</span>
           </div>
           <div class="row">
             <label for="mufFc">Muffle cutoff (Hz)</label>
@@ -116,6 +132,32 @@
             <input type="range" id="offMs" min="0" max="40" step="1" value="0" />
             <input type="number" id="offMsNum" min="0" max="500" step="1" value="0" />
             <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
+            <div id="hpWarn" class="toast hidden">Headphones only recommended when slicing is active.</div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <h3 style="margin:6px 0 8px">Output & Safety</h3>
+          <div class="row">
+            <label for="outDb">Output level</label>
+            <input type="range" id="outDb" min="-24" max="-6" step="1" value="-12" />
+            <input type="number" id="outDbNum" min="-24" max="-6" step="1" value="-12" />
+            <span class="small">dB (capped)</span>
+
+            <label for="route">Routing</label>
+            <select id="route" class="btn">
+              <option value="stereo" selected>Stereo</option>
+              <option value="left">Left-only</option>
+              <option value="right">Right-only</option>
+            </select>
+
+            <label class="row" style="gap:6px">
+              <input type="checkbox" id="hfOverride" />
+              <span class="small">Disable HF pad &gt;10 kHz</span>
+            </label>
+          </div>
+          <div class="row small" style="opacity:.85">
+            <span class="badge">Shift+Drag</span> for fine control • Live update for <b>Freq</b>, <b>BW</b>, <b>Mix</b>, <b>Muffle cutoff</b>, <b>Output level</b>. Changes to <b>Slice</b>, <b>Muffle order</b>, <b>Duration</b> apply on next start.
           </div>
         </div>
 
@@ -127,11 +169,6 @@
             <span class="small">Files include settings in the filename.</span>
           </div>
         </div>
-
-        <div class="col-12">
-          <div class="small">QOL: <span class="badge">Shift+Drag</span> for fine control • Values mirror slider/number. <span class="badge" style="background:#102232;color:#9ae6ff;border-color:#1d3a5a;">Live update</span> for <b>Freq</b>, <b>BW</b>, <b>Mix</b>, <b>Muffle cutoff</b>. <span style="opacity:.8">Changes to <b>Slice</b>, <b>Muffle order</b>, <b>Duration</b> apply on next start.</span></div>
-        </div>
-
       </div>
     </div>
 
@@ -140,7 +177,8 @@
       <ul class="small">
         <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
         <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
-        <li><b>Click‑train</b> schedules precise ON/OFF gain steps (sample‑accurate) for choppy/raspy percepts.</li>
+        <li><b>Click‑train</b> schedules precise ON/OFF gain steps; prefer headphones when active.</li>
+        <li>Very long exports (10–30 min) are heavy. If it fails, export 30–60s and loop in a DAW.</li>
       </ul>
     </div>
   </section>
@@ -161,7 +199,7 @@
       <h3>1) Setup (60 seconds)</h3>
       <ol>
         <li>Save this file (e.g., <code>tinnitus_freq_finder.html</code>).</li>
-        <li>Open in <b>Chrome</b> or <b>Edge</b> (best). Safari/Firefox usually work, but can be slower with long renders.</li>
+        <li>Open in <b>Chrome</b> or <b>Edge</b>. Safari/Firefox usually work, but can be slower with long renders.</li>
         <li>Use decent headphones/earbuds or monitors. <b>Start at low volume.</b></li>
       </ol>
       <p class="small"><i>Browsers block auto‑play. You must click <b>Play / Monitor</b> to hear anything.</i></p>
@@ -226,6 +264,7 @@
       <ul>
         <li><b>Volume</b>: start low. Don’t blast your ears.</li>
         <li><b>Rules</b>: follow your study protocol.</li>
+        <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
       </ul>
     </div>
   </section>
@@ -249,9 +288,15 @@
   tabAppBtn.addEventListener('click', ()=>showTab('app'));
   tabGuideBtn.addEventListener('click', ()=>showTab('guide'));
 
+  const peakLed = document.getElementById('peakLed');
+  const peakText = document.getElementById('peakText');
+  const todayBadge = document.getElementById('todayBadge');
+  const hfPadBadge = document.getElementById('hfPadBadge');
+  const hpWarn = document.getElementById('hpWarn');
+
   // ---------- Helpers ----------
   const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
-  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','playToggleBtn','exportBtn']);
+  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','outDb','outDbNum','route','hfOverride','playToggleBtn','exportBtn']);
 
   function linkPair(rangeEl, numEl, {min=null,max=null}={}){
     const sync = (src,dst)=>{ dst.value = src.value; };
@@ -261,10 +306,8 @@
       if(max!==null) numEl.value = Math.min(max, +numEl.value);
       sync(numEl, rangeEl);
     });
-    // init
     sync(rangeEl, numEl);
   }
-
   linkPair(E.freq, E.freqNum, {min:20, max:22000});
   linkPair(E.bw, E.bwNum, {min:0, max:20000});
   linkPair(E.toneMix, E.toneMixNum, {min:0, max:1});
@@ -273,52 +316,38 @@
   linkPair(E.mufOrder, E.mufOrderNum, {min:1, max:8});
   linkPair(E.onMs, E.onMsNum, {min:0, max:200});
   linkPair(E.offMs, E.offMsNum, {min:0, max:500});
+  linkPair(E.outDb, E.outDbNum, {min:-24, max:-6});
+
+  const lin = (db)=> Math.pow(10, db/20);
+
+  function todayKey(){ const d = new Date(); return d.toISOString().slice(0,10); }
+  function getTodayMinutes(){ const key = 'minutes_'+todayKey(); return +(localStorage.getItem(key) || '0'); }
+  function addTodayMinutes(min){ const key = 'minutes_'+todayKey(); const cur = getTodayMinutes(); localStorage.setItem(key, String(cur + min)); renderToday(); }
+  function renderToday(){ todayBadge.textContent = `Today: ${getTodayMinutes().toFixed(1)} min`; }
+  renderToday();
 
   function getParams(){
     const toneMix = +E.toneMixNum.value; const noiseMix = +E.noiseMixNum.value; const mixSum = Math.max(1e-9, toneMix + noiseMix);
+    const freq = Math.max(20, +E.freqNum.value);
+    const hfPadActive = (freq > 10000) && !E.hfOverride.checked;
+    hfPadBadge.style.display = hfPadActive ? 'inline-block' : 'none';
+    hpWarn.classList.toggle('hidden', !(+E.onMsNum.value > 0));
     return {
       sr: +E.sr.value,
       duration: Math.max(0.1, +E.duration.value),
-      freq: Math.max(20, +E.freqNum.value),
+      freq,
       bw: Math.max(0, +E.bwNum.value),
       toneMix: toneMix / mixSum,
       noiseMix: noiseMix / mixSum,
       mufFc: Math.max(0, +E.mufFcNum.value),
       mufOrder: Math.max(1, Math.round(+E.mufOrderNum.value)),
       onMs: Math.max(0, +E.onMsNum.value),
-      offMs: Math.max(0, +E.offMsNum.value)
+      offMs: Math.max(0, +E.offMsNum.value),
+      outDb: Math.min(-6, Math.max(-24, +E.outDbNum.value)),
+      route: E.route.value,
+      hfPad: hfPadActive ? 0.5 : 1.0
     };
   }
-
-  // ---------- Live parameter updates (auto-apply while playing) ----------
-  function applyLiveParams(){
-    if(!liveCtx || !liveNodes) return;
-    const p = getParams();
-    try{
-      // Pitch
-      liveNodes.osc.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
-      // Band-pass center & Q
-      liveNodes.bp.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
-      const q = Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001);
-      liveNodes.bp.Q.setTargetAtTime(q, liveCtx.currentTime, 0.01);
-      // Mix
-      liveNodes.toneGain.gain.setTargetAtTime(p.toneMix, liveCtx.currentTime, 0.02);
-      liveNodes.noiseGain.gain.setTargetAtTime(p.noiseMix, liveCtx.currentTime, 0.02);
-      // Muffle cutoff (order changes require restart)
-      if(liveNodes.lpChain && liveNodes.lpChain.length){
-        for(const lp of liveNodes.lpChain){
-          lp.frequency.setTargetAtTime(Math.max(20, p.mufFc || 20000), liveCtx.currentTime, 0.02);
-        }
-      }
-    }catch(_){ /* ignore */ }
-  }
-  let rafPending=false;
-  function scheduleApply(){ if(!liveCtx) return; if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; applyLiveParams(); }); }
-
-  // Bind live-updated controls
-  window.addEventListener('DOMContentLoaded', ()=>{
-    [E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum].forEach(el=> el.addEventListener('input', scheduleApply));
-  });
 
   // ---------- Audio graph builders ----------
   function buildGraph(ctx, p, forOffline=false){
@@ -333,7 +362,7 @@
     for(let i=0;i<data.length;i++){ data[i] = (Math.random()*2-1); }
     const noise = new AudioBufferSourceNode(ctx, { buffer: noiseBuf, loop: true });
 
-    // Band-pass using biquad; Q ~= f0/BW (protect from 0 and insane values)
+    // Band-pass using biquad; Q ~= f0/BW
     const bp = new BiquadFilterNode(ctx, { type:'bandpass', frequency: p.freq, Q: Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001) });
     const noiseGain = new GainNode(ctx, { gain: p.noiseMix });
     noise.connect(bp).connect(noiseGain);
@@ -344,60 +373,89 @@
     noiseGain.connect(mix);
 
     // Muffle: chain N lowpasses when enabled
-    let chainHead = mix;
-    const lpChain = [];
+    let chainHead = mix; const lpChain = [];
     if(p.mufFc > 0){
       for(let i=0;i<p.mufOrder;i++){
         const lp = new BiquadFilterNode(ctx, { type:'lowpass', frequency: p.mufFc, Q: 0.707 });
-        chainHead.connect(lp);
-        chainHead = lp;
-        lpChain.push(lp);
+        chainHead.connect(lp); chainHead = lp; lpChain.push(lp);
       }
     }
 
     // Gating (click-train)
     const gate = new GainNode(ctx, { gain: 1.0 });
     chainHead.connect(gate);
-
-    // Destination
-    gate.connect(ctx.destination);
-
-    // Start/stop helpers
     function scheduleGate(){
       if(p.onMs <= 0){ gate.gain.setValueAtTime(1.0, 0); return; }
       const on = p.onMs / 1000; const off = p.offMs / 1000; const period = Math.max(1e-4, on + off);
-      const total = p.duration;
-      let t = 0;
-      gate.gain.cancelScheduledValues(0);
-      while(t < total){
-        gate.gain.setValueAtTime(1.0, t);
-        const tOff = t + on;
-        if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); }
-        t += period;
-      }
+      const total = p.duration; let t = 0; gate.gain.cancelScheduledValues(0);
+      while(t < total){ gate.gain.setValueAtTime(1.0, t); const tOff = t + on; if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); } t += period; }
     }
 
-    function start(at=0){ osc.start(at); noise.start(at); scheduleGate(); }
-    function stop(at){ try{ osc.stop(at); noise.stop(at); } catch(_){} }
+    // Master gain + HF pad (combined)
+    const master = new GainNode(ctx, { gain: 0.0 }); // start muted; we ramp in
+    const limiter = new DynamicsCompressorNode(ctx, { threshold: -6, knee: 30, ratio: 20, attack: 0.003, release: 0.25 });
 
-    return { start, stop, nodes: { osc, bp, toneGain, noiseGain, lpChain, gate } };
+    gate.connect(master).connect(limiter);
+
+    // Routing
+    let destinationNode;
+    if(forOffline){
+      limiter.connect(ctx.destination);
+      destinationNode = ctx.destination;
+    } else {
+      const leftGain = new GainNode(ctx, { gain: 1 });
+      const rightGain = new GainNode(ctx, { gain: 1 });
+      const merger = new ChannelMergerNode(ctx, { numberOfInputs: 2 });
+      limiter.connect(leftGain); limiter.connect(rightGain);
+      leftGain.connect(merger, 0, 0); rightGain.connect(merger, 0, 1);
+      merger.connect(ctx.destination);
+      destinationNode = merger;
+      // store for live routing
+      var routeNodes = { leftGain, rightGain };
+    }
+
+    function setMasterTarget(db, pad){ master.gain.setTargetAtTime(Math.max(0, lin(db) * pad), ctx.currentTime, 0.03); }
+
+    function start(at=0){ osc.start(at); noise.start(at); scheduleGate(); setMasterTarget(p.outDb, p.hfPad); /* fade-in */ master.gain.setValueAtTime(0.0, at); master.gain.linearRampToValueAtTime(Math.max(0, lin(p.outDb)*p.hfPad), at + 0.3); }
+    function stop(at){ try{ /* fade-out then stop */ master.gain.cancelScheduledValues(at); master.gain.linearRampToValueAtTime(0.0, at + 0.3); osc.stop(at + 0.35); noise.stop(at + 0.35); } catch(_){} }
+
+    return { start, stop, nodes: { osc, bp, toneGain, noiseGain, lpChain, gate, master, limiter, routeNodes } };
   }
 
-  // ---------- Live Playback (toggle button) ----------
-  let liveCtx = null; let liveCtrl = null; let liveStopTimer = null; let liveNodes = null;
+  // ---------- Live Playback ----------
+  let liveCtx = null; let liveCtrl = null; let liveNodes = null; let liveStopTimer = null; let peakProcessor = null; let sessionStart = null; let tickTimer = null;
 
   function updatePlayButton(playing){
-    const btn = E.playToggleBtn;
-    if(!btn) return;
-    if(playing){
-      btn.textContent = '■ Stop';
-      btn.classList.remove('primary');
-      btn.classList.add('warn');
-    } else {
-      btn.textContent = '▶︎ Play / Monitor';
-      btn.classList.remove('warn');
-      btn.classList.add('primary');
-    }
+    const btn = E.playToggleBtn; if(!btn) return;
+    if(playing){ btn.textContent = '■ Stop'; btn.classList.remove('primary'); btn.classList.add('warn'); }
+    else { btn.textContent = '▶︎ Play / Monitor'; btn.classList.remove('warn'); btn.classList.add('primary'); }
+  }
+
+  function setRoute(route){ if(!liveNodes || !liveNodes.routeNodes) return; if(route==='left'){ liveNodes.routeNodes.leftGain.gain.value=1; liveNodes.routeNodes.rightGain.gain.value=0; } else if(route==='right'){ liveNodes.routeNodes.leftGain.gain.value=0; liveNodes.routeNodes.rightGain.gain.value=1; } else { liveNodes.routeNodes.leftGain.gain.value=1; liveNodes.routeNodes.rightGain.gain.value=1; } }
+
+  function updatePeakUI(level){ // level in linear 0..1
+    const dbfs = 20*Math.log10(Math.max(level,1e-9));
+    peakText.textContent = `Peak ${dbfs.toFixed(1)} dBFS`;
+    peakLed.classList.remove('green','yellow','red');
+    if(level < 0.5) peakLed.classList.add('green');
+    else if(level < 0.89) peakLed.classList.add('yellow');
+    else peakLed.classList.add('red');
+  }
+
+  function attachPeakProcessor(ctx, sourceNode){
+    // Use ScriptProcessor for simplicity; widely supported
+    const proc = ctx.createScriptProcessor(2048, 1, 1);
+    sourceNode.connect(proc); proc.connect(ctx.destination); // minimal passthrough to keep it running
+    proc.onaudioprocess = (e)=>{
+      const ch = e.inputBuffer.getChannelData(0); let peak = 0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
+      updatePeakUI(peak);
+      if(peak >= 0.89){ // ~ -1 dBFS
+        // Auto-backoff 3 dB if possible
+        const curDb = +E.outDbNum.value; const newDb = Math.max(-24, curDb - 3);
+        if(newDb < curDb){ E.outDbNum.value = String(newDb); E.outDb.value = String(newDb); applyLiveParams(); }
+      }
+    };
+    return proc;
   }
 
   async function play(){
@@ -406,81 +464,76 @@
     liveCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: p.sr });
     liveCtrl = buildGraph(liveCtx, p);
     liveNodes = liveCtrl.nodes;
+    setRoute(p.route);
+    // Peak monitor taps limiter output (post-master)
+    peakProcessor = attachPeakProcessor(liveCtx, liveNodes.limiter);
     liveCtrl.start(liveCtx.currentTime);
     updatePlayButton(true);
-    // Auto-stop after duration (so you don't forget it's playing)
-    clearTimeout(liveStopTimer);
-    liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 100);
+    sessionStart = performance.now();
+    clearTimeout(liveStopTimer); clearInterval(tickTimer);
+    liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 120);
+    tickTimer = setInterval(()=>{ renderToday(); }, 5000);
   }
 
   async function stop(){
     if(!liveCtx) return;
-    try{ liveCtrl?.stop(liveCtx.currentTime + 0.01); }catch(_){ }
-    await new Promise(r=>setTimeout(r,50));
-    liveCtx.close();
-    liveCtx = null; liveCtrl = null; liveNodes = null; clearTimeout(liveStopTimer);
+    try{ const t = liveCtx.currentTime; liveCtrl?.stop(t); }catch(_){ }
+    await new Promise(r=>setTimeout(r,380)); // let fade complete
+    try{ peakProcessor?.disconnect(); }catch(_){ }
+    try{ liveCtx.close(); }catch(_){ }
+    if(sessionStart){ const mins = (performance.now() - sessionStart)/60000; if(mins>0){ addTodayMinutes(mins); } }
+    liveCtx = null; liveCtrl = null; liveNodes = null; peakProcessor = null; sessionStart = null; clearTimeout(liveStopTimer); clearInterval(tickTimer);
     updatePlayButton(false);
   }
 
-  async function togglePlay(){
-    if(liveCtx){ await stop(); } else { await play(); }
-  }
-
+  async function togglePlay(){ if(liveCtx){ await stop(); } else { await play(); } }
   document.getElementById('playToggleBtn').addEventListener('click', togglePlay);
 
+  // Panic stop: Space / Esc
+  document.addEventListener('keydown', (e)=>{ if(e.code==='Space' || e.code==='Escape'){ e.preventDefault(); stop(); } });
+
+  // ---------- Live parameter updates (auto-apply while playing) ----------
+  function applyLiveParams(){ if(!liveCtx || !liveNodes) return; const p = getParams(); try{
+    // Pitch & Q
+    liveNodes.osc.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
+    liveNodes.bp.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
+    const q = Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001);
+    liveNodes.bp.Q.setTargetAtTime(q, liveCtx.currentTime, 0.01);
+    // Mix
+    liveNodes.toneGain.gain.setTargetAtTime(p.toneMix, liveCtx.currentTime, 0.02);
+    liveNodes.noiseGain.gain.setTargetAtTime(p.noiseMix, liveCtx.currentTime, 0.02);
+    // Muffle cutoff
+    if(liveNodes.lpChain && liveNodes.lpChain.length){ for(const lp of liveNodes.lpChain){ lp.frequency.setTargetAtTime(Math.max(20, p.mufFc || 20000), liveCtx.currentTime, 0.02); } }
+    // Master gain & HF pad
+    const target = Math.max(0, lin(p.outDb) * p.hfPad);
+    liveNodes.master.gain.setTargetAtTime(target, liveCtx.currentTime, 0.03);
+    // Routing
+    setRoute(p.route);
+  }catch(_){ } }
+
+  let rafPending=false; function scheduleApply(){ if(!liveCtx) return; if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; applyLiveParams(); }); }
+  ;[E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum,E.outDb,E.outDbNum,E.route,E.hfOverride].forEach(el=> el.addEventListener('input', scheduleApply));
+  ;[E.onMs,E.onMsNum,E.mufOrder,E.mufOrderNum,E.duration].forEach(el=> el.addEventListener('input', ()=>{ /* next start */ }));
+
   // ---------- Offline Export to WAV ----------
-  function floatToWavBlob(chData, sr){
-    const numFrames = chData.length;
-    const buffer = new ArrayBuffer(44 + numFrames*2);
-    const view = new DataView(buffer);
-    const writeStr = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
-
-    // RIFF header
-    writeStr(0, 'RIFF');
-    view.setUint32(4, 36 + numFrames*2, true);
-    writeStr(8, 'WAVE');
-    writeStr(12,'fmt ');
-    view.setUint32(16, 16, true);     // PCM chunk size
-    view.setUint16(20, 1, true);      // audio format = PCM
-    view.setUint16(22, 1, true);      // channels
-    view.setUint32(24, sr, true);     // sample rate
-    view.setUint32(28, sr*2, true);   // byte rate
-    view.setUint16(32, 2, true);      // block align
-    view.setUint16(34, 16, true);     // bits per sample
-    writeStr(36,'data');
-    view.setUint32(40, numFrames*2, true);
-
-    // samples
-    let offset = 44;
-    for(let i=0;i<numFrames;i++){
-      // soft clip and scale
-      const s = Math.max(-1, Math.min(1, chData[i] * 0.98));
-      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-      offset += 2;
-    }
-    return new Blob([view], { type:'audio/wav' });
-  }
+  function floatToWavBlob(chData, sr){ const numFrames = chData.length; const buffer = new ArrayBuffer(44 + numFrames*2); const view = new DataView(buffer); const writeStr = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); }; writeStr(0, 'RIFF'); view.setUint32(4, 36 + numFrames*2, true); writeStr(8, 'WAVE'); writeStr(12,'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sr, true); view.setUint32(28, sr*2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); writeStr(36,'data'); view.setUint32(40, numFrames*2, true); let offset = 44; for(let i=0;i<numFrames;i++){ const s = Math.max(-1, Math.min(1, chData[i] * 0.98)); view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true); offset += 2; } return new Blob([view], { type:'audio/wav' }); }
 
   async function exportWav(){
-    const p = getParams();
-    if(p.duration > 1800){ alert('Please keep duration ≤ 1800s (30 min). Long renders may fail in some browsers.'); return; }
-    const offCtx = new OfflineAudioContext(1, Math.ceil(p.sr * p.duration), p.sr);
-    const ctrl = buildGraph(offCtx, p, true);
+    const p0 = getParams();
+    if(p0.duration > 1800){ alert('Please keep duration ≤ 1800s (30 min).'); return; }
+    const offCtx = new OfflineAudioContext(1, Math.ceil(p0.sr * p0.duration), p0.sr);
+    const ctrl = buildGraph(offCtx, p0, true);
     ctrl.start(0);
     const rendered = await offCtx.startRendering();
     const ch = rendered.getChannelData(0);
-    const blob = floatToWavBlob(ch, p.sr);
-
-    const tag = `f${Math.round(p.freq)}_bw${Math.round(p.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p.mufFc)}o${p.mufOrder}_slice${Math.round(p.onMs)}x${Math.round(p.offMs)}_${p.duration}s_${p.sr}sr`;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `tinnitus_${tag}.wav`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+    // Peak check
+    let peak=0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
+    if(peak>0.98){ alert('Export peaked too high; lowering output 3 dB and retry.'); E.outDbNum.value = String(Math.max(-24, +E.outDbNum.value - 3)); E.outDb.value = E.outDbNum.value; return exportWav(); }
+    const blob = floatToWavBlob(ch, p0.sr);
+    const tag = `f${Math.round(p0.freq)}_bw${Math.round(p0.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p0.mufFc)}o${p0.mufOrder}_slice${Math.round(p0.onMs)}x${Math.round(p0.offMs)}_${p0.duration}s_${p0.sr}sr_out${p0.outDb}dB${p0.hfPad<1?'_HFpad':''}`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tinnitus_${tag}.wav`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
   }
-
   document.getElementById('exportBtn').addEventListener('click', exportWav);
-
 })();
 </script>
 </body>

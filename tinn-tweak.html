@@ -87,7 +87,7 @@
           <div class="row">
             <label for="freq">Frequency (Hz)</label>
             <input type="range" id="freq" min="100" max="16000" step="1" value="8000" />
-            <input type="number" id="freqNum" min="20" max="22000" step="1" value="8000" />
+            <input type="number" H0" max="22000" step="1" value="8000" />
           </div>
           <div class="row">
             <label for="bw">Bandwidth (Hz)</label>
@@ -112,8 +112,8 @@
           </div>
           <div class="row">
             <label for="mufFc">Muffle cutoff (Hz)</label>
-            <input type="range" id="mufFc" min="0" max="16000" step="50" value="6500" />
-            <input type="number" id="mufFcNum" min="0" max="20000" step="10" value="6500" />
+            <input type="range" T000" step="50" value="6500" />
+            <input type="number" T000" step="10" value="6500" />
             <span class="small">0 = off</span>
           </div>
           <div class="row">
@@ -263,7 +263,7 @@
       <h3>8) Safety & Protocol</h3>
       <ul>
         <li><b>Volume</b>: start low. Don’t blast your ears.</li>
-        <li><b>Trial rules</b>: follow your study protocol; don’t upload files to a device if it violates the agreement.</li>
+        <li><b>Rules</b>: follow your study protocol.</li>
         <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
       </ul>
       <p class="small">Runs locally in your browser; no network calls or analytics.</p>
@@ -327,7 +327,33 @@
   const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
   const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','outDb','outDbNum','route','hfOverride','playToggleBtn','exportBtn']);
 
-  function linkPair(rangeEl, numEl, {min=null,max=null}={}){
+  $1
+  // Typing-friendly pair: lets users type partial numbers (e.g., '8' -> '80' -> '8000')
+  // without snapping/clamping until they commit with blur/Enter. Mirrors range->number instantly.
+  function linkPairTypingFriendly(rangeEl, numEl, {min=null,max=null}={}){
+    const mirrorRange = ()=>{ numEl.value = rangeEl.value; };
+    const mirrorIfValid = ()=>{
+      const v = parseFloat(numEl.value);
+      if(Number.isFinite(v) && (min===null || v>=min) && (max===null || v<=max)){
+        rangeEl.value = String(v);
+      }
+    };
+    const commit = ()=>{
+      let v = parseFloat(numEl.value);
+      if(!Number.isFinite(v)) v = (min!==null? min : (rangeEl.min? +rangeEl.min : 0));
+      if(min!==null && v < min) v = min;
+      if(max!==null && v > max) v = max;
+      numEl.value = String(v);
+      rangeEl.value = String(v);
+    };
+    rangeEl.addEventListener('input', mirrorRange);
+    numEl.addEventListener('input', mirrorIfValid);
+    numEl.addEventListener('change', commit);
+    numEl.addEventListener('blur', commit);
+    numEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ commit(); numEl.blur(); } });
+    commit();
+  }
+={}){
     const sync = (src,dst)=>{ dst.value = src.value; };
     rangeEl.addEventListener('input', ()=>sync(rangeEl, numEl));
     numEl.addEventListener('input', ()=>{
@@ -337,11 +363,11 @@
     });
     sync(rangeEl, numEl);
   }
-  linkPair(E.freq, E.freqNum, {min:20, max:22000});
+  linkPairTypingFriendly(E.freq, E.freqNum, {min:100, max:22000});
   linkPair(E.bw, E.bwNum, {min:0, max:20000});
   linkPair(E.toneMix, E.toneMixNum, {min:0, max:1});
   linkPair(E.noiseMix, E.noiseMixNum, {min:0, max:1});
-  linkPair(E.mufFc, E.mufFcNum, {min:0, max:22000});
+  linkPair(E.mufFc, E.mufFcNum, {min:0, max:24000});
   linkPair(E.mufOrder, E.mufOrderNum, {min:1, max:8});
   linkPair(E.onMs, E.onMsNum, {min:0, max:200});
   linkPair(E.offMs, E.offMsNum, {min:0, max:500});
@@ -357,7 +383,7 @@
 
   function getParams(){
     const toneMix = +E.toneMixNum.value; const noiseMix = +E.noiseMixNum.value; const mixSum = Math.max(1e-9, toneMix + noiseMix);
-    const freq = Math.max(20, +E.freqNum.value);
+    const freq = Math.max(100, +E.freqNum.value);
     const hfPadActive = (freq > 10000) && !E.hfOverride.checked;
     hfPadBadge.style.display = hfPadActive ? 'inline-block' : 'none';
     hpWarn.classList.toggle('hidden', !(+E.onMsNum.value > 0));

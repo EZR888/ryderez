@@ -64,6 +64,11 @@
     <button id="tabGuideBtn" class="btn tab">User Guide</button>
   </div>
 
+  <div id="comfortBar" class="toast hidden" style="position:fixed; left:16px; right:16px; bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:9999;">
+    <span>Started at safe level (−24 dB). Adjust your system volume if needed, then confirm.</span>
+    <button id="comfortOk" class="btn primary">I'm comfortable</button>
+  </div>
+
   <!-- TAB: APP -->
   <section id="tabApp" class="tabpage">
     <div class="card">
@@ -134,6 +139,13 @@
             <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
             <div id="hpWarn" class="toast hidden">Headphones only recommended when slicing is active.</div>
           </div>
+          <div class="row">
+            <label class="row" style="gap:6px"><input type="checkbox" id="softGate" /> <span class="small">Soft edges</span></label>
+            <label for="edgeMs">Edge (ms)</label>
+            <input type="range" id="edgeMs" min="0.1" max="1.0" step="0.1" value="0.5" />
+            <input type="number" id="edgeMsNum" min="0.1" max="5.0" step="0.1" value="0.5" />
+            <span class="small">(ramps ON/OFF edges to reduce harshness)</span>
+          </div>
         </div>
 
         <div class="col-12">
@@ -155,6 +167,11 @@
               <input type="checkbox" id="hfOverride" />
               <span class="small">Disable HF pad &gt;10 kHz</span>
             </label>
+          </div>
+          <div class="row" style="margin-top:6px">
+            <label for="budgetMin">Daily budget (min)</label>
+            <input id="budgetMin" type="number" value="45" min="5" max="240" step="5" />
+            <span class="small">(for session cautions; not SPL-calibrated)</span>
           </div>
           <div class="row small" style="opacity:.85">
             <span class="badge">Shift+Drag</span> for fine control • Live update for <b>Freq</b>, <b>BW</b>, <b>Mix</b>, <b>Muffle cutoff</b>, <b>Output level</b>. Changes to <b>Slice</b>, <b>Muffle order</b>, <b>Duration</b> apply on next start.
@@ -263,7 +280,7 @@
       <h3>8) Safety & Protocol</h3>
       <ul>
         <li><b>Volume</b>: start low. Don’t blast your ears.</li>
-        <li><b>Rules</b>: follow your study protocol.</li>
+        <li><b>Trial rules</b>: follow your study protocol; don’t upload files to a device if it violates the agreement.</li>
         <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
       </ul>
     </div>
@@ -293,10 +310,11 @@
   const todayBadge = document.getElementById('todayBadge');
   const hfPadBadge = document.getElementById('hfPadBadge');
   const hpWarn = document.getElementById('hpWarn');
+  const comfortBar = document.getElementById('comfortBar');
 
   // ---------- Helpers ----------
   const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
-  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','outDb','outDbNum','route','hfOverride','playToggleBtn','exportBtn']);
+  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','outDb','outDbNum','route','hfOverride','softGate','edgeMs','edgeMsNum','budgetMin','playToggleBtn','exportBtn','comfortOk']);
 
   function linkPair(rangeEl, numEl, {min=null,max=null}={}){
     const sync = (src,dst)=>{ dst.value = src.value; };
@@ -317,14 +335,18 @@
   linkPair(E.onMs, E.onMsNum, {min:0, max:200});
   linkPair(E.offMs, E.offMsNum, {min:0, max:500});
   linkPair(E.outDb, E.outDbNum, {min:-24, max:-6});
+  linkPair(E.edgeMs, E.edgeMsNum, {min:0.1, max:5});
 
   const lin = (db)=> Math.pow(10, db/20);
 
   function todayKey(){ const d = new Date(); return d.toISOString().slice(0,10); }
   function getTodayMinutes(){ const key = 'minutes_'+todayKey(); return +(localStorage.getItem(key) || '0'); }
-  function addTodayMinutes(min){ const key = 'minutes_'+todayKey(); const cur = getTodayMinutes(); localStorage.setItem(key, String(cur + min)); renderToday(); }
-  function renderToday(){ todayBadge.textContent = `Today: ${getTodayMinutes().toFixed(1)} min`; }
+  function getBudget(){ const v = +(localStorage.getItem('budgetMin') || E.budgetMin.value || 45); return Math.min(240, Math.max(5, v)); }
+  function addTodayMinutes(min){ const key = 'minutes_'+todayKey(); const cur = getTodayMinutes(); const newTotal = cur + min; localStorage.setItem(key, String(newTotal)); const budget = getBudget(); if(cur < 0.75*budget && newTotal >= 0.75*budget){ alert("Heads up: you're past 75% of today's budget."); } if(cur < 1*budget && newTotal >= 1*budget){ alert("Caution: you've reached today's budget. Consider stopping."); } renderToday(); }
+  function renderToday(){ const mins = getTodayMinutes(); const budget = getBudget(); todayBadge.textContent = `Today: ${mins.toFixed(1)} / ${budget} min`; const frac = mins / Math.max(1,budget); todayBadge.style.background = frac>=1? '#2a1518' : (frac>=0.75? '#2a1a12':'#11161f'); todayBadge.style.color = frac>=0.75? '#ffcf9a':'#a9b0bc'; }
+  (function(){ const v = localStorage.getItem('budgetMin'); if(v!==null){ E.budgetMin.value = v; }})();
   renderToday();
+  E.budgetMin.addEventListener('input', ()=>{ localStorage.setItem('budgetMin', String(+E.budgetMin.value)); renderToday(); });
 
   function getParams(){
     const toneMix = +E.toneMixNum.value; const noiseMix = +E.noiseMixNum.value; const mixSum = Math.max(1e-9, toneMix + noiseMix);
@@ -345,7 +367,9 @@
       offMs: Math.max(0, +E.offMsNum.value),
       outDb: Math.min(-6, Math.max(-24, +E.outDbNum.value)),
       route: E.route.value,
-      hfPad: hfPadActive ? 0.5 : 1.0
+      hfPad: hfPadActive ? 0.5 : 1.0,
+      softGate: !!E.softGate.checked,
+      edgeMs: Math.max(0.05, +E.edgeMsNum.value)
     };
   }
 
@@ -388,17 +412,33 @@
       if(p.onMs <= 0){ gate.gain.setValueAtTime(1.0, 0); return; }
       const on = p.onMs / 1000; const off = p.offMs / 1000; const period = Math.max(1e-4, on + off);
       const total = p.duration; let t = 0; gate.gain.cancelScheduledValues(0);
-      while(t < total){ gate.gain.setValueAtTime(1.0, t); const tOff = t + on; if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); } t += period; }
+      const edge = p.softGate ? Math.min(p.edgeMs/1000, on*0.5) : 0;
+      while(t < total){
+        if(edge > 0){
+          // Ramp up
+          gate.gain.setValueAtTime(0.0, t);
+          gate.gain.linearRampToValueAtTime(1.0, t + edge);
+          // Hold
+          const tHold = Math.min(total, t + Math.max(edge, on - edge));
+          gate.gain.setValueAtTime(1.0, tHold);
+          // Ramp down
+          gate.gain.linearRampToValueAtTime(0.0, Math.min(total, t + on));
+        } else {
+          gate.gain.setValueAtTime(1.0, t);
+          const tOff = t + on; if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); }
+        }
+        t += period;
+      }
     }
 
-    // Master gain + HF pad (combined)
+    // Master gain + limiter
     const master = new GainNode(ctx, { gain: 0.0 }); // start muted; we ramp in
     const limiter = new DynamicsCompressorNode(ctx, { threshold: -6, knee: 30, ratio: 20, attack: 0.003, release: 0.25 });
 
     gate.connect(master).connect(limiter);
 
     // Routing
-    let destinationNode;
+    let destinationNode; let routeNodes;
     if(forOffline){
       limiter.connect(ctx.destination);
       destinationNode = ctx.destination;
@@ -409,9 +449,7 @@
       limiter.connect(leftGain); limiter.connect(rightGain);
       leftGain.connect(merger, 0, 0); rightGain.connect(merger, 0, 1);
       merger.connect(ctx.destination);
-      destinationNode = merger;
-      // store for live routing
-      var routeNodes = { leftGain, rightGain };
+      destinationNode = merger; routeNodes = { leftGain, rightGain };
     }
 
     function setMasterTarget(db, pad){ master.gain.setTargetAtTime(Math.max(0, lin(db) * pad), ctx.currentTime, 0.03); }
@@ -423,7 +461,7 @@
   }
 
   // ---------- Live Playback ----------
-  let liveCtx = null; let liveCtrl = null; let liveNodes = null; let liveStopTimer = null; let peakProcessor = null; let sessionStart = null; let tickTimer = null;
+  let liveCtx = null; let liveCtrl = null; let liveNodes = null; let liveStopTimer = null; let peakProcessor = null; let sessionStart = null; let tickTimer = null; let comfortConfirmed = (sessionStorage.getItem('comfort_ok')==='1');
 
   function updatePlayButton(playing){
     const btn = E.playToggleBtn; if(!btn) return;
@@ -443,14 +481,15 @@
   }
 
   function attachPeakProcessor(ctx, sourceNode){
-    // Use ScriptProcessor for simplicity; widely supported
     const proc = ctx.createScriptProcessor(2048, 1, 1);
-    sourceNode.connect(proc); proc.connect(ctx.destination); // minimal passthrough to keep it running
+    sourceNode.connect(proc);
+    // keep processor running without adding audible output
+    const nullGain = new GainNode(ctx, { gain: 0 });
+    proc.connect(nullGain); nullGain.connect(ctx.destination);
     proc.onaudioprocess = (e)=>{
       const ch = e.inputBuffer.getChannelData(0); let peak = 0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
       updatePeakUI(peak);
       if(peak >= 0.89){ // ~ -1 dBFS
-        // Auto-backoff 3 dB if possible
         const curDb = +E.outDbNum.value; const newDb = Math.max(-24, curDb - 3);
         if(newDb < curDb){ E.outDbNum.value = String(newDb); E.outDb.value = String(newDb); applyLiveParams(); }
       }
@@ -465,10 +504,15 @@
     liveCtrl = buildGraph(liveCtx, p);
     liveNodes = liveCtrl.nodes;
     setRoute(p.route);
-    // Peak monitor taps limiter output (post-master)
     peakProcessor = attachPeakProcessor(liveCtx, liveNodes.limiter);
     liveCtrl.start(liveCtx.currentTime);
     updatePlayButton(true);
+    if(!comfortConfirmed){
+      const safe = Math.max(0, lin(-24) * p.hfPad);
+      try{ liveNodes.master.gain.cancelScheduledValues(liveCtx.currentTime); liveNodes.master.gain.setValueAtTime(safe, liveCtx.currentTime + 0.01); }catch(_){ }
+      comfortBar.classList.remove('hidden');
+      E.comfortOk.onclick = ()=>{ comfortConfirmed = true; sessionStorage.setItem('comfort_ok','1'); comfortBar.classList.add('hidden'); applyLiveParams(); };
+    }
     sessionStart = performance.now();
     clearTimeout(liveStopTimer); clearInterval(tickTimer);
     liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 120);
@@ -484,6 +528,7 @@
     if(sessionStart){ const mins = (performance.now() - sessionStart)/60000; if(mins>0){ addTodayMinutes(mins); } }
     liveCtx = null; liveCtrl = null; liveNodes = null; peakProcessor = null; sessionStart = null; clearTimeout(liveStopTimer); clearInterval(tickTimer);
     updatePlayButton(false);
+    comfortBar.classList.add('hidden');
   }
 
   async function togglePlay(){ if(liveCtx){ await stop(); } else { await play(); } }
@@ -512,7 +557,7 @@
   }catch(_){ } }
 
   let rafPending=false; function scheduleApply(){ if(!liveCtx) return; if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; applyLiveParams(); }); }
-  ;[E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum,E.outDb,E.outDbNum,E.route,E.hfOverride].forEach(el=> el.addEventListener('input', scheduleApply));
+  ;[E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum,E.outDb,E.outDbNum,E.route,E.hfOverride,E.softGate,E.edgeMs,E.edgeMsNum].forEach(el=> el.addEventListener('input', scheduleApply));
   ;[E.onMs,E.onMsNum,E.mufOrder,E.mufOrderNum,E.duration].forEach(el=> el.addEventListener('input', ()=>{ /* next start */ }));
 
   // ---------- Offline Export to WAV ----------
@@ -530,8 +575,12 @@
     let peak=0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
     if(peak>0.98){ alert('Export peaked too high; lowering output 3 dB and retry.'); E.outDbNum.value = String(Math.max(-24, +E.outDbNum.value - 3)); E.outDb.value = E.outDbNum.value; return exportWav(); }
     const blob = floatToWavBlob(ch, p0.sr);
-    const tag = `f${Math.round(p0.freq)}_bw${Math.round(p0.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p0.mufFc)}o${p0.mufOrder}_slice${Math.round(p0.onMs)}x${Math.round(p0.offMs)}_${p0.duration}s_${p0.sr}sr_out${p0.outDb}dB${p0.hfPad<1?'_HFpad':''}`;
+    const tag = `f${Math.round(p0.freq)}_bw${Math.round(p0.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p0.mufFc)}o${p0.mufOrder}_slice${Math.round(p0.onMs)}x${Math.round(p0.offMs)}_${p0.duration}s_${p0.sr}sr_out${p0.outDb}dB${p0.hfPad<1?'_HFpad':''}${p0.softGate?'_soft':''}`;
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tinnitus_${tag}.wav`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+    // JSON sidecar with parameters
+    const meta = { timestamp: new Date().toISOString(), sr:p0.sr, duration:p0.duration, freq:p0.freq, bw:p0.bw, toneMix:+E.toneMixNum.value, noiseMix:+E.noiseMixNum.value, mufFc:p0.mufFc, mufOrder:p0.mufOrder, onMs:p0.onMs, offMs:p0.offMs, outDb:p0.outDb, route:p0.route, hfPadActive:(p0.hfPad<1), softGate:p0.softGate, edgeMs:p0.edgeMs };
+    const jsonBlob = new Blob([JSON.stringify(meta,null,2)], {type:'application/json'});
+    const a2 = document.createElement('a'); a2.href = URL.createObjectURL(jsonBlob); a2.download = `tinnitus_${tag}.json`; a2.click(); setTimeout(()=>URL.revokeObjectURL(a2.href), 5000);
   }
   document.getElementById('exportBtn').addEventListener('click', exportWav);
 })();

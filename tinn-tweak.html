@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex">
   <title>Tinnitus Freq Finder</title>
   <style>
     :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#8a7bff; --warn:#ffb86b; --danger:#ff6b6b; }
@@ -198,8 +199,7 @@
 
       <h3>1) Setup (60 seconds)</h3>
       <ol>
-        <li>Save this file (e.g., <code>tinnitus_freq_finder.html</code>).</li>
-        <li>Open in <b>Chrome</b> or <b>Edge</b>. Safari/Firefox usually work, but can be slower with long renders.</li>
+        <li>Open this page in <b>Chrome</b> or <b>Edge</b>. Safari/Firefox usually work, but can be slower with long renders.</li>
         <li>Use decent headphones/earbuds or monitors. <b>Start at low volume.</b></li>
       </ol>
       <p class="small"><i>Browsers block auto‑play. You must click <b>Play / Monitor</b> to hear anything.</i></p>
@@ -263,9 +263,24 @@
       <h3>8) Safety & Protocol</h3>
       <ul>
         <li><b>Volume</b>: start low. Don’t blast your ears.</li>
-        <li><b>Rules</b>: follow your study protocol.</li>
+        <li><b>Trial rules</b>: follow your study protocol; don’t upload files to a device if it violates the agreement.</li>
         <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
       </ul>
+      <p class="small">Runs locally in your browser; no network calls or analytics.</p>
+
+      <h3>9) Built‑in Safety Features (what the app enforces)</h3>
+      <ul>
+        <li><b>Output cap</b>: master output slider is limited to <span class="mono">−24…−6 dBFS</span>. Exports use the same cap.</li>
+        <li><b>Limiter</b>: a fast dynamics limiter after the master catches brief transients around <span class="mono">≈ −6 dBFS</span>.</li>
+        <li><b>Soft start/stop</b>: 300 ms fade‑in/out to avoid thumps.</li>
+        <li><b>HF pad</b>: automatic <span class="mono">−6 dB</span> padding when <b>Frequency</b> &gt; 10 kHz (badge shows). You can override with “Disable HF pad &gt;10 kHz.”</li>
+        <li><b>Peak monitor + auto‑backoff</b>: LED + live dBFS readout. If the peak approaches <span class="mono">−1 dBFS</span>, the app reduces output by <span class="mono">3 dB</span> automatically.</li>
+        <li><b>Panic stop</b>: press <b>Space</b> or <b>Esc</b> to stop immediately.</li>
+        <li><b>Ear routing</b>: Stereo / Left‑only / Right‑only so you can favor one ear if your protocol calls for it.</li>
+        <li><b>Click‑train caution</b>: when <b>Slice</b> is enabled the app shows a headphones warning; keep volumes conservative because gating creates sharper transients.</li>
+        <li><b>Session time badge</b>: the header shows <b>Today: X/Y min</b> with color cues and prompts at 75% & 100% of your chosen budget. (Not SPL‑calibrated.)</li>
+      </ul>
+      <p class="small">Limitations: the app cannot control your system/device volume and is not a dosimeter. Peak dBFS is not the same as ear‑canal dB SPL.</p>
 
       <h3>9) Built‑in Safety Features (what the app enforces)</h3>
       <ul>

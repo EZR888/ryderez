@@ -112,8 +112,8 @@
           </div>
           <div class="row">
             <label for="mufFc">Muffle cutoff (Hz)</label>
-            <input type="range" id="mufFc" min="0" max="16000" step="50" value="6500" />
-            <input type="number" id="mufFcNum" min="0" max="20000" step="10" value="6500" />
+            <input type="range" id="mufFc" min="0" max="24000" step="50" value="6500" />
+            <input type="number" id="mufFcNum" min="0" max="24000" step="10" value="6500" />
             <span class="small">0 = off</span>
           </div>
           <div class="row">
@@ -341,7 +341,7 @@
   linkPair(E.bw, E.bwNum, {min:0, max:20000});
   linkPair(E.toneMix, E.toneMixNum, {min:0, max:1});
   linkPair(E.noiseMix, E.noiseMixNum, {min:0, max:1});
-  linkPair(E.mufFc, E.mufFcNum, {min:0, max:22000});
+  linkPair(E.mufFc, E.mufFcNum, {min:0, max:24000});
   linkPair(E.mufOrder, E.mufOrderNum, {min:1, max:8});
   linkPair(E.onMs, E.onMsNum, {min:0, max:200});
   linkPair(E.offMs, E.offMsNum, {min:0, max:500});

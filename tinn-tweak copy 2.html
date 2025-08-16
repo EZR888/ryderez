@@ -10,7 +10,7 @@
     html,body{ height:100%; margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
     .wrap{ max-width:1100px; margin:24px auto 80px; padding:0 16px; }
     .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-    h1{ font-size:24px; margin:0; letter-spacing:0.3px; background: linear-gradient(90deg,#6ee7ff,#8a7bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    h1{ font-size:24px; margin:0; letter-spacing:0.3px; }
     .card{ background:var(--panel); border:1px solid #222630; border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 8px 30px rgba(0,0,0,.3); }
     .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
     .col-6{ grid-column: span 6; }
@@ -23,9 +23,8 @@
     .btn:hover{ transform: translateY(-1px); border-color:#394253; }
     .btn.primary{ background: linear-gradient(135deg, #1b5cff, #21b6ff); border-color: transparent; }
     .btn.warn{ background: linear-gradient(135deg, #ff9f1a, #ff5f6d); border-color:transparent; }
-    .btn.tab{ background: linear-gradient(135deg, #1a2030, #101726); border-color:#2f3850; color:#d9f3ff; box-shadow:0 0 0 rgba(0,0,0,0); }
-    .btn.tab:hover{ box-shadow: 0 0 0 2px rgba(110,231,255,.25); }
-    .btn.tab.active{ background: linear-gradient(135deg, #1b5cff, #21b6ff); color:#0b1020; border-color: transparent; box-shadow: 0 10px 24px rgba(33,182,255,.35); }
+    .btn.tab{ background:#0f1320; }
+    .btn.tab.active{ background: linear-gradient(135deg, #232a3b, #1e2634); border-color:#394253; }
     .badge{ padding:4px 8px; border-radius:999px; font-size:12px; background:#11161f; border:1px solid #2a2f3a; color:var(--muted); }
     .small{ font-size:12px; color:var(--muted); }
     .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
@@ -129,7 +128,7 @@
         </div>
 
         <div class="col-12">
-          <div class="small">QOL: <span class="badge">Shift+Drag</span> for fine control • Values mirror slider/number. <span class="badge" style="background:#102232;color:#9ae6ff;border-color:#1d3a5a;">Live update</span> for <b>Freq</b>, <b>BW</b>, <b>Mix</b>, <b>Muffle cutoff</b>. <span style="opacity:.8">Changes to <b>Slice</b>, <b>Muffle order</b>, <b>Duration</b> apply on next start.</span></div>
+          <div class="small">QOL shortcuts: <span class="badge">Shift+Drag</span> on sliders for finer control • Values are mirrored between slider & number boxes.</div>
         </div>
 
       </div>
@@ -141,7 +140,6 @@
         <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
         <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
         <li><b>Click‑train</b> schedules precise ON/OFF gain steps (sample‑accurate) for choppy/raspy percepts.</li>
-        <li>For therapy exports, consider generating the <i>exact match</i> you like here, then using a DAW to build longer files if your browser chokes on very long renders.</li>
       </ul>
     </div>
   </section>
@@ -226,7 +224,7 @@
       <h3>8) Safety & Protocol</h3>
       <ul>
         <li><b>Volume</b>: start low. Don’t blast your ears.</li>
-        <li><b>Rules</b>: follow your study protocol.</li>
+        <li><b>Rules</b>: follow the protocol.</li>
       </ul>
     </div>
   </section>
@@ -291,36 +289,6 @@
     };
   }
 
-  // ---------- Live parameter updates (auto-apply while playing) ----------
-  function applyLiveParams(){
-    if(!liveCtx || !liveNodes) return;
-    const p = getParams();
-    try{
-      // Pitch
-      liveNodes.osc.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
-      // Band-pass center & Q
-      liveNodes.bp.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
-      const q = Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001);
-      liveNodes.bp.Q.setTargetAtTime(q, liveCtx.currentTime, 0.01);
-      // Mix
-      liveNodes.toneGain.gain.setTargetAtTime(p.toneMix, liveCtx.currentTime, 0.02);
-      liveNodes.noiseGain.gain.setTargetAtTime(p.noiseMix, liveCtx.currentTime, 0.02);
-      // Muffle cutoff (order changes require restart)
-      if(liveNodes.lpChain && liveNodes.lpChain.length){
-        for(const lp of liveNodes.lpChain){
-          lp.frequency.setTargetAtTime(Math.max(20, p.mufFc || 20000), liveCtx.currentTime, 0.02);
-        }
-      }
-    }catch(_){ /* ignore */ }
-  }
-  let rafPending=false;
-  function scheduleApply(){ if(!liveCtx) return; if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; applyLiveParams(); }); }
-
-  // Bind live-updated controls
-  window.addEventListener('DOMContentLoaded', ()=>{
-    [E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum].forEach(el=> el.addEventListener('input', scheduleApply));
-  });
-
   // ---------- Audio graph builders ----------
   function buildGraph(ctx, p, forOffline=false){
     // Tone Oscillator
@@ -346,13 +314,11 @@
 
     // Muffle: chain N lowpasses when enabled
     let chainHead = mix;
-    const lpChain = [];
     if(p.mufFc > 0){
       for(let i=0;i<p.mufOrder;i++){
         const lp = new BiquadFilterNode(ctx, { type:'lowpass', frequency: p.mufFc, Q: 0.707 });
         chainHead.connect(lp);
         chainHead = lp;
-        lpChain.push(lp);
       }
     }
 
@@ -381,11 +347,11 @@
     function start(at=0){ osc.start(at); noise.start(at); scheduleGate(); }
     function stop(at){ try{ osc.stop(at); noise.stop(at); } catch(_){} }
 
-    return { start, stop, nodes: { osc, bp, toneGain, noiseGain, lpChain, gate } };
+    return { start, stop };
   }
 
   // ---------- Live Playback (toggle button) ----------
-  let liveCtx = null; let liveCtrl = null; let liveStopTimer = null; let liveNodes = null;
+  let liveCtx = null; let liveCtrl = null; let liveStopTimer = null;
 
   function updatePlayButton(playing){
     const btn = E.playToggleBtn;
@@ -406,7 +372,6 @@
     const p = getParams();
     liveCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: p.sr });
     liveCtrl = buildGraph(liveCtx, p);
-    liveNodes = liveCtrl.nodes;
     liveCtrl.start(liveCtx.currentTime);
     updatePlayButton(true);
     // Auto-stop after duration (so you don't forget it's playing)
@@ -419,7 +384,7 @@
     try{ liveCtrl?.stop(liveCtx.currentTime + 0.01); }catch(_){ }
     await new Promise(r=>setTimeout(r,50));
     liveCtx.close();
-    liveCtx = null; liveCtrl = null; liveNodes = null; clearTimeout(liveStopTimer);
+    liveCtx = null; liveCtrl = null; clearTimeout(liveStopTimer);
     updatePlayButton(false);
   }
 

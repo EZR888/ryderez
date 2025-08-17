@@ -288,6 +288,117 @@ tinn-tweak.html<!DOCTYPE html>
         <li>Keep volumes conservative; safety caps, limiter, and HF pad are active.</li>
       </ol>
     </div>
+
+    <div class="card">
+      <h2>User Guide</h2>
+      <h3>0) What it is</h3>
+      <ul>
+        <li>Plays a <b>tone + band‑limited noise</b> centered at your chosen frequency</li>
+        <li>Adds optional <b>muffle</b> (treble roll‑off)</li>
+        <li>Adds optional <b>slice/gating</b> (ON/OFF ms) for choppy/raspy percepts</li>
+        <li>Exports <b>16‑bit WAV</b> files you can use elsewhere</li>
+      </ul>
+      <hr class="hr" />
+
+      <h3>1) Setup (60 seconds)</h3>
+      <ol>
+        <li>Open this page in <b>Chrome</b> or <b>Edge</b>. Safari/Firefox usually work, but can be slower with long renders.</li>
+        <li>Use decent headphones/earbuds or monitors. <b>Start at low volume.</b></li>
+      </ol>
+      <p class="small"><i>Browsers block auto‑play. You must click <b>Play / Monitor</b> to hear anything.</i></p>
+
+      <h3>2) Quick Start (2 minutes)</h3>
+      <ol>
+        <li>Set <b>Sample rate</b> (48,000 Hz is fine).</li>
+        <li>Set <b>Duration</b> (10–30 s for testing; render longer only when exporting).</li>
+        <li>Set <b>Frequency</b> near your perceived tone (e.g., 8000 Hz).</li>
+        <li>Set <b>Bandwidth</b>: 0–400 narrow/clean; 600–1200 broader/muffled; >1500 hissier.</li>
+        <li>Adjust <b>Tone mix</b> vs <b>Noise mix</b> (auto‑normalized): tonal 0.7/0.3; muffled 0.3/0.7.</li>
+        <li>If dull/muffled, enable <b>Muffle</b>: cutoff 5–7 kHz, order 2–4.</li>
+        <li>If choppy/raspy, enable <b>Slice</b>: try <b>ON 2 ms / OFF 8 ms</b>.</li>
+        <li>Click <b>Play / Monitor</b>. The button turns red <b>Stop</b> while playing and flips back when done.</li>
+        <li>When it blends with your tinnitus best, click <b>Export WAV</b>.</li>
+      </ol>
+
+      <h3>3) Controls Cheat Sheet</h3>
+      <ul>
+        <li><b>Frequency (Hz)</b>: center pitch.</li>
+        <li><b>Bandwidth (Hz)</b>: width around the center (≈ <code>Q = f0 / BW</code>). Bigger = noisier.</li>
+        <li><b>Tone/Noise mix</b>: relative weights (keeps overall level sane).</li>
+        <li><b>Muffle</b>: smooth high‑frequency roll‑off; higher order = more “under a pillow.”</li>
+        <li><b>Slice ON/OFF (ms)</b>: amplitude gating; ON>0 enables it. Duty ≈ <code>ON / (ON+OFF)</code>.</li>
+        <li><b>Duration</b>: playback length and export length.</li>
+      </ul>
+      <p class="small">Fine control: <b>Shift+drag</b> sliders.</p>
+
+      <h3>4) Recommended Starting Presets</h3>
+      <ul>
+        <li><b>Clean, tonal</b>: Freq≈guess; BW 200–400; Tone 0.7 / Noise 0.3; Muffle off; Slice off.</li>
+        <li><b>Muffled</b>: BW 600–1200; Tone 0.3 / Noise 0.7; Muffle cutoff 5–7 kHz, Order 2–4; Slice off.</li>
+        <li><b>Choppy/raspy</b>: Start from “Muffled,” then Slice <b>2/8 ms</b>. Try 3/7, 4/6, 1/9 if 2/8 isn’t right.</li>
+        <li><b>Very high‑pitch hiss</b>: Freq near your pitch; BW 1200–2000; Tone 0.2 / Noise 0.8; Muffle cutoff 7–10 kHz, Order 1–2.</li>
+      </ul>
+
+      <h3>5) Finding a Perceptual Match (fast workflow)</h3>
+      <ol>
+        <li><b>Coarse pass</b>: sweep Frequency (±5–10%), BW at 400, 800, 1200.</li>
+        <li><b>Character pass</b>: adjust Tone/Noise and Muffle to get timbre right.</li>
+        <li><b>Texture pass</b>: if choppy, add Slice (start 2/8 ms) and tweak ON/OFF.</li>
+        <li>Export a 30–60 s candidate. If it still matches, export therapy length.</li>
+      </ol>
+
+      <h3>6) Exporting WAVs</h3>
+      <ul>
+        <li>16‑bit PCM mono at chosen sample rate.</li>
+        <li>Very long renders (10–30 min) can be heavy. If it fails, export a short loop and stitch it in a DAW.</li>
+        <li>Filenames encode all settings.</li>
+      </ul>
+
+      <h3>7) Troubleshooting</h3>
+      <ul>
+        <li><b>No sound</b>: you must click Play / Monitor; also check tab/system volume.</li>
+        <li><b>Distortion</b>: turn down output; the app has headroom but your DAC can still clip.</li>
+        <li><b>Export fails</b>: reduce Duration; export a short loop and stitch in a DAW.</li>
+        <li><b>Firefox sluggish</b>: use Chrome/Edge.</li>
+        <li><b>iOS</b>: use a desktop browser for exporting long files.</li>
+      </ul>
+
+      <h3>8) Safety & Protocol</h3>
+      <ul>
+        <li><b>Volume</b>: start low. Don’t blast your ears.</li>
+        <li><b>Trial rules</b>: follow your study protocol; don’t upload files to a device if it violates the agreement.</li>
+        <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
+      </ul>
+      <p class="small">Runs locally in your browser; no network calls or analytics.</p>
+
+      <h3>9) Built‑in Safety Features (what the app enforces)</h3>
+      <ul>
+        <li><b>Output cap</b>: master output slider is limited to <span class="mono">−24…−6 dBFS</span>. Exports use the same cap.</li>
+        <li><b>Limiter</b>: a fast dynamics limiter after the master catches brief transients around <span class="mono">≈ −6 dBFS</span>.</li>
+        <li><b>Soft start/stop</b>: 300 ms fade‑in/out to avoid thumps.</li>
+        <li><b>HF pad</b>: automatic <span class="mono">−6 dB</span> padding when <b>Frequency</b> &gt; 10 kHz (badge shows). You can override with “Disable HF pad &gt;10 kHz.”</li>
+        <li><b>Peak monitor + auto‑backoff</b>: LED + live dBFS readout. If the peak approaches <span class="mono">−1 dBFS</span>, the app reduces output by <span class="mono">3 dB</span> automatically.</li>
+        <li><b>Panic stop</b>: press <b>Space</b> or <b>Esc</b> to stop immediately.</li>
+        <li><b>Ear routing</b>: Stereo / Left‑only / Right‑only so you can favor one ear if your protocol calls for it.</li>
+        <li><b>Click‑train caution</b>: when <b>Slice</b> is enabled the app shows a headphones warning; keep volumes conservative because gating creates sharper transients.</li>
+        <li><b>Session time badge</b>: the header shows <b>Today: X/Y min</b> with color cues and prompts at 75% & 100% of your chosen budget. (Not SPL‑calibrated.)</li>
+      </ul>
+      <p class="small">Limitations: the app cannot control your system/device volume and is not a dosimeter. Peak dBFS is not the same as ear‑canal dB SPL.</p>
+
+      <h3>9) Built‑in Safety Features (what the app enforces)</h3>
+      <ul>
+        <li><b>Output cap</b>: master output slider is limited to <span class="mono">−24…−6 dBFS</span>. Exports use the same cap.</li>
+        <li><b>Limiter</b>: a fast dynamics limiter after the master catches brief transients around <span class="mono">≈ −6 dBFS</span>.</li>
+        <li><b>Soft start/stop</b>: 300 ms fade‑in/out to avoid thumps.</li>
+        <li><b>HF pad</b>: automatic <span class="mono">−6 dB</span> padding when <b>Frequency</b> &gt; 10 kHz (badge shows). You can override with “Disable HF pad &gt;10 kHz.”</li>
+        <li><b>Peak monitor + auto‑backoff</b>: LED + live dBFS readout. If the peak approaches <span class="mono">−1 dBFS</span>, the app reduces output by <span class="mono">3 dB</span> automatically.</li>
+        <li><b>Panic stop</b>: press <b>Space</b> or <b>Esc</b> to stop immediately.</li>
+        <li><b>Ear routing</b>: Stereo / Left‑only / Right‑only so you can favor one ear if your protocol calls for it.</li>
+        <li><b>Click‑train caution</b>: when <b>Slice</b> is enabled the app shows a headphones warning; keep volumes conservative because gating creates sharper transients.</li>
+        <li><b>Session time badge</b>: the header shows <b>Today: X min</b> so you can tally daily exposure time. (Not SPL‑calibrated.)</li>
+      </ul>
+      <p class="small">Limitations: the app cannot control your system/device volume and is not a dosimeter. Peak dBFS is not the same as ear‑canal dB SPL.</p>
+    </div>
   </section>
 </div>
 

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex">
+  <title>Tinnitus Freq Finder</title>
+  <style>
+    :root { --bg:#0f1115; --panel:#171a21; --text:#e6e7e9; --muted:#a9b0bc; --accent:#6ee7ff; --accent2:#8a7bff; --warn:#ffb86b; --danger:#ff6b6b; }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); }
+    .wrap{ max-width:1100px; margin:24px auto 80px; padding:0 16px; }
+    .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    h1{ font-size:26px; margin:0; letter-spacing:0.3px; background: linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .card{ background:var(--panel); border:1px solid #222630; border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 8px 30px rgba(0,0,0,.3); }
+    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .col-4{ grid-column: span 4; }
+    .col-6{ grid-column: span 6; }
+    .col-8{ grid-column: span 8; }
+    .col-12{ grid-column: span 12; }
+    .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    label{ font-size:13px; color:var(--muted); }
+    input[type="range"]{ width: 260px; }
+    input[type="number"]{ width: 110px; padding:6px 8px; border-radius:10px; border:1px solid #2a2f3a; background:#0e1117; color:var(--text); }
+    .btn{ padding:10px 14px; border-radius:12px; border:1px solid #2a2f3a; background:#0f1320; color:var(--text); cursor:pointer; transition: all .15s ease; }
+    .btn:hover{ transform: translateY(-1px); border-color:#394253; }
+    .btn.primary{ background: linear-gradient(135deg, #1b5cff, #21b6ff); border-color: transparent; }
+    .btn.warn{ background: linear-gradient(135deg, #ff9f1a, #ff5f6d); border-color:transparent; }
+    .btn.tab{ background: linear-gradient(135deg, #1a2030, #101726); border-color:#2f3850; color:#d9f3ff; box-shadow:0 0 0 rgba(0,0,0,0); }
+    .btn.tab:hover{ box-shadow: 0 0 0 2px rgba(110,231,255,.25); }
+    .btn.tab.active{ background: linear-gradient(135deg, #1b5cff, #21b6ff); color:#0b1020; border-color: transparent; box-shadow: 0 10px 24px rgba(33,182,255,.35); }
+    .badge{ padding:4px 8px; border-radius:999px; font-size:12px; background:#11161f; border:1px solid #2a2f3a; color:var(--muted); }
+    .small{ font-size:12px; color:var(--muted); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .hr{ height:1px; background:#232733; margin:12px 0; border-radius:1px; }
+    .hidden{ display:none; }
+    .guide h2, .guide h3 { margin: 12px 0 6px; }
+    .guide p, .guide li { color: var(--text); line-height: 1.5; }
+    .guide code { background:#0e1117; border:1px solid #2a2f3a; border-radius:8px; padding:0 6px; }
+    .pill{ padding:4px 10px; border-radius:999px; font-size:12px; border:1px solid #2a2f3a; }
+    .pill.ok{ background:#0f1b12; color:#a1f0b1; border-color:#234d2f; }
+    .pill.warn{ background:#2a1a12; color:#ffcf9a; border-color:#5a3a1d; }
+    .pill.danger{ background:#2a1518; color:#ff9aa5; border-color:#5a1f2b; }
+    .led{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px; background:#24303d; border:1px solid #35465a; box-shadow: inset 0 0 6px rgba(0,0,0,.4); }
+    .led.green{ background:#2be38a; box-shadow:0 0 12px rgba(43,227,138,.45); }
+    .led.yellow{ background:#ffd166; box-shadow:0 0 12px rgba(255,209,102,.35); }
+    .led.red{ background:#ff6b6b; box-shadow:0 0 12px rgba(255,107,107,.35); }
+    .toast{ padding:8px 12px; border-radius:10px; border:1px solid #3a2a2a; background:#1a1212; color:#ffb4b4; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>🎧 Tinnitus Freq Finder</h1>
+    <div class="row">
+      <div id="peakLed" class="led"></div>
+      <div id="peakText" class="small">Peak OK</div>
+      <div class="badge" id="todayBadge">Today: 0 min</div>
+      <div class="badge" id="hfPadBadge" style="display:none">HF pad −6 dB</div>
+    </div>
+  </div>
+
+  <div class="row" style="gap:8px; margin-bottom:10px">
+    <button id="tabAppBtn" class="btn tab active">Freq Finder</button>
+    <button id="tabGuideBtn" class="btn tab">User Guide</button>
+  </div>
+
+  <!-- TAB: APP -->
+  <section id="tabApp" class="tabpage">
+    <div class="card">
+      <div class="grid">
+        <div class="col-12">
+          <div class="row">
+            <label>Sample rate</label>
+            <select id="sr" class="btn">
+              <option value="48000" selected>48,000 Hz</option>
+              <option value="44100">44,100 Hz</option>
+            </select>
+            <label>Duration (s)</label>
+            <input id="duration" type="number" value="10" min="1" max="1800" step="1" />
+            <span class="small">Tip: test with 10–30s; long exports are heavy.</span>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <h3 style="margin:6px 0 8px">Pitch & Bandwidth</h3>
+          <div class="row">
+            <label for="freq">Frequency (Hz)</label>
+            <input type="range" id="freq" min="100" max="16000" step="1" value="8000" />
+            <input type="number" id="freqNum" min="20" max="22000" step="1" value="8000" />
+          </div>
+          <div class="row">
+            <label for="bw">Bandwidth (Hz)</label>
+            <input type="range" id="bw" min="0" max="4000" step="10" value="400" />
+            <input type="number" id="bwNum" min="0" max="20000" step="10" value="400" />
+            <span class="small">(Band-pass width; larger = noisier)</span>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <h3 style="margin:6px 0 8px">Mix & Timbre</h3>
+          <div class="row">
+            <label for="toneMix">Tone mix</label>
+            <input type="range" id="toneMix" min="0" max="1" step="0.01" value="0.6" />
+            <input type="number" id="toneMixNum" min="0" max="1" step="0.01" value="0.6" />
+          </div>
+          <div class="row">
+            <label for="noiseMix">Noise mix</label>
+            <input type="range" id="noiseMix" min="0" max="1" step="0.01" value="0.4" />
+            <input type="number" id="noiseMixNum" min="0" max="1" step="0.01" value="0.4" />
+            <span class="small">(Tone+Noise auto-normalized)</span>
+          </div>
+          <div class="row">
+            <label for="mufFc">Muffle cutoff (Hz)</label>
+            <input type="range" id="mufFc" min="0" max="24000" step="50" value="6500" />
+            <input type="number" id="mufFcNum" min="0" max="24000" step="10" value="6500" />
+            <span class="small">0 = off</span>
+          </div>
+          <div class="row">
+            <label for="mufOrder">Muffle order</label>
+            <input type="range" id="mufOrder" min="1" max="6" step="1" value="2" />
+            <input type="number" id="mufOrderNum" min="1" max="8" step="1" value="2" />
+          </div>
+        </div>
+
+        <div class="col-12">
+          <h3 style="margin:6px 0 8px">Click‑Train / Choppiness (optional)</h3>
+          <div class="row">
+            <label for="onMs">Slice ON (ms)</label>
+            <input type="range" id="onMs" min="0" max="20" step="1" value="0" />
+            <input type="number" id="onMsNum" min="0" max="200" step="1" value="0" />
+            <label for="offMs">Slice OFF (ms)</label>
+            <input type="range" id="offMs" min="0" max="40" step="1" value="0" />
+            <input type="number" id="offMsNum" min="0" max="500" step="1" value="0" />
+            <span class="small">(Set ON > 0 to enable; OFF can be 0)</span>
+            <div id="hpWarn" class="toast hidden">Headphones only recommended when slicing is active.</div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <h3 style="margin:6px 0 8px">Output & Safety</h3>
+          <div class="row">
+            <label for="outDb">Output level</label>
+            <input type="range" id="outDb" min="-24" max="-6" step="1" value="-12" />
+            <input type="number" id="outDbNum" min="-24" max="-6" step="1" value="-12" />
+            <span class="small">dB (capped)</span>
+
+            <label for="route">Routing</label>
+            <select id="route" class="btn">
+              <option value="stereo" selected>Stereo</option>
+              <option value="left">Left-only</option>
+              <option value="right">Right-only</option>
+            </select>
+
+            <label class="row" style="gap:6px">
+              <input type="checkbox" id="hfOverride" />
+              <span class="small">Disable HF pad &gt;10 kHz</span>
+            </label>
+          </div>
+          <div class="row small" style="opacity:.85">
+            <span class="badge">Shift+Drag</span> for fine control • Live update for <b>Freq</b>, <b>BW</b>, <b>Mix</b>, <b>Muffle cutoff</b>, <b>Output level</b>. Changes to <b>Slice</b>, <b>Muffle order</b>, <b>Duration</b> apply on next start.
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="row" style="margin-top:10px">
+            <button id="playToggleBtn" class="btn primary">▶︎ Play / Monitor</button>
+            <div class="hr" style="flex:1"></div>
+            <button id="exportBtn" class="btn">⬇︎ Export WAV</button>
+            <span class="small">Files include settings in the filename.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:6px 0 8px">Notes</h3>
+      <ul class="small">
+        <li><b>Bandwidth</b> feeds a band‑pass filter around your frequency (roughly Q ≈ f0 / BW). Broader BW ⇒ more hiss/muffle.</li>
+        <li><b>Muffle</b> chains multiple low‑pass filters at the cutoff to roll off treble (higher order ⇒ more muffled).</li>
+        <li><b>Click‑train</b> schedules precise ON/OFF gain steps; prefer headphones when active.</li>
+        <li>Very long exports (10–30 min) are heavy. If it fails, export 30–60s and loop in a DAW.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TAB: GUIDE -->
+  <section id="tabGuide" class="tabpage hidden">
+    <div class="card guide">
+      <h2>Tinnitus Freq Finder — User Guide</h2>
+      <h3>0) What it is</h3>
+      <ul>
+        <li>Plays a <b>tone + band‑limited noise</b> centered at your chosen frequency</li>
+        <li>Adds optional <b>muffle</b> (treble roll‑off)</li>
+        <li>Adds optional <b>slice/gating</b> (ON/OFF ms) for choppy/raspy percepts</li>
+        <li>Exports <b>16‑bit WAV</b> files you can use elsewhere</li>
+      </ul>
+      <hr class="hr" />
+
+      <h3>1) Setup (60 seconds)</h3>
+      <ol>
+        <li>Open this page in <b>Chrome</b> or <b>Edge</b>. Safari/Firefox usually work, but can be slower with long renders.</li>
+        <li>Use decent headphones/earbuds or monitors. <b>Start at low volume.</b></li>
+      </ol>
+      <p class="small"><i>Browsers block auto‑play. You must click <b>Play / Monitor</b> to hear anything.</i></p>
+
+      <h3>2) Quick Start (2 minutes)</h3>
+      <ol>
+        <li>Set <b>Sample rate</b> (48,000 Hz is fine).</li>
+        <li>Set <b>Duration</b> (10–30 s for testing; render longer only when exporting).</li>
+        <li>Set <b>Frequency</b> near your perceived tone (e.g., 8000 Hz).</li>
+        <li>Set <b>Bandwidth</b>: 0–400 narrow/clean; 600–1200 broader/muffled; >1500 hissier.</li>
+        <li>Adjust <b>Tone mix</b> vs <b>Noise mix</b> (auto‑normalized): tonal 0.7/0.3; muffled 0.3/0.7.</li>
+        <li>If dull/muffled, enable <b>Muffle</b>: cutoff 5–7 kHz, order 2–4.</li>
+        <li>If choppy/raspy, enable <b>Slice</b>: try <b>ON 2 ms / OFF 8 ms</b>.</li>
+        <li>Click <b>Play / Monitor</b>. The button turns red <b>Stop</b> while playing and flips back when done.</li>
+        <li>When it blends with your tinnitus best, click <b>Export WAV</b>.</li>
+      </ol>
+
+      <h3>3) Controls Cheat Sheet</h3>
+      <ul>
+        <li><b>Frequency (Hz)</b>: center pitch.</li>
+        <li><b>Bandwidth (Hz)</b>: width around the center (≈ <code>Q = f0 / BW</code>). Bigger = noisier.</li>
+        <li><b>Tone/Noise mix</b>: relative weights (keeps overall level sane).</li>
+        <li><b>Muffle</b>: smooth high‑frequency roll‑off; higher order = more “under a pillow.”</li>
+        <li><b>Slice ON/OFF (ms)</b>: amplitude gating; ON>0 enables it. Duty ≈ <code>ON / (ON+OFF)</code>.</li>
+        <li><b>Duration</b>: playback length and export length.</li>
+      </ul>
+      <p class="small">Fine control: <b>Shift+drag</b> sliders.</p>
+
+      <h3>4) Recommended Starting Presets</h3>
+      <ul>
+        <li><b>Clean, tonal</b>: Freq≈guess; BW 200–400; Tone 0.7 / Noise 0.3; Muffle off; Slice off.</li>
+        <li><b>Muffled</b>: BW 600–1200; Tone 0.3 / Noise 0.7; Muffle cutoff 5–7 kHz, Order 2–4; Slice off.</li>
+        <li><b>Choppy/raspy</b>: Start from “Muffled,” then Slice <b>2/8 ms</b>. Try 3/7, 4/6, 1/9 if 2/8 isn’t right.</li>
+        <li><b>Very high‑pitch hiss</b>: Freq near your pitch; BW 1200–2000; Tone 0.2 / Noise 0.8; Muffle cutoff 7–10 kHz, Order 1–2.</li>
+      </ul>
+
+      <h3>5) Finding a Perceptual Match (fast workflow)</h3>
+      <ol>
+        <li><b>Coarse pass</b>: sweep Frequency (±5–10%), BW at 400, 800, 1200.</li>
+        <li><b>Character pass</b>: adjust Tone/Noise and Muffle to get timbre right.</li>
+        <li><b>Texture pass</b>: if choppy, add Slice (start 2/8 ms) and tweak ON/OFF.</li>
+        <li>Export a 30–60 s candidate. If it still matches, export therapy length.</li>
+      </ol>
+
+      <h3>6) Exporting WAVs</h3>
+      <ul>
+        <li>16‑bit PCM mono at chosen sample rate.</li>
+        <li>Very long renders (10–30 min) can be heavy. If it fails, export a short loop and stitch it in a DAW.</li>
+        <li>Filenames encode all settings.</li>
+      </ul>
+
+      <h3>7) Troubleshooting</h3>
+      <ul>
+        <li><b>No sound</b>: you must click Play / Monitor; also check tab/system volume.</li>
+        <li><b>Distortion</b>: turn down output; the app has headroom but your DAC can still clip.</li>
+        <li><b>Export fails</b>: reduce Duration; export a short loop and stitch in a DAW.</li>
+        <li><b>Firefox sluggish</b>: use Chrome/Edge.</li>
+        <li><b>iOS</b>: use a desktop browser for exporting long files.</li>
+      </ul>
+
+      <h3>8) Safety & Protocol</h3>
+      <ul>
+        <li><b>Volume</b>: start low. Don’t blast your ears.</li>
+        <li><b>Trial rules</b>: follow your study protocol; don’t upload files to a device if it violates the agreement.</li>
+        <li>This tool is <b>not</b> a medical device—just an audio lab.</li>
+      </ul>
+      <p class="small">Runs locally in your browser; no network calls or analytics.</p>
+
+      <h3>9) Built‑in Safety Features (what the app enforces)</h3>
+      <ul>
+        <li><b>Output cap</b>: master output slider is limited to <span class="mono">−24…−6 dBFS</span>. Exports use the same cap.</li>
+        <li><b>Limiter</b>: a fast dynamics limiter after the master catches brief transients around <span class="mono">≈ −6 dBFS</span>.</li>
+        <li><b>Soft start/stop</b>: 300 ms fade‑in/out to avoid thumps.</li>
+        <li><b>HF pad</b>: automatic <span class="mono">−6 dB</span> padding when <b>Frequency</b> &gt; 10 kHz (badge shows). You can override with “Disable HF pad &gt;10 kHz.”</li>
+        <li><b>Peak monitor + auto‑backoff</b>: LED + live dBFS readout. If the peak approaches <span class="mono">−1 dBFS</span>, the app reduces output by <span class="mono">3 dB</span> automatically.</li>
+        <li><b>Panic stop</b>: press <b>Space</b> or <b>Esc</b> to stop immediately.</li>
+        <li><b>Ear routing</b>: Stereo / Left‑only / Right‑only so you can favor one ear if your protocol calls for it.</li>
+        <li><b>Click‑train caution</b>: when <b>Slice</b> is enabled the app shows a headphones warning; keep volumes conservative because gating creates sharper transients.</li>
+        <li><b>Session time badge</b>: the header shows <b>Today: X/Y min</b> with color cues and prompts at 75% & 100% of your chosen budget. (Not SPL‑calibrated.)</li>
+      </ul>
+      <p class="small">Limitations: the app cannot control your system/device volume and is not a dosimeter. Peak dBFS is not the same as ear‑canal dB SPL.</p>
+
+      <h3>9) Built‑in Safety Features (what the app enforces)</h3>
+      <ul>
+        <li><b>Output cap</b>: master output slider is limited to <span class="mono">−24…−6 dBFS</span>. Exports use the same cap.</li>
+        <li><b>Limiter</b>: a fast dynamics limiter after the master catches brief transients around <span class="mono">≈ −6 dBFS</span>.</li>
+        <li><b>Soft start/stop</b>: 300 ms fade‑in/out to avoid thumps.</li>
+        <li><b>HF pad</b>: automatic <span class="mono">−6 dB</span> padding when <b>Frequency</b> &gt; 10 kHz (badge shows). You can override with “Disable HF pad &gt;10 kHz.”</li>
+        <li><b>Peak monitor + auto‑backoff</b>: LED + live dBFS readout. If the peak approaches <span class="mono">−1 dBFS</span>, the app reduces output by <span class="mono">3 dB</span> automatically.</li>
+        <li><b>Panic stop</b>: press <b>Space</b> or <b>Esc</b> to stop immediately.</li>
+        <li><b>Ear routing</b>: Stereo / Left‑only / Right‑only so you can favor one ear if your protocol calls for it.</li>
+        <li><b>Click‑train caution</b>: when <b>Slice</b> is enabled the app shows a headphones warning; keep volumes conservative because gating creates sharper transients.</li>
+        <li><b>Session time badge</b>: the header shows <b>Today: X min</b> so you can tally daily exposure time. (Not SPL‑calibrated.)</li>
+      </ul>
+      <p class="small">Limitations: the app cannot control your system/device volume and is not a dosimeter. Peak dBFS is not the same as ear‑canal dB SPL.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  // Tabs
+  const tabAppBtn = document.getElementById('tabAppBtn');
+  const tabGuideBtn = document.getElementById('tabGuideBtn');
+  const tabApp = document.getElementById('tabApp');
+  const tabGuide = document.getElementById('tabGuide');
+  function showTab(which){
+    const app = which==='app';
+    tabApp.classList.toggle('hidden', !app);
+    tabGuide.classList.toggle('hidden', app);
+    tabAppBtn.classList.toggle('active', app);
+    tabGuideBtn.classList.toggle('active', !app);
+  }
+  tabAppBtn.addEventListener('click', ()=>showTab('app'));
+  tabGuideBtn.addEventListener('click', ()=>showTab('guide'));
+
+  const peakLed = document.getElementById('peakLed');
+  const peakText = document.getElementById('peakText');
+  const todayBadge = document.getElementById('todayBadge');
+  const hfPadBadge = document.getElementById('hfPadBadge');
+  const hpWarn = document.getElementById('hpWarn');
+
+  // ---------- Helpers ----------
+  const els = (ids) => Object.fromEntries(ids.map(id=>[id, document.getElementById(id)]));
+  const E = els(['sr','duration','freq','freqNum','bw','bwNum','toneMix','toneMixNum','noiseMix','noiseMixNum','mufFc','mufFcNum','mufOrder','mufOrderNum','onMs','onMsNum','offMs','offMsNum','outDb','outDbNum','route','hfOverride','playToggleBtn','exportBtn']);
+
+  function linkPair(rangeEl, numEl, {min=null,max=null}={}){
+    const sync = (src,dst)=>{ dst.value = src.value; };
+    rangeEl.addEventListener('input', ()=>sync(rangeEl, numEl));
+    numEl.addEventListener('input', ()=>{
+      if(min!==null) numEl.value = Math.max(min, +numEl.value);
+      if(max!==null) numEl.value = Math.min(max, +numEl.value);
+      sync(numEl, rangeEl);
+    });
+    sync(rangeEl, numEl);
+  }
+  linkPair(E.freq, E.freqNum, {min:20, max:22000});
+  linkPair(E.bw, E.bwNum, {min:0, max:20000});
+  linkPair(E.toneMix, E.toneMixNum, {min:0, max:1});
+  linkPair(E.noiseMix, E.noiseMixNum, {min:0, max:1});
+  linkPair(E.mufFc, E.mufFcNum, {min:0, max:24000});
+  linkPair(E.mufOrder, E.mufOrderNum, {min:1, max:8});
+  linkPair(E.onMs, E.onMsNum, {min:0, max:200});
+  linkPair(E.offMs, E.offMsNum, {min:0, max:500});
+  linkPair(E.outDb, E.outDbNum, {min:-24, max:-6});
+
+  const lin = (db)=> Math.pow(10, db/20);
+
+  function todayKey(){ const d = new Date(); return d.toISOString().slice(0,10); }
+  function getTodayMinutes(){ const key = 'minutes_'+todayKey(); return +(localStorage.getItem(key) || '0'); }
+  function addTodayMinutes(min){ const key = 'minutes_'+todayKey(); const cur = getTodayMinutes(); localStorage.setItem(key, String(cur + min)); renderToday(); }
+  function renderToday(){ todayBadge.textContent = `Today: ${getTodayMinutes().toFixed(1)} min`; }
+  renderToday();
+
+  function getParams(){
+    const toneMix = +E.toneMixNum.value; const noiseMix = +E.noiseMixNum.value; const mixSum = Math.max(1e-9, toneMix + noiseMix);
+    const freq = Math.max(20, +E.freqNum.value);
+    const hfPadActive = (freq > 10000) && !E.hfOverride.checked;
+    hfPadBadge.style.display = hfPadActive ? 'inline-block' : 'none';
+    hpWarn.classList.toggle('hidden', !(+E.onMsNum.value > 0));
+    return {
+      sr: +E.sr.value,
+      duration: Math.max(0.1, +E.duration.value),
+      freq,
+      bw: Math.max(0, +E.bwNum.value),
+      toneMix: toneMix / mixSum,
+      noiseMix: noiseMix / mixSum,
+      mufFc: Math.max(0, +E.mufFcNum.value),
+      mufOrder: Math.max(1, Math.round(+E.mufOrderNum.value)),
+      onMs: Math.max(0, +E.onMsNum.value),
+      offMs: Math.max(0, +E.offMsNum.value),
+      outDb: Math.min(-6, Math.max(-24, +E.outDbNum.value)),
+      route: E.route.value,
+      hfPad: hfPadActive ? 0.5 : 1.0
+    };
+  }
+
+  // ---------- Audio graph builders ----------
+  function buildGraph(ctx, p, forOffline=false){
+    // Tone Oscillator
+    const osc = new OscillatorNode(ctx, { type:'sine', frequency: p.freq });
+    const toneGain = new GainNode(ctx, { gain: p.toneMix });
+    osc.connect(toneGain);
+
+    // Noise source (white -> bandpass)
+    const noiseBuf = ctx.createBuffer(1, Math.max(1, Math.floor(p.sr * 2)), p.sr); // 2s loop
+    const data = noiseBuf.getChannelData(0);
+    for(let i=0;i<data.length;i++){ data[i] = (Math.random()*2-1); }
+    const noise = new AudioBufferSourceNode(ctx, { buffer: noiseBuf, loop: true });
+
+    // Band-pass using biquad; Q ~= f0/BW
+    const bp = new BiquadFilterNode(ctx, { type:'bandpass', frequency: p.freq, Q: Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001) });
+    const noiseGain = new GainNode(ctx, { gain: p.noiseMix });
+    noise.connect(bp).connect(noiseGain);
+
+    // Mix
+    const mix = new GainNode(ctx, { gain: 0.98 });
+    toneGain.connect(mix);
+    noiseGain.connect(mix);
+
+    // Muffle: chain N lowpasses when enabled
+    let chainHead = mix; const lpChain = [];
+    if(p.mufFc > 0){
+      for(let i=0;i<p.mufOrder;i++){
+        const lp = new BiquadFilterNode(ctx, { type:'lowpass', frequency: p.mufFc, Q: 0.707 });
+        chainHead.connect(lp); chainHead = lp; lpChain.push(lp);
+      }
+    }
+
+    // Gating (click-train)
+    const gate = new GainNode(ctx, { gain: 1.0 });
+    chainHead.connect(gate);
+    function scheduleGate(){
+      if(p.onMs <= 0){ gate.gain.setValueAtTime(1.0, 0); return; }
+      const on = p.onMs / 1000; const off = p.offMs / 1000; const period = Math.max(1e-4, on + off);
+      const total = p.duration; let t = 0; gate.gain.cancelScheduledValues(0);
+      while(t < total){ gate.gain.setValueAtTime(1.0, t); const tOff = t + on; if(tOff <= total){ gate.gain.setValueAtTime(0.0, tOff); } t += period; }
+    }
+
+    // Master gain + HF pad (combined)
+    const master = new GainNode(ctx, { gain: 0.0 }); // start muted; we ramp in
+    const limiter = new DynamicsCompressorNode(ctx, { threshold: -6, knee: 30, ratio: 20, attack: 0.003, release: 0.25 });
+
+    gate.connect(master).connect(limiter);
+
+    // Routing
+    let destinationNode;
+    if(forOffline){
+      limiter.connect(ctx.destination);
+      destinationNode = ctx.destination;
+    } else {
+      const leftGain = new GainNode(ctx, { gain: 1 });
+      const rightGain = new GainNode(ctx, { gain: 1 });
+      const merger = new ChannelMergerNode(ctx, { numberOfInputs: 2 });
+      limiter.connect(leftGain); limiter.connect(rightGain);
+      leftGain.connect(merger, 0, 0); rightGain.connect(merger, 0, 1);
+      merger.connect(ctx.destination);
+      destinationNode = merger;
+      // store for live routing
+      var routeNodes = { leftGain, rightGain };
+    }
+
+    function setMasterTarget(db, pad){ master.gain.setTargetAtTime(Math.max(0, lin(db) * pad), ctx.currentTime, 0.03); }
+
+    function start(at=0){ osc.start(at); noise.start(at); scheduleGate(); setMasterTarget(p.outDb, p.hfPad); /* fade-in */ master.gain.setValueAtTime(0.0, at); master.gain.linearRampToValueAtTime(Math.max(0, lin(p.outDb)*p.hfPad), at + 0.3); }
+    function stop(at){ try{ /* fade-out then stop */ master.gain.cancelScheduledValues(at); master.gain.linearRampToValueAtTime(0.0, at + 0.3); osc.stop(at + 0.35); noise.stop(at + 0.35); } catch(_){} }
+
+    return { start, stop, nodes: { osc, bp, toneGain, noiseGain, lpChain, gate, master, limiter, routeNodes } };
+  }
+
+  // ---------- Live Playback ----------
+  let liveCtx = null; let liveCtrl = null; let liveNodes = null; let liveStopTimer = null; let peakProcessor = null; let sessionStart = null; let tickTimer = null;
+
+  function updatePlayButton(playing){
+    const btn = E.playToggleBtn; if(!btn) return;
+    if(playing){ btn.textContent = '■ Stop'; btn.classList.remove('primary'); btn.classList.add('warn'); }
+    else { btn.textContent = '▶︎ Play / Monitor'; btn.classList.remove('warn'); btn.classList.add('primary'); }
+  }
+
+  function setRoute(route){ if(!liveNodes || !liveNodes.routeNodes) return; if(route==='left'){ liveNodes.routeNodes.leftGain.gain.value=1; liveNodes.routeNodes.rightGain.gain.value=0; } else if(route==='right'){ liveNodes.routeNodes.leftGain.gain.value=0; liveNodes.routeNodes.rightGain.gain.value=1; } else { liveNodes.routeNodes.leftGain.gain.value=1; liveNodes.routeNodes.rightGain.gain.value=1; } }
+
+  function updatePeakUI(level){ // level in linear 0..1
+    const dbfs = 20*Math.log10(Math.max(level,1e-9));
+    peakText.textContent = `Peak ${dbfs.toFixed(1)} dBFS`;
+    peakLed.classList.remove('green','yellow','red');
+    if(level < 0.5) peakLed.classList.add('green');
+    else if(level < 0.89) peakLed.classList.add('yellow');
+    else peakLed.classList.add('red');
+  }
+
+  function attachPeakProcessor(ctx, sourceNode){
+    // Use ScriptProcessor for simplicity; widely supported
+    const proc = ctx.createScriptProcessor(2048, 1, 1);
+    sourceNode.connect(proc); proc.connect(ctx.destination); // minimal passthrough to keep it running
+    proc.onaudioprocess = (e)=>{
+      const ch = e.inputBuffer.getChannelData(0); let peak = 0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
+      updatePeakUI(peak);
+      if(peak >= 0.89){ // ~ -1 dBFS
+        // Auto-backoff 3 dB if possible
+        const curDb = +E.outDbNum.value; const newDb = Math.max(-24, curDb - 3);
+        if(newDb < curDb){ E.outDbNum.value = String(newDb); E.outDb.value = String(newDb); applyLiveParams(); }
+      }
+    };
+    return proc;
+  }
+
+  async function play(){
+    if(liveCtx){ await stop(); }
+    const p = getParams();
+    liveCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: p.sr });
+    liveCtrl = buildGraph(liveCtx, p);
+    liveNodes = liveCtrl.nodes;
+    setRoute(p.route);
+    // Peak monitor taps limiter output (post-master)
+    peakProcessor = attachPeakProcessor(liveCtx, liveNodes.limiter);
+    liveCtrl.start(liveCtx.currentTime);
+    updatePlayButton(true);
+    sessionStart = performance.now();
+    clearTimeout(liveStopTimer); clearInterval(tickTimer);
+    liveStopTimer = setTimeout(()=>{ stop(); }, p.duration*1000 + 120);
+    tickTimer = setInterval(()=>{ renderToday(); }, 5000);
+  }
+
+  async function stop(){
+    if(!liveCtx) return;
+    try{ const t = liveCtx.currentTime; liveCtrl?.stop(t); }catch(_){ }
+    await new Promise(r=>setTimeout(r,380)); // let fade complete
+    try{ peakProcessor?.disconnect(); }catch(_){ }
+    try{ liveCtx.close(); }catch(_){ }
+    if(sessionStart){ const mins = (performance.now() - sessionStart)/60000; if(mins>0){ addTodayMinutes(mins); } }
+    liveCtx = null; liveCtrl = null; liveNodes = null; peakProcessor = null; sessionStart = null; clearTimeout(liveStopTimer); clearInterval(tickTimer);
+    updatePlayButton(false);
+  }
+
+  async function togglePlay(){ if(liveCtx){ await stop(); } else { await play(); } }
+  document.getElementById('playToggleBtn').addEventListener('click', togglePlay);
+
+  // Panic stop: Space / Esc
+  document.addEventListener('keydown', (e)=>{ if(e.code==='Space' || e.code==='Escape'){ e.preventDefault(); stop(); } });
+
+  // ---------- Live parameter updates (auto-apply while playing) ----------
+  function applyLiveParams(){ if(!liveCtx || !liveNodes) return; const p = getParams(); try{
+    // Pitch & Q
+    liveNodes.osc.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
+    liveNodes.bp.frequency.setTargetAtTime(p.freq, liveCtx.currentTime, 0.01);
+    const q = Math.max(0.0001, p.bw>0 ? (p.freq/Math.max(1,p.bw)) : 0.0001);
+    liveNodes.bp.Q.setTargetAtTime(q, liveCtx.currentTime, 0.01);
+    // Mix
+    liveNodes.toneGain.gain.setTargetAtTime(p.toneMix, liveCtx.currentTime, 0.02);
+    liveNodes.noiseGain.gain.setTargetAtTime(p.noiseMix, liveCtx.currentTime, 0.02);
+    // Muffle cutoff
+    if(liveNodes.lpChain && liveNodes.lpChain.length){ for(const lp of liveNodes.lpChain){ lp.frequency.setTargetAtTime(Math.max(20, p.mufFc || 20000), liveCtx.currentTime, 0.02); } }
+    // Master gain & HF pad
+    const target = Math.max(0, lin(p.outDb) * p.hfPad);
+    liveNodes.master.gain.setTargetAtTime(target, liveCtx.currentTime, 0.03);
+    // Routing
+    setRoute(p.route);
+  }catch(_){ } }
+
+  let rafPending=false; function scheduleApply(){ if(!liveCtx) return; if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; applyLiveParams(); }); }
+  ;[E.freq,E.freqNum,E.bw,E.bwNum,E.toneMix,E.toneMixNum,E.noiseMix,E.noiseMixNum,E.mufFc,E.mufFcNum,E.outDb,E.outDbNum,E.route,E.hfOverride].forEach(el=> el.addEventListener('input', scheduleApply));
+  ;[E.onMs,E.onMsNum,E.mufOrder,E.mufOrderNum,E.duration].forEach(el=> el.addEventListener('input', ()=>{ /* next start */ }));
+
+  // ---------- Offline Export to WAV ----------
+  function floatToWavBlob(chData, sr){ const numFrames = chData.length; const buffer = new ArrayBuffer(44 + numFrames*2); const view = new DataView(buffer); const writeStr = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); }; writeStr(0, 'RIFF'); view.setUint32(4, 36 + numFrames*2, true); writeStr(8, 'WAVE'); writeStr(12,'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sr, true); view.setUint32(28, sr*2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); writeStr(36,'data'); view.setUint32(40, numFrames*2, true); let offset = 44; for(let i=0;i<numFrames;i++){ const s = Math.max(-1, Math.min(1, chData[i] * 0.98)); view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true); offset += 2; } return new Blob([view], { type:'audio/wav' }); }
+
+  async function exportWav(){
+    const p0 = getParams();
+    if(p0.duration > 1800){ alert('Please keep duration ≤ 1800s (30 min).'); return; }
+    const offCtx = new OfflineAudioContext(1, Math.ceil(p0.sr * p0.duration), p0.sr);
+    const ctrl = buildGraph(offCtx, p0, true);
+    ctrl.start(0);
+    const rendered = await offCtx.startRendering();
+    const ch = rendered.getChannelData(0);
+    // Peak check
+    let peak=0; for(let i=0;i<ch.length;i++){ const a=Math.abs(ch[i]); if(a>peak) peak=a; }
+    if(peak>0.98){ alert('Export peaked too high; lowering output 3 dB and retry.'); E.outDbNum.value = String(Math.max(-24, +E.outDbNum.value - 3)); E.outDb.value = E.outDbNum.value; return exportWav(); }
+    const blob = floatToWavBlob(ch, p0.sr);
+    const tag = `f${Math.round(p0.freq)}_bw${Math.round(p0.bw)}_tone${(+E.toneMixNum.value).toFixed(2)}_noise${(+E.noiseMixNum.value).toFixed(2)}_muf${Math.round(p0.mufFc)}o${p0.mufOrder}_slice${Math.round(p0.onMs)}x${Math.round(p0.offMs)}_${p0.duration}s_${p0.sr}sr_out${p0.outDb}dB${p0.hfPad<1?'_HFpad':''}`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `tinnitus_${tag}.wav`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }
+  document.getElementById('exportBtn').addEventListener('click', exportWav);
+})();
+</script>
+</body>
+</html>

@@ -41,6 +41,44 @@ tinn-tweak.html<!DOCTYPE html>
     .toast{ padding:8px 12px; border-radius:10px; border:1px solid #3a2a2a; background:#1a1212; color:#ffb4b4; font-size:12px; }
     .layer-h{ display:flex; align-items:center; gap:10px; margin:2px 0 8px; }
     .layer-h h4{ margin:0; font-size:15px; }
+    
+    /* Layer-specific accents */
+.layer1 { --layer-accent: #4ade80; } /* green */
+.layer2 { --layer-accent: #60a5fa; } /* blue  */
+.layer3 { --layer-accent: #f97316; } /* orange*/
+
+/* Color the sliders (and the enable checkbox) inside each layer */
+.layer input[type="range"] { accent-color: var(--layer-accent); }
+.layer .layer-h input[type="checkbox"] { accent-color: var(--layer-accent); }
+
+/* Fallback styling for browsers that ignore accent-color */
+@supports not (accent-color: auto) {
+  .layer input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #2a2f3a;
+    border-radius: 8px;
+  }
+  .layer input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--layer-accent);
+    border: 2px solid #0e1117;
+    cursor: pointer;
+  }
+  .layer input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--layer-accent);
+    border: 2px solid #0e1117;
+    cursor: pointer;
+  }
+  .layer input[type="range"]::-moz-range-track {
+    height: 6px; background: #2a2f3a; border-radius: 8px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -82,7 +120,7 @@ tinn-tweak.html<!DOCTYPE html>
           <h3 style="margin:6px 0 8px">Multi‑Layer Synth (up to 3 layers)</h3>
           
           <!-- LAYER 1 -->
-          <div class="card" style="padding:12px; margin:10px 0">
+          <div class="card layer layer1" style="padding:12px; margin:10px 0">
             <div class="layer-h">
               <input type="checkbox" id="l1_enable" checked />
               <h4>Layer 1</h4>
@@ -124,7 +162,7 @@ tinn-tweak.html<!DOCTYPE html>
           </div>
 
           <!-- LAYER 2 -->
-          <div class="card" style="padding:12px; margin:10px 0">
+          <div class="card layer layer2" style="padding:12px; margin:10px 0">
             <div class="layer-h">
               <input type="checkbox" id="l2_enable" />
               <h4>Layer 2</h4>
@@ -166,7 +204,7 @@ tinn-tweak.html<!DOCTYPE html>
           </div>
 
           <!-- LAYER 3 -->
-          <div class="card" style="padding:12px; margin:10px 0">
+          <div class="card layer layer3" style="padding:12px; margin:10px 0">
             <div class="layer-h">
               <input type="checkbox" id="l3_enable" />
               <h4>Layer 3</h4>

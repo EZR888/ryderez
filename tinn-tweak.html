@@ -301,6 +301,15 @@
         <li><b>Texture</b>: “Noise” = classic filtered noise (grainy); “Smooth hiss” = many micro-sines (fine, steady); “Hum” = few detuned sines (soft, tonal).</li>
         <li>Change <b>Texture</b> then press <b>Stop → Play</b> to rebuild the source (the switch also autostops/plays now).</li>
       </ul>
+      <br>
+      
+      <h3 style="margin:6px 0 8px">How to dial it in</h3>
+For soft hum/hiss:<br>
+Texture = Smooth hiss, Noise mix ~0.6–0.9, Tone mix ~0.1–0.4, BW ~80–250 Hz.<br>
+If you want even silkier: bump K in buildGaussHiss to 96 or 128.<br>
+<br>
+For a hummier base:<br>
+Texture = Hum, BW ~40–120 Hz, Noise mix ~0.6, Tone mix ~0.3.<br><br><br>
     </div>
   </section>
 
@@ -464,62 +473,6 @@
     </div>
   </section>
 </div>
-
-
-    <div class="card">
-      <h2>User Guide</h2>
-      <p class="small">Guide unchanged—focus here is the new Texture switch.</p>
-    </div>
-  </section>
-</div>
-
-<div class="card">
-  <h2 id="pitch-anchor-sweep">Pitch-Anchor Sweep (Quick Method)</h2>
-
-  <h3>Setup (one time for anchoring)</h3>
-  <ul>
-    <li><b>Layer 1 only</b>: enabled.</li>
-    <li><b>Tone mix</b> = <code>1.00</code>, <b>Noise mix</b> = <code>0.00</code> (pure sine).</li>
-    <li><b>Level</b> modest (e.g., <code>0.5–0.7</code>).</li>
-    <li><b>BW</b> can stay at <code>0</code> (only affects noise/hum; with Noise mix = 0 it’s irrelevant).</li>
-    <li><b>AM depth</b> = <code>0</code>, <b>Muffle</b> off, <b>Slice</b> off.</li>
-    <li><b>Route</b> to the ear with the louder tinnitus.</li>
-  </ul>
-
-  <h3>Sweep</h3>
-  <ol>
-    <li><b>Coarse sweep</b> around your expected region (e.g., ~<code>2.6 kHz</code>):<br>
-      Start at <code>1 kHz</code>, then jump to <code>1.5 → 2.0 → 2.3 → 2.6 → 2.9 → 3.2 → 3.5 → 4.0 kHz</code>.<br>
-      Listen for where the external tone seems to “sit inside” your tinnitus and beating/roughness is minimal.
-    </li>
-    <li><b>Zoom in</b> around the best spot:<br>
-      Use ~<code>100 Hz</code> steps (e.g., <code>2400, 2500, 2600, 2700</code>).<br>
-      Then <code>10 Hz</code> steps (e.g., <code>2580–2620</code>).<br>
-      Use <kbd>Shift</kbd>+drag for fine control.
-    </li>
-    <li><b>Micro-tune</b> if needed:<br>
-      Use <code>1–2 Hz</code> nudges to land on the “least beating / most fused” point.<br>
-      That number is your center <b>f<sub>0</sub></b>.
-    </li>
-  </ol>
-
-  <h3>Only after you’ve got f<sub>0</sub>…</h3>
-  <ul>
-    <li>Bring <b>Noise mix</b> up (e.g., <code>0.3–0.8</code>) and pick <b>Texture</b> (“Smooth hiss” for fine hiss, “Hum” for soft tonality).</li>
-    <li>Now <b>BW</b> matters — open BW until the <i>character</i> (hiss/hum body) matches your tinnitus.</li>
-    <li>Report four numbers to the team: <br>
-      <code>low = f<sub>0</sub> − BW/2</code>, <code>center = f<sub>0</sub></code>, <code>high = f<sub>0</sub> + BW/2</code>, <code>width = BW</code>.
-    </li>
-  </ul>
-
-  <h3>Key clarifications</h3>
-  <ul>
-    <li>Don’t set both <b>Tone</b> and <b>Noise</b> to <code>0</code> — you won’t hear anything. For anchoring, use <b>Tone=1</b>, <b>Noise=0</b>.</li>
-    <li>You don’t need to repeat the sweep with <b>BW=10</b> or <b>20</b> for anchoring; BW only matters once you add noise/hum to shape the body.</li>
-    <li>Keep volume low and stable during the sweep; avoid just after shower/exercise/meditation to reduce short-term shifts.</li>
-  </ul>
-</div>
-
 
 <script>
 (function(){
@@ -690,24 +643,58 @@
     if(color==='pink'){ return new BiquadFilterNode(ctx,{type:'lowshelf',frequency:1000,gain:-9}); }
     return new BiquadFilterNode(ctx,{type:'lowpass',frequency:1000,Q:0.707}); // brown
   }
-  function buildCluster(ctx,f0,bw,K){
-    const group=new GainNode(ctx,{gain:1});
-    const partials=[];
-    for(let k=0;k<K;k++){
-      const pos=(K===1)?0:(-1 + 2*k/(K-1));     // -1..1
-      const delta=(bw/2)*pos;
-      const weight=Math.exp(-2.5*pos*pos);      // gaussian-ish
-      const osc=new OscillatorNode(ctx,{type:'sine',frequency:f0+delta});
-      const g=new GainNode(ctx,{gain:0});       // will set below
-      osc.connect(g).connect(group); osc.start();
-      partials.push({osc,gain:g,pos,weight});
-    }
-    // normalize weights
-    const sumW=partials.reduce((s,p)=>s+p.weight,0);
-    partials.forEach(p=>{ p.weight/=sumW; });
-    return {group,partials};
-  }
+// --- NEW: tiny Gaussian RNG for micro-sines
+function randn() { // Box–Muller, mean 0, std 1
+  let u=0, v=0; while(u===0) u=Math.random(); while(v===0) v=Math.random();
+  return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+}
 
+// Few detuned sines for a soft HUM (symmetric, weighted)
+function buildHumCluster(ctx, f0, bw, K){
+  const group = new GainNode(ctx, { gain: 1 });
+  const partials = [];
+  for(let k=0;k<K;k++){
+    const pos = (K===1)?0:(-1 + 2*k/(K-1));      // -1..1
+    const delta = (bw/2)*pos;                     // Hz offset
+    const weight = Math.exp(-2.5*pos*pos);        // center emphasis
+    const osc = new OscillatorNode(ctx, { type:'sine', frequency:f0+delta });
+    const g   = new GainNode(ctx, { gain: 0 });
+    osc.connect(g).connect(group);
+    // tiny random start jitter to decorrelate phases
+    const jit = Math.random()*0.003; // 0..3 ms
+    osc.start(ctx.currentTime + jit);
+    partials.push({ osc, gain:g, pos, weight, kind:'hum' });
+  }
+  // normalize weights
+  const sum = partials.reduce((s,p)=>s+p.weight,0);
+  partials.forEach(p=> p.weight /= sum);
+  return { group, partials };
+}
+
+// Many micro-sines drawn from a true Gaussian around f0 (FWHM = BW)
+function buildGaussHiss(ctx, f0, bw, K){
+  const sr = ctx.sampleRate;
+  const nyq = sr/2;
+  const sigma = Math.max(1, bw||1) / 2.355; // FWHM→σ
+  const group = new GainNode(ctx, { gain: 1 });
+  const partials = [];
+  for(let k=0;k<K;k++){
+    const z = randn();                         // ~N(0,1)
+    let f = f0 + z * sigma;                    // Hz
+    f = Math.max(20, Math.min(nyq-50, f));     // clamp
+    const osc = new OscillatorNode(ctx, { type:'sine', frequency:f });
+    const g   = new GainNode(ctx, { gain: 0 }); // per-partial gain set later
+    osc.connect(g).connect(group);
+    const jit = Math.random()*0.003;           // 0..3 ms start jitter
+    osc.start(ctx.currentTime + jit);
+    // equal nominal weight; Gaussian shape comes from frequency distribution
+    partials.push({ osc, gain:g, z, weight: 1, kind:'gauss' });
+  }
+  // normalize equal weights to sum=1
+  const norm = 1/Math.max(1,partials.length);
+  partials.forEach(p=> p.weight = norm);
+  return { group, partials };
+}
   // ---------- buildGraph (this is the one you were missing) ----------
   function buildGraph(ctx,p,forOffline=false){
     const preMuffleMix=new GainNode(ctx,{gain:1});
@@ -732,17 +719,16 @@
         bp=new BiquadFilterNode(ctx,{type:'bandpass',frequency:Lp.freq,Q:q});
         noise.connect(color).connect(bp).connect(noiseGain);
         noise.start();
-      }else{
-        const K=(texture==='hum')?6:24;
-        cluster=buildCluster(ctx, Lp.freq, Math.max(1,Lp.bw||1), K);
-        // Make cluster audible immediately (partials carry shape; noiseGain sets loudness)
-        const bwInit = Math.max(1, Lp.bw || 1);
-        for (const prt of cluster.partials) {
-          prt.osc.frequency.value = Lp.freq + prt.pos * (bwInit/2);
-          prt.gain.gain.value     = prt.weight;   // non-zero
-        }
-        cluster.group.connect(noiseGain);
-      }
+} else {
+  if (texture === 'hum') {
+    const K = 5; // few partials = soft tonal body
+    cluster = buildHumCluster(ctx, Lp.freq, Math.max(1, Lp.bw||1), K);
+  } else { // 'smooth' => true Gaussian micro-sine cloud
+    const K = 128; // increase to 96/128 if your CPU is comfy
+    cluster = buildGaussHiss(ctx, Lp.freq, Math.max(1, Lp.bw||1), K);
+  }
+  cluster.group.connect(noiseGain);
+}
 
       // Sum tone + (noise/cluster)
       const layerSum=new GainNode(ctx,{gain:1});
@@ -897,14 +883,21 @@
             if(N.color.type==='lowshelf'){ N.color.gain.setTargetAtTime((Lp.color==='pink')?-9:(Lp.color==='brown'?-15:0), liveCtx.currentTime, 0.02); }
             if(N.color.type==='lowpass'){ N.color.frequency.setTargetAtTime((Lp.color==='brown')?1000:20000, liveCtx.currentTime, 0.02); }
           }
-        } else if (N.cluster && N.cluster.partials){
-          const bw = Math.max(1, Lp.bw||1);
-          for (const prt of N.cluster.partials) {
-            const f = Lp.freq + prt.pos*(bw/2);
-            prt.osc.frequency.setTargetAtTime(f, liveCtx.currentTime, 0.01);
-            prt.gain.gain.setTargetAtTime(prt.weight, liveCtx.currentTime, 0.02); // weight only
-          }
-        }
+} else if (N.cluster && N.cluster.partials) {
+  const baseGain = Lp.enable ? (Lp.level * Lp.noiseMix) : 0;
+  const bw = Math.max(1, Lp.bw||1);
+  const sigma = bw / 2.355;
+  for (const prt of N.cluster.partials) {
+    // Use stored shape info:
+    // hum: deterministic symmetric offsets via prt.pos
+    // gauss: stochastic offsets via prt.z (Normal 0..1)
+    const offset = (prt.kind === 'hum') ? (prt.pos * (bw/2))
+                                        : (prt.z * sigma);
+    const f = Lp.freq + offset;
+    prt.osc.frequency.setTargetAtTime(f, liveCtx.currentTime, 0.01);
+    prt.gain.gain.setTargetAtTime(baseGain * prt.weight, liveCtx.currentTime, 0.02);
+  }
+}
 
         // Overall “noise/cluster” loudness here (single place)
         N.noiseGain.gain.setTargetAtTime(Lp.enable?(Lp.level*Lp.noiseMix):0, liveCtx.currentTime, 0.02);
@@ -960,3 +953,5 @@
 </script>
 </body>
 </html>
+
+

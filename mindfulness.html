@@ -58,8 +58,10 @@
     .avatar-wrap { padding: 16px; border-bottom: 1px solid #e6ece8; }
     .avatar-card { background: var(--panel); border-radius: 14px; overflow: hidden; border: 1px solid #e6ece8; text-align: center; }
     .avatar-card img { max-width: 100%; height: auto; display: block; }
-    .avatar-caption { padding: 10px; color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .avatar-caption { padding: 10px; color: var(--muted); font-size: 13px; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
     .mode-pill { background: var(--accent-2); color: #0e3b2a; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; }
+    .speak { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: #0e3b2a; }
+    input[type="radio"] { width: auto; margin-right: 6px; accent-color: var(--accent); }
 
     .chat { display: grid; grid-template-rows: 1fr auto; }
     .log { padding: 16px; overflow: auto; background: var(--input-bg); }
@@ -71,8 +73,6 @@
     .composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 12px; border-top: 1px solid #e6ece8; background: var(--input-bg); }
     button { padding: 10px 14px; border: 0; border-radius: 10px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
     button:disabled { opacity: .6; cursor: not-allowed; }
-      .radio-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-    input[type="radio"] { width: auto; margin-right: 6px; accent-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -131,7 +131,7 @@
             <option>no set schedule</option>
           </select>
         </div>
-        <div class="row"><label></label><button id="saveBtn" type="button">Save to Chat</button></div>
+        <div class="row"><label></label><button id="saveBtn" type="button">Send to Chat</button></div>
       </form>
     </section>
 
@@ -140,7 +140,11 @@
       <div class="avatar-wrap">
         <div class="avatar-card">
           <img src="mind.png" alt="Sophia - mindfulness coach avatar">
-          <div class="avatar-caption"><strong>Sophia</strong> — Mindfulness Coach <span class="mode-pill" id="modePill">AI: Demo</span></div>
+          <div class="avatar-caption">
+            <strong>Sophia</strong> — Mindfulness Coach
+            <span class="mode-pill" id="modePill">AI: Demo</span>
+            <label class="speak"><input type="checkbox" id="speakToggle"> Speak replies</label>
+          </div>
         </div>
       </div>
 
@@ -155,124 +159,182 @@
   </main>
 
   <script>
-    // ====== Elements
-    const log = document.getElementById('log');
-    const sendBtn = document.getElementById('send');
-    const promptInput = document.getElementById('prompt');
-    const nameInput = document.getElementById('name');
-    const whyInput = document.getElementById('why');
-    const whyCount = document.getElementById('whyCount');
-    const saveBtn = document.getElementById('saveBtn');
-    const modePill = document.getElementById('modePill');
+    // ===== Script bootstrap (ASCII-only to avoid Unicode parse issues)
+    console.log('[Mindfulness Coach] script loaded');
 
-    // Character counter for the textarea
-    whyInput.addEventListener('input', () => whyCount.textContent = String(whyInput.value.length));
+    // Elements
+    var log = document.getElementById('log');
+    var sendBtn = document.getElementById('send');
+    var promptInput = document.getElementById('prompt');
+    var nameInput = document.getElementById('name');
+    var whyInput = document.getElementById('why');
+    var whyCount = document.getElementById('whyCount');
+    var saveBtn = document.getElementById('saveBtn');
+    var modePill = document.getElementById('modePill');
+    var speakToggle = document.getElementById('speakToggle');
 
-    // ====== Minimal chat state + persona
-    const messages = [];
-    const coachName = 'Sophia';
-    const systemPrompt = `You are ${coachName}, a warm, practical mindfulness coach. Keep replies short (2–6 sentences), specific, and action‑oriented. Avoid medical claims. Offer gentle prompts: breath, grounding, labeling thoughts, body scan. Mirror the user's words once, then propose a next step. If the user wants to begin a practice, give a simple timed protocol (e.g., 4‑2‑6 breathing) and a one‑line debrief question.`;
+    // Safe HTML escaping
+    function escapeHTML(s) {
+      s = String(s == null ? '' : s);
+      s = s.replace(/&/g, '&amp;');
+      s = s.replace(/</g, '&lt;');
+      s = s.replace(/>/g, '&gt;');
+      s = s.replace(/\"/g, '&quot;');
+      s = s.replace(/'/g, '&#39;');
+      return s;
+    }
 
-    function escapeHTML(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+    // Character counter
+    if (whyInput && whyCount) {
+      whyInput.addEventListener('input', function () {
+        try { whyCount.textContent = String(whyInput.value.length); } catch(e) {}
+      });
+    }
+
+    // Chat state & persona
+    var messages = [];
+    var coachName = 'Sophia';
+    var systemPrompt = 'You are ' + coachName + ', a warm, practical mindfulness coach. Keep replies short (2-6 sentences), specific, and action-oriented. Avoid medical claims. Offer gentle prompts: breath, grounding, labeling thoughts, body scan. Mirror the user\'s words once, then propose a next step. If the user wants to begin a practice, give a simple timed protocol (e.g., 4-2-6 breathing) and a one-line debrief question.';
 
     function addMsg(by, text, role) {
-      const el = document.createElement('div');
-      el.className = `msg ${role}`;
-      el.innerHTML = `<span class="by">${escapeHTML(by)}</span>${escapeHTML(text)}`;
+      var el = document.createElement('div');
+      el.className = 'msg ' + role;
+      var safeBy = escapeHTML(by);
+      var safeText = escapeHTML(text);
+      var speakerBtn = (role === 'sophia') ? '<button class="replay" title="Replay voice" aria-label="Replay">\uD83D\uDD0A</button>' : '';
+      el.innerHTML = '<span class="by">' + safeBy + '</span>' + safeText + ' ' + speakerBtn;
+      if (role === 'sophia') {
+        var r = el.querySelector('.replay');
+        if (r) r.addEventListener('click', function(){ speak(text); });
+      }
       log.appendChild(el);
       log.scrollTop = log.scrollHeight;
     }
 
-    function userLabel(){ return (nameInput.value || '').trim() || 'You'; }
+    function userLabel(){ return (nameInput && nameInput.value ? nameInput.value.trim() : '') || 'You'; }
+
+    // TTS (browser-native)
+    var supportsTTS = (typeof window !== 'undefined') && ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+    var selectedVoice = null;
+
+    function pickVoice() {
+      if (!supportsTTS) return;
+      var voices = window.speechSynthesis.getVoices();
+      var i, prefs = [/Samantha/i, /Victoria/i, /Google US English/i, /Female/i];
+      for (i=0; i<prefs.length; i++) {
+        var v = voices.find(function(vo){ return prefs[i].test(vo.name); });
+        if (v) { selectedVoice = v; return; }
+      }
+      selectedVoice = voices[0] || null;
+    }
+    if (supportsTTS) {
+      pickVoice();
+      window.speechSynthesis.onvoiceschanged = pickVoice;
+      if (speakToggle) speakToggle.checked = true; // default on
+    } else {
+      if (speakToggle) {
+        speakToggle.checked = false; speakToggle.disabled = true; speakToggle.title = 'Text-to-speech not supported in this browser.';
+      }
+    }
+
+    function speak(text){
+      if (!supportsTTS || !speakToggle || !speakToggle.checked) return;
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(String(text || ''));
+        if (selectedVoice) u.voice = selectedVoice;
+        u.lang = (selectedVoice && selectedVoice.lang) ? selectedVoice.lang : 'en-US';
+        u.rate = 1.0; u.pitch = 1.0;
+        window.speechSynthesis.speak(u);
+      } catch (e) { /* ignore */ }
+    }
 
     // Greet on load
     addMsg(coachName, 'Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.', 'sophia');
+    speak('Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.');
 
-    // ====== API scaffold (plug your AI here)
-    // Toggle this to false once you wire a real API.
-    const DEMO_MODE = true;
+    // API scaffold (plug your AI here)
+    var DEMO_MODE = true; // set to false when wiring a backend
+
+    function mockCoach(chatMessages){
+      var last = (chatMessages[chatMessages.length - 1] && chatMessages[chatMessages.length - 1].content || '').toLowerCase();
+      if (/begin|start/.test(last)) {
+        return 'Great. Sit comfortably. Inhale 4, hold 2, exhale 6 - for 8 rounds. If distracted, label the thought "thinking" and return to breath. Afterward, type one word for how you feel.';
+      }
+      if (/stress|anx|overwhelm|panic/.test(last)) {
+        return 'I hear stress is present. Try three rounds of 4-2-6 breathing. On each exhale, soften the jaw and shoulders. What do you notice now?';
+      }
+      if (/sleep|insomnia|tired/.test(last)) {
+        return 'For sleep, try a 4-7-8 cycle for two minutes, then a brief body scan from toes to head. Keep the breath gentle. Would you like a 2-minute audio-style script?';
+      }
+      if (/focus|distraction|productivity|work/.test(last)) {
+        return 'To boost focus, do a 60-second anchor: feel the breath at the nostrils, then note "hearing/seeing/thinking" as sensations pass. Ready to try a 1-minute focus drill?';
+      }
+      if (/anger|sad|grief|frustrat/.test(last)) {
+        return 'Noted. Place a palm on the chest; breathe slowly for six breaths. Name the emotion out loud once. Ask: "What does this part of me need?" Tell me what comes up.';
+      }
+      return 'Thanks for sharing. Let\'s do one small step: take three slow breaths (inhale 4, hold 1, exhale 6). What changed, even slightly?';
+    }
 
     async function callAI(chatMessages) {
       if (DEMO_MODE) {
-        modePill.textContent = 'AI: Demo';
+        if (modePill) modePill.textContent = 'AI: Demo';
         return mockCoach(chatMessages);
       }
-
-      modePill.textContent = 'AI: Live';
-
-      // --- Example: OpenAI Responses API (browser fetch to your own backend) ---
-      // IMPORTANT: Do NOT put secrets in client code. Create a small server endpoint
-      // at /api/coach that forwards to your provider (OpenAI/Anthropic/etc.).
-      // return fetch('/api/coach', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ messages: chatMessages })
-      // }).then(r => r.json()).then(d => d.reply);
-
-      // --- Example: RetellAI (you would exchange messages with their session) ---
-      // return fetch('/api/retell-session', { method: 'POST', body: JSON.stringify({ messages: chatMessages }) })
-      //   .then(r => r.json()).then(d => d.reply);
+      if (modePill) modePill.textContent = 'AI: Live';
+      // Example backend call (implement server-side)
+      // var res = await fetch('/api/coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chatMessages }) });
+      // var data = await res.json();
+      // return data.reply;
+      return 'Live mode not configured yet.';
     }
 
-    // Simple rule-based fallback so the page works standalone.
-    function mockCoach(chatMessages){
-      const last = chatMessages[chatMessages.length - 1]?.content?.toLowerCase() || '';
-      if (/begin|start/.test(last)) {
-        return 'Great. Sit comfortably. Inhale 4, hold 2, exhale 6 — for 8 rounds. If distracted, label the thought “thinking” and return to breath. Afterward, type one word for how you feel.';
-      }
-      if (/stress|anx|overwhelm|panic/.test(last)) {
-        return 'I hear stress is present. Try three rounds of 4‑2‑6 breathing. On each exhale, soften the jaw and shoulders. What do you notice now?';
-      }
-      if (/sleep|insomnia|tired/.test(last)) {
-        return 'For sleep, try a 4‑7‑8 cycle for two minutes, then a brief body scan from toes to head. Keep the breath gentle. Would you like a 2‑minute audio-style script?';
-      }
-      if (/focus|distraction|productivity|work/.test(last)) {
-        return 'To boost focus, do a 60‑second anchor: feel the breath at the nostrils, then note “hearing/seeing/thinking” as sensations pass. Ready to try a 1‑minute focus drill?';
-      }
-      if (/anger|sad|grief|frustrat/.test(last)) {
-        return 'Noted. Place a palm on the chest; breathe slowly for six breaths. Name the emotion out loud once. Ask: “What does this part of me need?” Tell me what comes up.';
-      }
-      return 'Thanks for sharing. Let’s do one small step: take three slow breaths (inhale 4, hold 1, exhale 6). What changed, even slightly?';
-    }
-
-    // Build a message block the backend LLMs expect
     function toLLMMessages() {
-      const base = [{ role:'system', content: systemPrompt }];
+      var base = [{ role:'system', content: systemPrompt }];
       return base.concat(messages);
     }
 
-    // ====== Intake -> personalized response
-    saveBtn.addEventListener('click', async () => {
-      const practiced = (document.querySelector('input[name="practiced"]:checked') || {}).value || '—';
-      const eff = (document.getElementById('effectiveness').value || '—');
-      const freq = (document.getElementById('frequency').value || '—');
+    // Intake -> personalized response
+    if (saveBtn) saveBtn.addEventListener('click', async function(){
+      var practicedEl = document.querySelector('input[name="practiced"]:checked');
+      var practiced = practicedEl ? practicedEl.value : '—';
+      var effEl = document.getElementById('effectiveness');
+      var eff = (effEl && effEl.value) ? effEl.value : '—';
+      var freqEl = document.getElementById('frequency');
+      var freq = (freqEl && freqEl.value) ? freqEl.value : '—';
+      var why = (whyInput && whyInput.value) ? whyInput.value.trim() : '';
 
-      const summary = `Name: ${userLabel()}\nWhy mindfulness: ${whyInput.value.trim() || '—'}\nPracticed before: ${practiced}\nEffectiveness: ${eff}\nFrequency: ${freq}`;
+      var summary = 'Name: ' + userLabel() + '\nWhy mindfulness: ' + (why || '—') + '\nPracticed before: ' + practiced + '\nEffectiveness: ' + eff + '\nFrequency: ' + freq;
       addMsg('Intake Summary', summary, 'sophia');
 
-      // Push a single “user” message summarizing the profile
-      messages.push({ role: 'user', content: `Profile — name: ${userLabel()}; reason: ${whyInput.value.trim() || 'n/a'}; practiced: ${practiced}; effectiveness: ${eff}; frequency: ${freq}. Please reflect briefly and propose the next small step.` });
+      messages.push({ role: 'user', content: 'Profile — name: ' + userLabel() + '; reason: ' + (why || 'n/a') + '; practiced: ' + practiced + '; effectiveness: ' + eff + '; frequency: ' + freq + '. Please reflect briefly and propose the next small step.' });
 
-      const reply = await callAI(toLLMMessages());
+      var reply = await callAI(toLLMMessages());
       messages.push({ role: 'assistant', content: reply });
       addMsg(coachName, reply, 'sophia');
+      speak(reply);
     });
 
-    // ====== Chat -> AI
+    // Chat -> AI
     async function sendUserMessage() {
-      const val = promptInput.value.trim();
+      var val = (promptInput && promptInput.value) ? promptInput.value.trim() : '';
       if (!val) return;
       addMsg(userLabel(), val, 'user');
       messages.push({ role: 'user', content: val });
       promptInput.value = '';
 
-      const reply = await callAI(toLLMMessages());
+      var reply = await callAI(toLLMMessages());
       messages.push({ role: 'assistant', content: reply });
       addMsg(coachName, reply, 'sophia');
+      speak(reply);
     }
 
-    sendBtn.addEventListener('click', sendUserMessage);
-    promptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMessage(); } });
+    if (sendBtn) sendBtn.addEventListener('click', sendUserMessage);
+    if (promptInput) {
+      promptInput.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMessage(); }
+      });
+    }
   </script>
 </body>
 </html>

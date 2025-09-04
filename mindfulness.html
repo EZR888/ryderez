@@ -50,7 +50,7 @@
 
     .form h3 { margin: 0 0 12px; color: var(--accent); }
     .row { display: grid; grid-template-columns: 220px 1fr; align-items: start; gap: 12px; margin: 10px 0; }
-    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #d3e2d9; border-radius: 10px; background: var(--input-bg); }
+    input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #d3e2d9; border-radius: 10px; background: var(--input-bg); }
     textarea { resize: vertical; min-height: 90px; }
     .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
 
@@ -71,6 +71,8 @@
     .composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 12px; border-top: 1px solid #e6ece8; background: var(--input-bg); }
     button { padding: 10px 14px; border: 0; border-radius: 10px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
     button:disabled { opacity: .6; cursor: not-allowed; }
+      .radio-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    input[type="radio"] { width: auto; margin-right: 6px; accent-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -114,9 +116,9 @@
             <div class="hint"><span id="whyCount">0</span>/500</div>
           </div>
         </div>
-        <div class="row"><label>Practiced before?</label><br>
-          <div>
-            <label style="margin-right:16px;"><input type="radio" name="practiced" value="Yes"> Yes</label>
+        <div class="row"><label>Practiced before?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="practiced" value="Yes"> Yes</label>
             <label><input type="radio" name="practiced" value="No"> No</label>
           </div>
         </div>

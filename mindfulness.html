@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mindfulness Coach: Brought to you by AI</title>
+  <style>
+    :root {
+      --bg: #e4f0e7;           /* muted green background */
+      --panel: #fffbe6;        /* light yellow for card backgrounds */
+      --accent: #2e7d5b;       /* deep green */
+      --accent-2: #9cc5af;     /* soft green */
+      --text: #1f2933;         /* slate */
+      --muted: #6b7a86;        /* muted text */
+      --bubble-user: #e9f7ff;  /* user bubble */
+      --bubble-sophia: #eef7f0;/* sophia bubble */
+      --input-bg: #f5f5f5;     /* light gray for inputs and chat */
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      line-height: 1.45;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+      border: 1px solid #e6ece8;
+    }
+
+    .left { padding: 24px; display: grid; gap: 20px; }
+    .intro h1 { margin: 0 0 8px; font-size: 28px; color: var(--accent); }
+    .intro h2 { margin: 8px 0 12px; font-size: 20px; }
+    .intro p, .intro li { color: var(--text); }
+
+    .form h3 { margin: 0 0 12px; color: var(--accent); }
+    .row { display: grid; grid-template-columns: 220px 1fr; align-items: start; gap: 12px; margin: 10px 0; }
+    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #d3e2d9; border-radius: 10px; background: var(--input-bg); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    .right { display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+    .avatar-wrap { padding: 16px; border-bottom: 1px solid #e6ece8; }
+    .avatar-card { background: var(--panel); border-radius: 14px; overflow: hidden; border: 1px solid #e6ece8; text-align: center; }
+    .avatar-card img { max-width: 100%; height: auto; display: block; }
+    .avatar-caption { padding: 10px; color: var(--muted); font-size: 13px; }
+
+    .chat { display: grid; grid-template-rows: 1fr auto; }
+    .log { padding: 16px; overflow: auto; background: var(--input-bg); }
+    .msg { max-width: 85%; margin: 8px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #e2eadf; }
+    .msg.sophia { background: var(--bubble-sophia); }
+    .msg.user { background: var(--bubble-user); margin-left: auto; }
+    .msg .by { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; }
+
+    .composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 12px; border-top: 1px solid #e6ece8; background: var(--input-bg); }
+    button { padding: 10px 14px; border: 0; border-radius: 10px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header style="max-width:1200px;margin:0 auto 8px;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-weight:800;color:var(--accent);">Mindfulness Coach: Brought to you by AI</div>
+    <div style="background:var(--accent-2);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;">Dashboard</div>
+  </header>
+
+  <main class="shell">
+    <section class="left card">
+      <div class="intro">
+        <h1>What is mindfulness?</h1>
+        <p>Mindfulness is a practice ...</p>
+        <h2>Those who practice mindfulness often report</h2>
+        <ul>
+          <li>Feeling more positive</li>
+          <li>Reduced emotional reactivity</li>
+          <li>Cultivation of compassion</li>
+          <li>Minimized drama</li>
+          <li>Lowered stress levels</li>
+          <li>Appreciation for small things</li>
+          <li>Greater connection to goals</li>
+        </ul>
+      </div>
+
+      <form class="form" id="intakeForm" onsubmit="return false;">
+        <h3>Let's begin</h3>
+        <div class="row"><label>Your name</label><input id="name" type="text" maxlength="25"></div>
+        <div class="row"><label>Why mindfulness?</label><textarea id="why" maxlength="500"></textarea></div>
+        <div class="row"><label>Practiced before?</label><input type="radio" name="practiced" value="Yes"> Yes <input type="radio" name="practiced" value="No"> No</div>
+        <div class="row"><label>Effectiveness (1–10)</label><input id="effectiveness" type="number" min="1" max="10"></div>
+        <div class="row"><label>Frequency</label><select id="frequency"><option>daily</option><option>weekly</option><option>no set schedule</option></select></div>
+        <div class="row"><label></label><button id="saveBtn" type="button">Save to Chat</button></div>
+      </form>
+    </section>
+
+    <aside class="right card">
+      <div class="avatar-wrap">
+        <div class="avatar-card">
+          <img src="mind.png" alt="Sophia - mindfulness coach avatar">
+          <div class="avatar-caption"><strong>Sophia</strong> — Mindfulness Coach</div>
+        </div>
+      </div>
+
+      <div class="chat">
+        <div id="log" class="log"></div>
+        <div class="composer">
+          <input id="prompt" type="text" placeholder="Type your message…" style="background:var(--input-bg);">
+          <button id="send">Send</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const log = document.getElementById('log');
+    const sendBtn = document.getElementById('send');
+    const promptInput = document.getElementById('prompt');
+    const nameInput = document.getElementById('name');
+    const saveBtn = document.getElementById('saveBtn');
+
+    function addMsg(by, text, role) {
+      const el = document.createElement('div');
+      el.className = `msg ${role}`;
+      el.innerHTML = `<span class="by">${by}</span>${text}`;
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    addMsg('Sophia', 'Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.', 'sophia');
+
+    function sendUserMessage() {
+      const val = promptInput.value.trim();
+      if (!val) return;
+      addMsg(nameInput.value || 'You', val, 'user');
+      promptInput.value = '';
+      addMsg('Sophia', 'Thank you for sharing. When you are ready, type "begin".', 'sophia');
+    }
+
+    sendBtn.addEventListener('click', sendUserMessage);
+    promptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendUserMessage(); } });
+
+    saveBtn.addEventListener('click', () => {
+      addMsg('Sophia', 'Got your details saved! Ready to begin when you are.', 'sophia');
+    });
+  </script>
+</body>
+</html>

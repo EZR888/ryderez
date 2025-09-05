@@ -231,6 +231,12 @@
 
   function speak(text){
     if (!supportsTTS || !speakToggle || !speakToggle.checked) return;
+    if (!window.__tts_unlocked) {
+      // Queue until first user gesture unlocks speech
+      window.__tts_queue = window.__tts_queue || [];
+      window.__tts_queue.push(String(text || ''));
+      return;
+    }
     try {
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(String(text||''));
@@ -240,6 +246,33 @@
       window.speechSynthesis.speak(u);
     } catch(e){ console.warn('TTS error', e); }
   }
+
+  // Unlock speech on first user gesture (Chrome autoplay policy)
+  window.__tts_unlocked = false;
+  function __unlockTTS(){
+    if (window.__tts_unlocked) return;
+    window.__tts_unlocked = true;
+    document.removeEventListener('pointerdown', __unlockTTS);
+    document.removeEventListener('keydown', __unlockTTS);
+    try {
+      var q = window.__tts_queue || [];
+      if (q.length) { speak(q[q.length - 1]); }
+      window.__tts_queue = [];
+    } catch(_){}
+    try { if (typeof primeMicOnce === 'function') { primeMicOnce(); } } catch(_){}
+  }{
+    if (window.__tts_unlocked) return;
+    window.__tts_unlocked = true;
+    document.removeEventListener('pointerdown', __unlockTTS);
+    document.removeEventListener('keydown', __unlockTTS);
+    try {
+      var q = window.__tts_queue || [];
+      if (q.length) { speak(q[q.length - 1]); }
+      window.__tts_queue = [];
+    } catch(_){}
+  }
+  document.addEventListener('pointerdown', __unlockTTS, { once: true });
+  document.addEventListener('keydown', __unlockTTS, { once: true });
 
   if (supportsTTS){
     pickVoice();
@@ -259,7 +292,7 @@
     rec.lang = 'en-US';
     rec.interimResults = true;
     rec.maxAlternatives = 1;
-    rec.continuous = false;
+    rec.continuous = true; // single permission, long session
     rec.onresult = function(ev){
       var full = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++){
@@ -268,17 +301,46 @@
       if (promptInput) { promptInput.value = full; }
     };
     rec.onerror = function(e){ console.warn('STT error', e && e.error); if (micBtn) micBtn.textContent = 'Mic'; recActive = false; };
-    rec.onend = function(){ recActive = false; if (micBtn) micBtn.textContent = 'Mic'; };
+    rec.onend = function(){
+      if (recActive) {
+        try { rec.start(); } catch(e){}
+      } else {
+        if (micBtn) micBtn.textContent = 'Mic';
+      }
+    };
     return rec;
+  }
+  // Mic permission helpers
+  function queryMicPermission(){
+    if (!navigator.permissions || !navigator.permissions.query) return Promise.resolve('unknown');
+    try { return navigator.permissions.query({ name: 'microphone' }).then(function(p){ return p && p.state ? p.state : 'unknown'; }); }
+    catch(e){ return Promise.resolve('unknown'); }
+  }
+  function warmupMicPermission(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve();
+    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+      try { (stream.getTracks()||[]).forEach(function(t){ t.stop(); }); } catch(e){}
+    }).catch(function(err){ console.warn('mic warmup failed', err); });
+  }
+  function primeMicOnce(){
+    if (window.__micPrimed) return Promise.resolve();
+    return queryMicPermission().then(function(state){
+      if (state === 'granted') { window.__micPrimed = true; return; }
+      if (state === 'prompt') { return warmupMicPermission().then(function(){ window.__micPrimed = true; }); }
+    }).catch(function(){ /* ignore */ });
   }
   function toggleMic(){
     if (!SR){ alert('Speech recognition not supported in this browser.'); return; }
     var r = ensureRecognizer(); if (!r) return;
-    if (!recActive){
-      try { r.start(); recActive = true; if (micBtn) micBtn.textContent = 'Stop'; } catch(e){ console.warn('start failed', e); }
-    } else {
-      try { r.stop(); } catch(e){ console.warn('stop failed', e); }
+    function go(){
+      if (!recActive){
+        try { recActive = true; r.start(); if (micBtn) micBtn.textContent = 'Stop'; } catch(e){ console.warn('start failed', e); }
+      } else {
+        recActive = false;
+        try { r.stop(); } catch(e){ console.warn('stop failed', e); }
+      }
     }
+    primeMicOnce().then(go);
   }
   if (micBtn) { micBtn.addEventListener('click', toggleMic); }
 

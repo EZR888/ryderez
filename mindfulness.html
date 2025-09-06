@@ -168,7 +168,7 @@
 <script>
 (function(){
   'use strict';
-  console.log('[Mindfulness Coach] boot canned v3-keepalive');
+  console.log('[Mindfulness Coach] v3-liveSR');
 
   // ==== Elements
   var log = document.getElementById('log');
@@ -215,7 +215,7 @@
     return (nameInput && nameInput.value ? nameInput.value.trim() : '') || 'You';
   }
 
-  // ==== TTS
+  // ==== TTS (speak intro once after first user gesture)
   var supportsTTS = (typeof window !== 'undefined') && window.speechSynthesis && window.SpeechSynthesisUtterance;
   var selectedVoice = null;
 
@@ -242,7 +242,6 @@
     } catch(e){ console.warn('TTS error', e); }
   }
 
-  // Autoplay gate: speak intro once on first gesture
   window.__tts_unlocked = false;
   window.__intro_spoken = false;
   function __unlockTTS(){
@@ -268,9 +267,9 @@
     if (speakToggle){ speakToggle.checked = false; speakToggle.disabled = true; speakToggle.title = 'Text-to-speech not supported in this browser.'; }
   }
 
-  // ==== Voice Input (Web Speech API) with mic keep-alive
+  // ==== Voice Input (keep mic + SR alive; toggle listening only)
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-  var rec = null, recActive = false, micPrimed = false, micStream = null;
+  var rec = null, srRunning = false, listenEnabled = false, micPrimed = false, micStream = null;
 
   function ensureRecognizer(){
     if (!SR) return null;
@@ -279,8 +278,9 @@
     rec.lang = 'en-US';
     rec.interimResults = true;
     rec.maxAlternatives = 1;
-    rec.continuous = true; // keep running until user stops
+    rec.continuous = true; // keep running
     rec.onresult = function(ev){
+      if (!listenEnabled) return; // ignore when "muted"
       var full = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++){
         full += ev.results[i][0].transcript;
@@ -289,65 +289,59 @@
     };
     rec.onerror = function(e){
       console.warn('STT error', e && e.error);
-      recActive = false;
-      if (micBtn) micBtn.textContent = 'Mic';
+      // don't flip srRunning; just let onend restart if needed
     };
     rec.onend = function(){
-      if (recActive) {
+      // Keep SR alive if we've started it at least once
+      if (srRunning) {
         try { rec.start(); } catch(e){}
-      } else {
-        if (micBtn) micBtn.textContent = 'Mic';
       }
     };
     return rec;
   }
 
-  // Keep mic stream open once per session (prevents repeated prompts)
+  // Keep mic stream OPEN for session (prevents repeated prompts)
   function warmupOnce(){
     if (micPrimed) return Promise.resolve();
     micPrimed = true;
-
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve();
-
     return navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true
-      }
+      audio: { echoCancellation: true, noiseSuppression: true }
     })
     .then(function(stream){
-      micStream = stream; // KEEP IT OPEN for the session
-      // Attach to hidden audio so Chrome registers active capture
+      micStream = stream; // keep alive
       try {
         var a = document.createElement('audio');
-        a.autoplay = true;
-        a.muted = true;
-        a.srcObject = stream;
-        a.style.display = 'none';
+        a.autoplay = true; a.muted = true;
+        a.srcObject = stream; a.style.display = 'none';
         document.body.appendChild(a);
       } catch(e){}
     })
     .catch(function(err){
       console.warn('mic warmup failed', err);
-      micPrimed = false; // allow retry if user changes permission
+      micPrimed = false; // allow retry if user fixes permission
     });
+  }
+
+  function setMicUI(){
+    if (!micBtn) return;
+    micBtn.textContent = listenEnabled ? 'Listening' : 'Mic';
   }
 
   function toggleMic(){
     if (!SR){ alert('Speech recognition not supported in this browser.'); return; }
     var r = ensureRecognizer(); if (!r) return;
 
-    // Do the (one-time) permission inside this click to keep it a user gesture
+    // First click: request mic and start SR; subsequent clicks: just toggle listen flag.
     var warm = warmupOnce();
-    warm.finally(function go(){
-      if (!recActive){
-        try { recActive = true; r.start(); if (micBtn) micBtn.textContent = 'Stop'; }
-        catch(e){ console.warn('start failed', e); }
+    warm.finally(function(){
+      if (!srRunning){
+        try { r.start(); srRunning = true; } catch(e){ console.warn('start failed', e); }
+        listenEnabled = true; // first click turns listening ON
       } else {
-        recActive = false;
-        try { r.stop(); } catch(e){ console.warn('stop failed', e); }
+        listenEnabled = !listenEnabled; // toggle "mute"
       }
-      // Do NOT speak the intro here; intro is handled once by __unlockTTS
+      setMicUI();
     });
   }
   if (micBtn) micBtn.addEventListener('click', toggleMic);
@@ -428,7 +422,7 @@
     return [{ role:'system', content:'You are Sophia, a mindfulness coach.' }].concat(messages);
   }
 
-  // Intro bubble on load (voice will queue until unlock)
+  // Intro bubble on load (voice queues until unlock)
   addMsg('Sophia', INTRO, 'sophia');
   speak(INTRO);
 
@@ -478,6 +472,7 @@
     speak(reply);
   }
 
+  if (sendBtn) sendUserMessage;
   if (sendBtn) sendBtn.addEventListener('click', sendUserMessage);
   if (promptInput){
     promptInput.addEventListener('keydown', function(e){

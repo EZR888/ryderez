@@ -168,7 +168,7 @@
 <script>
 (function(){
   'use strict';
-  console.log('[Mindfulness Coach] v3-liveSR');
+  console.log('[Mindfulness Coach] v3-liveSR + auto-mute (stable)');
 
   // ==== Elements
   var log = document.getElementById('log');
@@ -186,17 +186,21 @@
   var coachCtx = { flow: 'generic', step: 0, reason: '' };
   var INTRO = 'Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.';
 
-  // ==== Helpers
+  // SR / mic state (explicit defaults)
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  var rec = null, srRunning = false, listenEnabled = false, micPrimed = false, micStream = null;
+
+  // TTS state
+  var supportsTTS = (typeof window !== 'undefined') && window.speechSynthesis && window.SpeechSynthesisUtterance;
+  var selectedVoice = null;
+  var speaking = false;        // true while Sophia is talking
+  var restoreListen = null;    // remembers listen state while Sophia talks
+
+  // ==== Utils
   function esc(s){
     s = String(s == null ? '' : s);
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
             .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
-  if (whyInput && whyCount){
-    whyInput.addEventListener('input', function(){
-      try { whyCount.textContent = String(whyInput.value.length); } catch(e){}
-    });
   }
 
   function addMsg(by, text, role){
@@ -215,10 +219,24 @@
     return (nameInput && nameInput.value ? nameInput.value.trim() : '') || 'You';
   }
 
-  // ==== TTS (speak intro once after first user gesture)
-  var supportsTTS = (typeof window !== 'undefined') && window.speechSynthesis && window.SpeechSynthesisUtterance;
-  var selectedVoice = null;
+  // Character counter
+  if (whyInput && whyCount){
+    whyInput.addEventListener('input', function(){
+      try { whyCount.textContent = String(whyInput.value.length); } catch(e){}
+    });
+  }
 
+  // ==== Mic UI
+  function setMicUI(force){
+    if (!micBtn) return;
+    if (force) { micBtn.textContent = force; return; }
+    if (speaking) { micBtn.textContent = 'Speaking…'; return; }
+    micBtn.textContent = listenEnabled ? 'Listening' : 'Mic';
+  }
+  // Force known-good initial label
+  setMicUI('Mic');
+
+  // ==== TTS
   function pickVoice(){
     if (!supportsTTS) return;
     var voices = window.speechSynthesis.getVoices();
@@ -238,10 +256,31 @@
       if (selectedVoice) u.voice = selectedVoice;
       u.lang = (selectedVoice && selectedVoice.lang) ? selectedVoice.lang : 'en-US';
       u.rate = 1.0; u.pitch = 1.0;
+
+      // Auto-mute SR while Sophia speaks
+      speaking = true;
+      restoreListen = listenEnabled;
+      listenEnabled = false;
+      setMicUI();
+
+      u.onend = function(){
+        speaking = false;
+        if (restoreListen != null) listenEnabled = restoreListen;
+        restoreListen = null;
+        setMicUI();
+      };
+      u.onerror = function(){
+        speaking = false;
+        if (restoreListen != null) listenEnabled = restoreListen;
+        restoreListen = null;
+        setMicUI();
+      };
+
       window.speechSynthesis.speak(u);
     } catch(e){ console.warn('TTS error', e); }
   }
 
+  // Autoplay gate: speak intro once on first gesture
   window.__tts_unlocked = false;
   window.__intro_spoken = false;
   function __unlockTTS(){
@@ -267,10 +306,7 @@
     if (speakToggle){ speakToggle.checked = false; speakToggle.disabled = true; speakToggle.title = 'Text-to-speech not supported in this browser.'; }
   }
 
-  // ==== Voice Input (keep mic + SR alive; toggle listening only)
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-  var rec = null, srRunning = false, listenEnabled = false, micPrimed = false, micStream = null;
-
+  // ==== Speech Recognition (keep alive; toggle listening only)
   function ensureRecognizer(){
     if (!SR) return null;
     if (rec) return rec;
@@ -280,7 +316,7 @@
     rec.maxAlternatives = 1;
     rec.continuous = true; // keep running
     rec.onresult = function(ev){
-      if (!listenEnabled) return; // ignore when "muted"
+      if (!listenEnabled || speaking) return; // ignore while muted or speaking
       var full = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++){
         full += ev.results[i][0].transcript;
@@ -289,10 +325,9 @@
     };
     rec.onerror = function(e){
       console.warn('STT error', e && e.error);
-      // don't flip srRunning; just let onend restart if needed
+      // keep SR alive; onend will restart if needed
     };
     rec.onend = function(){
-      // Keep SR alive if we've started it at least once
       if (srRunning) {
         try { rec.start(); } catch(e){}
       }
@@ -323,18 +358,11 @@
     });
   }
 
-  function setMicUI(){
-    if (!micBtn) return;
-    micBtn.textContent = listenEnabled ? 'Listening' : 'Mic';
-  }
-
   function toggleMic(){
     if (!SR){ alert('Speech recognition not supported in this browser.'); return; }
     var r = ensureRecognizer(); if (!r) return;
 
-    // First click: request mic and start SR; subsequent clicks: just toggle listen flag.
-    var warm = warmupOnce();
-    warm.finally(function(){
+    warmupOnce().finally(function(){
       if (!srRunning){
         try { r.start(); srRunning = true; } catch(e){ console.warn('start failed', e); }
         listenEnabled = true; // first click turns listening ON
@@ -472,15 +500,16 @@
     speak(reply);
   }
 
-  if (sendBtn) sendUserMessage;
   if (sendBtn) sendBtn.addEventListener('click', sendUserMessage);
   if (promptInput){
     promptInput.addEventListener('keydown', function(e){
       if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendUserMessage(); }
     });
   }
+
 })();
 </script>
+
 
 </body>
 </html>

@@ -165,10 +165,10 @@
     </aside>
   </main>
 
-  <script>
+<script>
 (function(){
   'use strict';
-  console.log('[Mindfulness Coach] boot canned v3');
+  console.log('[Mindfulness Coach] boot canned v3-fix');
 
   // ==== Elements
   var log = document.getElementById('log');
@@ -178,23 +178,19 @@
   var whyInput = document.getElementById('why');
   var whyCount = document.getElementById('whyCount');
   var saveBtn = document.getElementById('saveBtn');
-  var modePill = document.getElementById('modePill');
   var speakToggle = document.getElementById('speakToggle');
   var micBtn = document.getElementById('micBtn');
 
   // ==== State
-  var messages = []; // history (not required for demo logic)
+  var messages = [];
   var coachCtx = { flow: 'generic', step: 0, reason: '' };
+  var INTRO = 'Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.';
 
-  // ==== Helpers (ASCII only)
+  // ==== Helpers
   function esc(s){
     s = String(s == null ? '' : s);
-    s = s.replace(/&/g,'&amp;');
-    s = s.replace(/</g,'&lt;');
-    s = s.replace(/>/g,'&gt;');
-    s = s.replace(/"/g,'&quot;');
-    s = s.replace(/'/g,'&#39;');
-    return s;
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   if (whyInput && whyCount){
@@ -219,20 +215,19 @@
     return (nameInput && nameInput.value ? nameInput.value.trim() : '') || 'You';
   }
 
-  // ==== TTS (simple)
+  // ==== TTS
   var supportsTTS = (typeof window !== 'undefined') && window.speechSynthesis && window.SpeechSynthesisUtterance;
   var selectedVoice = null;
 
   function pickVoice(){
     if (!supportsTTS) return;
     var voices = window.speechSynthesis.getVoices();
-    selectedVoice = voices[0] || null; // keep simple
+    selectedVoice = voices[0] || null;
   }
 
   function speak(text){
     if (!supportsTTS || !speakToggle || !speakToggle.checked) return;
     if (!window.__tts_unlocked) {
-      // Queue until first user gesture unlocks speech
       window.__tts_queue = window.__tts_queue || [];
       window.__tts_queue.push(String(text || ''));
       return;
@@ -247,8 +242,9 @@
     } catch(e){ console.warn('TTS error', e); }
   }
 
-  // Unlock speech on first user gesture (Chrome autoplay policy)
+  // Autoplay gate: speak intro once on first gesture
   window.__tts_unlocked = false;
+  window.__intro_spoken = false;
   function __unlockTTS(){
     if (window.__tts_unlocked) return;
     window.__tts_unlocked = true;
@@ -256,18 +252,8 @@
     document.removeEventListener('keydown', __unlockTTS);
     try {
       var q = window.__tts_queue || [];
-      if (q.length) { speak(q[q.length - 1]); }
-      window.__tts_queue = [];
-    } catch(_){}
-    try { if (typeof primeMicOnce === 'function') { primeMicOnce(); } } catch(_){}
-  }{
-    if (window.__tts_unlocked) return;
-    window.__tts_unlocked = true;
-    document.removeEventListener('pointerdown', __unlockTTS);
-    document.removeEventListener('keydown', __unlockTTS);
-    try {
-      var q = window.__tts_queue || [];
-      if (q.length) { speak(q[q.length - 1]); }
+      var line = q.length ? q[q.length - 1] : (!window.__intro_spoken ? INTRO : '');
+      if (line) { speak(line); window.__intro_spoken = true; }
       window.__tts_queue = [];
     } catch(_){}
   }
@@ -284,7 +270,8 @@
 
   // ==== Voice Input (Web Speech API)
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-  var rec = null; var recActive = false;
+  var rec = null, recActive = false, micPrimed = false;
+
   function ensureRecognizer(){
     if (!SR) return null;
     if (rec) return rec;
@@ -292,7 +279,7 @@
     rec.lang = 'en-US';
     rec.interimResults = true;
     rec.maxAlternatives = 1;
-    rec.continuous = true; // single permission, long session
+    rec.continuous = true;
     rec.onresult = function(ev){
       var full = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++){
@@ -300,7 +287,11 @@
       }
       if (promptInput) { promptInput.value = full; }
     };
-    rec.onerror = function(e){ console.warn('STT error', e && e.error); if (micBtn) micBtn.textContent = 'Mic'; recActive = false; };
+    rec.onerror = function(e){
+      console.warn('STT error', e && e.error);
+      recActive = false;
+      if (micBtn) micBtn.textContent = 'Mic';
+    };
     rec.onend = function(){
       if (recActive) {
         try { rec.start(); } catch(e){}
@@ -310,39 +301,37 @@
     };
     return rec;
   }
-  // Mic permission helpers
-  function queryMicPermission(){
-    if (!navigator.permissions || !navigator.permissions.query) return Promise.resolve('unknown');
-    try { return navigator.permissions.query({ name: 'microphone' }).then(function(p){ return p && p.state ? p.state : 'unknown'; }); }
-    catch(e){ return Promise.resolve('unknown'); }
-  }
-  function warmupMicPermission(){
+
+  // Only warm up the mic ONCE to avoid double prompts
+  function warmupOnce(){
+    if (micPrimed) return Promise.resolve();
+    micPrimed = true;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve();
-    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
-      try { (stream.getTracks()||[]).forEach(function(t){ t.stop(); }); } catch(e){}
-    }).catch(function(err){ console.warn('mic warmup failed', err); });
+    return navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream){
+        try { (stream.getTracks()||[]).forEach(function(t){ t.stop(); }); } catch(e){}
+      })
+      .catch(function(err){ console.warn('mic warmup failed', err); });
   }
-  function primeMicOnce(){
-    if (window.__micPrimed) return Promise.resolve();
-    return queryMicPermission().then(function(state){
-      if (state === 'granted') { window.__micPrimed = true; return; }
-      if (state === 'prompt') { return warmupMicPermission().then(function(){ window.__micPrimed = true; }); }
-    }).catch(function(){ /* ignore */ });
-  }
+
   function toggleMic(){
     if (!SR){ alert('Speech recognition not supported in this browser.'); return; }
     var r = ensureRecognizer(); if (!r) return;
-    function go(){
+
+    // Do the (one-time) permission inside this click to keep it a user gesture
+    var warm = warmupOnce();
+    warm.finally(function go(){
       if (!recActive){
-        try { recActive = true; r.start(); if (micBtn) micBtn.textContent = 'Stop'; } catch(e){ console.warn('start failed', e); }
+        try { recActive = true; r.start(); if (micBtn) micBtn.textContent = 'Stop'; }
+        catch(e){ console.warn('start failed', e); }
       } else {
         recActive = false;
         try { r.stop(); } catch(e){ console.warn('stop failed', e); }
       }
-    }
-    primeMicOnce().then(go);
+      // Do NOT speak the intro here; we only do it once via __unlockTTS
+    });
   }
-  if (micBtn) { micBtn.addEventListener('click', toggleMic); }
+  if (micBtn) micBtn.addEventListener('click', toggleMic);
 
   // ==== Demo brain (rule-based)
   function detectFlow(text){
@@ -355,8 +344,7 @@
   }
 
   function nextReply(){
-    var f = coachCtx.flow;
-    var s = coachCtx.step;
+    var f = coachCtx.flow, s = coachCtx.step;
     var flows = {
       generic: [
         'Let\'s start with 3 slow breaths: inhale 4, hold 1, exhale 6 - three times. Notice one sensation in the body. What changed?',
@@ -416,11 +404,11 @@
     return [{ role:'system', content:'You are Sophia, a mindfulness coach.' }].concat(messages);
   }
 
-  // ==== Greet on load
-  addMsg('Sophia', 'Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.', 'sophia');
-  speak('Hi, my name is Sophia and I will be guiding you through this mindfulness exercise.');
+  // Intro bubble on load (voice queued until unlock)
+  addMsg('Sophia', INTRO, 'sophia');
+  speak(INTRO);
 
-  // ==== Intake -> response
+  // Intake -> response
   if (saveBtn){
     saveBtn.addEventListener('click', function(){
       var practicedEl = document.querySelector('input[name="practiced"]:checked');
@@ -452,7 +440,7 @@
     });
   }
 
-  // ==== Chat -> response
+  // Chat -> response
   function sendUserMessage(){
     var val = (promptInput && promptInput.value) ? promptInput.value.trim() : '';
     if (!val) return;
@@ -474,5 +462,6 @@
   }
 })();
 </script>
+
 </body>
 </html>

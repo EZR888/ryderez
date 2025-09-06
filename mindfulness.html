@@ -168,7 +168,7 @@
 <script>
 (function(){
   'use strict';
-  console.log('[Mindfulness Coach] boot canned v3-fix');
+  console.log('[Mindfulness Coach] boot canned v3-keepalive');
 
   // ==== Elements
   var log = document.getElementById('log');
@@ -268,9 +268,9 @@
     if (speakToggle){ speakToggle.checked = false; speakToggle.disabled = true; speakToggle.title = 'Text-to-speech not supported in this browser.'; }
   }
 
-  // ==== Voice Input (Web Speech API)
+  // ==== Voice Input (Web Speech API) with mic keep-alive
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-  var rec = null, recActive = false, micPrimed = false;
+  var rec = null, recActive = false, micPrimed = false, micStream = null;
 
   function ensureRecognizer(){
     if (!SR) return null;
@@ -279,7 +279,7 @@
     rec.lang = 'en-US';
     rec.interimResults = true;
     rec.maxAlternatives = 1;
-    rec.continuous = true;
+    rec.continuous = true; // keep running until user stops
     rec.onresult = function(ev){
       var full = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++){
@@ -302,16 +302,35 @@
     return rec;
   }
 
-  // Only warm up the mic ONCE to avoid double prompts
+  // Keep mic stream open once per session (prevents repeated prompts)
   function warmupOnce(){
     if (micPrimed) return Promise.resolve();
     micPrimed = true;
+
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve();
-    return navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(function(stream){
-        try { (stream.getTracks()||[]).forEach(function(t){ t.stop(); }); } catch(e){}
-      })
-      .catch(function(err){ console.warn('mic warmup failed', err); });
+
+    return navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true
+      }
+    })
+    .then(function(stream){
+      micStream = stream; // KEEP IT OPEN for the session
+      // Attach to hidden audio so Chrome registers active capture
+      try {
+        var a = document.createElement('audio');
+        a.autoplay = true;
+        a.muted = true;
+        a.srcObject = stream;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+      } catch(e){}
+    })
+    .catch(function(err){
+      console.warn('mic warmup failed', err);
+      micPrimed = false; // allow retry if user changes permission
+    });
   }
 
   function toggleMic(){
@@ -328,10 +347,15 @@
         recActive = false;
         try { r.stop(); } catch(e){ console.warn('stop failed', e); }
       }
-      // Do NOT speak the intro here; we only do it once via __unlockTTS
+      // Do NOT speak the intro here; intro is handled once by __unlockTTS
     });
   }
   if (micBtn) micBtn.addEventListener('click', toggleMic);
+
+  // Cleanup mic on unload
+  window.addEventListener('beforeunload', function(){
+    try { if (micStream) { micStream.getTracks().forEach(function(t){ t.stop(); }); } } catch(e){}
+  });
 
   // ==== Demo brain (rule-based)
   function detectFlow(text){
@@ -404,7 +428,7 @@
     return [{ role:'system', content:'You are Sophia, a mindfulness coach.' }].concat(messages);
   }
 
-  // Intro bubble on load (voice queued until unlock)
+  // Intro bubble on load (voice will queue until unlock)
   addMsg('Sophia', INTRO, 'sophia');
   speak(INTRO);
 

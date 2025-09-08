@@ -961,6 +961,122 @@ function computeTrendingHotNumbers(weeks = 25, count = 12) {
   return ranked.map(e => e.n).sort((a, b) => a - b);
 }
 
+function computeSystemPicks(count = 12, weeks = 25) {
+  // 1) Prepare recent window (newest first)
+  const windowSize = Math.min(weeks, fullData.length);
+  const draws = fullData.slice(0, windowSize)
+    .map(r => r.slice(1).map(Number).filter(n => !isNaN(n)));
+
+  const split = Math.ceil(draws.length / 2);
+  const newer = draws.slice(0, split);
+  const older = draws.slice(split);
+
+  const fNew = Object.create(null), fOld = Object.create(null);
+  newer.forEach(d => d.forEach(n => fNew[n] = (fNew[n] || 0) + 1));
+  older.forEach(d => d.forEach(n => fOld[n] = (fOld[n] || 0) + 1));
+
+  // helper: current since (age) for a number
+  const sinceOf = n => Math.min(Math.max((sinceMap[n] || 26), 1), 26) - 1; // 0..25 index
+
+  // helper: skip-likelihood at current age for this number (normalized row)
+  function skipLikelihood(n) {
+    const row = (skipDataGlobal.skipTable[n] || []);
+    const total = row.reduce((a,b)=>a+(b||0), 0) || 1;
+    return (row[sinceOf(n)] || 0) / total; // fraction of its hits that occurred at this exact skip
+  }
+
+  // helper: combo compatibility (lower points is better)
+  function compatibilityScore(n, trials = 35) {
+    // sample sets that include n from a candidate pool (Hot ∪ Top ∪ recents)
+    const pool = new Set([
+      ...top18,
+      ...Object.keys(fNew).map(Number).filter(x => fNew[x] >= 1)
+    ]);
+    pool.delete(n);
+
+    const arr = Array.from(pool);
+    if (arr.length < 4) return 0; // not enough to evaluate
+
+    let sum = 0, used = 0;
+    for (let t = 0; t < trials; t++) {
+      // pick 4 partners + n, sort, score
+      const partners = arr.sort(()=>0.5-Math.random()).slice(0,4);
+      const set = [n, ...partners].sort((a,b)=>a-b);
+      sum += calculateRawPointsForSet(set);
+      used++;
+    }
+    const avg = sum / Math.max(used,1);
+    // convert to a positive bonus: lower avg points -> higher bonus
+    return -avg;
+  }
+
+  // Build candidate list (exclude PB-only mode)
+  const candidates = [];
+  for (let n = 1; n <= totalNumbersGlobal; n++) {
+    const recent = fNew[n] || 0;
+    const old    = fOld[n] || 0;
+    const trend  = recent - old;
+    const recFloor = Math.max(1, Math.round(split * 0.12)); // ~12% recent floor
+
+    // Skip tiny-signal blips
+    if (recent < recFloor && trend <= 0) continue;
+
+    const skipLik = skipLikelihood(n);
+    candidates.push({ n, recent, trend, skipLik });
+  }
+
+  // Precompute compatibility cheaply once per candidate
+  const compatMap = new Map();
+  candidates.forEach(c => compatMap.set(c.n, compatibilityScore(c.n)));
+
+  // Weights: tweak to taste
+  const W_RECENT = 2.0;
+  const W_TREND  = 1.0;
+  const W_SKIP   = 1.6;
+  const W_COMP   = 0.003; // compatibility is on the scale of points; keep small
+
+  // Normalize features so no single axis dominates
+  const maxRecent = Math.max(1, ...candidates.map(c => c.recent));
+  const maxTrend  = Math.max(1, ...candidates.map(c => Math.max(c.trend,0)));
+  const maxSkip   = Math.max(1e-6, ...candidates.map(c => c.skipLik));
+  const compVals  = candidates.map(c => compatMap.get(c.n));
+  const compMin   = Math.min(...compVals);
+  const compMax   = Math.max(...compVals);
+  const compSpan  = Math.max(1e-6, compMax - compMin);
+
+  // Score
+  candidates.forEach(c => {
+    const nzTrend = Math.max(c.trend, 0); // only positive trend helps
+    const compNorm = (compatMap.get(c.n) - compMin) / compSpan; // 0..1 (higher better)
+    c.score =
+      W_RECENT * (c.recent / maxRecent) +
+      W_TREND  * (nzTrend   / maxTrend)  +
+      W_SKIP   * (c.skipLik / maxSkip)   +
+      W_COMP   * compNorm;
+  });
+
+  // Always include Top ∩ Hot first (if available)
+  const hotList = Array.from(hotSet || []);
+  const hotSetLocal = new Set(hotList);
+  const mustInclude = new Set(top18.filter(n => hotSetLocal.has(n)));
+
+  // Rank, then assemble final list
+  const ranked = candidates
+    .sort((a,b) => (b.score - a.score) || (a.n - b.n))
+    .map(c => c.n);
+
+  const picks = [];
+  // 1) force include intersection
+  for (const n of mustInclude) if (!picks.includes(n)) picks.push(n);
+  // 2) top-up by best scores
+  for (const n of ranked) {
+    if (picks.length >= count) break;
+    if (!picks.includes(n)) picks.push(n);
+  }
+
+  // Ensure stable sort ascending for display
+  return picks.slice(0, count).sort((a,b)=>a-b);
+}
 
 
 function getTopNumbersByFrequency(weeks, count){
@@ -993,20 +1109,19 @@ function runSystemPicks(){
     alert('System Picks are not available in Powerball-only mode.');
     return;
   }
-
-  // If Hot is empty, seed it (uses trending if available; falls back to raw freq)
+  // Ensure Hot exists (used in the “must include” step)
   if (!hotSet || hotSet.size === 0){
     const weeks = Math.min(25, fullData.length);
     const count = 12;
-    const hotList = (typeof computeTrendingHotNumbers === 'function')
-      ? computeTrendingHotNumbers(weeks, count)
-      : getTopNumbersByFrequency(25, count);
-
-    hotSet = new Set(hotList);
+    hotSet = new Set(computeTrendingHotNumbers(weeks, count));
   }
 
-  // ✅ Picks = Hot
-  syncPicksToHot();
+  const weeks = Math.min(25, fullData.length);
+  const count = 12; // or 18 if you want a longer list
+  const picks = computeSystemPicks(count, weeks);
+
+  systemPicksSet = new Set(picks);
+  renderReverseHitsTable();
 }
 
 function drawHistogram(points) {

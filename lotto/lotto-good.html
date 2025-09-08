@@ -830,30 +830,11 @@ if (runAutoBtn) {
     const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
     const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-    // Build frequency map from the last `weeks` draws
-    const recentDraws = fullData.slice(0, weeks).map(row => row.slice(1).map(Number));
-    const freqMap = {};
-    recentDraws.forEach(draw => {
-      draw.forEach(num => {
-        if (!isNaN(num)) freqMap[num] = (freqMap[num] || 0) + 1;
-      });
-    });
+    // 🔥 Trending upward instead of raw frequency
+    const topNums = computeTrendingHotNumbers(weeks, count);
 
-    // Top `count` numbers by frequency
-    const topNums = Object.entries(freqMap)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, count)
-      .map(([num]) => parseInt(num, 10))
-      .sort((a, b) => a - b);
-
-    // 🔥 Update HOT column only (do not touch Top inputs / top18)
     hotSet = new Set(topNums);
-
-    // Repaint Hits table so the Hot column reflects the change
     renderReverseHitsTable();
-
-    // Optionally close the modal:
-    // document.getElementById('autoPickModal').style.display = 'none';
   });
 }
 
@@ -906,6 +887,44 @@ function computeTopHitsFromRecent(weeks = 25, count = 12) {
     .map(([n]) => parseInt(n,10))
     .sort((a,b)=>a-b);
 }
+
+function computeTrendingHotNumbers(weeks = 25, count = 12) {
+  const windowSize = Math.min(weeks, fullData.length);
+  if (!windowSize) return [];
+
+  // Newest-first slice (fullData[0] is latest)
+  const windowDraws = fullData
+    .slice(0, windowSize)
+    .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
+
+  const split = Math.ceil(windowDraws.length / 2);
+  const newer = windowDraws.slice(0, split);                 // most recent half
+  const older = windowDraws.slice(split);                    // earlier half
+
+  const fNew = {};
+  const fOld = {};
+
+  newer.forEach(draw => draw.forEach(n => fNew[n] = (fNew[n] || 0) + 1));
+  older.forEach(draw => draw.forEach(n => fOld[n] = (fOld[n] || 0) + 1));
+
+  const entries = [];
+  for (let n = 1; n <= totalNumbersGlobal; n++) {
+    const a = fNew[n] || 0;     // recent hits
+    const b = fOld[n] || 0;     // older hits
+    const trend = a - b;        // simple upward trend measure
+    entries.push({ n, trend, recent: a });
+  }
+
+  // Sort by trend desc, then recent desc, then number asc
+  entries.sort((x, y) =>
+    (y.trend - x.trend) ||
+    (y.recent - x.recent) ||
+    (x.n - y.n)
+  );
+
+  return entries.slice(0, count).map(e => e.n).sort((a, b) => a - b);
+}
+
 
 function getTopNumbersByFrequency(weeks, count){
   const w = Math.min(weeks, fullData.length);

@@ -289,6 +289,8 @@ h3{margin:0 0 15px;color: gold}
   font-family: 'Comic Sans MS', cursive;
 }
 
+ .green-dot{
+    width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32;
 
   </style>
 </head>
@@ -408,6 +410,12 @@ h3{margin:0 0 15px;color: gold}
 <button id="quick12Button" class="button button-single" style="display:none">
   ⚡ 12‑Number Quick
 </button>
+
+<button id="systemPicksButton" class="button button-single" style="display:none">
+  🤖 System Picks
+</button>
+
+
 
 <br>
 	    
@@ -556,6 +564,8 @@ h3{margin:0 0 15px;color: gold}
 
 <script>
 
+let systemPicks = new Set();  // ✅ holds numbers to show in the "Picks" column
+
 let latestDrawingNumber = null;
 let fullData = [];
 let top18 = [];
@@ -605,6 +615,7 @@ btn69.onclick = () => {
     hidePBblock();
 	qs('#generateWheelButton').style.display = 'inline-block';
     qs('#quick12Button').style.display = 'none';
+    qs('#systemPicksButton').style.display = 'inline-block';   // ⬅️ add this
     qs('#checkNumbersButton').style.display = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
@@ -642,7 +653,9 @@ btn1.onclick = () => {
   qs('#generateWheelButton').style.display = 'none';
   qs('#checkNumbersButton').style.display = 'none';
   document.getElementById('showHistogramBtn').style.display = 'none';
-
+  qs('#quick12Button').style.display = 'none';
+  qs('#systemPicksButton').style.display = 'none';   
+ 
   const checkPBSpan = document.getElementById('checkPBSpan');
   if (checkPBSpan) checkPBSpan.style.display = 'none';
 
@@ -658,6 +671,10 @@ btn1.onclick = () => {
   document.getElementById('saveTop18Button').style.display = 'none';
   document.getElementById('loadTop18Button').style.display = 'none';
   document.getElementById('top18Label').style.display = 'none';
+  
+  document.getElementById('systemPicksButton')
+  .addEventListener('click', runSystemPicks);
+
 
   // ✅ Load the 1-number data fresh
   loadCSVFile('lotto_1.txt', 26, () => {
@@ -696,6 +713,7 @@ btn39.onclick = () => {
     highlight(btn39);
     qs('#generateWheelButton').style.display = 'inline-block';
     qs('#quick12Button').style.display = 'inline-block';
+    qs('#systemPicksButton').style.display = 'inline-block';   // ⬅️ add this
     qs('#checkNumbersButton').style.display = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
@@ -862,6 +880,132 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Holds current System Picks result
+let systemPicksSet = new Set();
+
+// Grab the first 12 values from the Top Numbers inputs (left side of the red divider)
+function getTopSkipsFromInputs(limit = 12) {
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => !isNaN(n));
+  return nums.slice(0, limit).sort((a,b)=>a-b);
+}
+
+// Replicates the Auto-Pick logic (weeks=25, top 12) to produce "topHits"
+function computeTopHitsFromRecent(weeks = 25, count = 12) {
+  if (!fullData || !fullData.length) return [];
+  const recentDraws = fullData.slice(0, Math.min(weeks, fullData.length))
+    .map(row => row.slice(1).map(Number));
+
+  const freq = {};
+  recentDraws.forEach(draw => {
+    draw.forEach(n => {
+      if (!isNaN(n)) freq[n] = (freq[n] || 0) + 1;
+    });
+  });
+
+  return Object.entries(freq)
+    .sort((a,b)=> b[1]-a[1])
+    .slice(0, count)
+    .map(([n]) => parseInt(n,10))
+    .sort((a,b)=>a-b);
+}
+
+// Main button action
+function runSystemPicks() {
+  // 1) Top 12 from Top Numbers inputs → topSkips
+  const topSkips = getTopSkipsFromInputs(12);
+
+  // 2) Auto-Pick Top Numbers programmatically for 25 drawings → topHits (12 numbers)
+  const topHits  = computeTopHitsFromRecent(25, 12);
+
+  // 3) Intersection
+  const hitsSet  = new Set(topHits);
+  const common   = topSkips.filter(n => hitsSet.has(n));
+
+  // 4) Find numbers NOT in either array, then keep ones adjacent to a topHit
+  const inEither = new Set([...topSkips, ...topHits]);
+  const maxN     = totalNumbersGlobal; // 69 for PB, 39 for Fantasy 5, etc.
+  const notInEither = [];
+  for (let n = 1; n <= maxN; n++) {
+    if (!inEither.has(n)) notInEither.push(n);
+  }
+  const adjacencyAdd = notInEither.filter(n =>
+    hitsSet.has(n - 1) || hitsSet.has(n + 1)
+  );
+
+  // 5) Final System Picks = { common ∪ adjacent-to-topHits (from outside) }
+  systemPicksSet = new Set([...common, ...adjacencyAdd]);
+
+  // 6) Re-render the Hits table so the "Picks" column shows the result
+  renderReverseHitsTable();
+}
+
+
+
+function getTopNumbersByFrequency(weeks, count){
+  const w = Math.min(weeks, fullData.length);
+  const recentDraws = fullData.slice(0, w)
+    .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
+
+  const freq = {};
+  recentDraws.forEach(draw => draw.forEach(n => { freq[n] = (freq[n] || 0) + 1; }));
+
+  return Object.entries(freq)
+    .sort((a,b) => (b[1]-a[1]) || (parseInt(a[0]) - parseInt(b[0])))
+    .slice(0, count)
+    .map(([n]) => parseInt(n, 10))
+    .sort((a,b) => a - b);
+}
+
+function readTopSkips12(){
+  // first 12 inputs in Top Numbers strip (left of the red divider)
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const first12 = inputs.slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => !isNaN(n));
+  // de-dup + sorted
+  return Array.from(new Set(first12)).sort((a,b) => a - b);
+}
+
+function runSystemPicks(){
+  // Not meaningful in 26-ball “PB-only” mode
+  if (totalNumbersGlobal === 26){
+    alert('System Picks are not available in Powerball-only mode.');
+    return;
+  }
+
+  // A) topSkips = 12 numbers from the Top Numbers fields
+  const topSkips = readTopSkips12();
+
+  // B) topHits = Auto-Pick result for last 25 drawings, Top-12
+  const topHits = getTopNumbersByFrequency(25, 12);
+
+  const topSkipsSet = new Set(topSkips);
+  const topHitsSet  = new Set(topHits);
+
+  // C) Common numbers between the two arrays
+  const common = topSkips.filter(n => topHitsSet.has(n));
+
+  // D) Universe 1..N (N = 58 or 69 or 39 depending on game) – we use the active pool size
+  //    If your 58-ball game is used, totalNumbersGlobal should already be 58 when loaded.
+  const N = totalNumbersGlobal;
+
+  // E) Numbers NOT in either array
+  const neither = [];
+  for (let n = 1; n <= N; n++){
+    if (!topSkipsSet.has(n) && !topHitsSet.has(n)) neither.push(n);
+  }
+
+  // F) From those, keep only the ones adjacent (±1) to a number in topHits
+  const adjacents = neither.filter(n => topHitsSet.has(n - 1) || topHitsSet.has(n + 1));
+
+  // G) Final set = common ∪ adjacents
+  systemPicks = new Set([...common, ...adjacents]);
+
+  // Update the table so the new “Picks” column shows dots
+  renderReverseHitsTable();
+}
 
 
 function drawHistogram(points) {
@@ -1615,6 +1759,10 @@ document.getElementById('quick12Button').addEventListener('click', function () {
     document.getElementById('modalSetCountChoice').style.display = 'none';
     document.getElementById('modalBestSetCount').style.display = 'none';
     document.getElementById('exportBestBtn').style.display = 'none';
+    document.getElementById('systemPicksButton')
+  .addEventListener('click', runSystemPicks);
+
+
     document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
 
     // Build fixed sets and score them
@@ -2501,6 +2649,8 @@ function renderReverseHitsTable() {
   container.innerHTML = '';
 
   const table = document.createElement('table');
+
+  // Header: 25..1 + "Top" + "Picks"
   const headerRow = document.createElement('tr');
   headerRow.appendChild(document.createElement('th'));
   for (let i = 25; i >= 1; i--) {
@@ -2509,9 +2659,12 @@ function renderReverseHitsTable() {
     headerRow.appendChild(th);
   }
   headerRow.appendChild(document.createElement('th')).textContent = 'Top';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';   // ⬅️ NEW
   table.appendChild(headerRow);
 
-  const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
+  const draws = fullData
+    .map(row => row.slice(1).map(n => parseInt(n, 10)))
+    .slice(0, 25);
 
   for (let number = 1; number <= totalNumbersGlobal; number++) {
     const row = document.createElement('tr');
@@ -2529,13 +2682,24 @@ function renderReverseHitsTable() {
       row.appendChild(cell);
     }
 
-const topCell = document.createElement('td');
-if (totalNumbersGlobal !== 26 && top18.includes(number)) {
-    const dot = document.createElement('div');
-    dot.className = 'orange-dot';
-    topCell.appendChild(dot);
-}
-row.appendChild(topCell);
+    // Top column (existing)
+    const topCell = document.createElement('td');
+    if (totalNumbersGlobal !== 26 && top18.includes(number)) {
+      const dot = document.createElement('div');
+      dot.className = 'orange-dot';
+      topCell.appendChild(dot);
+    }
+    row.appendChild(topCell);
+
+    // Picks column (NEW) — use the blue dot style you already defined
+    const picksCell = document.createElement('td');
+    if (systemPicksSet && systemPicksSet.has(number)) {
+      const b = document.createElement('div');
+      b.className = 'blue-dot';
+      picksCell.appendChild(b);
+    }
+    row.appendChild(picksCell);
+
     table.appendChild(row);
   }
 

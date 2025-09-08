@@ -946,36 +946,41 @@ function runSystemPicks(){
     return;
   }
 
-  // A) topSkips = 12 numbers from the Top Numbers fields
+  // A) topSkips = first 12 values from Top Numbers inputs
   const topSkips = readTopSkips12();
 
   // B) topHits = Auto-Pick result for last 25 drawings, Top-12
   const topHits = getTopNumbersByFrequency(25, 12);
 
+  const N = totalNumbersGlobal;
+
   const topSkipsSet = new Set(topSkips);
   const topHitsSet  = new Set(topHits);
 
-  // C) Common numbers between the two arrays
+  // C) Intersection (comparison output)
   const common = topSkips.filter(n => topHitsSet.has(n));
 
-  // D) Universe 1..N
-  const N = totalNumbersGlobal;
-
-  // E) Numbers NOT in either array
-  const neither = [];
+  // D) All numbers NOT in the comparison output (i.e., not in 'common')
+  const commonSet = new Set(common);
+  const notCommon = [];
   for (let n = 1; n <= N; n++){
-    if (!topSkipsSet.has(n) && !topHitsSet.has(n)) neither.push(n);
+    if (!commonSet.has(n)) notCommon.push(n);
   }
 
-  // F) From those, keep only the ones adjacent (±1) to a number in topHits
-  const adjacents = neither.filter(n => topHitsSet.has(n - 1) || topHitsSet.has(n + 1));
+  // E) Neighbors of every number in notCommon (bounded to 1..N)
+  const neighborSet = new Set();
+  for (const y of notCommon){
+    if (y - 1 >= 1) neighborSet.add(y - 1);
+    if (y + 1 <= N) neighborSet.add(y + 1);
+  }
 
-  // G) Final set = common ∪ adjacents  ✅ WRITE TO systemPicksSet
-  systemPicksSet = new Set([...common, ...adjacents]);
+  // F) Final Picks = common ∪ neighbors-of-notCommon
+  systemPicksSet = new Set([...common, ...neighborSet]);
 
-  // H) Re-render
+  // G) Re-render to show green dots in “Picks” column
   renderReverseHitsTable();
 }
+
 
 function drawHistogram(points) {
   const maxToShow = 500;

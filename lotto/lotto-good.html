@@ -671,10 +671,6 @@ btn1.onclick = () => {
   document.getElementById('saveTop18Button').style.display = 'none';
   document.getElementById('loadTop18Button').style.display = 'none';
   document.getElementById('top18Label').style.display = 'none';
-  
-  document.getElementById('systemPicksButton')
-  .addEventListener('click', runSystemPicks);
-
 
   // ✅ Load the 1-number data fresh
   loadCSVFile('lotto_1.txt', 26, () => {
@@ -878,6 +874,13 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('autoPickModal').style.display = 'block';
     });
   }
+  
+    // ✅ Attach System Picks button once
+  const sysBtn = document.getElementById('systemPicksButton');
+  if (sysBtn) {
+    sysBtn.addEventListener('click', runSystemPicks);
+  }
+
 });
 
 // Holds current System Picks result
@@ -910,38 +913,6 @@ function computeTopHitsFromRecent(weeks = 25, count = 12) {
     .map(([n]) => parseInt(n,10))
     .sort((a,b)=>a-b);
 }
-
-// Main button action
-function runSystemPicks() {
-  // 1) Top 12 from Top Numbers inputs → topSkips
-  const topSkips = getTopSkipsFromInputs(12);
-
-  // 2) Auto-Pick Top Numbers programmatically for 25 drawings → topHits (12 numbers)
-  const topHits  = computeTopHitsFromRecent(25, 12);
-
-  // 3) Intersection
-  const hitsSet  = new Set(topHits);
-  const common   = topSkips.filter(n => hitsSet.has(n));
-
-  // 4) Find numbers NOT in either array, then keep ones adjacent to a topHit
-  const inEither = new Set([...topSkips, ...topHits]);
-  const maxN     = totalNumbersGlobal; // 69 for PB, 39 for Fantasy 5, etc.
-  const notInEither = [];
-  for (let n = 1; n <= maxN; n++) {
-    if (!inEither.has(n)) notInEither.push(n);
-  }
-  const adjacencyAdd = notInEither.filter(n =>
-    hitsSet.has(n - 1) || hitsSet.has(n + 1)
-  );
-
-  // 5) Final System Picks = { common ∪ adjacent-to-topHits (from outside) }
-  systemPicksSet = new Set([...common, ...adjacencyAdd]);
-
-  // 6) Re-render the Hits table so the "Picks" column shows the result
-  renderReverseHitsTable();
-}
-
-
 
 function getTopNumbersByFrequency(weeks, count){
   const w = Math.min(weeks, fullData.length);
@@ -987,8 +958,7 @@ function runSystemPicks(){
   // C) Common numbers between the two arrays
   const common = topSkips.filter(n => topHitsSet.has(n));
 
-  // D) Universe 1..N (N = 58 or 69 or 39 depending on game) – we use the active pool size
-  //    If your 58-ball game is used, totalNumbersGlobal should already be 58 when loaded.
+  // D) Universe 1..N
   const N = totalNumbersGlobal;
 
   // E) Numbers NOT in either array
@@ -1000,13 +970,12 @@ function runSystemPicks(){
   // F) From those, keep only the ones adjacent (±1) to a number in topHits
   const adjacents = neither.filter(n => topHitsSet.has(n - 1) || topHitsSet.has(n + 1));
 
-  // G) Final set = common ∪ adjacents
-  systemPicks = new Set([...common, ...adjacents]);
+  // G) Final set = common ∪ adjacents  ✅ WRITE TO systemPicksSet
+  systemPicksSet = new Set([...common, ...adjacents]);
 
-  // Update the table so the new “Picks” column shows dots
+  // H) Re-render
   renderReverseHitsTable();
 }
-
 
 function drawHistogram(points) {
   const maxToShow = 500;
@@ -1759,9 +1728,6 @@ document.getElementById('quick12Button').addEventListener('click', function () {
     document.getElementById('modalSetCountChoice').style.display = 'none';
     document.getElementById('modalBestSetCount').style.display = 'none';
     document.getElementById('exportBestBtn').style.display = 'none';
-    document.getElementById('systemPicksButton')
-  .addEventListener('click', runSystemPicks);
-
 
     document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
 
@@ -2691,13 +2657,13 @@ function renderReverseHitsTable() {
     }
     row.appendChild(topCell);
 
-    // Picks column (NEW) — use the blue dot style you already defined
-    const picksCell = document.createElement('td');
-    if (systemPicksSet && systemPicksSet.has(number)) {
-      const b = document.createElement('div');
-      b.className = 'blue-dot';
-      picksCell.appendChild(b);
-    }
+const picksCell = document.createElement('td');
+if (systemPicksSet && systemPicksSet.has(number)) {
+  const b = document.createElement('div');
+  b.className = 'green-dot';
+  picksCell.appendChild(b);
+}
+
     row.appendChild(picksCell);
 
     table.appendChild(row);

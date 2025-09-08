@@ -289,8 +289,6 @@ h3{margin:0 0 15px;color: gold}
   font-family: 'Comic Sans MS', cursive;
 }
 
-  .green-dot { width:14px; height:14px; border-radius:50%; margin:auto; background:#32cd32; }
-
 
   </style>
 </head>
@@ -410,10 +408,6 @@ h3{margin:0 0 15px;color: gold}
 <button id="quick12Button" class="button button-single" style="display:none">
   ⚡ 12‑Number Quick
 </button>
-<button id="systemPicksButton" class="button button-single" style="display:inline-block">
-  🤖 System Picks
-</button>
-
 
 <br>
 	    
@@ -561,10 +555,6 @@ h3{margin:0 0 15px;color: gold}
 </div>
 
 <script>
-
-let systemPicksSet = new Set();   // picks to paint in table (green dots)
-let topSkips = [];                // 12 from “Top Numbers” inputs
-let topHits  = [];                // 12 from Auto-Pick (25 drawings)
 
 let latestDrawingNumber = null;
 let fullData = [];
@@ -872,51 +862,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function readTopNumbersInputs(limit = 12) {
-  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
-    .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(n => !isNaN(n) && n >= 1);
-  return nums.slice(0, limit).sort((a,b)=>a-b);
-}
-
-function writeTopNumbersInputs(nums) {
-  const wrap = document.getElementById('top18Inputs');
-  let inputs = Array.from(wrap.querySelectorAll('input'));
-  while (inputs.length < 12) {
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    wrap.appendChild(inp);
-    inputs.push(inp);
-  }
-  for (let i = 0; i < 12; i++) inputs[i].value = nums[i] ?? '';
-}
-
-function computeTopHitsByFrequency(weeks = 25, count = 12) {
-  if (!fullData || !fullData.length) return [];
-  const recentDraws = fullData.slice(0, Math.min(weeks, 25))
-    .map(row => row.slice(1).map(Number))
-    .filter(arr => arr.every(n => !isNaN(n)));
-  const freq = {};
-  recentDraws.forEach(draw => draw.forEach(n => freq[n] = (freq[n] || 0) + 1));
-  return Object.entries(freq)
-    .sort((a,b) => b[1]-a[1])
-    .slice(0, count)
-    .map(([n]) => parseInt(n,10))
-    .sort((a,b)=>a-b);
-}
-
-function numbersNotInEither(poolMax, a, b) {
-  const inA = new Set(a), inB = new Set(b);
-  const out = [];
-  for (let n = 1; n <= poolMax; n++) {
-    if (!inA.has(n) && !inB.has(n)) out.push(n);
-  }
-  return out;
-}
-
-function hasAdjacentInSet(n, set) {
-  return set.has(n-1) || set.has(n+1);
-}
 
 
 function drawHistogram(points) {
@@ -2287,54 +2232,6 @@ window.addEventListener('click', function (event) {
     }
 });
 
-document.getElementById('systemPicksButton')?.addEventListener('click', () => {
-  const poolMax = totalNumbersGlobal; // 39 or 69
-
-  // 1) Read 12 from Top inputs
-  topSkips = readTopNumbersInputs(12);
-
-  // 2) Compute Auto-Pick silently (weeks=25, Top 12)
-  topHits = computeTopHitsByFrequency(25, 12);
-
-  // Guidance if missing inputs or data
-  if (topSkips.length === 0 || topHits.length === 0) {
-    alert(
-      "System Picks needs:\n" +
-      "• Top Numbers filled (topSkips) AND\n" +
-      "• Auto-Pick results (topHits)\n\n" +
-      "Tip: Click “Auto-Pick Top Numbers”, set Number of Drawings (25), select ‘Top 12’, then Generate."
-    );
-    return;
-  }
-
-  // 3) Numbers NOT in either list
-  const notInEither = numbersNotInEither(poolMax, topSkips, topHits);
-
-  // 4) Keep only ones adjacent to a topHit
-  const topHitsSet = new Set(topHits);
-  const picks = notInEither.filter(n => hasAdjacentInSet(n, topHitsSet)).sort((a,b)=>a-b);
-
-  // 5) Persist for table (green dots)
-  systemPicksSet = new Set(picks);
-
-  // 6) Write picks into Top inputs (cap 12; pad with topHits then topSkips)
-  const chosen = [];
-  for (const n of picks) { if (chosen.length >= 12) break; chosen.push(n); }
-  if (chosen.length < 12) for (const n of topHits)  { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  if (chosen.length < 12) for (const n of topSkips) { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  chosen.sort((a,b)=>a-b);
-
-  writeTopNumbersInputs(chosen);
-  top18 = [...chosen];
-  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) top18From69 = [...chosen];
-
-  // repaint
-  renderReverseHitsTable();
-  renderSkipFrequency();
-  rehighlightSkipTableFromTop18();
-});
-
-
 function saveGeneratedSetsToText() {
     if (!generatedSets.length) {
         alert("No generated sets to save!");
@@ -2612,7 +2509,6 @@ function renderReverseHitsTable() {
     headerRow.appendChild(th);
   }
   headerRow.appendChild(document.createElement('th')).textContent = 'Top';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
   table.appendChild(headerRow);
 
   const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
@@ -2633,24 +2529,13 @@ function renderReverseHitsTable() {
       row.appendChild(cell);
     }
 
-    // Top (orange dot)
-    const topCell = document.createElement('td');
-    if (totalNumbersGlobal !== 26 && top18.includes(number)) {
-      const dot = document.createElement('div');
-      dot.className = 'orange-dot';
-      topCell.appendChild(dot);
-    }
-    row.appendChild(topCell);
-
-    // Picks (green dot)
-    const picksCell = document.createElement('td');
-    if (systemPicksSet.has(number)) {
-      const g = document.createElement('div');
-      g.className = 'green-dot';
-      picksCell.appendChild(g);
-    }
-    row.appendChild(picksCell);
-
+const topCell = document.createElement('td');
+if (totalNumbersGlobal !== 26 && top18.includes(number)) {
+    const dot = document.createElement('div');
+    dot.className = 'orange-dot';
+    topCell.appendChild(dot);
+}
+row.appendChild(topCell);
     table.appendChild(row);
   }
 

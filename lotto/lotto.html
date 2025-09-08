@@ -878,19 +878,6 @@ function readTopNumbersInputs(limit = 12) {
     .filter(n => !isNaN(n) && n >= 1);
   return nums.slice(0, limit).sort((a,b)=>a-b);
 }
-
-function writeTopNumbersInputs(nums) {
-  const wrap = document.getElementById('top18Inputs');
-  let inputs = Array.from(wrap.querySelectorAll('input'));
-  while (inputs.length < 12) {
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    wrap.appendChild(inp);
-    inputs.push(inp);
-  }
-  for (let i = 0; i < 12; i++) inputs[i].value = nums[i] ?? '';
-}
-
 function computeTopHitsByFrequency(weeks = 25, count = 12) {
   if (!fullData || !fullData.length) return [];
   const recentDraws = fullData.slice(0, Math.min(weeks, 25))
@@ -904,7 +891,6 @@ function computeTopHitsByFrequency(weeks = 25, count = 12) {
     .map(([n]) => parseInt(n,10))
     .sort((a,b)=>a-b);
 }
-
 function numbersNotInEither(poolMax, a, b) {
   const inA = new Set(a), inB = new Set(b);
   const out = [];
@@ -914,9 +900,6 @@ function numbersNotInEither(poolMax, a, b) {
   return out;
 }
 
-function hasAdjacentInSet(n, set) {
-  return set.has(n-1) || set.has(n+1);
-}
 
 
 function drawHistogram(points) {
@@ -2290,48 +2273,38 @@ window.addEventListener('click', function (event) {
 document.getElementById('systemPicksButton')?.addEventListener('click', () => {
   const poolMax = totalNumbersGlobal; // 39 or 69
 
-  // 1) Read 12 from Top inputs
+  // 1) Read Skips (first 12 inputs)
   topSkips = readTopNumbersInputs(12);
 
-  // 2) Compute Auto-Pick silently (weeks=25, Top 12)
+  // 2) Compute Hits (25 drawings, Top 12) — same logic as Auto-Pick
   topHits = computeTopHitsByFrequency(25, 12);
 
-  // Guidance if missing inputs or data
-  if (topSkips.length === 0 || topHits.length === 0) {
+  if (!topSkips.length || !topHits.length) {
     alert(
       "System Picks needs:\n" +
-      "• Top Numbers filled (topSkips) AND\n" +
-      "• Auto-Pick results (topHits)\n\n" +
-      "Tip: Click “Auto-Pick Top Numbers”, set Number of Drawings (25), select ‘Top 12’, then Generate."
+      "• Skips present in the inputs AND\n" +
+      "• Auto-Pick results (Top 12 from last 25 drawings)\n\n" +
+      "Run “Auto-Pick Top Numbers”, set Number of Drawings to 25 and Top 12, then try again."
     );
     return;
   }
 
-  // 3) Numbers NOT in either list
+  // 3) Numbers NOT in either Skips or Hits
   const notInEither = numbersNotInEither(poolMax, topSkips, topHits);
 
-  // 4) Keep only ones adjacent to a topHit
-  const topHitsSet = new Set(topHits);
-  const picks = notInEither.filter(n => hasAdjacentInSet(n, topHitsSet)).sort((a,b)=>a-b);
+  // 4) Keep only those with an adjacent IN HITS (list 2) — not union
+  const hitsSet = new Set(topHits);
+  const picks = notInEither.filter(n => hitsSet.has(n-1) || hitsSet.has(n+1)).sort((a,b)=>a-b);
 
-  // 5) Persist for table (green dots)
+  // 5) Paint green dots in the Picks column
   systemPicksSet = new Set(picks);
 
-  // 6) Write picks into Top inputs (cap 12; pad with topHits then topSkips)
-  const chosen = [];
-  for (const n of picks) { if (chosen.length >= 12) break; chosen.push(n); }
-  if (chosen.length < 12) for (const n of topHits)  { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  if (chosen.length < 12) for (const n of topSkips) { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  chosen.sort((a,b)=>a-b);
+  // Optional: print the picks for sanity check
+  console.log("System Picks:", picks.join(', '));
 
-  writeTopNumbersInputs(chosen);
-  top18 = [...chosen];
-  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) top18From69 = [...chosen];
-
-  // repaint
+  // 6) Re-render tables; DO NOT touch the Skips inputs or top18
   renderReverseHitsTable();
-  renderSkipFrequency();
-  rehighlightSkipTableFromTop18();
+  rehighlightSkipTableFromTop18(); // keeps your highlight styling intact
 });
 
 
@@ -2611,7 +2584,7 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Top';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
   headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
   table.appendChild(headerRow);
 

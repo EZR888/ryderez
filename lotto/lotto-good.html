@@ -2684,22 +2684,29 @@ function renderReverseHitsTable() {
 
 
 function updateReverseHitsTop18() {
+  // Refresh the top18 from current input values (all inputs)
+  const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  top18 = top18Inputs
+    .map(input => parseInt(input.value.trim(), 10))
+    .filter(x => !isNaN(x) && x >= 1)
+    .sort((a, b) => a - b);
 
-    // Refresh the top18 from current input values
-    const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-    top18 = top18Inputs.map(input => parseInt(input.value.trim(), 10))
-                       .filter(x => !isNaN(x) && x >= 1)
-                       .sort((a, b) => a - b);
+  // 🟢 NEW: Update the Picks column to mirror the FIRST 12 inputs
+  // (the left side of the red divider)
+  const first12 = getTopSkipsFromInputs(12);     // <-- reads first 12 inputs
+  systemPicksSet = new Set(first12);             // <-- set green dots to these
+  // (optional) console.log('Picks from inputs:', first12);
 
-    // Also update the saved Top 18 (in case they close modal later)
-    if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) {
-        top18From69 = [...top18];
-    }
+  // Also update the saved Top 18 (in case they close modal later)
+  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) {
+    top18From69 = [...top18];
+  }
 
-    renderReverseHitsTable();
-    renderSkipFrequency();
-    rehighlightSkipTableFromTop18();  // <-- Restore highlight styles
+  renderReverseHitsTable();       // redraw to show Top/Hot/Picks
+  renderSkipFrequency();          // keep your existing refresh
+  rehighlightSkipTableFromTop18();// restore skip table highlight styles
 }
+
 
 
 // 🟢 Export Generated Sets

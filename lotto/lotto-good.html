@@ -292,6 +292,11 @@ h3{margin:0 0 15px;color: gold}
  .green-dot{
     width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32;
 
+.hot-dot{
+  width:14px;height:14px;border-radius:50%;margin:auto;
+  background:#00bfff; /* deepskyblue for "Hot" */
+}
+
   </style>
 </head>
 <body>
@@ -818,54 +823,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const runAutoBtn = document.getElementById('runAutoPick');
-  if (runAutoBtn) {
-    runAutoBtn.addEventListener('click', () => {
-      const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
-      const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+const runAutoBtn = document.getElementById('runAutoPick');
+if (runAutoBtn) {
+  runAutoBtn.addEventListener('click', () => {
+    const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
+    const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-      const recentDraws = fullData.slice(0, weeks).map(row => row.slice(1).map(Number));
-      const freqMap = {};
-
-      recentDraws.forEach(draw => {
-        draw.forEach(num => {
-          if (!isNaN(num)) freqMap[num] = (freqMap[num] || 0) + 1;
-        });
+    // Build frequency map from the last `weeks` draws
+    const recentDraws = fullData.slice(0, weeks).map(row => row.slice(1).map(Number));
+    const freqMap = {};
+    recentDraws.forEach(draw => {
+      draw.forEach(num => {
+        if (!isNaN(num)) freqMap[num] = (freqMap[num] || 0) + 1;
       });
-
-      const topNums = Object.entries(freqMap)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, count)
-        .map(([num]) => parseInt(num, 10))
-        .sort((a, b) => a - b);
-
-      const topInputsDiv = document.getElementById('top18Inputs');
-      topInputsDiv.innerHTML = '';
-
-      topNums.forEach((num, i) => {
-        if (i === 12) {
-          const divider = document.createElement('div');
-          divider.style.borderLeft = '3px solid red';
-          divider.style.margin = '0 6px';
-          divider.style.height = '34px';
-          divider.style.alignSelf = 'center';
-          topInputsDiv.appendChild(divider);
-        }
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.value = num;
-        topInputsDiv.appendChild(inp);
-      });
-
-      top18 = [...topNums];
-      if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) {
-        top18From69 = [...topNums];
-      }
-
-      updateReverseHitsTop18();
-      document.getElementById('saveTop18Button').style.display = 'inline-block';
     });
-  }
+
+    // Top `count` numbers by frequency
+    const topNums = Object.entries(freqMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, count)
+      .map(([num]) => parseInt(num, 10))
+      .sort((a, b) => a - b);
+
+    // 🔥 Update HOT column only (do not touch Top inputs / top18)
+    hotSet = new Set(topNums);
+
+    // Repaint Hits table so the Hot column reflects the change
+    renderReverseHitsTable();
+
+    // Optionally close the modal:
+    document.getElementById('autoPickModal').style.display = 'none';
+  });
+}
+
 
   const showAutoBtn = document.getElementById('autoPickTopBtn');
   if (showAutoBtn) {
@@ -885,6 +875,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Holds current System Picks result
 let systemPicksSet = new Set();
+let hotSet = new Set();   // ✅ holds last Auto-Pick result for the "Hot" column
+
 
 // Grab the first 12 values from the Top Numbers inputs (left side of the red divider)
 function getTopSkipsFromInputs(limit = 12) {
@@ -1906,6 +1898,8 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
                 .filter(row => row.every(n => !isNaN(n)));
 
             totalNumbersGlobal = totalNumbers;
+            hotSet.clear();  // ✅ reset Hot when switching datasets
+
             skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
 
             pastDrawings = fullData.filter(row => row.length >= 6)
@@ -2621,7 +2615,7 @@ function renderReverseHitsTable() {
 
   const table = document.createElement('table');
 
-  // Header: 25..1 + "Top" + "Picks"
+  // Header: 25..1 + "Top" + "Hot" + "Picks"
   const headerRow = document.createElement('tr');
   headerRow.appendChild(document.createElement('th'));
   for (let i = 25; i >= 1; i--) {
@@ -2630,7 +2624,8 @@ function renderReverseHitsTable() {
     headerRow.appendChild(th);
   }
   headerRow.appendChild(document.createElement('th')).textContent = 'Top';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';   // ⬅️ NEW
+  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';    // ✅ NEW
+  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
   table.appendChild(headerRow);
 
   const draws = fullData
@@ -2653,7 +2648,7 @@ function renderReverseHitsTable() {
       row.appendChild(cell);
     }
 
-    // Top column (existing)
+    // Top column (unchanged; follows the user's Top inputs -> 'top18' array)
     const topCell = document.createElement('td');
     if (totalNumbersGlobal !== 26 && top18.includes(number)) {
       const dot = document.createElement('div');
@@ -2662,13 +2657,22 @@ function renderReverseHitsTable() {
     }
     row.appendChild(topCell);
 
-const picksCell = document.createElement('td');
-if (systemPicksSet && systemPicksSet.has(number)) {
-  const b = document.createElement('div');
-  b.className = 'green-dot';
-  picksCell.appendChild(b);
-}
+    // ✅ Hot column (from Auto-Pick results only)
+    const hotCell = document.createElement('td');
+    if (hotSet && hotSet.has(number)) {
+      const d = document.createElement('div');
+      d.className = 'hot-dot';
+      hotCell.appendChild(d);
+    }
+    row.appendChild(hotCell);
 
+    // Picks column (from System Picks)
+    const picksCell = document.createElement('td');
+    if (systemPicksSet && systemPicksSet.has(number)) {
+      const b = document.createElement('div');
+      b.className = 'green-dot';
+      picksCell.appendChild(b);
+    }
     row.appendChild(picksCell);
 
     table.appendChild(row);
@@ -2676,6 +2680,7 @@ if (systemPicksSet && systemPicksSet.has(number)) {
 
   container.appendChild(table);
 }
+
 
 function updateReverseHitsTop18() {
 

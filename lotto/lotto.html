@@ -872,43 +872,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-document.getElementById('systemPicksButton')?.addEventListener('click', () => {
-  const poolMax = totalNumbersGlobal; // 39 or 69
 
-  // 1) Read Skips (first 12 inputs)
-  topSkips = readTopNumbersInputs(12);
+// ---- Helpers for System Picks ----
+function readTopNumbersInputs(limit = 12) {
+  return Array.from(document.querySelectorAll('#top18Inputs input'))
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1)
+    .slice(0, limit)
+    .sort((a,b)=>a-b);
+}
 
-  // 2) Compute Hits (25 drawings, Top 12) — same logic as Auto-Pick
-  topHits = computeTopHitsByFrequency(25, 12);
+function computeTopHitsByFrequency(weeks = 25, count = 12) {
+  if (!Array.isArray(fullData) || fullData.length === 0) return [];
+  const recentDraws = fullData
+    .slice(0, Math.min(weeks, 25))
+    .map(row => row.slice(1).map(Number))
+    .filter(arr => arr.length > 0 && arr.every(n => Number.isInteger(n)));
+  const freq = {};
+  recentDraws.forEach(draw => draw.forEach(n => { freq[n] = (freq[n] || 0) + 1; }));
+  return Object.entries(freq)
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, count)
+    .map(([n]) => parseInt(n,10))
+    .sort((a,b)=>a-b);
+}
 
-  if (!topSkips.length || !topHits.length) {
-    alert(
-      "System Picks needs:\n" +
-      "• Skips present in the inputs AND\n" +
-      "• Auto-Pick results (Top 12 from last 25 drawings)\n\n" +
-      "Run “Auto-Pick Top Numbers”, set Number of Drawings to 25 and Top 12, then try again."
-    );
-    return;
+function numbersNotInEither(poolMax, a, b) {
+  const A = new Set(a), B = new Set(b);
+  const out = [];
+  for (let n = 1; n <= poolMax; n++) {
+    if (!A.has(n) && !B.has(n)) out.push(n);
   }
+  return out;
+}
 
-  // 3) Numbers NOT in either Skips or Hits
-  const notInEither = numbersNotInEither(poolMax, topSkips, topHits);
-
-  // 4) Keep only those with an adjacent IN HITS (list 2) — not union
-  const hitsSet = new Set(topHits);
-  const picks = notInEither.filter(n => hitsSet.has(n-1) || hitsSet.has(n+1)).sort((a,b)=>a-b);
-
-  // 5) Paint green dots in the Picks column
-  systemPicksSet = new Set(picks);
-
-  // Optional: print the picks for sanity check
-  console.log("System Picks:", picks.join(', '));
-
-  // 6) Re-render tables; DO NOT touch the Skips inputs or top18
-  renderReverseHitsTable();
-  rehighlightSkipTableFromTop18(); // keeps your highlight styling intact
-});
-
+function hasAdjacentInSet(n, setObj) {
+  return setObj.has(n - 1) || setObj.has(n + 1);
+}
 
 
 function drawHistogram(points) {
@@ -2279,52 +2279,6 @@ window.addEventListener('click', function (event) {
     }
 });
 
-document.getElementById('systemPicksButton')?.addEventListener('click', () => {
-  const poolMax = totalNumbersGlobal; // 39 or 69
-
-  // 1) Read 12 from Top inputs
-  topSkips = readTopNumbersInputs(12);
-
-  // 2) Compute Auto-Pick silently (weeks=25, Top 12)
-  topHits = computeTopHitsByFrequency(25, 12);
-
-  // Guidance if missing inputs or data
-  if (topSkips.length === 0 || topHits.length === 0) {
-    alert(
-      "System Picks needs:\n" +
-      "• Top Numbers filled (topSkips) AND\n" +
-      "• Auto-Pick results (topHits)\n\n" +
-      "Tip: Click “Auto-Pick Top Numbers”, set Number of Drawings (25), select ‘Top 12’, then Generate."
-    );
-    return;
-  }
-
-  // 3) Numbers NOT in either list
-  const notInEither = numbersNotInEither(poolMax, topSkips, topHits);
-
-  // 4) Keep only ones adjacent to a topHit
-  const topHitsSet = new Set(topHits);
-  const picks = notInEither.filter(n => hasAdjacentInSet(n, topHitsSet)).sort((a,b)=>a-b);
-
-  // 5) Persist for table (green dots)
-  systemPicksSet = new Set(picks);
-
-  // 6) Write picks into Top inputs (cap 12; pad with topHits then topSkips)
-  const chosen = [];
-  for (const n of picks) { if (chosen.length >= 12) break; chosen.push(n); }
-  if (chosen.length < 12) for (const n of topHits)  { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  if (chosen.length < 12) for (const n of topSkips) { if (chosen.length >= 12) break; if (!chosen.includes(n)) chosen.push(n); }
-  chosen.sort((a,b)=>a-b);
-
-  writeTopNumbersInputs(chosen);
-  top18 = [...chosen];
-  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) top18From69 = [...chosen];
-
-  // repaint
-  renderReverseHitsTable();
-  renderSkipFrequency();
-  rehighlightSkipTableFromTop18();
-});
 
 
 function saveGeneratedSetsToText() {

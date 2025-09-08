@@ -827,16 +827,24 @@ document.addEventListener('DOMContentLoaded', () => {
 const runAutoBtn = document.getElementById('runAutoPick');
 if (runAutoBtn) {
   runAutoBtn.addEventListener('click', () => {
-    const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
-    const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+    const weeks = Math.min(
+      25,
+      Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25)
+    );
+    const count = parseInt(
+      document.querySelector('input[name="coverage"]:checked').value,
+      10
+    );
 
     // 🔥 Trending upward instead of raw frequency
     const topNums = computeTrendingHotNumbers(weeks, count);
 
+    // Update Hot, then sync Picks = Hot
     hotSet = new Set(topNums);
-    renderReverseHitsTable();
+    syncPicksToHot();   // this sets systemPicksSet = hotSet and re-renders
   });
 }
+
 
 
   const showAutoBtn = document.getElementById('autoPickTopBtn');
@@ -859,6 +867,11 @@ if (runAutoBtn) {
 let systemPicksSet = new Set();
 let hotSet = new Set();   // ✅ holds last Auto-Pick result for the "Hot" column
 
+
+function syncPicksToHot() {
+  systemPicksSet = new Set(hotSet);   // Picks mirror Hot
+  renderReverseHitsTable();
+}
 
 // Grab the first 12 values from the Top Numbers inputs (left side of the red divider)
 function getTopSkipsFromInputs(limit = 12) {
@@ -952,47 +965,25 @@ function readTopSkips12(){
 }
 
 function runSystemPicks(){
-  // Not meaningful in 26-ball “PB-only” mode
   if (totalNumbersGlobal === 26){
     alert('System Picks are not available in Powerball-only mode.');
     return;
   }
 
-  // A) topSkips = first 12 values from Top Numbers inputs
-  const topSkips = readTopSkips12();
+  // If Hot is empty, seed it (uses trending if available; falls back to raw freq)
+  if (!hotSet || hotSet.size === 0){
+    const weeks = Math.min(25, fullData.length);
+    const count = 12;
+    const hotList = (typeof computeTrendingHotNumbers === 'function')
+      ? computeTrendingHotNumbers(weeks, count)
+      : getTopNumbersByFrequency(25, count);
 
-  // B) topHits = Auto-Pick style for last 25 drawings, Top-12
-  const topHits = getTopNumbersByFrequency(25, 12);
-
-  const N = totalNumbersGlobal;
-
-  const topSkipsSet = new Set(topSkips);
-  const topHitsSet  = new Set(topHits);
-
-  // C) Intersection (common)
-  const common = topSkips.filter(n => topHitsSet.has(n));
-  const commonSet = new Set(common);
-
-  // D) Union (numbers mentioned by either list)
-  const unionSet = new Set([...topSkips, ...topHits]);
-
-  // E) Remaining = union − common
-  const remaining = [...unionSet].filter(n => !commonSet.has(n));
-
-  // F) Neighbors of each remaining number (bounded to 1..N)
-  const neighborSet = new Set();
-  for (const y of remaining){
-    if (y - 1 >= 1)  neighborSet.add(y - 1);
-    if (y + 1 <= N)  neighborSet.add(y + 1);
+    hotSet = new Set(hotList);
   }
 
-  // G) Final Picks = common ∪ neighbors(remaining)
-  systemPicksSet = new Set([...common, ...neighborSet]);
-
-  // H) Re-render to show green dots in “Picks” column
-  renderReverseHitsTable();
+  // ✅ Picks = Hot
+  syncPicksToHot();
 }
-
 
 function drawHistogram(points) {
   const maxToShow = 500;

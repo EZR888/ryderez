@@ -874,35 +874,113 @@ function readTopSkips12(){
   return Array.from(new Set(first12)).sort((a,b) => a - b);
 }
 
+// 🔁 Replace your existing computeSystemPicks with this:
+// 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
+// while minimizing average points of sampled 5-number sets from the pool.
 function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}) {
+  const uniq = arr => Array.from(new Set(arr)).filter(n => Number.isInteger(n));
+  const H = uniq(hotList);
+  const T = uniq(topList);
+
   const chosen = new Set();
   const push = n => { if (!chosen.has(n)) chosen.add(n); };
 
-  const common = hotList.filter(n => topList.includes(n));
-  common.forEach(push);
+  // ---- helpers for structure & spacing ----
+  function clumpPenalty(n) {
+    let p = 0;
+    chosen.forEach(c => {
+      const d = Math.abs(c - n);
+      if (d === 1) p += 2;  // adjacent
+      else if (d === 2) p += 1;
+    });
+    return p;
+  }
 
-  const topOnly = topList
-    .filter(n => !common.includes(n))
-    .sort((a, b) => (sinceMapObj[b] || 0) - (sinceMapObj[a] || 0));
-  for (const n of topOnly) { if (chosen.size >= count) break; push(n); }
+  // higher is better (before points refinement)
+  function preScore(n) {
+    const due = (sinceMapObj[n] || 0); // larger = longer since hit (more due)
+    const inTop = T.includes(n) ? 1 : 0;
+    const inHot = H.includes(n) ? 1 : 0;
+    return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
+  }
 
-  // FIX: avoid already-chosen
-  const hotOnly = hotList
-    .filter(n => !chosen.has(n))
-    .sort((a, b) => (sinceMapObj[b] || 0) - (sinceMapObj[a] || 0));
-  for (const n of hotOnly) { if (chosen.size >= count) break; push(n); }
+  // ---- seed from consensus, then Top, then Hot ----
+  const common = H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a));
+  common.forEach(n => { if (chosen.size < count) push(n); });
 
+  const wantTopMin = Math.max(Math.floor(count / 2), 4);
+  T.filter(n => !chosen.has(n))
+    .sort((a,b)=>preScore(b)-preScore(a))
+    .forEach(n => { if (chosen.size < wantTopMin) push(n); });
+
+  H.filter(n => !chosen.has(n))
+    .sort((a,b)=>preScore(b)-preScore(a))
+    .forEach(n => { if (chosen.size < count) push(n); });
+
+  // Backfill by plain frequency if still short
   if (chosen.size < count) {
     getTopNumbersByFrequency(weeks, totalNumbersGlobal)
       .filter(n => !chosen.has(n))
+      .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
+  // Final safety
+  for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  for (let n = 1; chosen.size < count && n <= totalNumbersGlobal; n++) push(n);
+  // ---- points-aware refinement: minimize mean points of sampled 5-sets ----
+  let pool = Array.from(chosen).sort((a,b)=>a-b);
 
-  return Array.from(chosen).slice(0, count).sort((a, b) => a - b);
+  // small greedy local improvements: try swapping one number out for a nearby candidate that reduces avg points
+  const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
+  let currentScore = evaluatePoolPoints(pool);
+  let improved = true;
+
+  let tries = 0;
+  while (improved && tries < 40) {
+    improved = false;
+    tries++;
+
+    // try removing each element and replacing with the best candidate not already in pool
+    for (let i = 0; i < pool.length; i++) {
+      const removed = pool[i];
+      const base = pool.filter((_, idx) => idx !== i);
+
+      // rank candidates by preScore first (fast heuristic), then we’ll test points
+      const candidates = candidateUniverse
+        .filter(n => !base.includes(n))
+        .sort((a,b)=>preScore(b)-preScore(a))
+        .slice(0, 20); // limit evaluation for speed
+
+      let bestLocal = currentScore;
+      let bestChoice = null;
+
+      for (const cand of candidates) {
+        // soft anti-clump: skip if cand makes too many adjacencies
+        const adjBad = base.some(x => Math.abs(x - cand) <= 1);
+        // allow some adjacency but not excessive — we’ll still let points decide most of the time
+        if (adjBad && Math.random() < 0.4) continue;
+
+        const trial = [...base, cand].sort((a,b)=>a-b);
+        const trialScore = evaluatePoolPoints(trial);
+        if (trialScore < bestLocal) {
+          bestLocal = trialScore;
+          bestChoice = cand;
+        }
+      }
+
+      if (bestChoice !== null) {
+        pool = [...base, bestChoice].sort((a,b)=>a-b);
+        currentScore = bestLocal;
+        improved = true;
+      }
+    }
+  }
+
+  return pool.slice(0, count).sort((a,b)=>a-b);
 }
 
+
+// ✅ Keep your existing runSystemPicks, but add the marked lines:
 function runSystemPicks(){
   if (totalNumbersGlobal === 26){
     alert('System Picks are not available in Powerball-only mode.');
@@ -912,19 +990,34 @@ function runSystemPicks(){
   const weeks = Math.min(25, fullData.length);
   const count = 12;
 
-  // Use existing Hot if present; otherwise seed it so System Picks has something reasonable
+  // Seed Hot if user hasn’t run Auto-Pick yet
   if (!hotSet || hotSet.size === 0){
     const hotNums = computeTrendingHotNumbers(weeks, count);
     hotSet = new Set(hotNums);
   }
 
-  // Build Picks from Hot + Top + recency (sinceMap)
+  // ⬇️ Add this guard so Top isn’t empty
+  if (!top18 || top18.length === 0) {
+    if (typeof recomputeTopFromSkips === 'function') {
+      recomputeTopFromSkips(12);
+    }
+  }
+
+  // Blend Hot + Top + “due” (sinceMap) with anti-clumping
   const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
 
-  // ✅ This updates the green Picks column
-  systemPicksSet = new Set(picks);
-
+  systemPicksSet = new Set(picks);   // this updates the green “Picks” column
   renderReverseHitsTable();
+}
+
+// A quick, stable estimate of how “good” a 12-number pool is:
+// sample a bunch of 5-number combos from it and average their points (lower is better).
+function evaluatePoolPoints(pool) {
+  const combos = randomSampleCombos(pool, 5, 80); // 80 random 5-sets
+  if (combos.length === 0) return 1e9;
+  let sum = 0;
+  for (const c of combos) sum += calculateRawPointsForSet(c);
+  return sum / combos.length;
 }
 
 function ensureTwelveInputs() {
@@ -937,6 +1030,28 @@ function ensureTwelveInputs() {
     inp.placeholder = String(i + 1);
     div.appendChild(inp);
   }
+}
+
+function randomSampleCombos(pool, k, samples) {
+  const out = [];
+  const n = pool.length;
+  if (n < k) return out;
+
+  // prefer some spread by avoiding too many adjacent picks per sample
+  for (let s = 0; s < samples; s++) {
+    const idxs = new Set();
+    while (idxs.size < k) {
+      idxs.add(Math.floor(Math.random() * n));
+    }
+    const combo = Array.from(idxs).map(i => pool[i]).sort((a,b)=>a-b);
+
+    // soft anti-clump inside a set: re-roll if too many adjacencies
+    const adj = combo.filter((x,i)=> i>0 && combo[i]-combo[i-1]===1).length;
+    if (adj > 2 && Math.random() < 0.6) { s--; continue; }
+
+    out.push(combo);
+  }
+  return out;
 }
 
 function drawHistogram(points) {

@@ -651,6 +651,72 @@ function computeTopHitsFromRecent(weeks = 25, count = 12) {
     .sort((a,b)=>a-b);
 }
 
+function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
+    fetch(filename + '?t=' + Date.now())
+        .then(response => response.text())
+        .then(text => {
+            fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
+            const drawingNumbers = fullData.map(row => parseInt(row[0]));
+            latestDrawingNumber = drawingNumbers[0];
+
+            const lastDrawElem = document.getElementById('lastDrawingNumber');
+            if (lastDrawElem) {
+                lastDrawElem.textContent = latestDrawingNumber || '–';
+            } else {
+                console.warn("⚠️ Element with ID 'lastDrawingNumber' not found.");
+            }
+
+            const data = fullData.map(row => row.slice(1).map(n => parseInt(n)))
+                .filter(row => row.every(n => !isNaN(n)));
+
+            totalNumbersGlobal = totalNumbers;
+            hotSet.clear();  // ✅ reset Hot when switching datasets
+
+            skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+
+            pastDrawings = fullData.filter(row => row.length >= 6)
+                .map(row => row.slice(1, 6).map(n => parseInt(n)).sort((a, b) => a - b).join(','));
+
+            renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+
+            const quick12Btn = document.getElementById('quick12Button');
+            if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
+
+const genBtn = document.getElementById('generateWheelButton');
+if (genBtn) {
+  genBtn.style.display = (totalNumbers === 69 || totalNumbers === 39) ? 'inline-block' : 'none';
+}
+
+
+            const topInputs = document.getElementById('top18Inputs');
+if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
+
+            const exportAllButton = document.querySelector('button[onclick="exportGeneratedSets()"]');
+            if (exportAllButton) exportAllButton.style.display = 'inline-block';
+
+            const exportBestButton = document.querySelector('button[onclick="exportBestSets()"]');
+            if (exportBestButton) exportBestButton.style.display = 'inline-block';
+
+            const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
+            if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
+
+            const reverseHits = document.getElementById('reverseHitsContainer');
+            if (reverseHits) reverseHits.style.display = 'block';
+
+            const skipFreq = document.getElementById('skipFrequencyContainer');
+            if (skipFreq) skipFreq.style.display = 'block';
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load file:', error);
+            alert('Error loading the file.');
+        });
+}
+
+
 function computeTrendingHotNumbers(weeks = 25, count = 12) {
   const windowSize = Math.min(weeks, fullData.length);
   if (!windowSize) return [];

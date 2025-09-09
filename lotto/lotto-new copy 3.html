@@ -908,19 +908,6 @@ function getTopNumbersByFrequency(weeks, count){
     .sort((a,b) => a - b);
 }
 
-// 👉 Put this once (helper to sync inputs to a list)
-function setInputsFromList(list, limit = 12) {
-  const box = document.getElementById('top18Inputs');
-  if (!box) return;
-  const inputs = box.querySelectorAll('input');
-  for (let i = 0; i < limit; i++) {
-    if (i < inputs.length) inputs[i].value = list[i] ?? '';
-  }
-  // clear any extra inputs (shouldn’t have more than 12 though)
-  for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
-}
-
-
 function readTopSkips12(){
   const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
   const first12 = inputs.slice(0, 12)
@@ -1015,32 +1002,26 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
   return pool.slice(0, count).sort((a,b)=>a-b);
 }
 
-// 🔁 REPLACE/ADD this function
 function populateAllThreeOnLoad() {
-  // 1) Top (orange): from current-since skip profile
-  if (typeof recomputeTopFromSkips === 'function') {
-    recomputeTopFromSkips(12);
-  }
-
-  // 2) Hot (blue): trending last 25
   const weeks = Math.min(25, fullData.length);
-  const hot12 = computeTrendingHotNumbers(weeks, 12);
-  hotSet = new Set(hot12);
 
-  // 3) Picks (green): deterministic blend of Top+Hot+Due + points
-  setDeterministicSeed('systemPicks');                 // ← important: same seed as button
-  const picks12 = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
-  systemPicksSet = new Set(picks12);
+  // Top (12) from Skips
+  const top = recomputeTopFromSkips(12); // sets top18 + renders
 
-  // Draw Hits table now that Top/Hot/Picks are ready
+  // Hot (12) from trending
+  const hot = computeTrendingHotNumbers(weeks, 12);
+  hotSet = new Set(hot);
   renderReverseHitsTable();
-  reapplySkipTableHighlights();
 
-  // 👉 Mirror Picks into the 12 manual input boxes on load
-  ensureTwelveInputs();
-  setInputsFromList(picks12, 12);
+  // Picks (12) using same deterministic seed as the button
+  const seed = stableSeed(latestDrawingNumber || 0, hot, top);
+  const rng  = makeRNG(seed);
+  const picks = computeSystemPicks(12, weeks, hot, top, sinceMap, rng);
+  systemPicksSet = new Set(picks);
+
+  renderReverseHitsTable();
+  reapplySkipTableHighlights?.();
 }
-
 
 
 // ✅ Keep your existing runSystemPicks, but add the marked lines:
@@ -1049,38 +1030,21 @@ function runSystemPicks(){
     alert('System Picks are not available in Powerball-only mode.');
     return;
   }
-
   const weeks = Math.min(25, fullData.length);
-  const count = 12;
 
-  // Ensure Hot exists
-  if (!hotSet || hotSet.size === 0){
-    const hotNums = computeTrendingHotNumbers(weeks, count);
-    hotSet = new Set(hotNums);
-  }
-  // Ensure Top exists
-  if (!top18 || top18.length === 0) {
-    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
-  }
+  // Ensure Top/Hot exist (same as page-load)
+  if (!top18 || top18.length === 0) recomputeTopFromSkips(12);
+  if (!hotSet || hotSet.size === 0) hotSet = new Set(computeTrendingHotNumbers(weeks, 12));
 
-  // Deterministic seed so button matches page-load result
-  setDeterministicSeed('systemPicks');
+  // Same seed => same result when inputs haven't changed
+  const hot = Array.from(hotSet);
+  const seed = stableSeed(latestDrawingNumber || 0, hot, top18);
+  const rng  = makeRNG(seed);
 
-  // Compute Picks
-  const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
-
-  // Save to Picks column
+  const picks = computeSystemPicks(12, weeks, hot, top18, sinceMap, rng);
   systemPicksSet = new Set(picks);
-
-  // 👉 ALSO mirror Picks into the 12 inputs
-  ensureTwelveInputs();
-  setInputsFromList(picks, 12);
-
-  // Redraw
   renderReverseHitsTable();
-  reapplySkipTableHighlights();
 }
-
 
 
 function ensureTwelveInputs() {

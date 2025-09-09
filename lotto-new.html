@@ -823,7 +823,7 @@ function drawHistogram(points) {
   });
 }
 
-function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
+window.loadCSVFile = function (filename, totalNumbers, callback, isPowerball69 = false) {
   fetch(filename + '?t=' + Date.now())
     .then(response => {
       if (!response.ok) throw new Error('HTTP ' + response.status);

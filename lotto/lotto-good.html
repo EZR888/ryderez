@@ -824,6 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+c// Replace your current handler with this:
 const runAutoBtn = document.getElementById('runAutoPick');
 if (runAutoBtn) {
   runAutoBtn.addEventListener('click', () => {
@@ -836,13 +837,61 @@ if (runAutoBtn) {
       10
     );
 
-    // 🔥 Trending upward instead of raw frequency
-    const topNums = computeTrendingHotNumbers(weeks, count);
+    // 🔥 Hot = trending upward
+    const hotNums = computeTrendingHotNumbers(weeks, count);
+    hotSet = new Set(hotNums);
 
-    // Update Hot, then sync Picks = Hot
-    hotSet = new Set(topNums);
-    syncPicksToHot();   // this sets systemPicksSet = hotSet and re-renders
+    // ✅ Picks = curated (NOT a clone of Hot)
+    const picks = computeSystemPicks(count, weeks, hotNums, top18, sinceMap);
+    systemPicksSet = new Set(picks);
+
+    renderReverseHitsTable();
   });
+}
+
+/**
+ * Build a curated Picks list of length `count`.
+ * Priority:
+ *  1) Intersection of Hot and Top (common numbers)
+ *  2) Top-only numbers, most overdue first (by sinceMap)
+ *  3) Remaining Hot numbers, most overdue first
+ *  4) Recent-frequency fillers (not already chosen), until we reach `count`
+ */
+function computeSystemPicks(count, weeks, hotList, topList, sinceMapObj) {
+  const inSet = new Set();
+  const add = n => { if (!inSet.has(n)) inSet.add(n); };
+
+  const common = hotList.filter(n => topList.includes(n));
+  const topOnly = topList
+    .filter(n => !hotList.includes(n))
+    .sort((a, b) => (sinceMapObj[b] || 0) - (sinceMapObj[a] || 0)); // more overdue first
+  const hotOnly = hotList
+    .filter(n => !common.includes(n))
+    .sort((a, b) => (sinceMapObj[b] || 0) - (sinceMapObj[a] || 0));
+
+  // Start filling in priority order
+  common.forEach(add);
+  for (const n of topOnly) { if (inSet.size >= count) break; add(n); }
+  for (const n of hotOnly) { if (inSet.size >= count) break; add(n); }
+
+  // If still short, use recent frequency as filler (excluding already chosen)
+  if (inSet.size < count) {
+    const freqList = getTopNumbersByFrequency(weeks, totalNumbersGlobal)
+      .filter(n => !inSet.has(n));
+    for (const n of freqList) {
+      add(n);
+      if (inSet.size >= count) break;
+    }
+  }
+
+  // If STILL short (rare), pad from 1..N excluding chosen
+  if (inSet.size < count) {
+    for (let n = 1; n <= totalNumbersGlobal && inSet.size < count; n++) {
+      if (!inSet.has(n)) add(n);
+    }
+  }
+
+  return Array.from(inSet).slice(0, count).sort((a, b) => a - b);
 }
 
 
@@ -960,30 +1009,6 @@ function computeTrendingHotNumbers(weeks = 25, count = 12) {
 
   return ranked.map(e => e.n).sort((a, b) => a - b);
 }
-
-function computeSystemPicks(count = 12, weeks = 25) {
-  // 1) Prepare recent window (newest first)
-  const windowSize = Math.min(weeks, fullData.length);
-  const draws = fullData.slice(0, windowSize)
-    .map(r => r.slice(1).map(Number).filter(n => !isNaN(n)));
-
-  const split = Math.ceil(draws.length / 2);
-  const newer = draws.slice(0, split);
-  const older = draws.slice(split);
-
-  const fNew = Object.create(null), fOld = Object.create(null);
-  newer.forEach(d => d.forEach(n => fNew[n] = (fNew[n] || 0) + 1));
-  older.forEach(d => d.forEach(n => fOld[n] = (fOld[n] || 0) + 1));
-
-  // helper: current since (age) for a number
-  const sinceOf = n => Math.min(Math.max((sinceMap[n] || 26), 1), 26) - 1; // 0..25 index
-
-  // helper: skip-likelihood at current age for this number (normalized row)
-  function skipLikelihood(n) {
-    const row = (skipDataGlobal.skipTable[n] || []);
-    const total = row.reduce((a,b)=>a+(b||0), 0) || 1;
-    return (row[sinceOf(n)] || 0) / total; // fraction of its hits that occurred at this exact skip
-  }
 
   // helper: combo compatibility (lower points is better)
   function compatibilityScore(n, trials = 35) {

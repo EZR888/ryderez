@@ -1699,22 +1699,6 @@ function reapplySkipTableHighlights() {
     }
   });
 
-  if (activeGameMode === 69 || activeGameMode === 26) {
-    const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'))
-        .map(input => parseInt(input.value.trim(), 10))
-        .filter(n => !isNaN(n));
-    rows.forEach(row => {
-      const num = parseInt(row.querySelector('th')?.textContent, 10);
-      if (top18Inputs.includes(num)) {
-        row.querySelectorAll('td').forEach(cell => {
-          if (cell.classList.contains('selected-top-skip')) {
-            cell.classList.remove('selected-top-skip');
-            cell.classList.add('top18-selected');
-          }
-        });
-      }
-    });
-  }
 }
 
 function reapply69State() {
@@ -1750,11 +1734,19 @@ function reapply69State() {
 }
 
 function generateWheelSets() {
-  const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-  const numbersToUse = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(x => !isNaN(x) && x >= 1);
-  if (numbersToUse.length === 0) { alert('Please enter valid numbers in the Top 18 Numbers section.'); return; }
+const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+const numbersToUse = top18Inputs
+  .map(input => parseInt(input.value.trim(), 10))
+  .filter(x => Number.isInteger(x) && x >= 1);
 
-  top18 = numbersToUse.sort((a, b) => a - b);
+if (numbersToUse.length < 12) {
+  alert('Please enter 12 valid numbers in the input boxes.');
+  return;
+}
+
+// ✅ Use a local source for wheel generation; do NOT change Top
+const wheelSource = numbersToUse.sort((a, b) => a - b);
+
 
   const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
   progressDiv.innerHTML = '';
@@ -1762,7 +1754,7 @@ function generateWheelSets() {
   const setsToGenerateInput = document.getElementById('modalSetCountChoice');
   const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
 
-  const wheelSets = generateWheel(top18, pastDrawings, 5, setsToGenerate);
+  const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
   generatedSets = wheelSets.map(({ combo }) => ({ combo, points: calculateRawPointsForSet(combo) }));
 
   const modalWheelOutput = document.getElementById('modalWheelOutput');

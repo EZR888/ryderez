@@ -757,6 +757,9 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
                 .map(row => row.slice(1, 6).map(n => parseInt(n)).sort((a, b) => a - b).join(','));
 
             renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+            // ⬇️ draw Skip Frequency table now that skipDataGlobal/sinceMap are ready
+renderSkipFrequency();
+
 
             const quick12Btn = document.getElementById('quick12Button');
             if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';

@@ -433,26 +433,14 @@ btn69.onclick = () => {
   loadCSVFile('lotto_69.txt', 69, () => {
     activeGameMode = 69;
 
-    // keep inputs manual and exactly 12 (blank)
+    // Keep inputs manual and exactly 12 (placeholders)
     ensureTwelveInputs();
 
-    // 1) Top (orange): from current-since skip profile
-    recomputeTopFromSkips(12);
-
-    // 2) Hot (blue): trending last 25
-    const weeks = Math.min(25, fullData.length);
-    const hot12 = computeTrendingHotNumbers(weeks, 12);
-    hotSet = new Set(hot12);
-
-    // 3) Picks (green): blend Top+Hot+Due and minimize points
-    const picks = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
-    systemPicksSet = new Set(picks);
-
-    // Draw table now that Top/Hot/Picks are ready
-    renderReverseHitsTable();
-    reapplySkipTableHighlights();
+    // Auto-fill Top (orange), Hot (blue), Picks (green) — all 12 — deterministically
+    populateAllThreeOnLoad();
 
     // ---- existing UI/show logic (unchanged) ----
+    // Save supporting data for restoring later
     pastDrawingsFrom69 = [...pastDrawings];
     skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
     sinceMapFrom69     = { ...sinceMap };
@@ -469,7 +457,7 @@ btn69.onclick = () => {
     setupHistogramListener();
     highlight(btn69);
 
-    // show Top inputs/controls (inputs remain blank for your manual picks)
+    // Show Top inputs/controls (inputs remain for your manual edits)
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
     ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
@@ -530,24 +518,11 @@ btn39.onclick = () => {
   loadCSVFile('lotto_39.txt', 39, () => {
     activeGameMode = 39;
 
-    // keep inputs manual and exactly 12 (blank)
+    // Keep inputs manual and exactly 12 (placeholders)
     ensureTwelveInputs();
 
-    // 1) Top (orange): from current-since skip profile
-    recomputeTopFromSkips(12);
-
-    // 2) Hot (blue): trending last 25
-    const weeks = Math.min(25, fullData.length);
-    const hot12 = computeTrendingHotNumbers(weeks, 12);
-    hotSet = new Set(hot12);
-
-    // 3) Picks (green): blend Top+Hot+Due and minimize points
-    const picks = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
-    systemPicksSet = new Set(picks);
-
-    // Draw table now that Top/Hot/Picks are ready
-    renderReverseHitsTable();
-    reapplySkipTableHighlights();
+    // Auto-fill Top (orange), Hot (blue), Picks (green) — all 12 — deterministically
+    populateAllThreeOnLoad();
 
     // ---- existing UI/show logic (unchanged) ----
     if (btn1) btn1.style.display = 'none';
@@ -730,6 +705,26 @@ if (typeof pickBestSets !== "function") {
   };
 }
 
+// --- Seeded RNG utilities (deterministic randomness) ---
+function makeRNG(seed) {
+  let s = (seed >>> 0) || 1;
+  return function rng() {
+    s ^= s << 13; s ^= s >>> 17; s ^= s << 5;
+    return ((s >>> 0) / 4294967296);
+  };
+}
+function stableSeed(...things) {
+  const str = JSON.stringify(things);
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+
+
 function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
     fetch(filename + '?t=' + Date.now())
         .then(response => response.text())
@@ -805,29 +800,18 @@ window.loadCSVFile = loadCSVFile;
 // Score = how often this number historically had the current since-length.
 // Tie-breakers: larger current since (more due), then smaller number.
 function recomputeTopFromSkips(count = 12) {
-  if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
-
-  const rows = [];
+  if (!skipDataGlobal || !skipDataGlobal.skipTable) return [];
+  const totals = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
-    const since = sinceMap[n] || 26;            // 1..25, or "26+" if never in window
-    const idx   = Math.min(25, Math.max(1, since)) - 1; // 0..24
-    const hist  = skipDataGlobal.skipTable[n]?.[idx] || 0;
-    rows.push({ n, hist, since });
+    const row = skipDataGlobal.skipTable[n] || [];
+    const score = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0); // sum of counts
+    totals.push({ n, score });
   }
-
-  const picked = rows
-    .sort((a, b) =>
-      (b.hist - a.hist) ||          // more historical support first
-      (b.since - a.since) ||        // then more due
-      (a.n - b.n)                   // then lower number
-    )
-    .slice(0, count)
-    .map(r => r.n)
-    .sort((a, b) => a - b);
-
-  // Store for the Top (orange) column
-  top18 = picked;
-  return picked;
+  totals.sort((a,b)=> (b.score - a.score) || (a.n - b.n));
+  const top = totals.slice(0, count).map(x=>x.n).sort((a,b)=>a-b);
+  top18 = top;               // this drives the orange "Top" dots
+  renderReverseHitsTable();  // show them
+  return top;
 }
 
 
@@ -935,97 +919,79 @@ function readTopSkips12(){
 // 🔁 Replace your existing computeSystemPicks with this:
 // 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
 // while minimizing average points of sampled 5-number sets from the pool.
-function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}) {
-  const uniq = arr => Array.from(new Set(arr)).filter(n => Number.isInteger(n));
+function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = Math.random) {
+  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
   const H = uniq(hotList);
   const T = uniq(topList);
 
   const chosen = new Set();
   const push = n => { if (!chosen.has(n)) chosen.add(n); };
 
-  // ---- helpers for structure & spacing ----
   function clumpPenalty(n) {
     let p = 0;
     chosen.forEach(c => {
       const d = Math.abs(c - n);
-      if (d === 1) p += 2;  // adjacent
+      if (d === 1) p += 2;
       else if (d === 2) p += 1;
     });
     return p;
   }
-
-  // higher is better (before points refinement)
   function preScore(n) {
-    const due = (sinceMapObj[n] || 0); // larger = longer since hit (more due)
+    const due = (sinceMapObj[n] || 0);  // bigger = longer since hit
     const inTop = T.includes(n) ? 1 : 0;
     const inHot = H.includes(n) ? 1 : 0;
     return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
   }
 
-  // ---- seed from consensus, then Top, then Hot ----
-  const common = H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a));
-  common.forEach(n => { if (chosen.size < count) push(n); });
+  // 1) consensus first
+  H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
-  const wantTopMin = Math.max(Math.floor(count / 2), 4);
-  T.filter(n => !chosen.has(n))
-    .sort((a,b)=>preScore(b)-preScore(a))
-    .forEach(n => { if (chosen.size < wantTopMin) push(n); });
+  // 2) ensure at least half from Top
+  const wantTopMin = Math.max(Math.floor(count/2), 4);
+  T.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < wantTopMin) push(n); });
 
-  H.filter(n => !chosen.has(n))
-    .sort((a,b)=>preScore(b)-preScore(a))
-    .forEach(n => { if (chosen.size < count) push(n); });
+  // 3) fill from Hot
+  H.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
-  // Backfill by plain frequency if still short
+  // 4) backfill by raw frequency if still short
   if (chosen.size < count) {
     getTopNumbersByFrequency(weeks, totalNumbersGlobal)
       .filter(n => !chosen.has(n))
       .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
-  // Final safety
   for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  // ---- points-aware refinement: minimize mean points of sampled 5-sets ----
+  // 5) points-aware refinement (deterministic with rng)
   let pool = Array.from(chosen).sort((a,b)=>a-b);
-
-  // small greedy local improvements: try swapping one number out for a nearby candidate that reduces avg points
   const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
-  let currentScore = evaluatePoolPoints(pool);
-  let improved = true;
 
+  let currentScore = evaluatePoolPoints(pool, rng);
+  let improved = true;
   let tries = 0;
   while (improved && tries < 40) {
-    improved = false;
-    tries++;
-
-    // try removing each element and replacing with the best candidate not already in pool
+    improved = false; tries++;
     for (let i = 0; i < pool.length; i++) {
-      const removed = pool[i];
       const base = pool.filter((_, idx) => idx !== i);
 
-      // rank candidates by preScore first (fast heuristic), then we’ll test points
       const candidates = candidateUniverse
         .filter(n => !base.includes(n))
         .sort((a,b)=>preScore(b)-preScore(a))
-        .slice(0, 20); // limit evaluation for speed
+        .slice(0, 20);
 
       let bestLocal = currentScore;
       let bestChoice = null;
-
       for (const cand of candidates) {
-        // soft anti-clump: skip if cand makes too many adjacencies
         const adjBad = base.some(x => Math.abs(x - cand) <= 1);
-        // allow some adjacency but not excessive — we’ll still let points decide most of the time
-        if (adjBad && Math.random() < 0.4) continue;
+        if (adjBad && rng() < 0.4) continue;
 
         const trial = [...base, cand].sort((a,b)=>a-b);
-        const trialScore = evaluatePoolPoints(trial);
+        const trialScore = evaluatePoolPoints(trial, rng);
         if (trialScore < bestLocal) {
           bestLocal = trialScore;
           bestChoice = cand;
         }
       }
-
       if (bestChoice !== null) {
         pool = [...base, bestChoice].sort((a,b)=>a-b);
         currentScore = bestLocal;
@@ -1033,8 +999,28 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
       }
     }
   }
-
   return pool.slice(0, count).sort((a,b)=>a-b);
+}
+
+function populateAllThreeOnLoad() {
+  const weeks = Math.min(25, fullData.length);
+
+  // Top (12) from Skips
+  const top = recomputeTopFromSkips(12); // sets top18 + renders
+
+  // Hot (12) from trending
+  const hot = computeTrendingHotNumbers(weeks, 12);
+  hotSet = new Set(hot);
+  renderReverseHitsTable();
+
+  // Picks (12) using same deterministic seed as the button
+  const seed = stableSeed(latestDrawingNumber || 0, hot, top);
+  const rng  = makeRNG(seed);
+  const picks = computeSystemPicks(12, weeks, hot, top, sinceMap, rng);
+  systemPicksSet = new Set(picks);
+
+  renderReverseHitsTable();
+  reapplySkipTableHighlights?.();
 }
 
 
@@ -1044,39 +1030,22 @@ function runSystemPicks(){
     alert('System Picks are not available in Powerball-only mode.');
     return;
   }
-
   const weeks = Math.min(25, fullData.length);
-  const count = 12;
 
-  // Seed Hot if user hasn’t run Auto-Pick yet
-  if (!hotSet || hotSet.size === 0){
-    const hotNums = computeTrendingHotNumbers(weeks, count);
-    hotSet = new Set(hotNums);
-  }
+  // Ensure Top/Hot exist (same as page-load)
+  if (!top18 || top18.length === 0) recomputeTopFromSkips(12);
+  if (!hotSet || hotSet.size === 0) hotSet = new Set(computeTrendingHotNumbers(weeks, 12));
 
-  // ⬇️ Add this guard so Top isn’t empty
-  if (!top18 || top18.length === 0) {
-    if (typeof recomputeTopFromSkips === 'function') {
-      recomputeTopFromSkips(12);
-    }
-  }
+  // Same seed => same result when inputs haven't changed
+  const hot = Array.from(hotSet);
+  const seed = stableSeed(latestDrawingNumber || 0, hot, top18);
+  const rng  = makeRNG(seed);
 
-  // Blend Hot + Top + “due” (sinceMap) with anti-clumping
-  const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
-
-  systemPicksSet = new Set(picks);   // this updates the green “Picks” column
+  const picks = computeSystemPicks(12, weeks, hot, top18, sinceMap, rng);
+  systemPicksSet = new Set(picks);
   renderReverseHitsTable();
 }
 
-// A quick, stable estimate of how “good” a 12-number pool is:
-// sample a bunch of 5-number combos from it and average their points (lower is better).
-function evaluatePoolPoints(pool) {
-  const combos = randomSampleCombos(pool, 5, 80); // 80 random 5-sets
-  if (combos.length === 0) return 1e9;
-  let sum = 0;
-  for (const c of combos) sum += calculateRawPointsForSet(c);
-  return sum / combos.length;
-}
 
 function ensureTwelveInputs() {
   const div = document.getElementById('top18Inputs');
@@ -1090,27 +1059,32 @@ function ensureTwelveInputs() {
   }
 }
 
-function randomSampleCombos(pool, k, samples) {
+function randomSampleCombos(pool, k, samples, rng = Math.random) {
   const out = [];
   const n = pool.length;
   if (n < k) return out;
 
-  // prefer some spread by avoiding too many adjacent picks per sample
   for (let s = 0; s < samples; s++) {
     const idxs = new Set();
-    while (idxs.size < k) {
-      idxs.add(Math.floor(Math.random() * n));
-    }
+    while (idxs.size < k) idxs.add(Math.floor(rng() * n));
     const combo = Array.from(idxs).map(i => pool[i]).sort((a,b)=>a-b);
 
-    // soft anti-clump inside a set: re-roll if too many adjacencies
     const adj = combo.filter((x,i)=> i>0 && combo[i]-combo[i-1]===1).length;
-    if (adj > 2 && Math.random() < 0.6) { s--; continue; }
+    if (adj > 2 && rng() < 0.6) { s--; continue; } // same logic, seeded
 
     out.push(combo);
   }
   return out;
 }
+
+function evaluatePoolPoints(pool, rng = Math.random) {
+  const combos = randomSampleCombos(pool, 5, 80, rng);
+  if (combos.length === 0) return 1e9;
+  let sum = 0;
+  for (const c of combos) sum += calculateRawPointsForSet(c);
+  return sum / combos.length;
+}
+
 
 function drawHistogram(points) {
   const maxToShow = 500;

@@ -199,6 +199,24 @@ h3{margin:0 0 15px;color: gold}
 .green-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32; }
 .hot-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#00bfff; }
 
+.tooltip {
+  display: inline-block;
+  margin-left: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: gold;
+  color: black;
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+  cursor: help;
+}
+.tooltip:hover {
+  filter: brightness(1.2);
+}
+
   </style>
 </head>
 <body>
@@ -2058,9 +2076,27 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
+// Skips header + tooltip
+{
+  const th = document.createElement('th');
+  th.innerHTML = 'Skips <span class="tooltip" title="Skips = numbers with strong patterns in their skip history. Higher scores mean they’re statistically more likely to hit soon.">?</span>';
+  headerRow.appendChild(th);
+}
+
+// Hot header + tooltip
+{
+  const th = document.createElement('th');
+  th.innerHTML = 'Hot <span class="tooltip" title="Hot = numbers trending in the last 25 draws, with extra weight on recency and acceleration.">?</span>';
+  headerRow.appendChild(th);
+}
+
+// Picks header + tooltip
+{
+  const th = document.createElement('th');
+  th.innerHTML = 'Picks <span class="tooltip" title="Picks = a blend of Skips, Hot, and due numbers, optimized for spacing and lower point scores.">?</span>';
+  headerRow.appendChild(th);
+}
+
   table.appendChild(headerRow);
 
   const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);

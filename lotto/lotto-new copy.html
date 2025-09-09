@@ -905,24 +905,17 @@ function runSystemPicks(){
     alert('System Picks are not available in Powerball-only mode.');
     return;
   }
-
+  if (!hotSet || hotSet.size === 0){
+    const weeks = Math.min(25, fullData.length);
+    const count = 12;
+    hotSet = new Set(computeTrendingHotNumbers(weeks, count));
+  }
   const weeks = Math.min(25, fullData.length);
   const count = 12;
-
-  // Ensure we have hot numbers (same as Auto-Pick)
-  if (!hotSet || hotSet.size === 0){
-    const hotNums = computeTrendingHotNumbers(weeks, count);
-    hotSet = new Set(hotNums);
-  }
-
-  // ✅ Use hotSet, top18, and sinceMap so results match the “smart” behavior
-  const hotNumsArr = Array.from(hotSet);
-  const picks = computeSystemPicks(count, weeks, hotNumsArr, top18, sinceMap);
-
+  const picks = computeSystemPicks(count, weeks);
   systemPicksSet = new Set(picks);
   renderReverseHitsTable();
 }
-
 
 function drawHistogram(points) {
   const maxToShow = 500;

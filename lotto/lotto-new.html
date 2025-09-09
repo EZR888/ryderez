@@ -431,33 +431,45 @@ let skipDataFrom69 = {};
 /* ── Button handlers for loading datasets ── */
 btn69.onclick = () => {
   loadCSVFile('lotto_69.txt', 69, () => {
-activeGameMode = 69;
+    activeGameMode = 69;
 
-// keep inputs manual and exactly 12
-ensureTwelveInputs();
-top18 = [];               // no auto “Top” fill
-systemPicksSet = new Set(); // clear Picks view
-renderReverseHitsTable();    // redraw table with blank inputs
+    // keep inputs manual and exactly 12 (blank)
+    ensureTwelveInputs();
 
+    // 1) Top (orange): from current-since skip profile
+    recomputeTopFromSkips(12);
 
-    // Save supporting data for restoring later
+    // 2) Hot (blue): trending last 25
+    const weeks = Math.min(25, fullData.length);
+    const hot12 = computeTrendingHotNumbers(weeks, 12);
+    hotSet = new Set(hot12);
+
+    // 3) Picks (green): blend Top+Hot+Due and minimize points
+    const picks = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
+    systemPicksSet = new Set(picks);
+
+    // Draw table now that Top/Hot/Picks are ready
+    renderReverseHitsTable();
+    reapplySkipTableHighlights();
+
+    // ---- existing UI/show logic (unchanged) ----
     pastDrawingsFrom69 = [...pastDrawings];
-    skipDataFrom69 = JSON.parse(JSON.stringify(skipDataGlobal));
-    sinceMapFrom69 = { ...sinceMap };
-    fullDataFrom69 = [...fullData];
+    skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
+    sinceMapFrom69     = { ...sinceMap };
+    fullDataFrom69     = [...fullData];
 
     if (btn1) btn1.style.display = 'inline-block';
 
     hidePBblock();
     qs('#generateWheelButton').style.display = 'inline-block';
-    qs('#quick12Button').style.display = 'inline-block';
-    qs('#systemPicksButton').style.display = 'inline-block';
-    qs('#checkNumbersButton').style.display = 'inline-block';
+    qs('#quick12Button').style.display       = 'inline-block';
+    qs('#systemPicksButton').style.display   = 'inline-block';
+    qs('#checkNumbersButton').style.display  = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
     highlight(btn69);
 
-    // show Top18 controls
+    // show Top inputs/controls (inputs remain blank for your manual picks)
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
     ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
@@ -468,6 +480,7 @@ renderReverseHitsTable();    // redraw table with blank inputs
     if (pbSpan) pbSpan.style.display = 'inline';
   });
 };
+
 
 btn1.onclick = () => {
   highlight(btn1);
@@ -515,25 +528,38 @@ btn1.onclick = () => {
 
 btn39.onclick = () => {
   loadCSVFile('lotto_39.txt', 39, () => {
-activeGameMode = 39;
+    activeGameMode = 39;
 
-// keep inputs manual and exactly 12
-ensureTwelveInputs();
-top18 = [];
-systemPicksSet = new Set();
-renderReverseHitsTable();
+    // keep inputs manual and exactly 12 (blank)
+    ensureTwelveInputs();
 
+    // 1) Top (orange): from current-since skip profile
+    recomputeTopFromSkips(12);
+
+    // 2) Hot (blue): trending last 25
+    const weeks = Math.min(25, fullData.length);
+    const hot12 = computeTrendingHotNumbers(weeks, 12);
+    hotSet = new Set(hot12);
+
+    // 3) Picks (green): blend Top+Hot+Due and minimize points
+    const picks = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
+    systemPicksSet = new Set(picks);
+
+    // Draw table now that Top/Hot/Picks are ready
+    renderReverseHitsTable();
+    reapplySkipTableHighlights();
+
+    // ---- existing UI/show logic (unchanged) ----
     if (btn1) btn1.style.display = 'none';
     hidePBblock();
     highlight(btn39);
     qs('#generateWheelButton').style.display = 'inline-block';
-    qs('#quick12Button').style.display = 'inline-block';
-    qs('#systemPicksButton').style.display = 'inline-block';
-    qs('#checkNumbersButton').style.display = 'inline-block';
+    qs('#quick12Button').style.display       = 'inline-block';
+    qs('#systemPicksButton').style.display   = 'inline-block';
+    qs('#checkNumbersButton').style.display  = 'inline-block';
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
 
-    // show Top18 controls
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
     ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
@@ -771,6 +797,35 @@ if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex'
 
 // expose it globally so any handler can call it
 window.loadCSVFile = loadCSVFile;
+
+// Pick the `count` numbers whose current "since" length has the strongest historical frequency.
+// Score = how often this number historically had the current since-length.
+// Tie-breakers: larger current since (more due), then smaller number.
+function recomputeTopFromSkips(count = 12) {
+  if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
+
+  const rows = [];
+  for (let n = 1; n <= totalNumbersGlobal; n++) {
+    const since = sinceMap[n] || 26;            // 1..25, or "26+" if never in window
+    const idx   = Math.min(25, Math.max(1, since)) - 1; // 0..24
+    const hist  = skipDataGlobal.skipTable[n]?.[idx] || 0;
+    rows.push({ n, hist, since });
+  }
+
+  const picked = rows
+    .sort((a, b) =>
+      (b.hist - a.hist) ||          // more historical support first
+      (b.since - a.since) ||        // then more due
+      (a.n - b.n)                   // then lower number
+    )
+    .slice(0, count)
+    .map(r => r.n)
+    .sort((a, b) => a - b);
+
+  // Store for the Top (orange) column
+  top18 = picked;
+  return picked;
+}
 
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {

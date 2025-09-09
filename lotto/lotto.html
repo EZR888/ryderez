@@ -259,16 +259,16 @@ h3{margin:0 0 15px;color: gold}
 <button id="checkNumbersButton" class="button button-single" style="margin-left: 10px;">✅ Check Numbers</button>
 <br><br>
 
-<h2 id="top18Label">Top Numbers (Editable)</h2>
+<h2 id="top18Label">Your Picks (Editable)</h2>
 <div id="top18Inputs"></div>
 <button id="updateHitsBtn" class="button button-single">🔄 Update Hits Table</button>
-<button id="autoPickTopBtn" class="button button-single">🧠 Auto-Pick Top Numbers</button>
-<button id="loadTop18Button" class="button button-single">📂 Load Top #'s</button><br>
+<button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
+<button id="loadTop18Button" class="button button-single">📂 Load Prior Picks</button><br>
 
 <div id="loadTop18Modal" class="modal">
   <div class="modal-content">
     <span class="close-button" id="closeLoadModal">&times;</span>
-    <h2>Load Top 18 Numbers</h2>
+    <h2>Load Prior Picks</h2>
     <input type="file" id="loadTop18FileInput">
   </div>
 </div>
@@ -385,7 +385,7 @@ h3{margin:0 0 15px;color: gold}
 <div id="autoPickModal" class="modal">
   <div class="modal-content" style="width: 400px; max-width: 90%;">
     <span class="close-button" id="closeAutoPickModal">&times;</span>
-    <h2>Auto-Pick Top Numbers</h2>
+    <h2>Find Hot Numbers</h2>
     
     <label for="weeksInput">Number of Drawings (max 25):</label>
     <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
@@ -1587,7 +1587,7 @@ document.getElementById('quick12Button').addEventListener('click', function () {
       .sort((a, b) => a - b);
   const allInputs = Array.from(document.querySelectorAll('#top18Inputs input'));
   const topInputs = allInputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
-  if (topInputs.length < 12) { alert('Need at least 12 valid numbers in the Top Numbers inputs.'); return; }
+  if (topInputs.length < 12) { alert('Need at least 12 valid numbers in the Your Picks inputs.'); return; }
 
   const fixedPattern = [
       [0, 1, 2, 3, 4], [0, 1, 5, 6, 7], [0, 2, 5, 8, 9],
@@ -2044,7 +2044,7 @@ function calculateCoveragePercent(numNumbers, setsGenerated) {
   return percent.toFixed(1);
 }
 
-/* Reverse hits table (Top / Hot / Picks) */
+/* Reverse hits table (Skips / Hot / Picks) */
 function renderReverseHitsTable() {
   const container = document.getElementById('reverseHitsContainer');
   container.innerHTML = '';
@@ -2058,7 +2058,7 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Top';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
   headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
   headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
   table.appendChild(headerRow);

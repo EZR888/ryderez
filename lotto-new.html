@@ -823,6 +823,113 @@ function drawHistogram(points) {
   });
 }
 
+function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
+  fetch(filename + '?t=' + Date.now())
+    .then(response => {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.text();
+    })
+    .then(text => {
+      // Parse CSV -> array of rows
+      window.fullData = text
+        .trim()
+        .split('\n')
+        .map(line => line.split(',').map(s => s.trim()));
+
+      // Draw numbers (assumes newest row is first in the file)
+      const drawingNumbers = fullData
+        .map(row => parseInt(row[0], 10))
+        .filter(n => Number.isFinite(n));
+      window.latestDrawingNumber = drawingNumbers[0] ?? null;
+
+      // Update UI label if present
+      const lastDrawElem = document.getElementById('lastDrawingNumber');
+      if (lastDrawElem) lastDrawElem.textContent = latestDrawingNumber ?? '–';
+
+      // Numbers matrix: convert to ints and drop any bad rows
+      const data = fullData
+        .map(row => row.slice(1).map(n => parseInt(n, 10)))
+        .filter(row => row.every(n => Number.isFinite(n)));
+
+      // Game size (39/69/26)
+      window.totalNumbersGlobal = totalNumbers;
+
+      // Reset Hot when switching datasets (if it exists)
+      if (window.hotSet && typeof hotSet.clear === 'function') hotSet.clear();
+
+      // Build skip table (use your version if present, otherwise fallback)
+      if (typeof buildSkipTable === 'function') {
+        window.skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+      } else {
+        // minimal fallback
+        const skipTable = Array.from({ length: totalNumbers + 1 }, () => Array(26).fill(0));
+        const lastSeen = Array(totalNumbers + 1).fill(null);
+        for (let drawIndex = 0; drawIndex < data.length; drawIndex++) {
+          const present = new Set(data[drawIndex]);
+          for (let num = 1; num <= totalNumbers; num++) {
+            if (present.has(num)) {
+              if (lastSeen[num] !== null) {
+                const skip = drawIndex - lastSeen[num] - 1;
+                if (skip >= 1 && skip <= 25) skipTable[num][skip]++;
+              }
+              lastSeen[num] = drawIndex;
+            }
+          }
+        }
+        window.skipDataGlobal = { skipTable };
+      }
+
+      // Keep a simple list of past full 5-number draws (for duplicate filtering)
+      window.pastDrawings = fullData
+        .filter(row => row.length >= 6)
+        .map(row => row.slice(1, 6)
+          .map(n => parseInt(n, 10))
+          .sort((a, b) => a - b)
+          .join(',')
+        );
+
+      // Optional UI hooks if your helpers exist
+      if (typeof renderRecentDraws === 'function') {
+        renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+      }
+      if (typeof renderSkipFrequency === 'function') {
+        renderSkipFrequency();
+      }
+
+      // Toggle a few controls safely
+      const quick12Btn = document.getElementById('quick12Button');
+      if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
+
+      const genBtn = document.getElementById('generateWheelButton');
+      if (genBtn) genBtn.style.display = (totalNumbers === 69 || totalNumbers === 39) ? 'inline-block' : 'none';
+
+      const topInputs = document.getElementById('top18Inputs');
+      if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
+
+      const exportAllButton  = document.querySelector('button[onclick="exportGeneratedSets()"]');
+      const exportBestButton = document.querySelector('button[onclick="exportBestSets()"]');
+      const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
+      if (exportAllButton)  exportAllButton.style.display  = 'inline-block';
+      if (exportBestButton) exportBestButton.style.display = 'inline-block';
+      if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
+
+      const reverseHits = document.getElementById('reverseHitsContainer');
+      if (reverseHits) reverseHits.style.display = 'block';
+      const skipFreq = document.getElementById('skipFrequencyContainer');
+      if (skipFreq) skipFreq.style.display = 'block';
+
+      if (typeof callback === 'function') callback();
+    })
+    .catch(error => {
+      console.error('Failed to load file:', error);
+      alert(
+        `Error loading ${filename}.
+If you’re opening this page directly from your file system, start a small local server instead (e.g., “python3 -m http.server”) and open http://localhost:8000/`
+      );
+    });
+}
+
+
 function setupHistogramListener() {
   const histoBtn = document.getElementById('showHistogramBtn');
   if (!histoBtn) return;

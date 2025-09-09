@@ -431,14 +431,8 @@ let skipDataFrom69 = {};
 /* ── Button handlers for loading datasets ── */
 btn69.onclick = () => {
   loadCSVFile('lotto_69.txt', 69, () => {
-activeGameMode = 69;
-
-// keep inputs manual and exactly 12
-ensureTwelveInputs();
-top18 = [];               // no auto “Top” fill
-systemPicksSet = new Set(); // clear Picks view
-renderReverseHitsTable();    // redraw table with blank inputs
-
+    activeGameMode = 69;
+    generateTopNumbersAndRender(true);
 
     // Save supporting data for restoring later
     pastDrawingsFrom69 = [...pastDrawings];
@@ -515,14 +509,8 @@ btn1.onclick = () => {
 
 btn39.onclick = () => {
   loadCSVFile('lotto_39.txt', 39, () => {
-activeGameMode = 39;
-
-// keep inputs manual and exactly 12
-ensureTwelveInputs();
-top18 = [];
-systemPicksSet = new Set();
-renderReverseHitsTable();
-
+    activeGameMode = 39;
+    generateTopNumbersAndRender(false);
     if (btn1) btn1.style.display = 'none';
     hidePBblock();
     highlight(btn39);
@@ -608,13 +596,16 @@ runAutoBtn.addEventListener('click', () => {
   const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
   const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-  // Only compute & show HOT (blue). Do NOT write to Picks.
+  // Only compute & show HOT here
   const hotNums = computeTrendingHotNumbers(weeks, count);
   hotSet = new Set(hotNums);
 
+  // 🚫 Do not touch systemPicksSet here
+  // const picks = computeSystemPicks(...);  <-- remove
+  // systemPicksSet = new Set(picks);       <-- remove
+
   renderReverseHitsTable();
 });
-
 
   }
 
@@ -665,11 +656,42 @@ function computeTopHitsFromRecent(weeks = 25, count = 12) {
 
 // --- 1) If generateTopNumbersAndRender is missing, provide a simple version
 if (typeof generateTopNumbersAndRender !== "function") {
-  window.generateTopNumbersAndRender = function () {
-    // no-op: manual 12 inputs only now
+  window.generateTopNumbersAndRender = function(isPowerball69 = false) {
+    // Build a simple "Top 18" using frequency in the last 25 draws
+    const weeks = Math.min(25, fullData.length);
+    const recentDraws = fullData.slice(0, weeks)
+      .map(r => r.slice(1).map(Number).filter(n => !isNaN(n)));
+
+    const freq = {};
+    recentDraws.forEach(draw => draw.forEach(n => freq[n] = (freq[n] || 0) + 1));
+
+    const top = Object.entries(freq)
+      .sort((a,b) => (b[1]-a[1]) || (parseInt(a[0]) - parseInt(b[0])))
+      .slice(0, 18)
+      .map(([n]) => parseInt(n,10))
+      .sort((a,b) => a-b);
+
+    // Write them into the inputs
+    const inputsDiv = document.getElementById('top18Inputs');
+    inputsDiv.innerHTML = '';
+    for (let i = 0; i < 18; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.value = top[i] ?? '';
+      inputsDiv.appendChild(inp);
+    }
+
+    // Save and render
+    top18 = top;
+    renderReverseHitsTable();
+    renderSkipFrequency();
+    if (typeof rehighlightSkipTableFromTop18 === "function") {
+      rehighlightSkipTableFromTop18();
+    } else if (typeof reapplySkipTableHighlights === "function") {
+      reapplySkipTableHighlights();
+    }
   };
 }
-
 
 // --- 2) Alias the missing name to your existing highlighter
 if (typeof rehighlightSkipTableFromTop18 !== "function") {
@@ -912,32 +934,20 @@ function runSystemPicks(){
   const weeks = Math.min(25, fullData.length);
   const count = 12;
 
-  // Use existing Hot if present; otherwise seed it so System Picks has something reasonable
+  // Ensure we have hot numbers (same as Auto-Pick)
   if (!hotSet || hotSet.size === 0){
     const hotNums = computeTrendingHotNumbers(weeks, count);
     hotSet = new Set(hotNums);
   }
 
-  // Build Picks from Hot + Top + recency (sinceMap)
-  const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
+  // ✅ Use hotSet, top18, and sinceMap so results match the “smart” behavior
+  const hotNumsArr = Array.from(hotSet);
+  const picks = computeSystemPicks(count, weeks, hotNumsArr, top18, sinceMap);
 
-  // ✅ This updates the green Picks column
   systemPicksSet = new Set(picks);
-
   renderReverseHitsTable();
 }
 
-function ensureTwelveInputs() {
-  const div = document.getElementById('top18Inputs');
-  if (!div) return;
-  div.innerHTML = '';
-  for (let i = 0; i < 12; i++) {
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.placeholder = String(i + 1);
-    div.appendChild(inp);
-  }
-}
 
 function drawHistogram(points) {
   const maxToShow = 500;
@@ -1913,21 +1923,15 @@ function renderReverseHitsTable() {
 }
 
 function updateReverseHitsTop18() {
-  // Read exactly the 12 inputs you typed
-  const picks = Array.from(document.querySelectorAll('#top18Inputs input'))
-    .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(n => !isNaN(n))
-    .slice(0, 12)
-    .sort((a,b)=>a-b);
+  const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  top18 = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(x => !isNaN(x) && x >= 1).sort((a, b) => a - b);
 
-  // Update ONLY the green Picks column
-  systemPicksSet = new Set(picks);
+  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) top18From69 = [...top18];
 
-  // Do not touch Top or Hot
   renderReverseHitsTable();
-  reapplySkipTableHighlights();
+  renderSkipFrequency();
+  rehighlightSkipTableFromTop18();
 }
-
 
 /* Exports */
 function exportGeneratedSets() {

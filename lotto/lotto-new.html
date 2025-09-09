@@ -592,18 +592,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const runAutoBtn = document.getElementById('runAutoPick');
   if (runAutoBtn) {
-    runAutoBtn.addEventListener('click', () => {
-      const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
-      const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+runAutoBtn.addEventListener('click', () => {
+  const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
+  const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-      const hotNums = computeTrendingHotNumbers(weeks, count);
-      hotSet = new Set(hotNums);
+  // Only compute & show HOT here
+  const hotNums = computeTrendingHotNumbers(weeks, count);
+  hotSet = new Set(hotNums);
 
-      const picks = computeSystemPicks(count, weeks, hotNums, top18, sinceMap);
-      systemPicksSet = new Set(picks);
+  // 🚫 Do not touch systemPicksSet here
+  // const picks = computeSystemPicks(...);  <-- remove
+  // systemPicksSet = new Set(picks);       <-- remove
 
-      renderReverseHitsTable();
-    });
+  renderReverseHitsTable();
+});
+
   }
 
   // Open Auto-pick modal
@@ -793,56 +796,78 @@ window.loadCSVFile = loadCSVFile;
 
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {
-  const windowSize = Math.min(weeks, fullData.length);
-  if (!windowSize) return [];
+  const N = Math.min(weeks, fullData.length);
+  if (!N) return [];
 
-  const windowDraws = fullData
-    .slice(0, windowSize)
+  // Parse the last N draws (0 = most recent)
+  const windowDraws = fullData.slice(0, N)
     .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
 
-  const split = Math.ceil(windowDraws.length / 2);
-  const newer = windowDraws.slice(0, split);
-  const older = windowDraws.slice(split);
+  const stats = Array.from({ length: totalNumbersGlobal + 1 }, () => ({
+    hits: 0,
+    lastAges: [],  // draw indices (0 recent) where number hit
+    recencyScore: 0
+  }));
 
-  const fNew = Object.create(null);
-  const fOld = Object.create(null);
-  newer.forEach(d => d.forEach(n => fNew[n] = (fNew[n] || 0) + 1));
-  older.forEach(d => d.forEach(n => fOld[n] = (fOld[n] || 0) + 1));
+  // Exponential decay for recency (tau controls decay; smaller = more recent emphasis)
+  const tau = Math.max(4, Math.round(N / 3));
 
-  const minRecent = Math.max(1, Math.round(split * 0.2));
+  windowDraws.forEach((nums, age) => {
+    const w = Math.exp(-age / tau);
+    nums.forEach(n => {
+      if (n >= 1 && n <= totalNumbersGlobal) {
+        stats[n].hits += 1;
+        stats[n].recencyScore += w;
+        stats[n].lastAges.push(age);
+      }
+    });
+  });
 
+  // Build scored entries with acceleration bonus
+  const R = Math.max(1, Math.ceil(N / 3)); // "recent" slice for plain recent-count
   const entries = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
-    const recent = fNew[n] || 0;
-    const olderC = fOld[n] || 0;
-    const trend  = recent - olderC;
-    const total  = recent + olderC;
-    entries.push({ n, recent, trend, total });
+    const s = stats[n];
+    if (s.hits === 0) continue;
+
+    // Recent-count in last R draws
+    const recentCount = s.lastAges.filter(a => a < R).length;
+
+    // Acceleration: compare last two inter-hit gaps (smaller gap = speeding up)
+    // ages: e.g., [0, 4, 11] -> gaps [4-0, 11-4] = [4,7] (but ages grow going older)
+    const ages = s.lastAges.slice().sort((a, b) => a - b); // youngest->oldest
+    let accelBonus = 0;
+    if (ages.length >= 3) {
+      const lastGap = ages[1] - ages[0];      // most recent gap
+      const prevGap = ages[2] - ages[1];      // prior gap
+      const accel = Math.max(0, prevGap - lastGap); // positive = accelerating
+      // Normalize a bit so it’s a small nudge, not the whole story:
+      accelBonus = accel / Math.max(2, Math.min(12, R));
+    }
+
+    const veryRecent = ages.length && ages[0] <= 3; // hit within 3 draws
+    const eligibility = (recentCount >= 2) || veryRecent;
+
+    // Composite score: mostly recency + a touch of raw hits + acceleration nudge
+    const score = (0.65 * s.recencyScore) + (0.25 * recentCount) + (0.10 * accelBonus);
+
+    entries.push({ n, recentCount, veryRecent, score, hits: s.hits });
   }
 
+  // Strict filter first: require eligibility
   let ranked = entries
-    .filter(e => e.recent >= minRecent)
-    .sort((a, b) =>
-      (b.recent - a.recent) ||
-      (b.trend  - a.trend)  ||
-      (b.total  - a.total)  ||
-      (a.n - b.n)
-    )
+    .filter(e => e.veryRecent || e.recentCount >= 2)
+    .sort((a, b) => (b.score - a.score) || (a.n - b.n))
     .slice(0, count);
 
+  // If we’re still short, allow 1-hit numbers but only if that 1 hit was ≤R and not clearly decelerating
   if (ranked.length < count) {
-    const needed = count - ranked.length;
     const picked = new Set(ranked.map(e => e.n));
-    const fallback = entries
-      .filter(e => !picked.has(e.n))
-      .sort((a, b) =>
-        (b.recent - a.recent) ||
-        (b.trend  - a.trend)  ||
-        (b.total  - a.total)  ||
-        (a.n - b.n)
-      )
-      .slice(0, needed);
-    ranked = ranked.concat(fallback);
+    const fillers = entries
+      .filter(e => !picked.has(e.n) && e.recentCount >= 1 && e.veryRecent)
+      .sort((a, b) => (b.score - a.score) || (a.n - b.n))
+      .slice(0, count - ranked.length);
+    ranked = ranked.concat(fillers);
   }
 
   return ranked.map(e => e.n).sort((a, b) => a - b);
@@ -1900,9 +1925,6 @@ function renderReverseHitsTable() {
 function updateReverseHitsTop18() {
   const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
   top18 = top18Inputs.map(input => parseInt(input.value.trim(), 10)).filter(x => !isNaN(x) && x >= 1).sort((a, b) => a - b);
-
-  const first12 = getTopSkipsFromInputs(12);
-  systemPicksSet = new Set(first12);
 
   if (totalNumbersGlobal === 69 || totalNumbersGlobal === 26) top18From69 = [...top18];
 

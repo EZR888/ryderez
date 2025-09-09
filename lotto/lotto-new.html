@@ -723,6 +723,21 @@ function stableSeed(...things) {
   return h >>> 0;
 }
 
+// --- Deterministic RNG glue ---
+let __rng = Math.random;              // default: normal randomness
+function rand() { return __rng(); }   // use this everywhere instead of Math.random
+
+function setDeterministicSeed(tag = 'systemPicks') {
+  // Build a stable seed from the dataset + tag so same data → same picks.
+  const seed = stableSeed(
+    tag,
+    totalNumbersGlobal,
+    latestDrawingNumber || 0,
+    // include latest row content to “lock” to the dataset snapshot
+    (fullData && fullData[0]) ? fullData[0].join(',') : ''
+  );
+  __rng = makeRNG(seed);
+}
 
 
 function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
@@ -932,8 +947,7 @@ function readTopSkips12(){
 // 🔁 Replace your existing computeSystemPicks with this:
 // 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
 // while minimizing average points of sampled 5-number sets from the pool.
-function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = Math.random) {
-  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
   const H = uniq(hotList);
   const T = uniq(topList);
 
@@ -1095,7 +1109,7 @@ function ensureTwelveInputs() {
   }
 }
 
-function randomSampleCombos(pool, k, samples, rng = Math.random) {
+function randomSampleCombos(pool, k, samples, rng = rand) {
   const out = [];
   const n = pool.length;
   if (n < k) return out;
@@ -1113,7 +1127,7 @@ function randomSampleCombos(pool, k, samples, rng = Math.random) {
   return out;
 }
 
-function evaluatePoolPoints(pool, rng = Math.random) {
+function evaluatePoolPoints(pool, rng = rand) {
   const combos = randomSampleCombos(pool, 5, 80, rng);
   if (combos.length === 0) return 1e9;
   let sum = 0;

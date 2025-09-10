@@ -1,2 +1,0 @@
-Matching Numbers	Winning Tickets	Prize Amounts
-Total Winning Tickets	0	

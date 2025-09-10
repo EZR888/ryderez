@@ -1002,6 +1002,32 @@ function recomputeTopFromSkips(count = 12) {
   return top;
 }
 
+let __pbCycleIndex = 0;
+
+function getPBPool(){
+  // Read whatever is in the 5 boxes, ignore blanks/out-of-range
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  return vals;
+}
+
+function getNextPB(){
+  const pool = getPBPool();
+  if (pool.length === 0) {
+    // No manual PBs supplied – fall back to 1..26 cycling (deterministic)
+    __pbCycleIndex = (__pbCycleIndex + 1) % 26;
+    return __pbCycleIndex + 1;
+  }
+  const v = pool[ __pbCycleIndex % pool.length ];
+  __pbCycleIndex++;
+  return v;
+}
+
+// Reset PB cycle whenever user edits any PB input
+qsa('#pbBlock input').forEach(inp => {
+  inp.addEventListener('input', () => { __pbCycleIndex = 0; });
+});
 
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {
@@ -1518,13 +1544,20 @@ window.addEventListener("click", function(event) { const modal = document.getEle
 
 function showPBblock(){
   pbBlk.style.display='flex';
+
+  // If any input already has a value, don't auto-fill (respect manual edits)
+  const inputs = qsa('#pbBlock input');
+  const existing = inputs.map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
+  if (existing.length) return;
+
+  // Otherwise, give a quick random seed fill
   const pool  = Array.from({length:26}, (_,i) => i+1);
   const picks = [];
   while (picks.length < 5) {
     const idx = Math.floor(Math.random() * pool.length);
-    picks.push( pool.splice(idx,1)[0] );
+    picks.push(pool.splice(idx,1)[0]);
   }
-  qsa('#pbBlock input').forEach((inp,i) => inp.value = picks[i] ?? '');
+  inputs.forEach((inp,i) => inp.value = picks[i] ?? '');
 }
 
 qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
@@ -1534,42 +1567,57 @@ document.getElementById('pickBestSetsModal').onclick = ()=> pickBestSets(true);
 document.getElementById('exportAllBtn').onclick = ()=> doExport('all');
 document.getElementById('exportBestBtn').onclick = ()=> doExport('best');
 
-function doExport(mode){
-  if(!generatedSets.length){ alert('Generate sets first!'); return; }
-
-  const allCount  = +qs('#modalSetCountChoice').value||1;
-  const bestCount = +qs('#modalBestSetCount').value||1;
-  let list = [...generatedSets];
-
-  if(mode==='best'){
-      list.sort((a,b)=>a.points-b.points);
-      list = list.slice(0,bestCount);
-  }else{
-      list = list.slice(0,allCount);
+function doExport(mode) {
+  if (!generatedSets.length) { 
+    alert('Generate sets first!'); 
+    return; 
   }
 
-  const pbInputs = qsa('#pbBlock input').map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
-  const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
+  const allCount  = +qs('#modalSetCountChoice').value || 1;
+  const bestCount = +qs('#modalBestSetCount').value  || 1;
+  let list = [...generatedSets];
 
-  const lines = list.map(({combo},idx)=>{
-let out = `${idx+1}.  ${asSorted(combo).join(', ')}`;
-      if(needPB){
-          const pb = pbInputs.length
-                      ? pbInputs[Math.floor(Math.random()*pbInputs.length)]
-                      : Math.floor(Math.random()*26)+1;
-          out += '  '+pb;
+  if (mode === 'best') {
+    list.sort((a, b) => a.points - b.points);
+    list = list.slice(0, bestCount);
+  } else {
+    list = list.slice(0, allCount);
+  }
+
+  const pbInputs = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value, 10))
+    .filter(n => n >= 1 && n <= 26);
+
+  const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
+  let pbIndex = 0;  // reset fresh for each export
+
+  const lines = list.map(({ combo }, idx) => {
+    let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
+    if (needPB) {
+      let pb;
+      if (pbInputs.length > 0) {
+        // pick next PB from list, wrap around if needed
+        pb = pbInputs[pbIndex % pbInputs.length];
+        pbIndex++;
+      } else {
+        // fallback: random 1–26
+        pb = Math.floor(Math.random() * 26) + 1;
       }
-      return out;
+      out += '  ' + pb;
+    }
+    return out;
   }).join('\n');
 
-  const blob=new Blob([lines],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  const prefix = (totalNumbersGlobal === 39) ? 'f5' : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x'); // FIX
+  const blob = new Blob([lines], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const prefix = (totalNumbersGlobal === 39) ? 'f5'
+                : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x');
   const draw = (typeof latestDrawingNumber === 'number' ? latestDrawingNumber + 1 : '00000');
   a.download = `${mode}_sets_${prefix}_${draw}.txt`;
   a.click();
 }
+
 
 /* Check Numbers (file flow) */
 document.getElementById("checkNumbersButton").onclick = function () {

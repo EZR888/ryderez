@@ -1055,8 +1055,8 @@ function readTopSkips12(){
 // 🔁 REPLACE your existing computeSystemPicks with this version
 function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {
   // --- knobs you can tune ---
-  const MIN_FROM_TOP = Math.max(6, Math.floor(count * 0.45)); // ensure strong Skips presence
-  const MAX_FROM_HOT = Math.min(5, Math.floor(count * 0.40)); // cap Hot dominance
+  const MIN_FROM_TOP = Math.max(6, Math.floor(count * 0.30)); // ensure strong Skips presence
+  const MAX_FROM_HOT = Math.min(5, Math.floor(count * 0.30)); // cap Hot dominance
   const EXPLORERS    = Math.max(2, count - (MIN_FROM_TOP + Math.min(MAX_FROM_HOT, (hotList||[]).length)));
 
   // helper: uniq ints

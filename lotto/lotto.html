@@ -543,7 +543,7 @@ btn69.onclick = () => {
     // Show Top inputs/controls (inputs remain for your manual edits)
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
-    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
     });
 
@@ -569,7 +569,7 @@ btn1.onclick = () => {
   if (checkPBSpan) checkPBSpan.style.display = 'none';
 
   // hide Top controls
-  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label'].forEach(id=>{
+  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.style.display='none';
   });
 
@@ -620,7 +620,7 @@ btn39.onclick = () => {
 
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
-    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
     });
 

@@ -722,6 +722,8 @@ window.onload = function () {
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');
   if (closeAutoBtn) closeAutoBtn.addEventListener('click', () => { document.getElementById('autoPickModal').style.display = 'none'; });
+  
+  loadPBFromStorage();   // if the PB block is hidden, values still populate the inputs
 
   const runAutoBtn = document.getElementById('runAutoPick');
   if (runAutoBtn) {
@@ -1024,9 +1026,12 @@ function getNextPB(){
   return v;
 }
 
-// Reset PB cycle whenever user edits any PB input
+// Reset PB cycle + persist PB pool on every edit
 qsa('#pbBlock input').forEach(inp => {
-  inp.addEventListener('input', () => { __pbCycleIndex = 0; });
+  inp.addEventListener('input', () => {
+    __pbCycleIndex = 0;
+    savePBToStorage();            // 🧠 persist on every edit
+  });
 });
 
 
@@ -1497,6 +1502,27 @@ function loadPicksIntoColumnAndInputs(numbers) {
   reapplySkipTableHighlights();
 }
 
+function savePBToStorage(){
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  localStorage.setItem('twePBPool', JSON.stringify(vals));
+}
+
+function loadPBFromStorage(){
+  try {
+    const raw = localStorage.getItem('twePBPool');
+    const vals = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(vals) && vals.length){
+      const inputs = qsa('#pbBlock input');
+      for (let i = 0; i < inputs.length; i++){
+        inputs[i].value = vals[i] ?? '';
+      }
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
 
 function loadTop18NumbersIntoTable(numbers) {
   const container = document.getElementById('reverseHitsContainer');
@@ -1537,20 +1563,23 @@ style.textContent = `.blue-dot { width: 14px; height: 14px; border-radius: 50%; 
 document.head.appendChild(style);
 
 function highlight(btn){ [btn39, btn69, btn1].forEach(b => b.classList.toggle('active', b === btn)); }
-function hidePBblock(){ pbBlk.style.display = 'none'; qsa('#pbBlock input').forEach(inp => inp.value = ''); }
+function hidePBblock(){
+  pbBlk.style.display = 'none';   // 🔒 do NOT clear values here
+}
 
 function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
 window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });
 
 function showPBblock(){
-  pbBlk.style.display='flex';
+  pbBlk.style.display = 'flex';
 
-  // If any input already has a value, don't auto-fill (respect manual edits)
   const inputs = qsa('#pbBlock input');
   const existing = inputs.map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
-  if (existing.length) return;
 
-  // Otherwise, give a quick random seed fill
+  if (existing.length) return;                // already have user entries, respect them
+  if (loadPBFromStorage()) return;            // 🧠 restore saved PBs if available
+
+  // Otherwise, give a quick random seed fill (first-time only)
   const pool  = Array.from({length:26}, (_,i) => i+1);
   const picks = [];
   while (picks.length < 5) {
@@ -1558,6 +1587,7 @@ function showPBblock(){
     picks.push(pool.splice(idx,1)[0]);
   }
   inputs.forEach((inp,i) => inp.value = picks[i] ?? '');
+  savePBToStorage();                           // save the initial fill too
 }
 
 qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';

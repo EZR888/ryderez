@@ -199,6 +199,28 @@ h3{margin:0 0 15px;color: gold}
 .green-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32; }
 .hot-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#00bfff; }
 
+/* Toast */
+#tweToast {
+  position: fixed;
+  left: 50%;
+  top: 50%;                      /* move from bottom to middle */
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.85);
+  color: #fff;
+  padding: 18px 26px;            /* more padding */
+  border-radius: 8px;
+  font-size: 22px;               /* larger font */
+  font-weight: bold;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+#tweToast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05); /* subtle "pop" */
+}
+
   </style>
 </head>
 <body>
@@ -260,10 +282,12 @@ h3{margin:0 0 15px;color: gold}
 <br><br>
 
 <h2 id="top18Label">Your Picks (Editable)</h2>
+
 <div id="top18Inputs"></div>
 <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button>
-<button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
-<button id="loadTop18Button" class="button button-single">📂 Load Prior Picks</button><br>
+<button id="loadTop18Button" class="button button-single">📂 Load Prior Picks</button>
+<button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
+<button id="savePicksBtn" class="button button-single">💾 Save Picks</button><br>
 
 <div id="loadTop18Modal" class="modal">
   <div class="modal-content">
@@ -273,9 +297,9 @@ h3{margin:0 0 15px;color: gold}
   </div>
 </div>
 
+<button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
 <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Generate Wheel</button>
 <button id="quick12Button" class="button button-single" style="display:none">⚡ 12-Number Quick</button>
-<button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
 
 <br><br>
 
@@ -457,7 +481,6 @@ h3{margin:0 0 15px;color: gold}
     <label for="coverage12">Top 12</label><br>
     <input type="radio" name="coverage" value="18" id="coverage18" checked>
     <label for="coverage18">Top 18</label><br><br>
-
     <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
     <button id="saveTop18Button" class="button button-single" style="display:none;">💾 Save Top #'s</button>
     <button id="exportAutoTopBtn" class="button button-single" style="display:none;">⬇️ Export Auto Top</button>
@@ -475,11 +498,7 @@ let skipDataGlobal={}, sinceMap={}, referenceData={};
 let top18From69 = [];
 let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
 let activeGameMode = null;
-// ── Enhancement caches ──
-let hazardScore = {};
-let soonProb    = {};
-let coHit       = {};
-
+let __pbInputsWired = false;
 
 const qs  = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
@@ -525,7 +544,7 @@ btn69.onclick = () => {
     // Show Top inputs/controls (inputs remain for your manual edits)
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
-    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
     });
 
@@ -542,40 +561,34 @@ btn1.onclick = () => {
 
   showPBblock();
   qs('#generateWheelButton').style.display = 'none';
-  qs('#checkNumbersButton').style.display = 'none';
+  qs('#checkNumbersButton').style.display  = 'none';
   document.getElementById('showHistogramBtn').style.display = 'none';
-  qs('#quick12Button').style.display = 'none';
-  qs('#systemPicksButton').style.display = 'none';
+  qs('#quick12Button').style.display       = 'none';
+  qs('#systemPicksButton').style.display   = 'none';
 
-  const checkPBSpan = document.getElementById('checkPBSpan');
-  if (checkPBSpan) checkPBSpan.style.display = 'none';
+  // Hide Top inputs & related controls in PB-only mode (including Save Picks)
+  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
 
-  // hide Top controls
-  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.style.display='none';
-  });
-
-  // load 1-number data
+  // Load PB-only data (1..26) and compute Skips/Hot for visual consistency
   loadCSVFile('lotto_1.txt', 26, () => {
-    const highlighted = [];
-    for (let number = 1; number <= totalNumbersGlobal; number++) {
-      const val = skipDataGlobal.skipTable[number]?.reduce((a, b) => a + b, 0) || 0;
-      highlighted.push({ number, val });
-    }
-    highlighted.sort((a, b) => b.val - a.val);
-    top18 = highlighted.slice(0, 12).map(x => x.number).sort((a, b) => a - b);
-
-    const top18InputsDiv = document.getElementById('top18Inputs');
-    top18InputsDiv.innerHTML = '';
-    for (let i = 0; i < top18.length; i++) {
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.value = top18[i];
-      top18InputsDiv.appendChild(inp);
+    // ✅ SKIPS (orange): take top 12 by current skip-profile
+    if (typeof recomputeTopFromSkips === 'function') {
+      top18 = recomputeTopFromSkips(12); // sets top18 and refreshes highlights internally
+    } else {
+      top18 = [];
     }
 
-    updateReverseHitsTop18();
-    rehighlightSkipTableFromTop18();
+    // ✅ HOT (blue): trending in last up to 25 PB draws
+    const weeks = Math.min(25, fullData.length);
+    hotSet = new Set(computeTrendingHotNumbers(weeks, 12));
+
+    // No Picks column in PB mode
+    systemPicksSet = new Set();
+
+    // Draw/refresh the two tables
+    renderReverseHitsTable();
+    reapplySkipTableHighlights();
   });
 };
 
@@ -602,7 +615,7 @@ btn39.onclick = () => {
 
     document.getElementById('top18Inputs').style.display = 'flex';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
-    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button'].forEach(id => {
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
     });
 
@@ -617,6 +630,43 @@ const loadTop18Button = document.getElementById('loadTop18Button');
 const loadTop18Modal = document.getElementById('loadTop18Modal');
 const loadTop18FileInput = document.getElementById('loadTop18FileInput');
 const closeLoadModal = document.getElementById('closeLoadModal');
+const savePicksBtn = document.getElementById('savePicksBtn');
+if (savePicksBtn) savePicksBtn.addEventListener('click', savePicksFromInputs);
+
+// Save the 12 inputs (low→high) to a file
+function savePicksFromInputs() {
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n));
+
+  if (nums.length !== 12) {
+    alert('Please enter 12 valid numbers in the input boxes before saving.');
+    return;
+  }
+
+  const sorted = nums.sort((a,b)=>a-b);
+
+  // Use both the current drawing and the next one
+  const currentDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+    ? String(latestDrawingNumber) : '00000';
+  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+    ? String(latestDrawingNumber + 1) : '00000';
+
+  const prefix = (totalNumbersGlobal === 69) ? 'picksPB'
+               : (totalNumbersGlobal === 39) ? 'picksF5'
+               : 'picks';
+
+  // Filename example: picksPB_cur1469_next1470.txt
+  const filename = `${prefix}_cur${currentDraw}_next${nextDraw}.txt`;
+
+  const blob = new Blob([sorted.join(', ')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 100);
+}
 
 saveTop18Button.addEventListener('click', saveTop18Numbers);
 loadTop18Button.addEventListener('click', () => { loadTop18Modal.style.display = 'block'; });
@@ -667,20 +717,41 @@ window.onload = function () {
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');
   if (closeAutoBtn) closeAutoBtn.addEventListener('click', () => { document.getElementById('autoPickModal').style.display = 'none'; });
-
+  
+  loadPBFromStorage();   // if the PB block is hidden, values still populate the inputs
+  wirePBInputsOnce();
+  
   const runAutoBtn = document.getElementById('runAutoPick');
   if (runAutoBtn) {
 runAutoBtn.addEventListener('click', () => {
   const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
   const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-  // Only compute & show HOT (blue). Do NOT write to Picks.
+  // Recalculate Hot (blue dots)
+  const beforeHot = new Set(hotSet);
   const hotNums = computeTrendingHotNumbers(weeks, count);
   hotSet = new Set(hotNums);
 
-  renderReverseHitsTable();
-});
+  // 👉 Also recompute Picks (green dots)
+  const beforePicks = new Set(systemPicksSet);
+  setDeterministicSeed('systemPicks');
+  const picks = computeSystemPicks(12, weeks, hotNums, top18, sinceMap);
+  systemPicksSet = new Set(picks);
+  setInputsFromList(picks, 12);   // mirror into inputs
 
+  // Redraw
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+
+  // Feedback
+  const hotChanged   = !setsEqual(beforeHot, hotSet);
+  const picksChanged = !setsEqual(beforePicks, systemPicksSet);
+  if (hotChanged || picksChanged) {
+    showToast('Hot + Picks updated.');
+  } else {
+    showToast('Recalculated (no change).');
+  }
+});
 
   }
 
@@ -790,7 +861,6 @@ function stableSeed(...things) {
 
 const asSorted = arr => [...arr].sort((a,b)=>a-b);
 
-
 // --- Deterministic RNG glue ---
 let __rng = Math.random;              // default: normal randomness
 function rand() { return __rng(); }   // use this everywhere instead of Math.random
@@ -836,9 +906,7 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
 
             renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
             // ⬇️ draw Skip Frequency table now that skipDataGlobal/sinceMap are ready
-            
-           precomputeEnhancements();           
-		   renderSkipFrequency();
+renderSkipFrequency();
 
 
             const quick12Btn = document.getElementById('quick12Button');
@@ -932,7 +1000,41 @@ function recomputeTopFromSkips(count = 12) {
   return top;
 }
 
+let __pbCycleIndex = 0;
 
+function getPBPool() {
+  // Read whatever is in the 5 boxes, ignore blanks/out-of-range
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  return vals;
+}
+
+function wirePBInputsOnce() {
+  if (__pbInputsWired) return;
+  __pbInputsWired = true;
+
+  qsa('#pbBlock input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      __pbCycleIndex = 0;   // reset round-robin on any edit
+      savePBToStorage();    // 🧠 persist on every edit
+    });
+  });
+}
+
+function getNextPB(){
+  const pool = getPBPool();
+
+  // ✅ If user provided 1+ values, round-robin through them
+  if (pool.length > 0) {
+    const v = pool[ __pbCycleIndex % pool.length ];
+    __pbCycleIndex++;
+    return v;
+  }
+
+  // ✅ If inputs are blank, return a fresh random 1–26 for EACH set
+  return Math.floor(Math.random() * 26) + 1;
+}
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {
   const N = Math.min(weeks, fullData.length);
@@ -1039,6 +1141,26 @@ function setInputsFromList(list, limit = 12) {
   for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
 }
 
+// Toast helper
+function showToast(msg, ms=1600){
+  let el = document.getElementById('tweToast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'tweToast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(showToast.__t);
+  showToast.__t = setTimeout(()=> el.classList.remove('show'), ms);
+}
+
+// Set compare
+function setsEqual(a, b){
+  if(a.size !== b.size) return false;
+  for (const v of a) if (!b.has(v)) return false;
+  return true;
+}
 
 function readTopSkips12(){
   const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
@@ -1051,40 +1173,14 @@ function readTopSkips12(){
 // 🔁 Replace your existing computeSystemPicks with this:
 // 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
 // while minimizing average points of sampled 5-number sets from the pool.
-// 🔁 REPLACE your existing computeSystemPicks with this version
-// 🔁 REPLACE your existing computeSystemPicks with this version
-function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {
-  // --- knobs you can tune ---
-  const MIN_FROM_TOP = Math.max(6, Math.floor(count * 0.30)); // ensure strong Skips presence
-  const MAX_FROM_HOT = Math.min(5, Math.floor(count * 0.30)); // cap Hot dominance
-  const EXPLORERS    = Math.max(2, count - (MIN_FROM_TOP + Math.min(MAX_FROM_HOT, (hotList||[]).length)));
-
-  // helper: uniq ints
-  const uniq = arr => Array.from(new Set((arr || []).map(x => parseInt(x,10)).filter(Number.isInteger)));
-  const T = uniq(topList);                     // Skips/Top (orange)
-  const H = new Set(uniq(hotList));            // Hot (blue)
-
-  // explorer pools
-  const dueRank = Array.from({length: totalNumbersGlobal}, (_,i)=>i+1)
-    .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0));   // longest-unhit first
-
-  // “current skip matches”: how much num ‘likes’ its current skip length
-  const skipMatch = Array.from({length: totalNumbersGlobal}, (_,i)=>i+1)
-    .map(n => {
-      const cur = sinceMapObj[n] || 0;
-      const s   = (skipDataGlobal && skipDataGlobal.skipTable && skipDataGlobal.skipTable[n] && skipDataGlobal.skipTable[n][cur]) || 0;
-      return {n, s};
-    })
-    .sort((a,b)=> (b.s - a.s) || ( (sinceMapObj[b.n]||0) - (sinceMapObj[a.n]||0) ))
-    .map(x => x.n);
-
-  // scoring bits already precomputed in the earlier patch:
-  // hazardScore, soonProb, coHit + helpers pairDiversityPenalty, compPenaltyIfUnbalanced, clumpPenalty via closure
+function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+  const H = uniq(hotList);
+  const T = uniq(topList);
 
   const chosen = new Set();
-  const push   = n => { if (!chosen.has(n)) chosen.add(n); };
+  const push = n => { if (!chosen.has(n)) chosen.add(n); };
 
-  function clumpPenaltyLocal(n) {
+  function clumpPenalty(n) {
     let p = 0;
     chosen.forEach(c => {
       const d = Math.abs(c - n);
@@ -1093,122 +1189,58 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
     });
     return p;
   }
-
-  function preScore(n){
-    const due   = (sinceMapObj[n] || 0);
+  function preScore(n) {
+    const due = (sinceMapObj[n] || 0);  // bigger = longer since hit
     const inTop = T.includes(n) ? 1 : 0;
-    const inHot = H.has(n)      ? 1 : 0;
-
-    const h     = hazardScore[n] || 0;
-    const soon  = soonProb[n]    || 0;
-
-    // emphasize skip-match on the *current* skip
-    const cur = sinceMapObj[n] || 0;
-    const likeCur = (skipDataGlobal?.skipTable?.[n]?.[cur] || 0);
-
-    const pairP = pairDiversityPenalty(n, chosen);
-    const comp  = compPenaltyIfUnbalanced(n, Array.from(chosen));
-
-    // ↓ dial Hot down, dial due/skip-match up a bit
-    return (due   * 1.10)
-         + (inTop * 0.70)
-         + (inHot * 0.20)
-         + (h     * 0.80)
-         + (soon  * 0.30)
-         + (likeCur * 0.35)
-         - (clumpPenaltyLocal(n) * 0.60)
-         - (pairP)
-         - (comp);
+    const inHot = H.includes(n) ? 1 : 0;
+    return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
   }
 
-  // constraint check used in refinement
-  function respectsMix(arr){
-    const set = new Set(arr);
-    let topCnt = 0, hotCnt = 0;
-    set.forEach(n => {
-      if (T.includes(n)) topCnt++;
-      if (H.has(n))      hotCnt++;
-    });
-    // must have at least MIN_FROM_TOP and at most MAX_FROM_HOT
-    return (topCnt >= MIN_FROM_TOP) && (hotCnt <= MAX_FROM_HOT);
-  }
+  // 1) consensus first
+  H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
-  // 1) consensus first (Hot ∩ Top)
-  T.filter(n => H.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < count) push(n); });
+  // 2) ensure at least half from Top
+  const wantTopMin = Math.max(Math.floor(count/2), 4);
+  T.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < wantTopMin) push(n); });
 
-  // 2) ensure Top minimum
-  T.filter(n => !chosen.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < MIN_FROM_TOP) push(n); });
+  // 3) fill from Hot
+  H.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
-  // 3) fill from Hot up to cap
-  let hotAdded = Array.from(chosen).filter(n => H.has(n)).length;
-  Array.from(H).filter(n => !chosen.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => {
-     if (chosen.size < count && hotAdded < MAX_FROM_HOT) {
-       push(n); hotAdded++;
-     }
-   });
-
-  // 4) explorers: mix of skip-match & due that aren’t already chosen
-  const explorers = uniq([...skipMatch, ...dueRank]).filter(n => !chosen.has(n));
-  explorers.sort((a,b)=> preScore(b)-preScore(a));
-  for (const n of explorers) {
-    if (chosen.size >= Math.min(count, MIN_FROM_TOP + MAX_FROM_HOT + EXPLORERS)) break;
-    push(n);
-  }
-
-  // 5) backfill by recent frequency if still short
+  // 4) backfill by raw frequency if still short
   if (chosen.size < count) {
     getTopNumbersByFrequency(weeks, totalNumbersGlobal)
       .filter(n => !chosen.has(n))
-      .sort((a,b)=> preScore(b)-preScore(a))
+      .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
   for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  // 6) Points refinement with stability & mix guards
+  // 5) points-aware refinement (deterministic with rng)
   let pool = Array.from(chosen).sort((a,b)=>a-b);
+  const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
+
   let currentScore = evaluatePoolPoints(pool, rng);
-  const epsilon = 0.02; // require ≥2% improvement
-
-  const candidateUniverse = uniq([
-    ...T,
-    ...Array.from(H),
-    ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40)),
-    ...skipMatch.slice(0, Math.min(30, totalNumbersGlobal)),
-    ...dueRank.slice(0, Math.min(30, totalNumbersGlobal))
-  ]);
-
-  let improved = true, tries = 0;
-  while (improved && tries < 50) {
+  let improved = true;
+  let tries = 0;
+  while (improved && tries < 40) {
     improved = false; tries++;
     for (let i = 0; i < pool.length; i++) {
       const base = pool.filter((_, idx) => idx !== i);
 
       const candidates = candidateUniverse
         .filter(n => !base.includes(n))
-        .sort((a,b)=> preScore(b)-preScore(a))
-        .slice(0, 24);
+        .sort((a,b)=>preScore(b)-preScore(a))
+        .slice(0, 20);
 
       let bestLocal = currentScore;
       let bestChoice = null;
-
       for (const cand of candidates) {
-        const trial = [...base, cand].sort((a,b)=>a-b);
-
-        // keep composition constraints
-        if (!respectsMix(trial)) continue;
-
-        // avoid tight clumps unless it really helps
         const adjBad = base.some(x => Math.abs(x - cand) <= 1);
-        if (adjBad && rng() < 0.5) continue;
+        if (adjBad && rng() < 0.4) continue;
 
+        const trial = [...base, cand].sort((a,b)=>a-b);
         const trialScore = evaluatePoolPoints(trial, rng);
-        if (trialScore < bestLocal && trialScore <= currentScore * (1 - epsilon)) {
+        if (trialScore < bestLocal) {
           bestLocal = trialScore;
           bestChoice = cand;
         }
@@ -1220,7 +1252,6 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
       }
     }
   }
-
   return pool.slice(0, count).sort((a,b)=>a-b);
 }
 
@@ -1272,6 +1303,9 @@ function runSystemPicks(){
     if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
   }
 
+  // Keep a copy for change detection
+  const before = new Set(systemPicksSet);
+
   // Deterministic seed so button matches page-load result
   setDeterministicSeed('systemPicks');
 
@@ -1281,16 +1315,18 @@ function runSystemPicks(){
   // Save to Picks column
   systemPicksSet = new Set(picks);
 
-  // 👉 ALSO mirror Picks into the 12 inputs
+  // Mirror Picks into the 12 inputs (sorted)
   ensureTwelveInputs();
-  setInputsFromList(picks, 12);
+  setInputsFromList(picks.slice().sort((a,b)=>a-b), 12);
 
   // Redraw
   renderReverseHitsTable();
   reapplySkipTableHighlights();
+
+  // ✅ Feedback toast
+  const changed = !setsEqual(before, systemPicksSet);
+  showToast(changed ? 'System Picks updated.' : 'System Picks recalculated (no change).');
 }
-
-
 
 function ensureTwelveInputs() {
   const div = document.getElementById('top18Inputs');
@@ -1434,12 +1470,61 @@ function handleTop18FileSelect(event) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    const contents = e.target.result;
-    const numbers = contents.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
-    loadTop18NumbersIntoTable(numbers);
+    // accept either comma or space-separated lists
+    const contents = e.target.result.trim();
+    const numbers = contents.split(/[^0-9]+/)
+      .map(s => parseInt(s, 10))
+      .filter(n => Number.isInteger(n));
+
+    if (numbers.length === 0) {
+      alert('No valid numbers found in the file.');
+      return;
+    }
+
+    // Only take up to the first 12 numbers
+    const picks12 = Array.from(new Set(numbers)).slice(0, 12).sort((a,b)=>a-b);
+    loadPicksIntoColumnAndInputs(picks12);
     loadTop18Modal.style.display = 'none';
+    loadTop18FileInput.value = '';
   };
   reader.readAsText(file);
+}
+
+function loadPicksIntoColumnAndInputs(numbers) {
+  // Mirror into the 12 inputs
+  ensureTwelveInputs();
+  setInputsFromList(numbers, 12);
+
+  // Update the green Picks column
+  systemPicksSet = new Set(numbers);
+
+  // Re-draw tables/highlights
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+}
+
+function savePBToStorage() {
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  localStorage.setItem('twePBPool', JSON.stringify(vals));
+}
+
+function loadPBFromStorage() {
+  try {
+    const raw = localStorage.getItem('twePBPool');
+    const vals = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(vals) && vals.length) {
+      const inputs = qsa('#pbBlock input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].value = vals[i] ?? '';
+      }
+      __pbCycleIndex = 0;     // safe to reset after loading a saved pool
+      wirePBInputsOnce();     // ensure listeners exist
+      return true;
+    }
+  } catch (e) {}
+  return false;
 }
 
 function loadTop18NumbersIntoTable(numbers) {
@@ -1481,20 +1566,37 @@ style.textContent = `.blue-dot { width: 14px; height: 14px; border-radius: 50%; 
 document.head.appendChild(style);
 
 function highlight(btn){ [btn39, btn69, btn1].forEach(b => b.classList.toggle('active', b === btn)); }
-function hidePBblock(){ pbBlk.style.display = 'none'; qsa('#pbBlock input').forEach(inp => inp.value = ''); }
+function hidePBblock(){
+  pbBlk.style.display = 'none';   // 🔒 do NOT clear values here
+}
 
 function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
 window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });
 
-function showPBblock(){
-  pbBlk.style.display='flex';
-  const pool  = Array.from({length:26}, (_,i) => i+1);
+function showPBblock() {
+  pbBlk.style.display = 'flex';
+
+  // make sure inputs are wired for edits
+  wirePBInputsOnce();
+
+  const inputs = qsa('#pbBlock input');
+  const existing = inputs
+    .map(inp => parseInt(inp.value, 10))
+    .filter(n => n >= 1 && n <= 26);
+
+  if (existing.length) return;     // already have user entries, respect them
+  if (loadPBFromStorage()) return; // 🧠 restore saved PBs if available
+
+  // Otherwise, give a quick random seed fill (first-time only)
+  const pool  = Array.from({ length: 26 }, (_, i) => i + 1);
   const picks = [];
   while (picks.length < 5) {
     const idx = Math.floor(Math.random() * pool.length);
-    picks.push( pool.splice(idx,1)[0] );
+    picks.push(pool.splice(idx, 1)[0]);
   }
-  qsa('#pbBlock input').forEach((inp,i) => inp.value = picks[i] ?? '');
+  inputs.forEach((inp, i) => (inp.value = picks[i] ?? ''));
+  savePBToStorage();               // save the initial fill too
+  __pbCycleIndex = 0;              // start round-robin from the beginning
 }
 
 qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
@@ -1504,38 +1606,46 @@ document.getElementById('pickBestSetsModal').onclick = ()=> pickBestSets(true);
 document.getElementById('exportAllBtn').onclick = ()=> doExport('all');
 document.getElementById('exportBestBtn').onclick = ()=> doExport('best');
 
-function doExport(mode){
-  if(!generatedSets.length){ alert('Generate sets first!'); return; }
-
-  const allCount  = +qs('#modalSetCountChoice').value||1;
-  const bestCount = +qs('#modalBestSetCount').value||1;
-  let list = [...generatedSets];
-
-  if(mode==='best'){
-      list.sort((a,b)=>a.points-b.points);
-      list = list.slice(0,bestCount);
-  }else{
-      list = list.slice(0,allCount);
+function doExport(mode) {
+  if (!generatedSets.length) { 
+    alert('Generate sets first!'); 
+    return; 
   }
 
-  const pbInputs = qsa('#pbBlock input').map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
+  const allCount  = parseInt(qs('#modalSetCountChoice')?.value, 10) || 1;
+  const bestCount = parseInt(qs('#modalBestSetCount')?.value, 10) || 1;
+
+  let list = [...generatedSets];
+  if (mode === 'best') {
+    list.sort((a, b) => a.points - b.points);
+    list = list.slice(0, bestCount);
+  } else {
+    list = list.slice(0, allCount);
+  }
+
   const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
 
-  const lines = list.map(({combo},idx)=>{
-let out = `${idx+1}.  ${asSorted(combo).join(', ')}`;
-      if(needPB){
-          const pb = pbInputs.length
-                      ? pbInputs[Math.floor(Math.random()*pbInputs.length)]
-                      : Math.floor(Math.random()*26)+1;
-          out += '  '+pb;
-      }
-      return out;
+  // ✅ Reset round-robin index so each export starts clean
+  __pbCycleIndex = 0;
+
+  const lines = list.map(({ combo }, idx) => {
+    let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
+    if (needPB) {
+      // ✅ Single source of truth:
+      //    - If PB inputs have values -> round-robin them
+      //    - If blank -> random 1–26 per set
+      const pb = getNextPB();
+      out += '  ' + pb;
+    }
+    return out;
   }).join('\n');
 
-  const blob=new Blob([lines],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  const prefix = (totalNumbersGlobal === 39) ? 'f5' : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x'); // FIX
+  const blob = new Blob([lines], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+
+  const prefix = (totalNumbersGlobal === 39) ? 'f5'
+                : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x');
   const draw = (typeof latestDrawingNumber === 'number' ? latestDrawingNumber + 1 : '00000');
   a.download = `${mode}_sets_${prefix}_${draw}.txt`;
   a.click();
@@ -2069,116 +2179,6 @@ function buildSkipTable(data, totalNumbers, drawingNumbers) {
   return { skipTable };
 }
 
-/* ========= Enhancements: hazard/soon, co-hit, soft composition ========= */
-
-// 1) Per-number hazard: how often a number hits at a given skip vs reaches that skip.
-//    We’ll use the overall hit-rate across skips as a lightweight proxy; we’ll also
-//    fold in the *current* skip’s share in preScore.
-function computeHazardScores(skipTable){
-  const H = {};
-  for(let n=1; n<=totalNumbersGlobal; n++){
-    let reached = 0, hits = 0;
-    for(let k=1; k<=25; k++){
-      const c = skipTable[n][k] || 0;
-      reached += c;
-      hits    += c;
-    }
-    H[n] = reached > 0 ? hits / reached : 0;
-  }
-  return H;
-}
-
-// 2) Soon-window probability: chance to hit within next W draws, conditioned on
-//    historical skip behavior. Here we approximate: numbers that often hit at small
-//    skips get higher soon probabilities.
-function computeSoonWindow(skipTable, W = 3){
-  const P = {};
-  for(let n=1; n<=totalNumbersGlobal; n++){
-    let small = 0, total = 0;
-    for(let k=1; k<=25; k++){
-      const c = skipTable[n][k] || 0;
-      total += c;
-      if (k <= W) small += c;
-    }
-    P[n] = total > 0 ? (small / total) : 0;
-  }
-  return P;
-}
-
-// 3) Co-hit matrix over recent draws (recency-weighted).
-//    coHit[a][b] is bigger if a & b appear together often in recent draws.
-function buildCoHitMatrix(fullData, windowSize = 200){
-  const M = Array.from({length: totalNumbersGlobal+1},
-          () => Array(totalNumbersGlobal+1).fill(0));
-  const N = Math.min(windowSize, fullData.length);
-  const tau = Math.max(12, Math.round(N/2)); // slow decay
-  for(let i=0; i<N; i++){
-    const weight = Math.exp(-i / tau); // i=0 is most recent
-    const row = fullData[i].slice(1).map(Number).filter(n => !isNaN(n));
-    for(let x=0; x<row.length; x++){
-      for(let y=x+1; y<row.length; y++){
-        const a = row[x], b = row[y];
-        if (a>=1 && a<=totalNumbersGlobal && b>=1 && b<=totalNumbersGlobal){
-          M[a][b] += weight;
-          M[b][a] += weight;
-        }
-      }
-    }
-  }
-  return M;
-}
-
-// 4) Pair diversity penalty: discourage candidates that co-occur *too* often
-//    with numbers already chosen (pushes coverage breadth).
-function pairDiversityPenalty(n, chosenSet){
-  if (!coHit || !coHit[n]) return 0;
-  if (!chosenSet || chosenSet.size === 0) return 0;
-  let sum = 0, cnt = 0;
-  chosenSet.forEach(c => {
-    sum += coHit[n][c] || 0;
-    cnt++;
-  });
-  if (cnt === 0) return 0;
-  // Normalize by cnt so it stays small; scale lightly.
-  return (sum / cnt) * 0.05;
-}
-
-// 5) Soft composition balance (parity, low/high, residues)
-//    Tiny penalties if adding n worsens balance in the 12-pick pool.
-function compPenaltyIfUnbalanced(n, chosenArr){
-  const targetSize = 12;
-  const arr = [...chosenArr, n];
-
-  // Parity
-  const odds = arr.filter(x => x%2===1).length;
-  const evens = arr.length - odds;
-  const parityPenalty = Math.max(0, Math.abs(odds - evens) - 2) * 0.05; // allow ±2 before penalty
-
-  // Low/High
-  const mid = totalNumbersGlobal/2;
-  const lows = arr.filter(x => x <= mid).length;
-  const highs = arr.length - lows;
-  const lowHighPenalty = Math.max(0, Math.abs(lows - highs) - 2) * 0.05;
-
-  // Residue (last digit / mod 10)
-  const countByResidue = {};
-  arr.forEach(x => { const r = x%10; countByResidue[r] = (countByResidue[r]||0)+1; });
-  const maxResidue = Math.max(...Object.values(countByResidue));
-  const residuePenalty = Math.max(0, maxResidue - Math.ceil(arr.length/5)) * 0.04; // prefer spread over digits
-
-  // Scale down so it’s gentle.
-  return (parityPenalty + lowHighPenalty + residuePenalty);
-}
-
-// 6) One-shot precompute wrapper (call this after sinceMap/skipTable/fullData are ready)
-function precomputeEnhancements(){
-  if (!skipDataGlobal || !skipDataGlobal.skipTable) return;
-  hazardScore = computeHazardScores(skipDataGlobal.skipTable);
-  soonProb    = computeSoonWindow(skipDataGlobal.skipTable, 3);
-  coHit       = buildCoHitMatrix(fullData, 200);
-}
-
-
 function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
   const container = document.getElementById('recentDrawsContainer');
   const comment = document.getElementById('latestDrawingComment');
@@ -2368,9 +2368,17 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
-headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+
+  // ✅ Only add Picks header if not Powerball-only mode
+// ✅ show Skips (orange) even in 26 mode
+if (top18.includes(number)) {
+  const dot = document.createElement('div');
+  dot.className = 'orange-dot';
+  topCell.appendChild(dot);
+}
+
 
   table.appendChild(headerRow);
 
@@ -2394,17 +2402,30 @@ headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
 
     const topCell = document.createElement('td');
     if (totalNumbersGlobal !== 26 && top18.includes(number)) {
-      const dot = document.createElement('div'); dot.className = 'orange-dot'; topCell.appendChild(dot);
+      const dot = document.createElement('div');
+      dot.className = 'orange-dot';
+      topCell.appendChild(dot);
     }
     row.appendChild(topCell);
 
     const hotCell = document.createElement('td');
-    if (hotSet && hotSet.has(number)) { const d = document.createElement('div'); d.className = 'hot-dot'; hotCell.appendChild(d); }
+    if (hotSet && hotSet.has(number)) {
+      const d = document.createElement('div');
+      d.className = 'hot-dot';
+      hotCell.appendChild(d);
+    }
     row.appendChild(hotCell);
 
-    const picksCell = document.createElement('td');
-    if (systemPicksSet && systemPicksSet.has(number)) { const b = document.createElement('div'); b.className = 'green-dot'; picksCell.appendChild(b); }
-    row.appendChild(picksCell);
+    // ✅ Only draw Picks column in 39/69 modes
+    if (totalNumbersGlobal !== 26) {
+      const picksCell = document.createElement('td');
+      if (systemPicksSet && systemPicksSet.has(number)) {
+        const b = document.createElement('div');
+        b.className = 'green-dot';
+        picksCell.appendChild(b);
+      }
+      row.appendChild(picksCell);
+    }
 
     table.appendChild(row);
   }

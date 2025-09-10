@@ -274,6 +274,12 @@ h3{margin:0 0 15px;color: gold}
     <h3 style="margin:0 6px 0 0;">Pick Powerball Number</h3>
     <input><input><input><input><input>
 </div>
+
+<div id="pbNote" style="display:none; margin: 4px 0 0 12px; max-width: 680px; font-size: 14px; color: lightyellow;">
+  Tip: Enter 1–5 Powerball numbers above. When you export sets, we’ll cycle through these in order (round-robin).
+  Leave them blank to use a fresh random PB (1–26) for each set. Your entries are saved in your browser.
+</div>
+
 <br>
 
 <button id="methodologyBtn" class="button button-single">📘 Methodology</button>
@@ -840,6 +846,36 @@ if (typeof pickBestSets !== "function") {
     if (openModal) document.getElementById('wheelModal').style.display = 'block';
   };
 }
+
+function hidePBblock(){
+  pbBlk.style.display = 'none';
+  const note = document.getElementById('pbNote');
+  if (note) note.style.display = 'none';
+}
+
+function showPBblock() {
+  pbBlk.style.display = 'flex';
+  const note = document.getElementById('pbNote');
+  if (note) note.style.display = 'block';
+
+  wirePBInputsOnce();
+  const inputs = qsa('#pbBlock input');
+  const existing = inputs.map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
+  if (existing.length) return;
+  if (loadPBFromStorage()) return;
+
+  // first-time quick seed
+  const pool = Array.from({ length: 26 }, (_, i) => i + 1);
+  const picks = [];
+  while (picks.length < 5) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picks.push(pool.splice(idx, 1)[0]);
+  }
+  inputs.forEach((inp, i) => (inp.value = picks[i] ?? ''));
+  savePBToStorage();
+  __pbCycleIndex = 0;
+}
+
 
 // --- Seeded RNG utilities (deterministic randomness) ---
 function makeRNG(seed) {
@@ -2361,24 +2397,20 @@ function renderReverseHitsTable() {
 
   const table = document.createElement('table');
 
-  const headerRow = document.createElement('tr');
-  headerRow.appendChild(document.createElement('th'));
-  for (let i = 25; i >= 1; i--) {
-    const th = document.createElement('th');
-    th.textContent = i;
-    headerRow.appendChild(th);
-  }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
-
-  // ✅ Only add Picks header if not Powerball-only mode
-// ✅ show Skips (orange) even in 26 mode
-if (top18.includes(number)) {
-  const dot = document.createElement('div');
-  dot.className = 'orange-dot';
-  topCell.appendChild(dot);
+  // header
+const headerRow = document.createElement('tr');
+headerRow.appendChild(document.createElement('th'));
+for (let i = 25; i >= 1; i--) {
+  const th = document.createElement('th');
+  th.textContent = i;
+  headerRow.appendChild(th);
 }
-
+headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+if (totalNumbersGlobal !== 26) {
+  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
+}
+table.appendChild(headerRow);
 
   table.appendChild(headerRow);
 
@@ -2390,45 +2422,53 @@ if (top18.includes(number)) {
     th.textContent = number;
     row.appendChild(th);
 
-    for (let i = 24; i >= 0; i--) {
-      const cell = document.createElement('td');
-      if (draws[i] && draws[i].includes(number)) {
-        const dot = document.createElement('div');
-        dot.className = 'red-dot';
-        cell.appendChild(dot);
-      }
-      row.appendChild(cell);
-    }
+for (let number = 1; number <= totalNumbersGlobal; number++) {
+  const row = document.createElement('tr');
+  const th = document.createElement('th');
+  th.textContent = number;
+  row.appendChild(th);
 
-    const topCell = document.createElement('td');
-    if (totalNumbersGlobal !== 26 && top18.includes(number)) {
+  for (let i = 24; i >= 0; i--) {
+    const cell = document.createElement('td');
+    if (draws[i] && draws[i].includes(number)) {
       const dot = document.createElement('div');
-      dot.className = 'orange-dot';
-      topCell.appendChild(dot);
+      dot.className = 'red-dot';
+      cell.appendChild(dot);
     }
-    row.appendChild(topCell);
-
-    const hotCell = document.createElement('td');
-    if (hotSet && hotSet.has(number)) {
-      const d = document.createElement('div');
-      d.className = 'hot-dot';
-      hotCell.appendChild(d);
-    }
-    row.appendChild(hotCell);
-
-    // ✅ Only draw Picks column in 39/69 modes
-    if (totalNumbersGlobal !== 26) {
-      const picksCell = document.createElement('td');
-      if (systemPicksSet && systemPicksSet.has(number)) {
-        const b = document.createElement('div');
-        b.className = 'green-dot';
-        picksCell.appendChild(b);
-      }
-      row.appendChild(picksCell);
-    }
-
-    table.appendChild(row);
+    row.appendChild(cell);
   }
+
+  // Skips (orange) — YES even in 26 mode
+  const topCell = document.createElement('td');
+  if (top18.includes(number)) {
+    const dot = document.createElement('div');
+    dot.className = 'orange-dot';
+    topCell.appendChild(dot);
+  }
+  row.appendChild(topCell);
+
+  // Hot (blue)
+  const hotCell = document.createElement('td');
+  if (hotSet && hotSet.has(number)) {
+    const d = document.createElement('div');
+    d.className = 'hot-dot';
+    hotCell.appendChild(d);
+  }
+  row.appendChild(hotCell);
+
+  // Picks (green) — only in 39/69 modes
+  if (totalNumbersGlobal !== 26) {
+    const picksCell = document.createElement('td');
+    if (systemPicksSet && systemPicksSet.has(number)) {
+      const b = document.createElement('div');
+      b.className = 'green-dot';
+      picksCell.appendChild(b);
+    }
+    row.appendChild(picksCell);
+  }
+
+  table.appendChild(row);
+}
 
   container.appendChild(table);
 }

@@ -203,21 +203,22 @@ h3{margin:0 0 15px;color: gold}
 #tweToast {
   position: fixed;
   left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
+  top: 50%;                      /* move from bottom to middle */
+  transform: translate(-50%, -50%);
   background: rgba(0,0,0,.85);
   color: #fff;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 18px 26px;            /* more padding */
+  border-radius: 8px;
+  font-size: 22px;               /* larger font */
+  font-weight: bold;
   z-index: 99999;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
+  transition: opacity .3s ease, transform .3s ease;
 }
 #tweToast.show {
   opacity: 1;
-  transform: translateX(-50%) translateY(-4px);
+  transform: translate(-50%, -50%) scale(1.05); /* subtle "pop" */
 }
 
   </style>

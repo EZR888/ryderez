@@ -874,20 +874,43 @@ window.loadCSVFile = loadCSVFile;
 // Pick the `count` numbers whose current "since" length has the strongest historical frequency.
 // Score = how often this number historically had the current since-length.
 // Tie-breakers: larger current since (more due), then smaller number.
+// Pick the `count` numbers whose *current* since length is most common
+// for that number historically. Primary sort: freq at current skip.
+// Tie-breakers: (2) larger current since (more due), (3) bigger row sum,
+// (4) smaller number.
 function recomputeTopFromSkips(count = 12) {
-  if (!skipDataGlobal || !skipDataGlobal.skipTable) return [];
-  const totals = [];
+  if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
+
+  const rowSum = (n) =>
+    (skipDataGlobal.skipTable[n] || [])
+      .slice(1, 26)
+      .reduce((a, b) => a + (b || 0), 0);
+
+  const candidates = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
-    const row = skipDataGlobal.skipTable[n] || [];
-    const score = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0); // sum of counts
-    totals.push({ n, score });
+    const s = sinceMap[n];                          // 1..25 (or >25)
+    const val = (s >= 1 && s <= 25)
+      ? (skipDataGlobal.skipTable[n]?.[s] || 0)     // freq of THIS exact skip length
+      : 0;
+
+    candidates.push({ n, s, val, sum: rowSum(n) });
   }
-  totals.sort((a,b)=> (b.score - a.score) || (a.n - b.n));
-  const top = totals.slice(0, count).map(x=>x.n).sort((a,b)=>a-b);
-  top18 = top;               // this drives the orange "Top" dots
-  renderReverseHitsTable();  // show them
+
+  candidates.sort((a, b) =>
+    (b.val - a.val) ||         // 1) prefers numbers that historically hit at this skip
+    (b.s - a.s)   ||           // 2) longer current since = more "due"
+    (b.sum - a.sum) ||         // 3) overall history as gentle tiebreak
+    (a.n - b.n)                // 4) stable final tie
+  );
+
+  const top = candidates.slice(0, count).map(x => x.n).sort((a, b) => a - b);
+  top18 = top;
+
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
   return top;
 }
+
 
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {

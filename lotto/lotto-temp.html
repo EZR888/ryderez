@@ -560,34 +560,40 @@ btn1.onclick = () => {
 
   showPBblock();
   qs('#generateWheelButton').style.display = 'none';
-  qs('#checkNumbersButton').style.display  = 'none';
+  qs('#checkNumbersButton').style.display = 'none';
   document.getElementById('showHistogramBtn').style.display = 'none';
-  qs('#quick12Button').style.display       = 'none';
-  qs('#systemPicksButton').style.display   = 'none';
+  qs('#quick12Button').style.display = 'none';
+  qs('#systemPicksButton').style.display = 'none';
 
-  // Hide Top inputs & related controls in PB-only mode (including Save Picks)
-  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  const checkPBSpan = document.getElementById('checkPBSpan');
+  if (checkPBSpan) checkPBSpan.style.display = 'none';
 
-  // Load PB-only data (1..26) and compute Skips/Hot for visual consistency
+  // hide Top controls
+  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+
+  // load 1-number data
   loadCSVFile('lotto_1.txt', 26, () => {
-    // ✅ SKIPS (orange): take top 12 by current skip-profile
-    if (typeof recomputeTopFromSkips === 'function') {
-      top18 = recomputeTopFromSkips(12); // sets top18 and refreshes highlights internally
-    } else {
-      top18 = [];
+    const highlighted = [];
+    for (let number = 1; number <= totalNumbersGlobal; number++) {
+      const val = skipDataGlobal.skipTable[number]?.reduce((a, b) => a + b, 0) || 0;
+      highlighted.push({ number, val });
+    }
+    highlighted.sort((a, b) => b.val - a.val);
+    top18 = highlighted.slice(0, 12).map(x => x.number).sort((a, b) => a - b);
+
+    const top18InputsDiv = document.getElementById('top18Inputs');
+    top18InputsDiv.innerHTML = '';
+    for (let i = 0; i < top18.length; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.value = top18[i];
+      top18InputsDiv.appendChild(inp);
     }
 
-    // ✅ HOT (blue): trending in last up to 25 PB draws
-    const weeks = Math.min(25, fullData.length);
-    hotSet = new Set(computeTrendingHotNumbers(weeks, 12));
-
-    // No Picks column in PB mode
-    systemPicksSet = new Set();
-
-    // Draw/refresh the two tables
-    renderReverseHitsTable();
-    reapplySkipTableHighlights();
+    updateReverseHitsTop18();
+    rehighlightSkipTableFromTop18();
   });
 };
 

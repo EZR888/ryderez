@@ -2288,13 +2288,9 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
-
-  // ✅ Only add Picks header if not Powerball-only mode
-  if (totalNumbersGlobal !== 26) {
-    headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
-  }
+headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
 
   table.appendChild(headerRow);
 
@@ -2318,30 +2314,17 @@ function renderReverseHitsTable() {
 
     const topCell = document.createElement('td');
     if (totalNumbersGlobal !== 26 && top18.includes(number)) {
-      const dot = document.createElement('div');
-      dot.className = 'orange-dot';
-      topCell.appendChild(dot);
+      const dot = document.createElement('div'); dot.className = 'orange-dot'; topCell.appendChild(dot);
     }
     row.appendChild(topCell);
 
     const hotCell = document.createElement('td');
-    if (hotSet && hotSet.has(number)) {
-      const d = document.createElement('div');
-      d.className = 'hot-dot';
-      hotCell.appendChild(d);
-    }
+    if (hotSet && hotSet.has(number)) { const d = document.createElement('div'); d.className = 'hot-dot'; hotCell.appendChild(d); }
     row.appendChild(hotCell);
 
-    // ✅ Only draw Picks column in 39/69 modes
-    if (totalNumbersGlobal !== 26) {
-      const picksCell = document.createElement('td');
-      if (systemPicksSet && systemPicksSet.has(number)) {
-        const b = document.createElement('div');
-        b.className = 'green-dot';
-        picksCell.appendChild(b);
-      }
-      row.appendChild(picksCell);
-    }
+    const picksCell = document.createElement('td');
+    if (systemPicksSet && systemPicksSet.has(number)) { const b = document.createElement('div'); b.className = 'green-dot'; picksCell.appendChild(b); }
+    row.appendChild(picksCell);
 
     table.appendChild(row);
   }

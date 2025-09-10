@@ -874,36 +874,47 @@ window.loadCSVFile = loadCSVFile;
 // Pick the `count` numbers whose current "since" length has the strongest historical frequency.
 // Score = how often this number historically had the current since-length.
 // Tie-breakers: larger current since (more due), then smaller number.
-// Pick the `count` numbers whose *current* since length is most common
-// for that number historically. Primary sort: freq at current skip.
-// Tie-breakers: (2) larger current since (more due), (3) bigger row sum,
-// (4) smaller number.
+// Pick by how much a number "likes" its CURRENT skip length (bin), with smoothing + due nudge.
 function recomputeTopFromSkips(count = 12) {
   if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
 
-  const rowSum = (n) =>
-    (skipDataGlobal.skipTable[n] || [])
-      .slice(1, 26)
-      .reduce((a, b) => a + (b || 0), 0);
-
-  const candidates = [];
+  const picks = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
-    const s = sinceMap[n];                          // 1..25 (or >25)
-    const val = (s >= 1 && s <= 25)
-      ? (skipDataGlobal.skipTable[n]?.[s] || 0)     // freq of THIS exact skip length
-      : 0;
+    const row = skipDataGlobal.skipTable[n] || [];
+    const curSkip = sinceMap[n] || 26;            // 1..25; 26+ = "over 25"
+    const capped = Math.min(curSkip, 25);         // we only have bins 1..25
 
-    candidates.push({ n, s, val, sum: rowSum(n) });
+    // Row total for smoothing / context
+    const rowTotal = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0);
+
+    // Frequency of THIS number hitting after THIS exact skip length historically
+    const freqAtCur = (capped >= 1 && capped <= 25) ? (row[capped] || 0) : 0;
+
+    // Laplace smoothing (prevents zeroes from dominating)
+    const p = (freqAtCur + 1) / (rowTotal + 25);  // “probability” this number likes this bin
+
+    // Gentle due bonus so longer-current-skips aren’t ignored when p is similar
+    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);  // tweak 0.10–0.25 to taste
+
+    const score = p * dueBonus;
+
+    picks.push({
+      n,
+      score,
+      curSkip,
+      freqAtCur,
+      rowTotal
+    });
   }
 
-  candidates.sort((a, b) =>
-    (b.val - a.val) ||         // 1) prefers numbers that historically hit at this skip
-    (b.s - a.s)   ||           // 2) longer current since = more "due"
-    (b.sum - a.sum) ||         // 3) overall history as gentle tiebreak
-    (a.n - b.n)                // 4) stable final tie
+  // Rank by the “likes current bin” score; then favor longer current skips; then smaller number
+  picks.sort((a, b) =>
+    (b.score - a.score) ||
+    (b.curSkip - a.curSkip) ||
+     (a.n - b.n)
   );
 
-  const top = candidates.slice(0, count).map(x => x.n).sort((a, b) => a - b);
+  const top = picks.slice(0, count).map(x => x.n).sort((a,b)=>a-b);
   top18 = top;
 
   renderReverseHitsTable();

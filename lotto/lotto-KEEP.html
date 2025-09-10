@@ -475,11 +475,6 @@ let skipDataGlobal={}, sinceMap={}, referenceData={};
 let top18From69 = [];
 let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
 let activeGameMode = null;
-// ── Enhancement caches ──
-let hazardScore = {};
-let soonProb    = {};
-let coHit       = {};
-
 
 const qs  = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
@@ -836,9 +831,7 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
 
             renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
             // ⬇️ draw Skip Frequency table now that skipDataGlobal/sinceMap are ready
-            
-           precomputeEnhancements();           
-		   renderSkipFrequency();
+renderSkipFrequency();
 
 
             const quick12Btn = document.getElementById('quick12Button');
@@ -1051,11 +1044,8 @@ function readTopSkips12(){
 // 🔁 Replace your existing computeSystemPicks with this:
 // 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
 // while minimizing average points of sampled 5-number sets from the pool.
-// 🔁 REPLACE your existing computeSystemPicks with this version
-function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {
-  // helpers
-  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
-  const H = new Set(uniq(hotList));
+function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+  const H = uniq(hotList);
   const T = uniq(topList);
 
   const chosen = new Set();
@@ -1070,81 +1060,58 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
     });
     return p;
   }
-
-  function preScore(n){
-    const due   = (sinceMapObj[n] || 0);
+  function preScore(n) {
+    const due = (sinceMapObj[n] || 0);  // bigger = longer since hit
     const inTop = T.includes(n) ? 1 : 0;
-    const inHot = H.has(n) ? 1 : 0;
-
-    // new bits:
-    const h     = hazardScore[n] || 0;     // overall hazard proxy
-    const soon  = soonProb[n]    || 0;     // small-window pop
-    const pairP = pairDiversityPenalty(n, chosen); // co-occurrence with chosen
-    const comp  = compPenaltyIfUnbalanced(n, Array.from(chosen)); // composition soft penalty
-
-    return (due * 1.00)
-         + (inTop * 0.60)
-         + (inHot * 0.40)
-         + (h * 0.80)
-         + (soon * 0.30)
-         - (clumpPenalty(n) * 0.50)
-         - (pairP)                // already scaled small inside function
-         - (comp);                // small gentle nudges
+    const inHot = H.includes(n) ? 1 : 0;
+    return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
   }
 
-  // 1) consensus (Hot ∩ Top)
-  T.filter(n => H.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < count) push(n); });
+  // 1) consensus first
+  H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
   // 2) ensure at least half from Top
   const wantTopMin = Math.max(Math.floor(count/2), 4);
-  T.filter(n => !chosen.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < wantTopMin) push(n); });
+  T.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < wantTopMin) push(n); });
 
   // 3) fill from Hot
-  Array.from(H).filter(n => !chosen.has(n))
-   .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < count) push(n); });
+  H.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
 
   // 4) backfill by raw frequency if still short
   if (chosen.size < count) {
     getTopNumbersByFrequency(weeks, totalNumbersGlobal)
       .filter(n => !chosen.has(n))
-      .sort((a,b)=> (sinceMapObj[b]||0) - (sinceMapObj[a]||0))
+      .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
   for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  // 5) points-aware refinement with stability guard (require ≥2% improvement)
+  // 5) points-aware refinement (deterministic with rng)
   let pool = Array.from(chosen).sort((a,b)=>a-b);
-  const candidateUniverse = uniq([...T, ...Array.from(H), ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
+  const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
 
   let currentScore = evaluatePoolPoints(pool, rng);
   let improved = true;
   let tries = 0;
-  const epsilon = 0.02; // 2% minimum improvement to accept
-  while (improved && tries < 50) {
+  while (improved && tries < 40) {
     improved = false; tries++;
     for (let i = 0; i < pool.length; i++) {
       const base = pool.filter((_, idx) => idx !== i);
 
       const candidates = candidateUniverse
         .filter(n => !base.includes(n))
-        .sort((a,b)=> preScore(b)-preScore(a))
-        .slice(0, 24);
+        .sort((a,b)=>preScore(b)-preScore(a))
+        .slice(0, 20);
 
       let bestLocal = currentScore;
       let bestChoice = null;
       for (const cand of candidates) {
-        // Avoid tight clumps unless it really helps
         const adjBad = base.some(x => Math.abs(x - cand) <= 1);
-        if (adjBad && rng() < 0.5) continue;
+        if (adjBad && rng() < 0.4) continue;
 
         const trial = [...base, cand].sort((a,b)=>a-b);
         const trialScore = evaluatePoolPoints(trial, rng);
-        if (trialScore < bestLocal && (trialScore <= currentScore * (1 - epsilon))) {
+        if (trialScore < bestLocal) {
           bestLocal = trialScore;
           bestChoice = cand;
         }
@@ -2003,116 +1970,6 @@ function buildSkipTable(data, totalNumbers, drawingNumbers) {
   }
   return { skipTable };
 }
-
-/* ========= Enhancements: hazard/soon, co-hit, soft composition ========= */
-
-// 1) Per-number hazard: how often a number hits at a given skip vs reaches that skip.
-//    We’ll use the overall hit-rate across skips as a lightweight proxy; we’ll also
-//    fold in the *current* skip’s share in preScore.
-function computeHazardScores(skipTable){
-  const H = {};
-  for(let n=1; n<=totalNumbersGlobal; n++){
-    let reached = 0, hits = 0;
-    for(let k=1; k<=25; k++){
-      const c = skipTable[n][k] || 0;
-      reached += c;
-      hits    += c;
-    }
-    H[n] = reached > 0 ? hits / reached : 0;
-  }
-  return H;
-}
-
-// 2) Soon-window probability: chance to hit within next W draws, conditioned on
-//    historical skip behavior. Here we approximate: numbers that often hit at small
-//    skips get higher soon probabilities.
-function computeSoonWindow(skipTable, W = 3){
-  const P = {};
-  for(let n=1; n<=totalNumbersGlobal; n++){
-    let small = 0, total = 0;
-    for(let k=1; k<=25; k++){
-      const c = skipTable[n][k] || 0;
-      total += c;
-      if (k <= W) small += c;
-    }
-    P[n] = total > 0 ? (small / total) : 0;
-  }
-  return P;
-}
-
-// 3) Co-hit matrix over recent draws (recency-weighted).
-//    coHit[a][b] is bigger if a & b appear together often in recent draws.
-function buildCoHitMatrix(fullData, windowSize = 200){
-  const M = Array.from({length: totalNumbersGlobal+1},
-          () => Array(totalNumbersGlobal+1).fill(0));
-  const N = Math.min(windowSize, fullData.length);
-  const tau = Math.max(12, Math.round(N/2)); // slow decay
-  for(let i=0; i<N; i++){
-    const weight = Math.exp(-i / tau); // i=0 is most recent
-    const row = fullData[i].slice(1).map(Number).filter(n => !isNaN(n));
-    for(let x=0; x<row.length; x++){
-      for(let y=x+1; y<row.length; y++){
-        const a = row[x], b = row[y];
-        if (a>=1 && a<=totalNumbersGlobal && b>=1 && b<=totalNumbersGlobal){
-          M[a][b] += weight;
-          M[b][a] += weight;
-        }
-      }
-    }
-  }
-  return M;
-}
-
-// 4) Pair diversity penalty: discourage candidates that co-occur *too* often
-//    with numbers already chosen (pushes coverage breadth).
-function pairDiversityPenalty(n, chosenSet){
-  if (!coHit || !coHit[n]) return 0;
-  if (!chosenSet || chosenSet.size === 0) return 0;
-  let sum = 0, cnt = 0;
-  chosenSet.forEach(c => {
-    sum += coHit[n][c] || 0;
-    cnt++;
-  });
-  if (cnt === 0) return 0;
-  // Normalize by cnt so it stays small; scale lightly.
-  return (sum / cnt) * 0.05;
-}
-
-// 5) Soft composition balance (parity, low/high, residues)
-//    Tiny penalties if adding n worsens balance in the 12-pick pool.
-function compPenaltyIfUnbalanced(n, chosenArr){
-  const targetSize = 12;
-  const arr = [...chosenArr, n];
-
-  // Parity
-  const odds = arr.filter(x => x%2===1).length;
-  const evens = arr.length - odds;
-  const parityPenalty = Math.max(0, Math.abs(odds - evens) - 2) * 0.05; // allow ±2 before penalty
-
-  // Low/High
-  const mid = totalNumbersGlobal/2;
-  const lows = arr.filter(x => x <= mid).length;
-  const highs = arr.length - lows;
-  const lowHighPenalty = Math.max(0, Math.abs(lows - highs) - 2) * 0.05;
-
-  // Residue (last digit / mod 10)
-  const countByResidue = {};
-  arr.forEach(x => { const r = x%10; countByResidue[r] = (countByResidue[r]||0)+1; });
-  const maxResidue = Math.max(...Object.values(countByResidue));
-  const residuePenalty = Math.max(0, maxResidue - Math.ceil(arr.length/5)) * 0.04; // prefer spread over digits
-
-  // Scale down so it’s gentle.
-  return (parityPenalty + lowHighPenalty + residuePenalty);
-}
-
-// 6) One-shot precompute wrapper (call this after sinceMap/skipTable/fullData are ready)
-function precomputeEnhancements(){
-  if (!skipDataGlobal || !skipDataGlobal.skipTable) return;
-  hazardScore = computeHazardScores(skipDataGlobal.skipTable);
-  soonProb    = computeSoonWindow(skipDataGlobal.skipTable, 3);
-  coHit       = buildCoHitMatrix(fullData, 200);
-}
-
 
 function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
   const container = document.getElementById('recentDrawsContainer');

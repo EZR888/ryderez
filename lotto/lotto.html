@@ -2372,9 +2372,13 @@ function renderReverseHitsTable() {
   headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
 
   // ✅ Only add Picks header if not Powerball-only mode
-  if (totalNumbersGlobal !== 26) {
-    headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
-  }
+// ✅ show Skips (orange) even in 26 mode
+if (top18.includes(number)) {
+  const dot = document.createElement('div');
+  dot.className = 'orange-dot';
+  topCell.appendChild(dot);
+}
+
 
   table.appendChild(headerRow);
 

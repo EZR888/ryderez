@@ -260,13 +260,10 @@ h3{margin:0 0 15px;color: gold}
 <br><br>
 
 <h2 id="top18Label">Your Picks (Editable)</h2>
-
-<div id="top18Inputs">
-<button id="savePicksBtn" class="button button-single">💾 Save Picks</button>
-</div>
+<div id="top18Inputs"></div>
 <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button>
+<button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
 <button id="loadTop18Button" class="button button-single">📂 Load Prior Picks</button><br>
-<button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
 
 <div id="loadTop18Modal" class="modal">
   <div class="modal-content">
@@ -276,9 +273,9 @@ h3{margin:0 0 15px;color: gold}
   </div>
 </div>
 
-<button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
 <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Generate Wheel</button>
 <button id="quick12Button" class="button button-single" style="display:none">⚡ 12-Number Quick</button>
+<button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
 
 <br><br>
 
@@ -615,36 +612,6 @@ const loadTop18Button = document.getElementById('loadTop18Button');
 const loadTop18Modal = document.getElementById('loadTop18Modal');
 const loadTop18FileInput = document.getElementById('loadTop18FileInput');
 const closeLoadModal = document.getElementById('closeLoadModal');
-const savePicksBtn = document.getElementById('savePicksBtn');
-if (savePicksBtn) savePicksBtn.addEventListener('click', savePicksFromInputs);
-
-// Save the 12 inputs (low→high) to a file
-function savePicksFromInputs() {
-  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
-    .slice(0, 12)
-    .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(n => Number.isInteger(n));
-
-  if (nums.length !== 12) {
-    alert('Please enter 12 valid numbers in the input boxes before saving.');
-    return;
-  }
-
-  const sorted = nums.sort((a,b)=>a-b);
-  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
-    ? String(latestDrawingNumber + 1) : '00000';
-
-  const prefix = (totalNumbersGlobal === 69) ? 'picksPB'
-               : (totalNumbersGlobal === 39) ? 'picksF5'
-               : 'picks';
-
-  const blob = new Blob([sorted.join(', ')], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${prefix}_${nextDraw}.txt`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 100);
-}
 
 saveTop18Button.addEventListener('click', saveTop18Numbers);
 loadTop18Button.addEventListener('click', () => { loadTop18Modal.style.display = 'block'; });
@@ -1369,39 +1336,13 @@ function handleTop18FileSelect(event) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    // accept either comma or space-separated lists
-    const contents = e.target.result.trim();
-    const numbers = contents.split(/[^0-9]+/)
-      .map(s => parseInt(s, 10))
-      .filter(n => Number.isInteger(n));
-
-    if (numbers.length === 0) {
-      alert('No valid numbers found in the file.');
-      return;
-    }
-
-    // Only take up to the first 12 numbers
-    const picks12 = Array.from(new Set(numbers)).slice(0, 12).sort((a,b)=>a-b);
-    loadPicksIntoColumnAndInputs(picks12);
+    const contents = e.target.result;
+    const numbers = contents.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+    loadTop18NumbersIntoTable(numbers);
     loadTop18Modal.style.display = 'none';
-    loadTop18FileInput.value = '';
   };
   reader.readAsText(file);
 }
-
-function loadPicksIntoColumnAndInputs(numbers) {
-  // Mirror into the 12 inputs
-  ensureTwelveInputs();
-  setInputsFromList(numbers, 12);
-
-  // Update the green Picks column
-  systemPicksSet = new Set(numbers);
-
-  // Re-draw tables/highlights
-  renderReverseHitsTable();
-  reapplySkipTableHighlights();
-}
-
 
 function loadTop18NumbersIntoTable(numbers) {
   const container = document.getElementById('reverseHitsContainer');

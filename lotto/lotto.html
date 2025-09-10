@@ -481,14 +481,7 @@ h3{margin:0 0 15px;color: gold}
     <label for="coverage12">Top 12</label><br>
     <input type="radio" name="coverage" value="18" id="coverage18" checked>
     <label for="coverage18">Top 18</label><br><br>
-
     <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
-    
-        <p style="margin-top:12px; font-size:14px; color:#ccc;">
-      Note: This updates the <b>Hot</b> column only.  
-      To refresh the <b>Picks</b> column based on the new Hot numbers, press <b>System Picks</b>.
-    </p>
-    
     <button id="saveTop18Button" class="button button-single" style="display:none;">💾 Save Top #'s</button>
     <button id="exportAutoTopBtn" class="button button-single" style="display:none;">⬇️ Export Auto Top</button>
   </div>
@@ -736,20 +729,31 @@ runAutoBtn.addEventListener('click', () => {
   const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
   const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-  // Before/after for change detection
-  const before = new Set(hotSet);
-
-  // Only compute & show HOT (blue). Do NOT write to Picks.
+  // Recalculate Hot (blue dots)
+  const beforeHot = new Set(hotSet);
   const hotNums = computeTrendingHotNumbers(weeks, count);
   hotSet = new Set(hotNums);
 
+  // 👉 Also recompute Picks (green dots)
+  const beforePicks = new Set(systemPicksSet);
+  setDeterministicSeed('systemPicks');
+  const picks = computeSystemPicks(12, weeks, hotNums, top18, sinceMap);
+  systemPicksSet = new Set(picks);
+  setInputsFromList(picks, 12);   // mirror into inputs
+
+  // Redraw
   renderReverseHitsTable();
+  reapplySkipTableHighlights();
 
-  const changed = !setsEqual(before, hotSet);
-  showToast(changed ? 'Hot numbers updated.' : 'Hot numbers recalculated (no change).');
+  // Feedback
+  const hotChanged   = !setsEqual(beforeHot, hotSet);
+  const picksChanged = !setsEqual(beforePicks, systemPicksSet);
+  if (hotChanged || picksChanged) {
+    showToast('Hot + Picks updated.');
+  } else {
+    showToast('Recalculated (no change).');
+  }
 });
-
-
 
   }
 

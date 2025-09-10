@@ -1052,16 +1052,39 @@ function readTopSkips12(){
 // 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
 // while minimizing average points of sampled 5-number sets from the pool.
 // 🔁 REPLACE your existing computeSystemPicks with this version
+// 🔁 REPLACE your existing computeSystemPicks with this version
 function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {
-  // helpers
-  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
-  const H = new Set(uniq(hotList));
-  const T = uniq(topList);
+  // --- knobs you can tune ---
+  const MIN_FROM_TOP = Math.max(6, Math.floor(count * 0.45)); // ensure strong Skips presence
+  const MAX_FROM_HOT = Math.min(5, Math.floor(count * 0.40)); // cap Hot dominance
+  const EXPLORERS    = Math.max(2, count - (MIN_FROM_TOP + Math.min(MAX_FROM_HOT, (hotList||[]).length)));
+
+  // helper: uniq ints
+  const uniq = arr => Array.from(new Set((arr || []).map(x => parseInt(x,10)).filter(Number.isInteger)));
+  const T = uniq(topList);                     // Skips/Top (orange)
+  const H = new Set(uniq(hotList));            // Hot (blue)
+
+  // explorer pools
+  const dueRank = Array.from({length: totalNumbersGlobal}, (_,i)=>i+1)
+    .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0));   // longest-unhit first
+
+  // “current skip matches”: how much num ‘likes’ its current skip length
+  const skipMatch = Array.from({length: totalNumbersGlobal}, (_,i)=>i+1)
+    .map(n => {
+      const cur = sinceMapObj[n] || 0;
+      const s   = (skipDataGlobal && skipDataGlobal.skipTable && skipDataGlobal.skipTable[n] && skipDataGlobal.skipTable[n][cur]) || 0;
+      return {n, s};
+    })
+    .sort((a,b)=> (b.s - a.s) || ( (sinceMapObj[b.n]||0) - (sinceMapObj[a.n]||0) ))
+    .map(x => x.n);
+
+  // scoring bits already precomputed in the earlier patch:
+  // hazardScore, soonProb, coHit + helpers pairDiversityPenalty, compPenaltyIfUnbalanced, clumpPenalty via closure
 
   const chosen = new Set();
-  const push = n => { if (!chosen.has(n)) chosen.add(n); };
+  const push   = n => { if (!chosen.has(n)) chosen.add(n); };
 
-  function clumpPenalty(n) {
+  function clumpPenaltyLocal(n) {
     let p = 0;
     chosen.forEach(c => {
       const d = Math.abs(c - n);
@@ -1074,57 +1097,93 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
   function preScore(n){
     const due   = (sinceMapObj[n] || 0);
     const inTop = T.includes(n) ? 1 : 0;
-    const inHot = H.has(n) ? 1 : 0;
+    const inHot = H.has(n)      ? 1 : 0;
 
-    // new bits:
-    const h     = hazardScore[n] || 0;     // overall hazard proxy
-    const soon  = soonProb[n]    || 0;     // small-window pop
-    const pairP = pairDiversityPenalty(n, chosen); // co-occurrence with chosen
-    const comp  = compPenaltyIfUnbalanced(n, Array.from(chosen)); // composition soft penalty
+    const h     = hazardScore[n] || 0;
+    const soon  = soonProb[n]    || 0;
 
-    return (due * 1.00)
-         + (inTop * 0.60)
-         + (inHot * 0.40)
-         + (h * 0.80)
-         + (soon * 0.30)
-         - (clumpPenalty(n) * 0.50)
-         - (pairP)                // already scaled small inside function
-         - (comp);                // small gentle nudges
+    // emphasize skip-match on the *current* skip
+    const cur = sinceMapObj[n] || 0;
+    const likeCur = (skipDataGlobal?.skipTable?.[n]?.[cur] || 0);
+
+    const pairP = pairDiversityPenalty(n, chosen);
+    const comp  = compPenaltyIfUnbalanced(n, Array.from(chosen));
+
+    // ↓ dial Hot down, dial due/skip-match up a bit
+    return (due   * 1.10)
+         + (inTop * 0.70)
+         + (inHot * 0.20)
+         + (h     * 0.80)
+         + (soon  * 0.30)
+         + (likeCur * 0.35)
+         - (clumpPenaltyLocal(n) * 0.60)
+         - (pairP)
+         - (comp);
   }
 
-  // 1) consensus (Hot ∩ Top)
+  // constraint check used in refinement
+  function respectsMix(arr){
+    const set = new Set(arr);
+    let topCnt = 0, hotCnt = 0;
+    set.forEach(n => {
+      if (T.includes(n)) topCnt++;
+      if (H.has(n))      hotCnt++;
+    });
+    // must have at least MIN_FROM_TOP and at most MAX_FROM_HOT
+    return (topCnt >= MIN_FROM_TOP) && (hotCnt <= MAX_FROM_HOT);
+  }
+
+  // 1) consensus first (Hot ∩ Top)
   T.filter(n => H.has(n))
    .sort((a,b)=> preScore(b)-preScore(a))
    .forEach(n => { if (chosen.size < count) push(n); });
 
-  // 2) ensure at least half from Top
-  const wantTopMin = Math.max(Math.floor(count/2), 4);
+  // 2) ensure Top minimum
   T.filter(n => !chosen.has(n))
    .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < wantTopMin) push(n); });
+   .forEach(n => { if (chosen.size < MIN_FROM_TOP) push(n); });
 
-  // 3) fill from Hot
+  // 3) fill from Hot up to cap
+  let hotAdded = Array.from(chosen).filter(n => H.has(n)).length;
   Array.from(H).filter(n => !chosen.has(n))
    .sort((a,b)=> preScore(b)-preScore(a))
-   .forEach(n => { if (chosen.size < count) push(n); });
+   .forEach(n => {
+     if (chosen.size < count && hotAdded < MAX_FROM_HOT) {
+       push(n); hotAdded++;
+     }
+   });
 
-  // 4) backfill by raw frequency if still short
+  // 4) explorers: mix of skip-match & due that aren’t already chosen
+  const explorers = uniq([...skipMatch, ...dueRank]).filter(n => !chosen.has(n));
+  explorers.sort((a,b)=> preScore(b)-preScore(a));
+  for (const n of explorers) {
+    if (chosen.size >= Math.min(count, MIN_FROM_TOP + MAX_FROM_HOT + EXPLORERS)) break;
+    push(n);
+  }
+
+  // 5) backfill by recent frequency if still short
   if (chosen.size < count) {
     getTopNumbersByFrequency(weeks, totalNumbersGlobal)
       .filter(n => !chosen.has(n))
-      .sort((a,b)=> (sinceMapObj[b]||0) - (sinceMapObj[a]||0))
+      .sort((a,b)=> preScore(b)-preScore(a))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
   for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  // 5) points-aware refinement with stability guard (require ≥2% improvement)
+  // 6) Points refinement with stability & mix guards
   let pool = Array.from(chosen).sort((a,b)=>a-b);
-  const candidateUniverse = uniq([...T, ...Array.from(H), ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
-
   let currentScore = evaluatePoolPoints(pool, rng);
-  let improved = true;
-  let tries = 0;
-  const epsilon = 0.02; // 2% minimum improvement to accept
+  const epsilon = 0.02; // require ≥2% improvement
+
+  const candidateUniverse = uniq([
+    ...T,
+    ...Array.from(H),
+    ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40)),
+    ...skipMatch.slice(0, Math.min(30, totalNumbersGlobal)),
+    ...dueRank.slice(0, Math.min(30, totalNumbersGlobal))
+  ]);
+
+  let improved = true, tries = 0;
   while (improved && tries < 50) {
     improved = false; tries++;
     for (let i = 0; i < pool.length; i++) {
@@ -1137,14 +1196,19 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
 
       let bestLocal = currentScore;
       let bestChoice = null;
+
       for (const cand of candidates) {
-        // Avoid tight clumps unless it really helps
+        const trial = [...base, cand].sort((a,b)=>a-b);
+
+        // keep composition constraints
+        if (!respectsMix(trial)) continue;
+
+        // avoid tight clumps unless it really helps
         const adjBad = base.some(x => Math.abs(x - cand) <= 1);
         if (adjBad && rng() < 0.5) continue;
 
-        const trial = [...base, cand].sort((a,b)=>a-b);
         const trialScore = evaluatePoolPoints(trial, rng);
-        if (trialScore < bestLocal && (trialScore <= currentScore * (1 - epsilon))) {
+        if (trialScore < bestLocal && trialScore <= currentScore * (1 - epsilon)) {
           bestLocal = trialScore;
           bestChoice = cand;
         }
@@ -1156,6 +1220,7 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
       }
     }
   }
+
   return pool.slice(0, count).sort((a,b)=>a-b);
 }
 

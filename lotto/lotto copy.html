@@ -199,27 +199,6 @@ h3{margin:0 0 15px;color: gold}
 .green-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32; }
 .hot-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#00bfff; }
 
-/* Toast */
-#tweToast {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,.85);
-  color: #fff;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  z-index: 99999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
-}
-#tweToast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-4px);
-}
-
   </style>
 </head>
 <body>
@@ -729,19 +708,12 @@ runAutoBtn.addEventListener('click', () => {
   const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
   const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-  // Before/after for change detection
-  const before = new Set(hotSet);
-
   // Only compute & show HOT (blue). Do NOT write to Picks.
   const hotNums = computeTrendingHotNumbers(weeks, count);
   hotSet = new Set(hotNums);
 
   renderReverseHitsTable();
-
-  const changed = !setsEqual(before, hotSet);
-  showToast(changed ? 'Hot numbers updated.' : 'Hot numbers recalculated (no change).');
 });
-
 
 
   }
@@ -851,6 +823,7 @@ function stableSeed(...things) {
 }
 
 const asSorted = arr => [...arr].sort((a,b)=>a-b);
+
 
 // --- Deterministic RNG glue ---
 let __rng = Math.random;              // default: normal randomness
@@ -1098,26 +1071,6 @@ function setInputsFromList(list, limit = 12) {
   for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
 }
 
-// Toast helper
-function showToast(msg, ms=1600){
-  let el = document.getElementById('tweToast');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'tweToast';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(showToast.__t);
-  showToast.__t = setTimeout(()=> el.classList.remove('show'), ms);
-}
-
-// Set compare
-function setsEqual(a, b){
-  if(a.size !== b.size) return false;
-  for (const v of a) if (!b.has(v)) return false;
-  return true;
-}
 
 function readTopSkips12(){
   const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
@@ -1260,9 +1213,6 @@ function runSystemPicks(){
     if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
   }
 
-  // Keep a copy for change detection
-  const before = new Set(systemPicksSet);
-
   // Deterministic seed so button matches page-load result
   setDeterministicSeed('systemPicks');
 
@@ -1272,18 +1222,16 @@ function runSystemPicks(){
   // Save to Picks column
   systemPicksSet = new Set(picks);
 
-  // Mirror Picks into the 12 inputs (sorted)
+  // 👉 ALSO mirror Picks into the 12 inputs
   ensureTwelveInputs();
-  setInputsFromList(picks.slice().sort((a,b)=>a-b), 12);
+  setInputsFromList(picks, 12);
 
   // Redraw
   renderReverseHitsTable();
   reapplySkipTableHighlights();
-
-  // ✅ Feedback toast
-  const changed = !setsEqual(before, systemPicksSet);
-  showToast(changed ? 'System Picks updated.' : 'System Picks recalculated (no change).');
 }
+
+
 
 function ensureTwelveInputs() {
   const div = document.getElementById('top18Inputs');

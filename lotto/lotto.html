@@ -855,17 +855,28 @@ function hidePBblock(){
 
 function showPBblock() {
   pbBlk.style.display = 'flex';
+
+  // 🔔 Note under the inputs
   const note = document.getElementById('pbNote');
-  if (note) note.style.display = 'block';
+  if (note) {
+    note.innerHTML = 'Tip: Enter <b>up to 5 Powerball numbers</b> above. ' +
+      'When you export sets, we’ll <b>round-robin</b> through them on each line. ' +
+      'Leave them blank to use a fresh random PB (1–26) for every set. ' +
+      '<i>Your entries are saved in your browser.</i>';
+    note.style.display = 'block';
+  }
 
   wirePBInputsOnce();
+
   const inputs = qsa('#pbBlock input');
-  const existing = inputs.map(inp => parseInt(inp.value, 10)).filter(n => n >= 1 && n <= 26);
+  const existing = inputs
+    .map(inp => parseInt(inp.value, 10))
+    .filter(n => n >= 1 && n <= 26);
+
   if (existing.length) return;
   if (loadPBFromStorage()) return;
 
-  // first-time quick seed
-  const pool = Array.from({ length: 26 }, (_, i) => i + 1);
+  const pool  = Array.from({ length: 26 }, (_, i) => i + 1);
   const picks = [];
   while (picks.length < 5) {
     const idx = Math.floor(Math.random() * pool.length);
@@ -1608,32 +1619,6 @@ function hidePBblock(){
 
 function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
 window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });
-
-function showPBblock() {
-  pbBlk.style.display = 'flex';
-
-  // make sure inputs are wired for edits
-  wirePBInputsOnce();
-
-  const inputs = qsa('#pbBlock input');
-  const existing = inputs
-    .map(inp => parseInt(inp.value, 10))
-    .filter(n => n >= 1 && n <= 26);
-
-  if (existing.length) return;     // already have user entries, respect them
-  if (loadPBFromStorage()) return; // 🧠 restore saved PBs if available
-
-  // Otherwise, give a quick random seed fill (first-time only)
-  const pool  = Array.from({ length: 26 }, (_, i) => i + 1);
-  const picks = [];
-  while (picks.length < 5) {
-    const idx = Math.floor(Math.random() * pool.length);
-    picks.push(pool.splice(idx, 1)[0]);
-  }
-  inputs.forEach((inp, i) => (inp.value = picks[i] ?? ''));
-  savePBToStorage();               // save the initial fill too
-  __pbCycleIndex = 0;              // start round-robin from the beginning
-}
 
 qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
 
@@ -2397,7 +2382,7 @@ function renderReverseHitsTable() {
 
   const table = document.createElement('table');
 
-  // header
+  // ----- header -----
   const headerRow = document.createElement('tr');
   headerRow.appendChild(document.createElement('th'));
   for (let i = 25; i >= 1; i--) {
@@ -2405,13 +2390,21 @@ function renderReverseHitsTable() {
     th.textContent = i;
     headerRow.appendChild(th);
   }
-  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+
+  // Only show Skips/Hot when NOT in PB-only (26)
+  if (totalNumbersGlobal !== 26) {
+    headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+    headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+  }
+
+  // Picks already hidden in PB-only; keep as-is otherwise
   if (totalNumbersGlobal !== 26) {
     headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
   }
-  table.appendChild(headerRow); // ← append only once
 
+  table.appendChild(headerRow);
+
+  // ----- rows -----
   const draws = fullData
     .map(row => row.slice(1).map(n => parseInt(n, 10)))
     .slice(0, 25);
@@ -2432,23 +2425,25 @@ function renderReverseHitsTable() {
       row.appendChild(cell);
     }
 
-    // Skips (orange)
-    const topCell = document.createElement('td');
-    if (top18.includes(number)) {
-      const dot = document.createElement('div');
-      dot.className = 'orange-dot';
-      topCell.appendChild(dot);
-    }
-    row.appendChild(topCell);
+    if (totalNumbersGlobal !== 26) {
+      // Skips (orange)
+      const topCell = document.createElement('td');
+      if (top18.includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'orange-dot';
+        topCell.appendChild(dot);
+      }
+      row.appendChild(topCell);
 
-    // Hot (blue)
-    const hotCell = document.createElement('td');
-    if (hotSet && hotSet.has(number)) {
-      const d = document.createElement('div');
-      d.className = 'hot-dot';
-      hotCell.appendChild(d);
+      // Hot (blue)
+      const hotCell = document.createElement('td');
+      if (hotSet && hotSet.has(number)) {
+        const d = document.createElement('div');
+        d.className = 'hot-dot';
+        hotCell.appendChild(d);
+      }
+      row.appendChild(hotCell);
     }
-    row.appendChild(hotCell);
 
     // Picks (green) — only in 39/69 modes
     if (totalNumbersGlobal !== 26) {

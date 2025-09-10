@@ -783,6 +783,9 @@ function stableSeed(...things) {
   return h >>> 0;
 }
 
+const asSorted = arr => [...arr].sort((a,b)=>a-b);
+
+
 // --- Deterministic RNG glue ---
 let __rng = Math.random;              // default: normal randomness
 function rand() { return __rng(); }   // use this everywhere instead of Math.random
@@ -1421,7 +1424,7 @@ function doExport(mode){
   const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
 
   const lines = list.map(({combo},idx)=>{
-      let out = `${idx+1}.  ${combo.join(', ')}`;
+let out = `${idx+1}.  ${asSorted(combo).join(', ')}`;
       if(needPB){
           const pb = pbInputs.length
                       ? pbInputs[Math.floor(Math.random()*pbInputs.length)]
@@ -1702,10 +1705,13 @@ document.getElementById('quick12Button').addEventListener('click', function () {
     if (totalScore < bestScore) { bestScore = totalScore; bestOrder = shuffled.slice(0, 12); }
   }
 
-  allInputs.forEach((inp, idx) => {
-    if (idx < 12) { inp.value = bestOrder[idx]; inp.classList.remove('dimmed'); }
-    else { inp.classList.add('dimmed'); }
-  });
+// NEW: write inputs low→high for easy ticket entry
+const sortedForInputs = asSorted(bestOrder);
+allInputs.forEach((inp, idx) => {
+  if (idx < 12) { inp.value = sortedForInputs[idx]; inp.classList.remove('dimmed'); }
+  else { inp.classList.add('dimmed'); }
+});
+
 
   document.getElementById('generateSetsModalButton').style.display = 'none';
   document.getElementById('pickBestSetsModal').style.display = 'none';
@@ -1714,8 +1720,10 @@ document.getElementById('quick12Button').addEventListener('click', function () {
   document.getElementById('exportBestBtn').style.display = 'none';
   document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
 
-  const fixedSets = fixedPattern.map(indexes => indexes.map(i => bestOrder[i]));
-  generatedSets = fixedSets.map(combo => ({ combo, points: calculateRawPointsForSet(combo) }));
+const fixedSets = fixedPattern.map(indexes =>
+  asSorted(indexes.map(i => bestOrder[i]))
+);  
+generatedSets = fixedSets.map(combo => ({ combo, points: calculateRawPointsForSet(combo) }));
 
   const modal = document.getElementById('wheelModal');
   const output = document.getElementById('modalWheelOutput');
@@ -1742,7 +1750,7 @@ function renderFixedSetsToModal() {
 
   let html = '<ol>';
   generatedSets.forEach(({ combo, points }) => {
-      html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
   });
   html += '</ol>';
   output.innerHTML = html;

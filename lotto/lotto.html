@@ -1613,9 +1613,6 @@ style.textContent = `.blue-dot { width: 14px; height: 14px; border-radius: 50%; 
 document.head.appendChild(style);
 
 function highlight(btn){ [btn39, btn69, btn1].forEach(b => b.classList.toggle('active', b === btn)); }
-function hidePBblock(){
-  pbBlk.style.display = 'none';   // 🔒 do NOT clear values here
-}
 
 function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
 window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });

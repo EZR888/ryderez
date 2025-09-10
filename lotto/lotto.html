@@ -2398,23 +2398,23 @@ function renderReverseHitsTable() {
   const table = document.createElement('table');
 
   // header
-const headerRow = document.createElement('tr');
-headerRow.appendChild(document.createElement('th'));
-for (let i = 25; i >= 1; i--) {
-  const th = document.createElement('th');
-  th.textContent = i;
-  headerRow.appendChild(th);
-}
-headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
-headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
-if (totalNumbersGlobal !== 26) {
-  headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
-}
-table.appendChild(headerRow);
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 25; i >= 1; i--) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+  headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
+  if (totalNumbersGlobal !== 26) {
+    headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
+  }
+  table.appendChild(headerRow); // ← append only once
 
-  table.appendChild(headerRow);
-
-  const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
+  const draws = fullData
+    .map(row => row.slice(1).map(n => parseInt(n, 10)))
+    .slice(0, 25);
 
   for (let number = 1; number <= totalNumbersGlobal; number++) {
     const row = document.createElement('tr');
@@ -2422,56 +2422,51 @@ table.appendChild(headerRow);
     th.textContent = number;
     row.appendChild(th);
 
-for (let number = 1; number <= totalNumbersGlobal; number++) {
-  const row = document.createElement('tr');
-  const th = document.createElement('th');
-  th.textContent = number;
-  row.appendChild(th);
+    for (let i = 24; i >= 0; i--) {
+      const cell = document.createElement('td');
+      if (draws[i] && draws[i].includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'red-dot';
+        cell.appendChild(dot);
+      }
+      row.appendChild(cell);
+    }
 
-  for (let i = 24; i >= 0; i--) {
-    const cell = document.createElement('td');
-    if (draws[i] && draws[i].includes(number)) {
+    // Skips (orange)
+    const topCell = document.createElement('td');
+    if (top18.includes(number)) {
       const dot = document.createElement('div');
-      dot.className = 'red-dot';
-      cell.appendChild(dot);
+      dot.className = 'orange-dot';
+      topCell.appendChild(dot);
     }
-    row.appendChild(cell);
-  }
+    row.appendChild(topCell);
 
-  // Skips (orange) — YES even in 26 mode
-  const topCell = document.createElement('td');
-  if (top18.includes(number)) {
-    const dot = document.createElement('div');
-    dot.className = 'orange-dot';
-    topCell.appendChild(dot);
-  }
-  row.appendChild(topCell);
-
-  // Hot (blue)
-  const hotCell = document.createElement('td');
-  if (hotSet && hotSet.has(number)) {
-    const d = document.createElement('div');
-    d.className = 'hot-dot';
-    hotCell.appendChild(d);
-  }
-  row.appendChild(hotCell);
-
-  // Picks (green) — only in 39/69 modes
-  if (totalNumbersGlobal !== 26) {
-    const picksCell = document.createElement('td');
-    if (systemPicksSet && systemPicksSet.has(number)) {
-      const b = document.createElement('div');
-      b.className = 'green-dot';
-      picksCell.appendChild(b);
+    // Hot (blue)
+    const hotCell = document.createElement('td');
+    if (hotSet && hotSet.has(number)) {
+      const d = document.createElement('div');
+      d.className = 'hot-dot';
+      hotCell.appendChild(d);
     }
-    row.appendChild(picksCell);
-  }
+    row.appendChild(hotCell);
 
-  table.appendChild(row);
-}
+    // Picks (green) — only in 39/69 modes
+    if (totalNumbersGlobal !== 26) {
+      const picksCell = document.createElement('td');
+      if (systemPicksSet && systemPicksSet.has(number)) {
+        const b = document.createElement('div');
+        b.className = 'green-dot';
+        picksCell.appendChild(b);
+      }
+      row.appendChild(picksCell);
+    }
+
+    table.appendChild(row);
+  }
 
   container.appendChild(table);
 }
+
 
 function updateReverseHitsTop18() {
   // Read exactly the 12 inputs you typed

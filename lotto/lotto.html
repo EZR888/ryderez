@@ -706,7 +706,7 @@ function savePicksFromInputs() {
   //   picksF5_11631_w25_h12_SYS.txt
   //   picksPB_1470_Q12.txt
   //   picksF5_11631_MAN.txt
-  const parts = [`picks${game}`, nextDraw];
+  const parts = [`Picks_${game}`, nextDraw];
   if (method === 'system') {
     if (weeks) parts.push(`w${weeks}`);
     if (hotN)  parts.push(`h${hotN}`);

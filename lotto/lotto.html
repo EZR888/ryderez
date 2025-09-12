@@ -221,6 +221,19 @@ h3{margin:0 0 15px;color: gold}
   transform: translate(-50%, -50%) scale(1.05); /* subtle "pop" */
 }
 
+#hitsSubtitle{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+}
+#picksMetaDisplay{
+  font-weight:bold;
+  color: lightyellow;
+  font-size: 16px;
+}
+
   </style>
 </head>
 <body>
@@ -420,7 +433,7 @@ h3{margin:0 0 15px;color: gold}
 </div>
 
 <h2>Hits Table</h2> 
-<h3>Last 25 Drawings</h3>
+<h3 id="hitsSubtitle">Last 25 Drawings <span id="picksMetaDisplay"></span></h3>
 <div id="reverseHitsContainer"></div>
 <br>
 <h2>Skip Frequency Table</h2>
@@ -990,6 +1003,33 @@ function showPBblock() {
   __pbCycleIndex = 0;
 }
 
+function updatePicksMetaDisplay(meta){
+  const span = document.getElementById('picksMetaDisplay');
+  if (!span) return;
+
+  // Clear when no meta (e.g., on dataset load)
+  if (!meta) { span.textContent = ''; return; }
+
+  const game = meta.game || getGameCode();
+  const nextDraw = meta.nextDraw || (typeof latestDrawingNumber === 'number' ? String(latestDrawingNumber + 1) : '');
+  const methodRaw = (meta.method || '').toUpperCase();
+  const methodCodeShort = methodRaw.startsWith('SYS') ? 'SYS' : 'MAN';
+
+  const hotToken  = meta.hotCoverage ? `h${meta.hotCoverage}` : null;
+  const lookToken = meta.lookback   ? `d${meta.lookback}`   : null;
+
+  const left = ['Picks', game, nextDraw, hotToken, lookToken, methodCodeShort]
+    .filter(Boolean).join('_');
+
+  const niceMethod = (methodCodeShort === 'SYS') ? 'System Picks' : 'Manual Picks';
+  const niceBits = [niceMethod];
+  if (meta.hotCoverage) niceBits.push(`Top ${meta.hotCoverage} hot numbers`);
+  if (meta.lookback)   niceBits.push(`looking back ${meta.lookback} drawings`);
+
+  const right = `(${niceBits.join(', ')})`;
+  span.textContent = `${left}, ${right}`;
+}
+
 
 // --- Seeded RNG utilities (deterministic randomness) ---
 function makeRNG(seed) {
@@ -1035,6 +1075,8 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
             fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
             const drawingNumbers = fullData.map(row => parseInt(row[0]));
             latestDrawingNumber = drawingNumbers[0];
+            
+            updatePicksMetaDisplay(null);
 
             const lastDrawElem = document.getElementById('lastDrawingNumber');
             if (lastDrawElem) {
@@ -1704,6 +1746,20 @@ function handleTop18FileSelect(event) {
   reader.onload = function(e) {
     // Full file text (trim BOM + whitespace)
     const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
+    // --- parse header comments (if present) ---
+const nextDrawMatch = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
+const methodMatch   = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
+const lookbackMatch = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
+const hotMatch      = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
+
+const picksHeaderMeta = {
+  game: fileGameCode || null,
+  nextDraw: nextDrawMatch ? nextDrawMatch[1] : null,
+  method: methodMatch ? methodMatch[1] : null,                // e.g., SYSTEM / MANUAL
+  lookback: lookbackMatch ? parseInt(lookbackMatch[1],10) : null,
+  hotCoverage: hotMatch ? parseInt(hotMatch[1],10) : null
+};
+
 
     // 🔎 Try to read "# Game: XXX" before we strip comments
     const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
@@ -1745,6 +1801,8 @@ function handleTop18FileSelect(event) {
     const applyPicks = () => {
       loadPicksIntoColumnAndInputs(picks12);
       setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+     // 🆕 show parsed header summary next to "Last 25 Drawings"
+  updatePicksMetaDisplay(picksHeaderMeta);
       showToast(`Loaded ${fileGameCode || getGameCode()} picks.`);
       // Close modal + reset input
       loadTop18Modal.style.display = 'none';

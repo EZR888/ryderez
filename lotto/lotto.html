@@ -512,6 +512,15 @@ function setPicksMeta({ method, weeks=null, hotCoverage=null }) {
   };
 }
 
+// 🛡️ Put this once, right after setPicksMeta()
+window.__suppressManualFlag = false;
+function withSuppressedManual(fn){
+  const prev = window.__suppressManualFlag;
+  window.__suppressManualFlag = true;
+  try { fn(); } finally { window.__suppressManualFlag = prev; }
+}
+
+
 function getGameCode() {
   return (totalNumbersGlobal === 69) ? 'PB'
        : (totalNumbersGlobal === 39) ? 'F5'
@@ -778,50 +787,70 @@ document.addEventListener('DOMContentLoaded', () => {
   
   loadPBFromStorage();   // if the PB block is hidden, values still populate the inputs
   wirePBInputsOnce();
-  
+
+  // ✍️ NEW: flip to MANUAL when a human edits any of the 12 inputs
+  const topBox = document.getElementById('top18Inputs');
+  if (topBox) {
+    topBox.addEventListener('input', (e) => {
+      // Only care about the 12 pick inputs
+      if (!(e.target && e.target.matches('#top18Inputs input'))) return;
+      // Ignore programmatic writes protected by withSuppressedManual
+      if (window.__suppressManualFlag) return;
+
+      const meta = window.lastPicksMeta || {};
+      setPicksMeta({
+        method: 'system', // overwritten to manual below; keeps weeks/hot if present
+        weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+        hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+      });
+      window.lastPicksMeta.method = 'manual';
+    });
+  }
+  // ✍️ END NEW
+
   const runAutoBtn = document.getElementById('runAutoPick');
   if (runAutoBtn) {
-runAutoBtn.addEventListener('click', () => {
-  const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
-  const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+    runAutoBtn.addEventListener('click', () => {
+      const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
+      const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
 
-  // Recalculate Hot (blue dots)
-  const beforeHot = new Set(hotSet);
-  const hotNums = computeTrendingHotNumbers(weeks, count);
-  hotSet = new Set(hotNums);
+      // Recalculate Hot (blue dots)
+      const beforeHot = new Set(hotSet);
+      const hotNums = computeTrendingHotNumbers(weeks, count);
+      hotSet = new Set(hotNums);
 
-  // 👉 Also recompute Picks (green dots)
-  const beforePicks = new Set(systemPicksSet);
-  setDeterministicSeed('systemPicks');
-  const picks = computeSystemPicks(12, weeks, hotNums, top18, sinceMap);
-  systemPicksSet = new Set(picks);
-  setInputsFromList(picks, 12);   // mirror into inputs
+      // 👉 Also recompute Picks (green dots)
+      const beforePicks = new Set(systemPicksSet);
+      setDeterministicSeed('systemPicks');
+      const picks = computeSystemPicks(12, weeks, hotNums, top18, sinceMap);
+      systemPicksSet = new Set(picks);
 
-  // Redraw
-  renderReverseHitsTable();
-  reapplySkipTableHighlights();
-  
-  // inside runAutoPick click handler, right after you update `hotSet` and `systemPicksSet`:
-setPicksMeta({
-  method: 'system',
-  weeks,
-  hotCoverage: count
-});
+      // Mirror into inputs (programmatic; won’t flip to MANUAL)
+      setInputsFromList(picks, 12);
 
+      // Redraw
+      renderReverseHitsTable();
+      reapplySkipTableHighlights();
 
-  // Feedback
-  const hotChanged   = !setsEqual(beforeHot, hotSet);
-  const picksChanged = !setsEqual(beforePicks, systemPicksSet);
-  if (hotChanged || picksChanged) {
-    showToast('Hot + Picks updated.');
-  } else {
-    showToast('Recalculated (no change).');
-  }
-  
-wireHotDialogMetaSync();
+      // Record as SYSTEM (since this was automated)
+      setPicksMeta({
+        method: 'system',
+        weeks,
+        hotCoverage: count
+      });
 
-});
+      // Feedback
+      const hotChanged   = !setsEqual(beforeHot, hotSet);
+      const picksChanged = !setsEqual(beforePicks, systemPicksSet);
+      if (hotChanged || picksChanged) {
+        showToast('Hot + Picks updated.');
+      } else {
+        showToast('Recalculated (no change).');
+      }
 
+      // If you added this helper, safe to keep:
+      wireHotDialogMetaSync?.();
+    });
   }
 
   // Open Auto-pick modal
@@ -837,6 +866,7 @@ wireHotDialogMetaSync();
   const sysBtn = document.getElementById('systemPicksButton');
   if (sysBtn) sysBtn.addEventListener('click', runSystemPicks);
 });
+
 
 // Holds current System Picks result
 let systemPicksSet = new Set();
@@ -1233,17 +1263,19 @@ function getTopNumbersByFrequency(weeks, count){
     .sort((a,b) => a - b);
 }
 
-// 👉 Put this once (helper to sync inputs to a list)
+// ✅ Replace your existing setInputsFromList with this guarded version
 function setInputsFromList(list, limit = 12) {
   const box = document.getElementById('top18Inputs');
   if (!box) return;
-  const inputs = box.querySelectorAll('input');
-  for (let i = 0; i < limit; i++) {
-    if (i < inputs.length) inputs[i].value = list[i] ?? '';
-  }
-  // clear any extra inputs (shouldn’t have more than 12 though)
-  for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
+  withSuppressedManual(() => {
+    const inputs = box.querySelectorAll('input');
+    for (let i = 0; i < limit; i++) {
+      if (i < inputs.length) inputs[i].value = list[i] ?? '';
+    }
+    for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
+  });
 }
+
 
 // Toast helper
 function showToast(msg, ms=1600){

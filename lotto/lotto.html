@@ -1628,23 +1628,50 @@ function handleTop18FileSelect(event) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    // accept either comma or space-separated lists
-    const contents = e.target.result.trim();
-    const numbers = contents.split(/[^0-9]+/)
-      .map(s => parseInt(s, 10))
-      .filter(n => Number.isInteger(n));
+    // Full file text (trim BOM + whitespace)
+    const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
 
-    if (numbers.length === 0) {
-      alert('No valid numbers found in the file.');
+    // Keep only non-empty, non-comment lines (ignore those starting with # or ---)
+    const lines = raw
+      .split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(l => l && !/^\s*(#|---)/.test(l));
+
+    if (!lines.length) {
+      alert('No data lines found. Make sure the file contains a row of 12 numbers after the header.');
       return;
     }
 
-    // Only take up to the first 12 numbers
-    const picks12 = Array.from(new Set(numbers)).slice(0, 12).sort((a,b)=>a-b);
+    // Use the first remaining line as the picks row
+    const dataLine = lines[0];
+
+    // Accept comma or space separated numbers (or mixed)
+    const nums = dataLine
+      .split(/[,\s]+/)
+      .map(s => parseInt(s, 10))
+      .filter(n => Number.isInteger(n));
+
+    if (nums.length < 12) {
+      alert(`Found only ${nums.length} numbers on the data line. Need 12.`);
+      return;
+    }
+
+    // Take the first 12 unique numbers, sorted
+    const picks12 = Array.from(new Set(nums)).slice(0, 12).sort((a, b) => a - b);
+
+    if (picks12.length !== 12) {
+      alert(`Need 12 unique numbers, but got ${picks12.length}.`);
+      return;
+    }
+
+    // Load into inputs + Picks column
     loadPicksIntoColumnAndInputs(picks12);
+
+    // Close modal and reset input
     loadTop18Modal.style.display = 'none';
     loadTop18FileInput.value = '';
   };
+
   reader.readAsText(file);
 }
 

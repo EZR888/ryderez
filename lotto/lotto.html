@@ -783,29 +783,37 @@ window.onload = function () {
 
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');
-  if (closeAutoBtn) closeAutoBtn.addEventListener('click', () => { document.getElementById('autoPickModal').style.display = 'none'; });
-  
+  if (closeAutoBtn) {
+    closeAutoBtn.addEventListener('click', () => {
+      document.getElementById('autoPickModal').style.display = 'none';
+    });
+  }
+
   loadPBFromStorage();   // if the PB block is hidden, values still populate the inputs
   wirePBInputsOnce();
 
   // ✍️ NEW: flip to MANUAL when a human edits any of the 12 inputs
   const topBox = document.getElementById('top18Inputs');
   if (topBox) {
-    topBox.addEventListener('input', (e) => {
+    const onManualEdit = (e) => {
       // Only care about the 12 pick inputs
       if (!(e.target && e.target.matches('#top18Inputs input'))) return;
       // Ignore programmatic writes protected by withSuppressedManual
       if (window.__suppressManualFlag) return;
 
       const meta = window.lastPicksMeta || {};
-setPicksMeta({
-  method: 'manual',
-  weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
-  hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+      setPicksMeta({
+        method: 'manual',
+        weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+        hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+      });
+    };
+
+    topBox.addEventListener('input', onManualEdit);
+    topBox.addEventListener('change', onManualEdit); // also catch blur/enter edits
+  }
 });
 
-    });
-  }
   // ✍️ END NEW
 
   const runAutoBtn = document.getElementById('runAutoPick');
@@ -1772,8 +1780,32 @@ function doExport(mode) {
                    : '00000';
 
   const meta = (window.lastPicksMeta || {});
-const method = (meta.method || 'manual').toLowerCase();
-const methodTag = (method === 'manual') ? 'M' : 'S';
+
+  // Read the 12 input boxes right now
+  const inputsNow = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(Number.isInteger);
+
+  // Compare to the current systemPicksSet (what the app thinks is “system”)
+  const inputsSet = new Set(inputsNow);
+  const systemSet = (window.systemPicksSet instanceof Set) ? window.systemPicksSet : new Set();
+
+  const sameAsSystem =
+    inputsSet.size === systemSet.size &&
+    [...inputsSet].every(n => systemSet.has(n));
+
+  // If inputs differ from system picks, treat as MANUAL *and* persist it
+  if (!sameAsSystem && inputsNow.length === 12) {
+    setPicksMeta({
+      method: 'manual',
+      weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+      hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+    });
+  }
+
+  const method = ((window.lastPicksMeta || {}).method || 'manual').toLowerCase();
+  const methodTag = (method === 'manual') ? 'M' : 'S';
 
   // ---- Read current dialog state as fallback (or override if meta missing) ----
   function readHotDialog() {
@@ -2630,20 +2662,24 @@ function renderReverseHitsTable() {
 
 
 function updateReverseHitsTop18() {
-  // Read exactly the 12 inputs you typed
   const picks = Array.from(document.querySelectorAll('#top18Inputs input'))
     .map(inp => parseInt(inp.value.trim(), 10))
     .filter(n => !isNaN(n))
     .slice(0, 12)
     .sort((a,b)=>a-b);
 
-  // Update ONLY the green Picks column
   systemPicksSet = new Set(picks);
-
-  // Do not touch Top or Hot
   renderReverseHitsTable();
   reapplySkipTableHighlights();
+
+  // NEW: if these came from the user, call them manual
+  setPicksMeta({
+    method: 'manual',
+    weeks: (window.lastPicksMeta?.weeks ?? null),
+    hotCoverage: (window.lastPicksMeta?.hotCoverage ?? null)
+  });
 }
+
 
 /* Additional check flow (CSV-style) */
 document.addEventListener("DOMContentLoaded", function() {

@@ -1716,7 +1716,7 @@ function doExport(mode) {
 
   const lines = list.map(({ combo }, idx) => {
     let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
-    if (needPB) out += '  ' + getNextPB(); // round-robin or random per your inputs
+    if (needPB) out += '  ' + getNextPB();
     return out;
   }).join('\n');
 
@@ -1734,17 +1734,28 @@ function doExport(mode) {
 
   const meta = (window.lastPicksMeta || {});
   const method = (meta.method || 'manual').toLowerCase(); // 'system' | 'quick12' | 'manual'
-
-  // Map method → short code
   const methodTag = (method === 'system')  ? 'S'
                   : (method === 'quick12') ? 'Q'
                   :                           'M';
 
-  // Hot coverage (Top N). If missing, default to 0.
-  const hVal = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : 0;
+  // ---- Read current dialog state as fallback (or override if meta missing) ----
+  function readHotDialog() {
+    const weeksEl = document.getElementById('weeksInput');
+    const covEl   = document.querySelector('input[name="coverage"]:checked');
+    const d = weeksEl ? parseInt(weeksEl.value, 10) : NaN;
+    const h = covEl   ? parseInt(covEl.value, 10)   : NaN;
+    return {
+      weeks: (Number.isInteger(d) && d >= 1 && d <= 25) ? d : null,
+      hotCoverage: (h === 5 || h === 12 || h === 18) ? h : null
+    };
+  }
+  const dlg = readHotDialog();
 
-  // Drawings lookback. If missing, default to 0.
-  const dVal = (typeof meta.weeks === 'number') ? meta.weeks : 0;
+  // Prefer meta if it exists; otherwise use dialog values; otherwise zeros
+  const dVal = (typeof meta.weeks === 'number') ? meta.weeks
+              : (dlg.weeks ?? 0);
+  const hVal = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage
+              : (dlg.hotCoverage ?? 0);
 
   // All|Best prefix (capitalized)
   const modeTag = (mode === 'best') ? 'Best' : 'All';

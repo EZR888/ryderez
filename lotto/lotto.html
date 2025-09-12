@@ -1773,7 +1773,7 @@ function doExport(mode) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
 
-  // ---------- filename bits (new convention) ----------
+  // ---------- filename bits ----------
   const gameCode = (totalNumbersGlobal === 39) ? 'F5'
                    : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'PWB' : 'X');
 
@@ -1789,18 +1789,21 @@ function doExport(mode) {
     .map(inp => parseInt(inp.value.trim(), 10))
     .filter(Number.isInteger);
 
-  // Compare to the current systemPicksSet (what the app thinks is “system”)
+  // Compare to the current systemPicksSet (order-agnostic)
   const inputsSet = new Set(inputsNow);
-const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet instanceof Set)
-  ? systemPicksSet
-  : new Set();
-  
+  const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet instanceof Set)
+    ? systemPicksSet
+    : new Set();
+
   const sameAsSystem =
     inputsSet.size === systemSet.size &&
     [...inputsSet].every(n => systemSet.has(n));
 
-  // If inputs differ from system picks, treat as MANUAL *and* persist it
-  if (!sameAsSystem && inputsNow.length === 12) {
+  // PATCH: Decide tag straight from the diff (only call it manual when all 12 are filled)
+  const methodTag = (!sameAsSystem && inputsNow.length === 12) ? 'M' : 'S';
+
+  // Keep metadata in sync when it's manual
+  if (methodTag === 'M') {
     setPicksMeta({
       method: 'manual',
       weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
@@ -1808,10 +1811,7 @@ const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet insta
     });
   }
 
-  const method = ((window.lastPicksMeta || {}).method || 'manual').toLowerCase();
-  const methodTag = (method === 'manual') ? 'M' : 'S';
-
-  // ---- Read current dialog state as fallback (or override if meta missing) ----
+  // ---- Read current dialog state as fallback for h/d values ----
   function readHotDialog() {
     const weeksEl = document.getElementById('weeksInput');
     const covEl   = document.querySelector('input[name="coverage"]:checked');
@@ -1831,7 +1831,6 @@ const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet insta
   const hVal = (dlg.hotCoverage !== null && dlg.hotCoverage !== undefined) ? dlg.hotCoverage
               : (typeof meta.hotCoverage === 'number' ? meta.hotCoverage : 0);
 
-
   // All|Best prefix (capitalized)
   const modeTag = (mode === 'best') ? 'Best' : 'All';
 
@@ -1840,8 +1839,10 @@ const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet insta
 
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 100);
-}
 
+  // (Optional) quick sanity log:
+  // console.log('[export]', { sameAsSystem, methodTag, inputsNow, system: [...systemSet] });
+}
 
 /* Check Numbers (file flow) */
 document.getElementById("checkNumbersButton").onclick = function () {

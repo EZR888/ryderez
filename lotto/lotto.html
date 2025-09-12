@@ -2004,7 +2004,8 @@ const sortedForInputs = asSorted(bestOrder);
 allInputs.forEach((inp, idx) => {
   if (idx < 12) { inp.value = sortedForInputs[idx]; inp.classList.remove('dimmed'); }
   else { inp.classList.add('dimmed'); }
-  
+}); 
+
   // at the end of quick12Button handler (once bestOrder is chosen / inputs filled):
 setPicksMeta({
   method: 'quick12',

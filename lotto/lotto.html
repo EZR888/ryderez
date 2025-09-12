@@ -1743,33 +1743,33 @@ function handleTop18FileSelect(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
-    // Full file text (trim BOM + whitespace)
-    const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
-    // --- parse header comments (if present) ---
-const nextDrawMatch = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
-const methodMatch   = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
-const lookbackMatch = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
-const hotMatch      = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
+reader.onload = function(e) {
+  // Full file text (trim BOM + whitespace)
+  const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
 
-const picksHeaderMeta = {
-  game: fileGameCode || null,
-  nextDraw: nextDrawMatch ? nextDrawMatch[1] : null,
-  method: methodMatch ? methodMatch[1] : null,                // e.g., SYSTEM / MANUAL
-  lookback: lookbackMatch ? parseInt(lookbackMatch[1],10) : null,
-  hotCoverage: hotMatch ? parseInt(hotMatch[1],10) : null
-};
+  // 🔎 Try to read "# Game: XXX" before we use it anywhere
+  const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
+  const fileGameCode = gameMatch ? gameMatch[1].toUpperCase() : null; // e.g., 'PB' or 'F5'
 
+  // --- parse header comments (if present) ---
+  const nextDrawMatch = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
+  const methodMatch   = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
+  const lookbackMatch = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
+  const hotMatch      = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
 
-    // 🔎 Try to read "# Game: XXX" before we strip comments
-    const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
-    const fileGameCode = gameMatch ? gameMatch[1].toUpperCase() : null; // e.g., 'PB' or 'F5'
+  const picksHeaderMeta = {
+    game: fileGameCode || null,
+    nextDraw: nextDrawMatch ? nextDrawMatch[1] : null,
+    method: methodMatch ? methodMatch[1] : null,                // e.g., SYSTEM / MANUAL
+    lookback: lookbackMatch ? parseInt(lookbackMatch[1],10) : null,
+    hotCoverage: hotMatch ? parseInt(hotMatch[1],10) : null
+  };
 
-    // Keep only non-empty, non-comment lines (ignore # / ---)
-    const lines = raw
-      .split(/\r?\n/)
-      .map(l => l.trim())
-      .filter(l => l && !/^\s*(#|---)/.test(l));
+  // Keep only non-empty, non-comment lines (ignore # / ---)
+  const lines = raw
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(l => l && !/^\s*(#|---)/.test(l));
 
     if (!lines.length) {
       alert('No data lines found. Make sure the file contains a row of 12 numbers after the header.');

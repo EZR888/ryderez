@@ -2551,37 +2551,6 @@ function updateReverseHitsTop18() {
   reapplySkipTableHighlights();
 }
 
-
-/* Exports */
-function exportGeneratedSets() {
-  if (generatedSets.length === 0) { alert("No generated sets!"); return; }
-  const text = generatedSets.map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
-  const blob = new Blob([text], { type: 'text/plain' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'generated_sets_' + totalNumbersGlobal + '.txt';
-  link.click();
-}
-
-function exportBestSets() {
-  if (!generatedSets.length) { alert("No generated sets!"); return; }
-
-  const bestCount = parseInt(document.getElementById('modalBestSetCount')?.value, 10) || 5; // FIX
-  const sorted = [...generatedSets].sort((a,b) => a.points - b.points);
-  const bestSets = sorted.slice(0, bestCount);
-
-  if (bestSets.length === 0) { alert("No best sets available!"); return; }
-
-  const text = bestSets.map(({ combo, points }) => `${combo.join(', ')} ➔ ${points.toFixed(1)} pts`).join('\n');
-  const blob = new Blob([text], { type: 'text/plain' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  const prefix = (totalNumbersGlobal === 39) ? 'f5' : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x'); // FIX
-  const draw = latestDrawingNumber || '00000';
-  link.download = `best_sets_${prefix}_${draw}.txt`;
-  link.click();
-}
-
 /* Additional check flow (CSV-style) */
 document.addEventListener("DOMContentLoaded", function() {
   const fileInput = document.getElementById("checkFileInput");

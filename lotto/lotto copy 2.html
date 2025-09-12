@@ -494,34 +494,6 @@ h3{margin:0 0 15px;color: gold}
 </div>
 
 <script>
-
-// 🧠 Last-picks metadata (used when saving)
-window.lastPicksMeta = {
-  method: 'manual',          // 'system' | 'quick12' | 'manual'
-  weeks: null,               // lookback drawings (e.g., 25)
-  hotCoverage: null,         // 5 | 12 | 18 (Top N)
-  timestamp: null            // ISO string
-};
-
-function setPicksMeta({ method, weeks=null, hotCoverage=null }) {
-  window.lastPicksMeta = {
-    method,
-    weeks,
-    hotCoverage,
-    timestamp: new Date().toISOString()
-  };
-}
-
-function getGameCode() {
-  return (totalNumbersGlobal === 69) ? 'PB'
-       : (totalNumbersGlobal === 39) ? 'F5'
-       : 'X';
-}
-
-function methodCode(m) {  // for filename
-  return (m === 'system') ? 'SYS' : (m === 'quick12') ? 'Q12' : 'MAN';
-}
-
 let systemPicks = new Set();
 let latestDrawingNumber = null;
 let fullData = [];
@@ -679,46 +651,21 @@ function savePicksFromInputs() {
     return;
   }
 
-  const sorted = nums.sort((a,b)=>a-b);
+  const sorted = nums.sort((a, b) => a - b);
 
-  // Next draw only
+  // Next drawing number only
   const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
     ? String(latestDrawingNumber + 1)
     : '00000';
 
-  const game = getGameCode();              // 'PB' | 'F5' | 'X'
-  const meta = window.lastPicksMeta || {};
-  const method = meta.method || 'manual';
-  const weeks = (typeof meta.weeks === 'number') ? meta.weeks : null;
-  const hotN  = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null;
+  const prefix = (totalNumbersGlobal === 69) ? 'picksPB'
+               : (totalNumbersGlobal === 39) ? 'picksF5'
+               : 'picks';
 
-  // 🏷️ Compact, informative filename:
-  // examples:
-  //   picksF5_11631_w25_h12_SYS.txt
-  //   picksPB_1470_Q12.txt
-  //   picksF5_11631_MAN.txt
-  const parts = [`picks${game}`, nextDraw];
-  if (method === 'system') {
-    if (weeks) parts.push(`w${weeks}`);
-    if (hotN)  parts.push(`h${hotN}`);
-  }
-  parts.push(methodCode(method));
-  const filename = parts.join('_') + '.txt';
+  // ✅ Filename example: picksF5_11631.txt
+  const filename = `${prefix}_${nextDraw}.txt`;
 
-  // 🧾 Human-friendly header inside the file
-  const header = [
-    '# The Winning Edge - Picks',
-    `# Game: ${game}`,
-    `# Next Draw: ${nextDraw}`,
-    `# Method: ${method.toUpperCase()}`,
-    (weeks ? `# Lookback: ${weeks} drawings` : null),
-    (hotN  ? `# Hot Coverage: Top ${hotN}` : null),
-    (meta.timestamp ? `# Generated: ${meta.timestamp}` : `# Generated: ${new Date().toISOString()}`),
-    '---'
-  ].filter(Boolean).join('\n');
-
-  const body = sorted.join(', ');
-  const blob = new Blob([header + '\n' + body + '\n'], { type: 'text/plain' });
+  const blob = new Blob([sorted.join(', ')], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
@@ -800,14 +747,6 @@ runAutoBtn.addEventListener('click', () => {
   // Redraw
   renderReverseHitsTable();
   reapplySkipTableHighlights();
-  
-  // inside runAutoPick click handler, right after you update `hotSet` and `systemPicksSet`:
-setPicksMeta({
-  method: 'system',
-  weeks,
-  hotCoverage: count
-});
-
 
   // Feedback
   const hotChanged   = !setsEqual(beforeHot, hotSet);
@@ -1429,14 +1368,6 @@ function runSystemPicks(){
   // Redraw
   renderReverseHitsTable();
   reapplySkipTableHighlights();
-  
-  // inside runSystemPicks(), after you compute `picks` successfully:
-setPicksMeta({
-  method: 'system',
-  weeks: Math.min(25, fullData.length),
-  hotCoverage: (hotSet ? hotSet.size : null) // usually 12
-});
-
 
   // ✅ Feedback toast
   const changed = !setsEqual(before, systemPicksSet);
@@ -2004,12 +1935,6 @@ const sortedForInputs = asSorted(bestOrder);
 allInputs.forEach((inp, idx) => {
   if (idx < 12) { inp.value = sortedForInputs[idx]; inp.classList.remove('dimmed'); }
   else { inp.classList.add('dimmed'); }
-  
-  // at the end of quick12Button handler (once bestOrder is chosen / inputs filled):
-setPicksMeta({
-  method: 'quick12',
-  weeks: Math.min(25, fullData.length),   // or null if you prefer
-  hotCoverage: 12                         // fixed quick-12 scenario
 });
 
 

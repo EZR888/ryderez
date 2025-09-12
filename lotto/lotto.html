@@ -1791,8 +1791,10 @@ function doExport(mode) {
 
   // Compare to the current systemPicksSet (what the app thinks is “system”)
   const inputsSet = new Set(inputsNow);
-  const systemSet = (window.systemPicksSet instanceof Set) ? window.systemPicksSet : new Set();
-
+const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet instanceof Set)
+  ? systemPicksSet
+  : new Set();
+  
   const sameAsSystem =
     inputsSet.size === systemSet.size &&
     [...inputsSet].every(n => systemSet.has(n));

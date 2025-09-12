@@ -1028,12 +1028,6 @@ if (genBtn) {
             const topInputs = document.getElementById('top18Inputs');
 if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
 
-            const exportAllButton = document.querySelector('button[onclick="exportGeneratedSets()"]');
-            if (exportAllButton) exportAllButton.style.display = 'inline-block';
-
-            const exportBestButton = document.querySelector('button[onclick="exportBestSets()"]');
-            if (exportBestButton) exportBestButton.style.display = 'inline-block';
-
             const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
             if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
 
@@ -1691,6 +1685,12 @@ document.getElementById('generateSetsModalButton').onclick = generateWheelSets;
 document.getElementById('pickBestSetsModal').onclick = ()=> pickBestSets(true);
 document.getElementById('exportAllBtn').onclick = ()=> doExport('all');
 document.getElementById('exportBestBtn').onclick = ()=> doExport('best');
+
+
+// Force any legacy calls to use the new exporter & new filenames
+window.exportGeneratedSets = function () { doExport('all'); };
+window.exportBestSets      = function () { doExport('best'); };
+
 
 function doExport(mode) {
   if (!generatedSets.length) { 

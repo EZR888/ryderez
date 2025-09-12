@@ -1724,22 +1724,33 @@ function doExport(mode) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
 
-  // ---------- filename bits ----------
-  const prefix = (totalNumbersGlobal === 39) ? 'f5'
-                : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x');
-  const draw   = (typeof latestDrawingNumber === 'number' ? latestDrawingNumber + 1 : '00000');
+  // ---------- filename bits (new convention) ----------
+  const gameCode = (totalNumbersGlobal === 39) ? 'F5'
+                   : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'PWB' : 'X');
 
-  const meta   = (window.lastPicksMeta || {});
-  const method = meta.method || 'manual';          // 'system' | 'quick12' | 'manual'
-  const mcode  = methodCode(method);               // 'SYS' | 'Q12' | 'MAN'
+  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+                   ? (latestDrawingNumber + 1)
+                   : '00000';
 
-  // include how many sets you exported this time
-  const qtyTag = (mode === 'best') ? `b${bestCount}` : `a${allCount}`;
+  const meta = (window.lastPicksMeta || {});
+  const method = (meta.method || 'manual').toLowerCase(); // 'system' | 'quick12' | 'manual'
 
-  // final name example:
-  //   all_sets_f5_SYS_a12_11631.txt
-  //   best_sets_pwb_Q12_b5_1470.txt
-  a.download = `${mode}_sets_${prefix}_${mcode}_${qtyTag}_${draw}.txt`;
+  // Map method → short code
+  const methodTag = (method === 'system')  ? 'S'
+                  : (method === 'quick12') ? 'Q'
+                  :                           'M';
+
+  // Hot coverage (Top N). If missing, default to 0.
+  const hVal = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : 0;
+
+  // Drawings lookback. If missing, default to 0.
+  const dVal = (typeof meta.weeks === 'number') ? meta.weeks : 0;
+
+  // All|Best prefix (capitalized)
+  const modeTag = (mode === 'best') ? 'Best' : 'All';
+
+  // Final filename
+  a.download = `${modeTag}_${gameCode}_${methodTag}_h${hVal}_d${dVal}_${nextDraw}.txt`;
 
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 100);

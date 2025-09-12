@@ -708,8 +708,8 @@ function savePicksFromInputs() {
   //   picksF5_11631_MAN.txt
   const parts = [`Picks_${game}`, nextDraw];
   if (method === 'system') {
-    if (weeks) parts.push(`w${weeks}`);
     if (hotN)  parts.push(`h${hotN}`);
+    if (weeks) parts.push(`d${weeks}`);
   }
   parts.push(methodCode(method));
   const filename = parts.join('_') + '.txt';

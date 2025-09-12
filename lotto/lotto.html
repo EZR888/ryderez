@@ -528,7 +528,7 @@ function getGameCode() {
 }
 
 function methodCode(m) {  // for filename
-  return (m === 'system') ? 'SYS' : (m === 'quick12') ? 'Q12' : 'MAN';
+  return (m === 'manual') ? 'MAN' : 'SYS';
 }
 
 let systemPicks = new Set();
@@ -798,12 +798,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.__suppressManualFlag) return;
 
       const meta = window.lastPicksMeta || {};
-      setPicksMeta({
-        method: 'system', // overwritten to manual below; keeps weeks/hot if present
-        weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
-        hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
-      });
-      window.lastPicksMeta.method = 'manual';
+setPicksMeta({
+  method: 'manual',
+  weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+  hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+});
+
     });
   }
   // ✍️ END NEW
@@ -1415,7 +1415,11 @@ function populateAllThreeOnLoad() {
   // 👉 Mirror Picks into the 12 manual input boxes on load
   ensureTwelveInputs();
   setInputsFromList(picks12, 12);
-}
+  setPicksMeta({
+  method: 'system',
+  weeks,
+  hotCoverage: 12
+});
 
 
 
@@ -1768,10 +1772,8 @@ function doExport(mode) {
                    : '00000';
 
   const meta = (window.lastPicksMeta || {});
-  const method = (meta.method || 'manual').toLowerCase(); // 'system' | 'quick12' | 'manual'
-  const methodTag = (method === 'system')  ? 'S'
-                  : (method === 'quick12') ? 'Q'
-                  :                           'M';
+const method = (meta.method || 'manual').toLowerCase();
+const methodTag = (method === 'manual') ? 'M' : 'S';
 
   // ---- Read current dialog state as fallback (or override if meta missing) ----
   function readHotDialog() {
@@ -2093,18 +2095,18 @@ document.getElementById('quick12Button').addEventListener('click', function () {
 
 // NEW: write inputs low→high for easy ticket entry
 const sortedForInputs = asSorted(bestOrder);
-allInputs.forEach((inp, idx) => {
-  if (idx < 12) { inp.value = sortedForInputs[idx]; inp.classList.remove('dimmed'); }
-  else { inp.classList.add('dimmed'); }
-}); 
+setInputsFromList(sortedForInputs, 12);       // uses the suppressor internally
+document.querySelectorAll('#top18Inputs input').forEach((inp, idx) => {
+  if (idx < 12) inp.classList.remove('dimmed'); else inp.classList.add('dimmed');
+});
+
 
   // at the end of quick12Button handler (once bestOrder is chosen / inputs filled):
 setPicksMeta({
-  method: 'quick12',
-  weeks: Math.min(25, fullData.length),   // or null if you prefer
-  hotCoverage: 12                         // fixed quick-12 scenario
+  method: 'system',
+  weeks: Math.min(25, fullData.length),
+  hotCoverage: 12
 });
-
 
   document.getElementById('generateSetsModalButton').style.display = 'none';
   document.getElementById('pickBestSetsModal').style.display = 'none';

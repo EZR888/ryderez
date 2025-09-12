@@ -817,6 +817,9 @@ setPicksMeta({
   } else {
     showToast('Recalculated (no change).');
   }
+  
+wireHotDialogMetaSync();
+
 });
 
   }
@@ -1751,11 +1754,13 @@ function doExport(mode) {
   }
   const dlg = readHotDialog();
 
-  // Prefer meta if it exists; otherwise use dialog values; otherwise zeros
-  const dVal = (typeof meta.weeks === 'number') ? meta.weeks
-              : (dlg.weeks ?? 0);
-  const hVal = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage
-              : (dlg.hotCoverage ?? 0);
+  // Prefer what's visible in the Find Hot Numbers dialog RIGHT NOW.
+  const dVal = (dlg.weeks !== null && dlg.weeks !== undefined) ? dlg.weeks
+              : (typeof meta.weeks === 'number' ? meta.weeks : 0);
+
+  const hVal = (dlg.hotCoverage !== null && dlg.hotCoverage !== undefined) ? dlg.hotCoverage
+              : (typeof meta.hotCoverage === 'number' ? meta.hotCoverage : 0);
+
 
   // All|Best prefix (capitalized)
   const modeTag = (mode === 'best') ? 'Best' : 'All';
@@ -1826,6 +1831,30 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
   fileInput.click();
 };
+
+function wireHotDialogMetaSync(){
+  const weeksEl = document.getElementById('weeksInput');
+  const covEls  = document.querySelectorAll('input[name="coverage"]');
+  if (!weeksEl || !covEls.length) return;
+
+  const sync = () => {
+    const weeks = parseInt(weeksEl.value, 10);
+    const cov   = document.querySelector('input[name="coverage"]:checked');
+    const hotN  = cov ? parseInt(cov.value, 10) : null;
+
+    setPicksMeta({
+      // keep whatever method you last used (system / quick12 / manual)
+      method: (window.lastPicksMeta?.method) || 'system',
+      weeks: (Number.isInteger(weeks) && weeks >= 1 && weeks <= 25) ? weeks : null,
+      hotCoverage: (hotN === 5 || hotN === 12 || hotN === 18) ? hotN : null
+    });
+  };
+
+  weeksEl.addEventListener('input',  sync);
+  covEls.forEach(r => r.addEventListener('change', sync));
+  sync(); // seed once with current UI
+}
+
 
 function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
   const winDisplay = document.getElementById("winningNumbersDisplay");

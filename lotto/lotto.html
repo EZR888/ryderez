@@ -355,82 +355,96 @@ h3{margin:0 0 15px;color: gold}
 </div>
 
 <div id="methodologyModal" class="modal">
-<div class="modal-content">
-  <span class="close-button" id="closeMethodology">&times;</span>
-  <h2>How This Works</h2>
+  <div class="modal-content">
+    <span class="close-button" id="closeMethodology">&times;</span>
+    <h2>How This Works</h2>
 
-  <h3 style="margin-top:16px;">Skips (orange dots)</h3>
-  <p style="line-height:1.6;">
-    <b>Skips</b> are based on each number’s “time since last hit” and the
-    <i>historical frequency</i> of that exact skip length. Numbers whose current skip length
-    lines up with a historically common skip for that number are considered stronger (more “due”).
-  </p>
+    <h3 style="margin-top:16px;">Skips (orange dots)</h3>
+    <p style="line-height:1.6;">
+      <b>Skips</b> are based on each number’s “time since last hit” and the
+      <i>historical frequency</i> of that exact skip length. Numbers whose current skip length
+      lines up with a historically common skip for that number are considered stronger (more “due”).
+    </p>
 
-  <h3 style="margin-top:16px;">Hot (blue dots)</h3>
-  <p style="line-height:1.6;">
-    <b>Hot</b> looks at just the last 25 drawings and scores numbers by recent activity:
-    more weight on newer hits, a small bonus if hits are accelerating, and a minimum of recent presence.
-    This favors numbers trending now, not just historically.
-  </p>
+    <h3 style="margin-top:16px;">Hot (blue dots)</h3>
+    <p style="line-height:1.6;">
+      <b>Hot</b> scores the <b>last 1–25 drawings</b> (25 by default), with <b>more weight on newer hits</b>,
+      a small bonus if hits are <b>accelerating</b>, and a minimum level of recent presence. A number must be
+      <b>very recent</b> <i>or</i> show <b>≥2 recent hits</b> to qualify. This favors numbers trending now, not just historically.
+    </p>
 
-  <h3 style="margin-top:16px;">Picks (green dots)</h3>
-  <p style="line-height:1.6;">
-    <b>Picks</b> blend <b>Skips</b> + <b>Hot</b> + “due” (time since hit), then refine the pool to reduce
-    clumping and lower the average <b>Points</b> (see below). We start with the overlap of Hot∩Skips,
-    ensure at least half are from Skips, add remaining from Hot, and backfill from recent frequency if needed.
-    Finally, we run a quick points-aware swap search to improve spacing and reduce weak patterns.
-  </p>
-  <ul style="line-height:1.6; margin-left:18px;">
-    <li><b>Spacing:</b> small penalty if a candidate sits right next to something already picked.</li>
-    <li><b>Due-ness:</b> longer “since last hit” helps a candidate.</li>
-    <li><b>Deterministic:</b> the System Picks button uses a stable seed based on the current dataset and latest draw.
-        Same data in ⇒ same picks out.</li>
-  </ul>
+    <h3 style="margin-top:16px;">Picks (green dots)</h3>
+    <p style="line-height:1.6;">
+      <b>Picks</b> blend <b>Skips + Hot + Due</b> (time since hit), then refine the pool to reduce clumping
+      and lower average <b>Points</b> (see below). We start with the <b>overlap</b> (<i>Hot ∩ Skips</i>),
+      ensure <b>at least half</b> of the 12 come from <b>Skips</b>, add the rest from <b>Hot</b>, and
+      backfill from <b>recent frequency</b> if needed. A light <b>anti-clump</b> nudge discourages numbers
+      adjacent to ones already chosen. Finally, we run a quick <b>points-aware swap search</b> to improve spacing and shape.
+    </p>
+    <ul style="line-height:1.6; margin-left:18px;">
+      <li><b>Spacing:</b> small penalty if a candidate sits right next to something already picked.</li>
+      <li><b>Due-ness:</b> longer “since last hit” helps a candidate.</li>
+      <li><b>Deterministic:</b> System Picks use a stable seed tied to the current dataset and latest draw —
+          same data in ⇒ same picks out.</li>
+      <li><b>Manual edits:</b> typing in the 12 inputs flips the method to <b>Manual</b> so exports are labeled correctly.</li>
+    </ul>
 
-  <h3 style="margin-top:16px;">Wheel Generation</h3>
-  <p style="line-height:1.6;">
-    When you open <b>Generate Wheel</b>, we build 5-number sets from <i>your 12 inputs</i> (not the Skips/Hot columns).
-    Each set must pass filters:
-  </p>
-  <ul style="line-height:1.6; margin-left:18px;">
-    <li><b>Sum window:</b> reject sets whose sum is too low/high vs what’s typical for your 12-number pool.</li>
-    <li><b>No recent full draw:</b> reject sets that exactly match any recent 5-number draw.</li>
-    <li><b>Points cap:</b> reject sets whose Points score is above a threshold (we want stronger shapes).</li>
-    <li><b>Coverage:</b> we track 3-number combinations covered; more sets ⇒ more 3-combo coverage.</li>
-  </ul>
+    <h3 style="margin-top:16px;">Wheel Generation</h3>
+    <p style="line-height:1.6;">
+      <b>Generate Wheel</b> builds 5-number sets from <i>your 12 inputs</i> (not the Skips/Hot columns).
+      Each set must pass these filters:
+    </p>
+    <ul style="line-height:1.6; margin-left:18px;">
+      <li><b>Adaptive sum window:</b> reject sets whose sum is too low/high vs what’s typical for your 12-number pool.</li>
+      <li><b>No recent full draw:</b> reject sets that exactly match any recent 5-number draw.</li>
+      <li><b>Points cap (~1200):</b> reject sets whose <b>Points</b> score is above the threshold (we want stronger shapes).</li>
+      <li><b>Coverage:</b> track covered <b>3-number combinations</b>; more sets ⇒ more 3-combo coverage.</li>
+    </ul>
 
-  <h3 style="margin-top:16px;">Points (shape/quality score)</h3>
-  <p style="line-height:1.6;">
-    <b>Points</b> evaluate a 5-number set’s “shape.” Lower is better. We reference empirical tables to
-    penalize unusual or historically weak patterns. Features include:
-  </p>
-  <ul style="line-height:1.6; margin-left:18px;">
-    <li><b>Sum</b> &amp; <b>Spread</b></li>
-    <li><b>Odd–Even balance</b> &amp; <b>Low–High balance</b></li>
-    <li><b>Consecutive pairs</b> and gaps between positions (1–2, 2–3, 3–4, 4–5)</li>
-    <li>Min/Max and center value</li>
-  </ul>
-  <p style="line-height:1.6;">
-    Picks try to minimize average Points across many sampled combinations from the pool, which tends to
-    avoid awkward clumps, skewed parity, and odd spreads.
-  </p>
+    <h3 style="margin-top:16px;">Powerball (optional)</h3>
+    <p style="line-height:1.6;">
+      Enter up to <b>5</b> Powerball numbers; exports <b>cycle round-robin</b> through them on each line.
+      Leave them blank to use a <b>fresh random PB (1–26)</b> for every set.
+    </p>
 
-  <h3 style="margin-top:16px;">Does this improve my odds?</h3>
-  <p style="line-height:1.6;">
-    The jackpot odds don’t change, but this workflow aims to improve your chances of matching 3–4 numbers by:
-  </p>
-  <ul style="line-height:1.6; margin-left:18px;">
-    <li>Selecting numbers with statistically supportive signals (Skips + Hot + Due)</li>
-    <li>Favoring balanced “shapes” via the Points score</li>
-    <li>Filtering out obviously weak sets and near-duplicates of recent full draws</li>
-    <li>Covering more distinct 3-number combos with fewer tickets</li>
-  </ul>
-  <p style="line-height:1.6; color: #ddd;">
-    It’s not magic—just disciplined filtering, scoring, and coverage.
-  </p>
+    <h3 style="margin-top:16px;">Quick 12 (optional)</h3>
+    <p style="line-height:1.6;">
+      <b>Quick 12</b> builds six sets from a fixed pattern using your 12 numbers and
+      optimizes their ordering by the <b>Points</b> score.
+    </p>
+
+    <h3 style="margin-top:16px;">Points (shape/quality score)</h3>
+    <p style="line-height:1.6;">
+      <b>Points</b> evaluate a 5-number set’s “shape.” Lower is better. We reference empirical tables to
+      penalize unusual or historically weak patterns. Features include:
+    </p>
+    <ul style="line-height:1.6; margin-left:18px;">
+      <li><b>Sum</b> &amp; <b>Spread</b></li>
+      <li><b>Odd–Even</b> balance &amp; <b>Low–High</b> balance</li>
+      <li><b>Consecutive pairs</b> and gaps between positions (1–2, 2–3, 3–4, 4–5)</li>
+      <li><b>Min/Max</b> and <b>center value</b></li>
+    </ul>
+    <p style="line-height:1.6;">
+      Picks try to minimize <b>average Points</b> across many sampled combinations from the pool, which tends to
+      avoid awkward clumps, skewed parity, and odd spreads.
+    </p>
+
+    <h3 style="margin-top:16px;">Does this improve my odds?</h3>
+    <p style="line-height:1.6;">
+      The jackpot odds don’t change, but this workflow aims to improve your chances of matching 3–4 numbers by:
+    </p>
+    <ul style="line-height:1.6; margin-left:18px;">
+      <li>Selecting numbers with statistically supportive signals (Skips + Hot + Due)</li>
+      <li>Favoring balanced “shapes” via the <b>Points</b> score</li>
+      <li>Filtering out obviously weak sets and near-duplicates of recent full draws</li>
+      <li>Covering more distinct 3-number combos with fewer tickets</li>
+    </ul>
+    <p style="line-height:1.6; color:#ddd;">
+      It’s not magic—just disciplined filtering, scoring, and coverage.
+    </p>
+  </div>
 </div>
 
-</div>
 
 <h2>Hits Table</h2> 
 <h3 id="hitsSubtitle">Last 25 Drawings <span id="picksMetaDisplay"></span></h3>

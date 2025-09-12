@@ -1711,18 +1711,12 @@ function doExport(mode) {
 
   const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
 
-  // ✅ Reset round-robin index so each export starts clean
+  // reset round-robin PB index each export
   __pbCycleIndex = 0;
 
   const lines = list.map(({ combo }, idx) => {
     let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
-    if (needPB) {
-      // ✅ Single source of truth:
-      //    - If PB inputs have values -> round-robin them
-      //    - If blank -> random 1–26 per set
-      const pb = getNextPB();
-      out += '  ' + pb;
-    }
+    if (needPB) out += '  ' + getNextPB(); // round-robin or random per your inputs
     return out;
   }).join('\n');
 
@@ -1730,12 +1724,27 @@ function doExport(mode) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
 
+  // ---------- filename bits ----------
   const prefix = (totalNumbersGlobal === 39) ? 'f5'
                 : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'pwb' : 'x');
-  const draw = (typeof latestDrawingNumber === 'number' ? latestDrawingNumber + 1 : '00000');
-  a.download = `${mode}_sets_${prefix}_${draw}.txt`;
+  const draw   = (typeof latestDrawingNumber === 'number' ? latestDrawingNumber + 1 : '00000');
+
+  const meta   = (window.lastPicksMeta || {});
+  const method = meta.method || 'manual';          // 'system' | 'quick12' | 'manual'
+  const mcode  = methodCode(method);               // 'SYS' | 'Q12' | 'MAN'
+
+  // include how many sets you exported this time
+  const qtyTag = (mode === 'best') ? `b${bestCount}` : `a${allCount}`;
+
+  // final name example:
+  //   all_sets_f5_SYS_a12_11631.txt
+  //   best_sets_pwb_Q12_b5_1470.txt
+  a.download = `${mode}_sets_${prefix}_${mcode}_${qtyTag}_${draw}.txt`;
+
   a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 100);
 }
+
 
 /* Check Numbers (file flow) */
 document.getElementById("checkNumbersButton").onclick = function () {

@@ -651,20 +651,19 @@ function savePicksFromInputs() {
     return;
   }
 
-  const sorted = nums.sort((a,b)=>a-b);
+  const sorted = nums.sort((a, b) => a - b);
 
-  // Use both the current drawing and the next one
-  const currentDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
-    ? String(latestDrawingNumber) : '00000';
+  // Next drawing number only
   const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
-    ? String(latestDrawingNumber + 1) : '00000';
+    ? String(latestDrawingNumber + 1)
+    : '00000';
 
   const prefix = (totalNumbersGlobal === 69) ? 'picksPB'
                : (totalNumbersGlobal === 39) ? 'picksF5'
                : 'picks';
 
-  // Filename example: picksPB_cur1469_next1470.txt
-  const filename = `${prefix}_cur${currentDraw}_next${nextDraw}.txt`;
+  // ✅ Filename example: picksF5_11631.txt
+  const filename = `${prefix}_${nextDraw}.txt`;
 
   const blob = new Blob([sorted.join(', ')], { type: 'text/plain' });
   const a = document.createElement('a');

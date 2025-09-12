@@ -1622,6 +1622,80 @@ function saveTop18Numbers() {
   link.click();
 }
 
+function loadGameByCode(gameCode, afterLoad) {
+  const code = String(gameCode || '').toUpperCase();
+
+  if (code === 'PB') {
+    // Mirror btn69.onclick but with a callback we control
+    loadCSVFile('lotto_69.txt', 69, () => {
+      activeGameMode = 69;
+      ensureTwelveInputs();
+      populateAllThreeOnLoad();
+
+      // ---- same UI bits as the Powerball button ----
+      pastDrawingsFrom69 = [...pastDrawings];
+      skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
+      sinceMapFrom69     = { ...sinceMap };
+      fullDataFrom69     = [...fullData];
+
+      if (btn1) btn1.style.display = 'inline-block';
+      hidePBblock();
+      qs('#generateWheelButton').style.display = 'inline-block';
+      qs('#quick12Button').style.display       = 'inline-block';
+      qs('#systemPicksButton').style.display   = 'inline-block';
+      qs('#checkNumbersButton').style.display  = 'inline-block';
+      const sh = document.getElementById('showHistogramBtn');
+      if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+      highlight(btn69);
+
+      document.getElementById('top18Inputs').style.display = 'flex';
+      const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+      ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+      });
+
+      const pbSpan = document.getElementById('checkPBSpan');
+      if (pbSpan) pbSpan.style.display = 'inline';
+
+      if (typeof afterLoad === 'function') afterLoad();
+    });
+
+  } else if (code === 'F5') {
+    // Mirror btn39.onclick but with a callback we control
+    loadCSVFile('lotto_39.txt', 39, () => {
+      activeGameMode = 39;
+      ensureTwelveInputs();
+      populateAllThreeOnLoad();
+
+      if (btn1) btn1.style.display = 'none';
+      hidePBblock();
+      highlight(btn39);
+      qs('#generateWheelButton').style.display = 'inline-block';
+      qs('#quick12Button').style.display       = 'inline-block';
+      qs('#systemPicksButton').style.display   = 'inline-block';
+      qs('#checkNumbersButton').style.display  = 'inline-block';
+      const sh = document.getElementById('showHistogramBtn');
+      if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+
+      document.getElementById('top18Inputs').style.display = 'flex';
+      const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+      ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+      });
+
+      const checkPBSpan = document.getElementById('checkPBSpan');
+      if (checkPBSpan) checkPBSpan.style.display = 'none';
+
+      if (typeof afterLoad === 'function') afterLoad();
+    });
+
+  } else {
+    // Unknown code → don’t switch; just proceed
+    if (typeof afterLoad === 'function') afterLoad();
+  }
+}
+
+
 function handleTop18FileSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1631,7 +1705,11 @@ function handleTop18FileSelect(event) {
     // Full file text (trim BOM + whitespace)
     const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
 
-    // Keep only non-empty, non-comment lines (ignore those starting with # or ---)
+    // 🔎 Try to read "# Game: XXX" before we strip comments
+    const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
+    const fileGameCode = gameMatch ? gameMatch[1].toUpperCase() : null; // e.g., 'PB' or 'F5'
+
+    // Keep only non-empty, non-comment lines (ignore # / ---)
     const lines = raw
       .split(/\r?\n/)
       .map(l => l.trim())
@@ -1642,38 +1720,50 @@ function handleTop18FileSelect(event) {
       return;
     }
 
-    // Use the first remaining line as the picks row
+    // First remaining line = picks row
     const dataLine = lines[0];
 
     // Accept comma or space separated numbers (or mixed)
     const nums = dataLine
       .split(/[,\s]+/)
       .map(s => parseInt(s, 10))
-      .filter(n => Number.isInteger(n));
+      .filter(Number.isInteger);
 
     if (nums.length < 12) {
       alert(`Found only ${nums.length} numbers on the data line. Need 12.`);
       return;
     }
 
-    // Take the first 12 unique numbers, sorted
+    // First 12 unique numbers (sorted)
     const picks12 = Array.from(new Set(nums)).slice(0, 12).sort((a, b) => a - b);
-
     if (picks12.length !== 12) {
       alert(`Need 12 unique numbers, but got ${picks12.length}.`);
       return;
     }
 
-    // Load into inputs + Picks column
-    loadPicksIntoColumnAndInputs(picks12);
+    // 👉 After the right dataset is loaded, apply the numbers + mark manual
+    const applyPicks = () => {
+      loadPicksIntoColumnAndInputs(picks12);
+      setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+      showToast(`Loaded ${fileGameCode || getGameCode()} picks.`);
+      // Close modal + reset input
+      loadTop18Modal.style.display = 'none';
+      loadTop18FileInput.value = '';
+    };
 
-    // Close modal and reset input
-    loadTop18Modal.style.display = 'none';
-    loadTop18FileInput.value = '';
+    // If the file specifies a game and it's different, switch first; else just apply
+    if (fileGameCode === 'PB' && totalNumbersGlobal !== 69) {
+      loadGameByCode('PB', applyPicks);
+    } else if (fileGameCode === 'F5' && totalNumbersGlobal !== 39) {
+      loadGameByCode('F5', applyPicks);
+    } else {
+      applyPicks();
+    }
   };
 
   reader.readAsText(file);
 }
+
 
 function loadPicksIntoColumnAndInputs(numbers) {
   // Mirror into the 12 inputs

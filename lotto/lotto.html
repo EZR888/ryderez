@@ -335,12 +335,27 @@ h2 { margin: 8px 0; }
   </style>
 </head>
 <body>
-<body>
-<div id="zoomToolbar" aria-label="Page zoom controls">
-  <button id="zoomOutBtn"  title="Zoom Out">−</button>
-  <button id="zoomResetBtn" title="Reset (100%)">100%</button>
-  <button id="zoomInBtn"   title="Zoom In">+</button>
-  <span id="zoomPct" style="color:#fff; padding:6px 6px; min-width:52px; text-align:center;">100%</span>
+
+<div id="toolbarRow"
+     style="display:flex; gap:20px; align-items:center; margin:6px 0;">
+
+  <!-- Row Density -->
+  <div id="densityToolbar" style="display:flex; gap:6px; align-items:center;">
+    <button id="rowsDown" class="button button-single" style="margin:0;">Rows −</button>
+    <button id="rowsReset" class="button button-single" style="margin:0;">Rows 100%</button>
+    <button id="rowsUp"   class="button button-single" style="margin:0;">Rows +</button>
+    <span id="rowsPct" style="color:#fff; margin-left:6px;">100%</span>
+  </div>
+
+  <!-- Page Zoom -->
+  <div id="zoomToolbar" aria-label="Page zoom controls"
+       style="display:flex; gap:6px; align-items:center;">
+    <button id="zoomOutBtn"  title="Zoom Out">−</button>
+    <button id="zoomResetBtn" title="Reset (100%)">100%</button>
+    <button id="zoomInBtn"   title="Zoom In">+</button>
+    <span id="zoomPct" style="color:#fff; padding:6px 6px; min-width:52px; text-align:center;">100%</span>
+  </div>
+
 </div>
 
 <!-- Wrap your app so transform fallback can scale cleanly -->
@@ -700,6 +715,47 @@ let top18From69 = [];
 let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
 let activeGameMode = null;
 let __pbInputsWired = false;
+
+/* ===== Table density (affects only the data tables) ===== */
+:root { --table-scale: 1; }  /* 1 = 100% density (default) */
+
+#reverseHitsContainer table,
+#skipFrequencyContainer table {
+  font-size: calc(14px * var(--table-scale));
+}
+
+#reverseHitsContainer table th,
+#reverseHitsContainer table td,
+#skipFrequencyContainer table th,
+#skipFrequencyContainer table td {
+  height: calc(30px * var(--table-scale));
+  padding: 0; /* tighter by default; height controls the row size */
+}
+
+/* if you want header a tad bigger than body rows: */
+#reverseHitsContainer table thead th,
+#skipFrequencyContainer table thead th {
+  height: calc(32px * var(--table-scale));
+  font-weight: bold;
+}
+
+/* dots scale too */
+.red-dot, .orange-dot, .green-dot, .hot-dot, .blue-dot {
+  width: calc(14px * var(--table-scale));
+  height: calc(14px * var(--table-scale));
+}
+
+/* your special larger font in skip freq table also scales */
+#skipFrequencyContainer td {
+  font-size: calc(17px * var(--table-scale));
+}
+
+/* keep sticky headers looking right */
+#reverseHitsContainer table thead th,
+#reverseHitsContainer table tr:first-child th {
+  line-height: calc(30px * var(--table-scale));
+}
+
 
 const qs  = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
@@ -3090,6 +3146,39 @@ window.addEventListener('load', function() {
 </script>
 
 <script>
+
+(function(){
+  // 0.60 = 60% row height (denser, more rows); 1.40 = 140% (looser)
+  const MIN = 0.60, MAX = 1.40, STEP = 0.05;
+
+  let scale = parseFloat(localStorage.getItem('tweTableScale') || '1');
+  scale = Math.min(MAX, Math.max(MIN, scale));
+
+  const rowsPct = document.getElementById('rowsPct');
+  const root = document.documentElement;
+
+  function applyScale(){
+    root.style.setProperty('--table-scale', String(scale));
+    if (rowsPct) rowsPct.textContent = `${Math.round(scale*100)}%`;
+    localStorage.setItem('tweTableScale', String(scale));
+  }
+
+  function up(){   scale = Math.min(MAX, +(scale + STEP).toFixed(2)); applyScale(); }
+  function down(){ scale = Math.max(MIN, +(scale - STEP).toFixed(2)); applyScale(); }
+  function reset(){ scale = 1; applyScale(); }
+
+  const btnUp   = document.getElementById('rowsUp');
+  const btnDown = document.getElementById('rowsDown');
+  const btnReset= document.getElementById('rowsReset');
+
+  if (btnUp)   btnUp.addEventListener('click', up);
+  if (btnDown) btnDown.addEventListener('click', down);
+  if (btnReset)btnReset.addEventListener('click', reset);
+
+  applyScale();
+})();
+
+
 (function(){
   const supportsCssZoom = 'zoom' in document.body.style; // true in Chrome
   const rootEl = document.getElementById('zoomRoot') || document.body;

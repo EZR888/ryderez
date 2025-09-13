@@ -153,8 +153,6 @@ button:not(.gameBtn){ background:#064d06; }
 
 input.dimmed { opacity: 0.4; pointer-events: none; }
 
-#top18Inputs > div { display: inline-block; }
-
 #matchResults div { margin: 4px 0; font-weight: bold; }
 
 /* Remove spinner arrows */
@@ -615,7 +613,7 @@ btn69.onclick = () => {
     highlight(btn69);
 
     // Show Top inputs/controls (inputs remain for your manual edits)
-    document.getElementById('top18Inputs').style.display = 'flex';
+    document.getElementById('top18Inputs').style.display = 'grid';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
     ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
@@ -686,7 +684,7 @@ btn39.onclick = () => {
     document.getElementById('showHistogramBtn').style.display = 'inline-block';
     setupHistogramListener();
 
-    document.getElementById('top18Inputs').style.display = 'flex';
+    document.getElementById('top18Inputs').style.display = 'grid';
     const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
     ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
@@ -1707,7 +1705,7 @@ function loadGameByCode(gameCode, afterLoad) {
       if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
       highlight(btn69);
 
-      document.getElementById('top18Inputs').style.display = 'flex';
+      document.getElementById('top18Inputs').style.display = 'grid';
       const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
       ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
         const el = document.getElementById(id); if (el) el.style.display = 'inline-block';

@@ -331,6 +331,45 @@ h2 { margin: 8px 0; }
 /* Optional: nudge right data panel in when zoomed way out so it doesn't feel tight */
 .app { padding-right: 10px; }
 
+/* ===== Table density (affects only the data tables) ===== */
+:root { --table-scale: 1; }  /* 1 = 100% density (default) */
+
+#reverseHitsContainer table,
+#skipFrequencyContainer table {
+  font-size: calc(14px * var(--table-scale));
+}
+
+#reverseHitsContainer table th,
+#reverseHitsContainer table td,
+#skipFrequencyContainer table th,
+#skipFrequencyContainer table td {
+  height: calc(30px * var(--table-scale));
+  padding: 0; /* tighter by default; height controls the row size */
+}
+
+/* if you want header a tad bigger than body rows: */
+#reverseHitsContainer table thead th,
+#skipFrequencyContainer table thead th {
+  height: calc(32px * var(--table-scale));
+  font-weight: bold;
+}
+
+/* dots scale too */
+.red-dot, .orange-dot, .green-dot, .hot-dot, .blue-dot {
+  width: calc(14px * var(--table-scale));
+  height: calc(14px * var(--table-scale));
+}
+
+/* your special larger font in skip freq table also scales */
+#skipFrequencyContainer td {
+  font-size: calc(17px * var(--table-scale));
+}
+
+/* keep sticky headers looking right */
+#reverseHitsContainer table thead th,
+#reverseHitsContainer table tr:first-child th {
+  line-height: calc(30px * var(--table-scale));
+}
 
   </style>
 </head>
@@ -716,45 +755,6 @@ let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDra
 let activeGameMode = null;
 let __pbInputsWired = false;
 
-/* ===== Table density (affects only the data tables) ===== */
-:root { --table-scale: 1; }  /* 1 = 100% density (default) */
-
-#reverseHitsContainer table,
-#skipFrequencyContainer table {
-  font-size: calc(14px * var(--table-scale));
-}
-
-#reverseHitsContainer table th,
-#reverseHitsContainer table td,
-#skipFrequencyContainer table th,
-#skipFrequencyContainer table td {
-  height: calc(30px * var(--table-scale));
-  padding: 0; /* tighter by default; height controls the row size */
-}
-
-/* if you want header a tad bigger than body rows: */
-#reverseHitsContainer table thead th,
-#skipFrequencyContainer table thead th {
-  height: calc(32px * var(--table-scale));
-  font-weight: bold;
-}
-
-/* dots scale too */
-.red-dot, .orange-dot, .green-dot, .hot-dot, .blue-dot {
-  width: calc(14px * var(--table-scale));
-  height: calc(14px * var(--table-scale));
-}
-
-/* your special larger font in skip freq table also scales */
-#skipFrequencyContainer td {
-  font-size: calc(17px * var(--table-scale));
-}
-
-/* keep sticky headers looking right */
-#reverseHitsContainer table thead th,
-#reverseHitsContainer table tr:first-child th {
-  line-height: calc(30px * var(--table-scale));
-}
 
 
 const qs  = sel => document.querySelector(sel);

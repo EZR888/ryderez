@@ -341,10 +341,6 @@ h2 { margin: 8px 0; }
   line-height: calc(30px * var(--table-scale));
 }
 
-/* Make the Picks column cells look interactive */
-.pick-cell { cursor: pointer; }
-.pick-cell:hover { outline: 1px dashed #4caf50; outline-offset: -3px; }
-
 /* Inline toolbars that match your button styles */
 .toolbar{
   display: flex;
@@ -366,9 +362,6 @@ h2 { margin: 8px 0; }
   margin: 0;
   padding: 6px 10px;
 }
-
-.pick-cell { cursor: pointer; }
-.pick-cell:hover { outline: 1px dashed #6f6; outline-offset: -3px; }
 
 
   </style>
@@ -531,7 +524,7 @@ h2 { margin: 8px 0; }
 
       <div style="margin-top:10px">
         <label style="color:lightgreen">How many sets to generate? </label>
-        <input type="number" id="modalSetCountChoice" value="220" min="1" max="100" style="width:50px;font-size:16px;background:#333;color:#fff"><br>
+        <input type="number" id="modalSetCountChoice" value="6" min="1" max="100" style="width:50px;font-size:16px;background:#333;color:#fff"><br>
         <label style="color:lightgreen">Show Best Sets: </label>
         <input type="number" id="modalBestSetCount" value="5" min="1" style="width:50px;font-size:16px;background:#333;color:#fff">
       </div>
@@ -1089,66 +1082,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ✅ Attach System Picks button once
   const sysBtn = document.getElementById('systemPicksButton');
   if (sysBtn) sysBtn.addEventListener('click', runSystemPicks);
-  
-  // Toggle picks by clicking the Picks column cells
-(function wirePickCellClickOnce(){
-  const container = document.getElementById('reverseHitsContainer');
-  if (!container || container.__pickClickWired) return;
-  container.__pickClickWired = true;
+});
 
-  // CLICK to toggle
-  container.addEventListener('click', (e) => {
-    const cell = e.target.closest('.pick-cell');
-    if (!cell || !container.contains(cell)) return;
 
-    // Not available in PB-only mode
-    if (totalNumbersGlobal === 26) {
-      showToast('Picks are disabled in Powerball-only mode.');
-      return;
-    }
 
-    const n = parseInt(cell.dataset.n, 10);
-    if (!Number.isInteger(n)) return;
-
-    const wasSelected = systemPicksSet.has(n);
-
-    // Enforce a 12-cap (optional). Remove this block if you want unlimited.
-    if (!wasSelected && systemPicksSet.size >= 12) {
-      showToast('You already have 12 picks. Deselect one to add another.');
-      return;
-    }
-
-    // Flip membership
-    if (wasSelected) systemPicksSet.delete(n);
-    else systemPicksSet.add(n);
-
-    // Re-render and re-highlight
-    renderReverseHitsTable();
-    reapplySkipTableHighlights?.();
-
-    // Mirror to the 12 inputs (sorted)
-    const arr = Array.from(systemPicksSet).sort((a,b)=>a-b);
-    ensureTwelveInputs();
-    setInputsFromList(arr.slice(0,12), 12);
-
-    // Mark this as a manual change so exports label correctly
-    setPicksMeta({
-      method: 'manual',
-      weeks: (window.lastPicksMeta?.weeks ?? null),
-      hotCoverage: (window.lastPicksMeta?.hotCoverage ?? null)
-    });
-  });
-
-  // KEYBOARD: Enter/Space to toggle
-  container.addEventListener('keydown', (e) => {
-    const cell = e.target.closest('.pick-cell');
-    if (!cell) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();     // prevent page scroll on Space
-      cell.click();           // reuse the click handler logic
-    }
-  });
-})();
 
 
 // Holds current System Picks result
@@ -3083,26 +3020,16 @@ function renderReverseHitsTable() {
       row.appendChild(hotCell);
     }
 
-// Picks (green) — only in 39/69 modes
-if (totalNumbersGlobal !== 26) {
-  const picksCell = document.createElement('td');
-
-  // ✅ make it identifiable + accessible
-  picksCell.classList.add('pick-cell');       // <— needed for click/keydown delegation
-  picksCell.dataset.n = String(number);       // <— needed to know which number to toggle
-  picksCell.tabIndex = 0;                     // allow keyboard focus
-  picksCell.setAttribute('role', 'button');   // announce as a button
-  picksCell.setAttribute('aria-pressed', systemPicksSet.has(number) ? 'true' : 'false');
-  picksCell.setAttribute('aria-label', `Toggle pick ${number}`);
-
-  if (systemPicksSet && systemPicksSet.has(number)) {
-    const dot = document.createElement('div');
-    dot.className = 'green-dot';
-    picksCell.appendChild(dot);
-  }
-  row.appendChild(picksCell);
-}
-
+    // Picks (green) — only in 39/69 modes
+    if (totalNumbersGlobal !== 26) {
+      const picksCell = document.createElement('td');
+      if (systemPicksSet && systemPicksSet.has(number)) {
+        const b = document.createElement('div');
+        b.className = 'green-dot';
+        picksCell.appendChild(b);
+      }
+      row.appendChild(picksCell);
+    }
 
     table.appendChild(row);
   }

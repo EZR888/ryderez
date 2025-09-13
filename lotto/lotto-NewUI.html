@@ -37,8 +37,6 @@ input[type="text"]{
     background:#fffbcc;
 }
 
-/* ---------- top-numbers input strip ---------- */
-#top18Inputs { display: none; }
 
 /* ---------- table styling ---------- */
 table{
@@ -294,6 +292,12 @@ h3{margin:0 0 15px;color: gold}
 button { margin: 8px; }
 h2 { margin: 8px 0; }
 
+#top18Inputs {
+  display: grid;
+  grid-template-columns: repeat(6, 50px); /* each ~50px wide */
+  gap: 8px;
+  justify-content: center; /* optional: centers the whole block */
+}
 
 
   </style>
@@ -369,7 +373,7 @@ h2 { margin: 8px 0; }
 
       <!-- 2 x 6 grid for inputs (JS still targets #top18Inputs input) -->
       <div id="top18Inputs"
-           style="display:grid; grid-template-columns: repeat(6, minmax(40px, 1fr)); gap:8px; align-items:center;">
+     style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; max-width:360px;">
         <!-- JS will populate 12 <input> here -->
       </div>
 

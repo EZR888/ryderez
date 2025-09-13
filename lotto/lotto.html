@@ -1620,10 +1620,16 @@ function readTopSkips12(){
   return Array.from(new Set(first12)).sort((a,b) => a - b);
 }
 
-// 🔁 Replace your existing computeSystemPicks with this:
-// 👉 Drop-in replacement: blends Hot ∩ Top first, then Top, then Hot,
-// while minimizing average points of sampled 5-number sets from the pool.
-function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapObj = {}, rng = rand) {  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+function computeSystemPicks(
+  count,
+  weeks,
+  hotList = [],
+  topList = [],
+  sinceMapObj = {},
+  rng = rand
+) {
+  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+
   const H = uniq(hotList);
   const T = uniq(topList);
 
@@ -1640,7 +1646,7 @@ function computeSystemPicks(count, weeks, hotList = [], topList = [], sinceMapOb
     return p;
   }
   function preScore(n) {
-    const due = (sinceMapObj[n] || 0);  // bigger = longer since hit
+    const due = (sinceMapObj[n] || 0);
     const inTop = T.includes(n) ? 1 : 0;
     const inHot = H.includes(n) ? 1 : 0;
     return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;

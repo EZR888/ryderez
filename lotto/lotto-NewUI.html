@@ -490,15 +490,30 @@ h2 { margin: 8px 0; }
     </div>
   </div>
 
-  <!-- Auto Pick -->
-  <div id="autoPickModal" class="modal">
-    <div class="modal-content" style="width: 400px; max-width: 90%;">
-      <span class="close-button" id="closeAutoPickModal">&times;</span>
-      <h2>Find Hot Numbers</h2>
-      <!-- (content unchanged) -->
-      <!-- ... -->
-    </div>
+<!-- Auto Pick -->
+<div id="autoPickModal" class="modal">
+  <div class="modal-content" style="width: 400px; max-width: 90%;">
+    <span class="close-button" id="closeAutoPickModal">&times;</span>
+    <h2>Find Hot Numbers</h2>
+    
+    <label for="weeksInput">Number of Drawings (max 25):</label>
+    <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
+
+    <label>Select Coverage:</label><br>
+    <input type="radio" name="coverage" value="5" id="coverage5">
+    <label for="coverage5">Top 5</label><br>
+    <input type="radio" name="coverage" value="12" id="coverage12">
+    <label for="coverage12">Top 12</label><br>
+    <input type="radio" name="coverage" value="18" id="coverage18" checked>
+    <label for="coverage18">Top 18</label><br><br>
+
+    <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
+    <!-- ✅ Keep these hidden but present -->
+    <button id="saveTop18Button" class="button button-single" style="display:none;">💾 Save Top #'s</button>
+    <button id="exportAutoTopBtn" class="button button-single" style="display:none;">⬇️ Export Auto Top</button>
   </div>
+</div>
+
 
   <!-- Wheel output placeholder -->
   <div id="wheelOutput" style="display: none;"></div>

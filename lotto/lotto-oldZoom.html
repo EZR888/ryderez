@@ -297,6 +297,36 @@ h2 { margin: 8px 0; }
   justify-content: center; /* optional: centers the whole block */
 }
 
+/* ---- In-page zoom toolbar ---- */
+#zoomToolbar {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  z-index: 10000;
+  display: flex;
+  gap: 6px;
+  background: rgba(0,0,0,.55);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 6px;
+  backdrop-filter: blur(2px);
+}
+#zoomToolbar button {
+  margin: 0;
+  padding: 6px 10px;
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#zoomToolbar button:hover { background: #666; }
+
+/* Wrapper used only for the transform fallback */
+#zoomRoot {
+  transform-origin: top left;
+}
 
 /* Optional: nudge right data panel in when zoomed way out so it doesn't feel tight */
 .app { padding-right: 10px; }
@@ -341,32 +371,31 @@ h2 { margin: 8px 0; }
   line-height: calc(30px * var(--table-scale));
 }
 
-/* Inline toolbars that match your button styles */
-.toolbar{
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;       /* wraps nicely if the column is narrow */
-  margin: 8px 0;
-}
-.toolbar .readout{
-  color: #fff;
-  min-width: 52px;
-  text-align: center;
-  padding: 4px 6px;
-  font-weight: bold;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 6px;
-}
-.toolbar button.button{  /* reuse your existing .button look, but tighter spacing */
-  margin: 0;
-  padding: 6px 10px;
-}
-
-
   </style>
 </head>
 <body>
+
+<div id="toolbarRow"
+     style="display:flex; gap:20px; align-items:center; margin:6px 0;">
+
+  <!-- Row Density -->
+  <div id="densityToolbar" style="display:flex; gap:6px; align-items:center;">
+    <button id="rowsDown" class="button button-single" style="margin:0;">Rows −</button>
+    <button id="rowsReset" class="button button-single" style="margin:0;">Rows 100%</button>
+    <button id="rowsUp"   class="button button-single" style="margin:0;">Rows +</button>
+    <span id="rowsPct" style="color:#fff; margin-left:6px;">100%</span>
+  </div>
+
+  <!-- Page Zoom -->
+  <div id="zoomToolbar" aria-label="Page zoom controls"
+       style="display:flex; gap:6px; align-items:center;">
+    <button id="zoomOutBtn"  title="Zoom Out">−</button>
+    <button id="zoomResetBtn" title="Reset (100%)">100%</button>
+    <button id="zoomInBtn"   title="Zoom In">+</button>
+    <span id="zoomPct" style="color:#fff; padding:6px 6px; min-width:52px; text-align:center;">100%</span>
+  </div>
+
+</div>
 
 <!-- Wrap your app so transform fallback can scale cleanly -->
 <div id="zoomRoot">
@@ -395,23 +424,6 @@ h2 { margin: 8px 0; }
   <div class="app">
     <!-- LEFT: controls -->
     <aside id="controlColumn">
-    
-    <!-- Rows density (table compaction) -->
-<div id="densityToolbar" class="toolbar">
-  <button id="rowsDown"  class="button button-single" title="Show more rows (compact)">Rows −</button>
-  <button id="rowsReset" class="button button-single" title="Reset table density">Rows 100%</button>
-  <button id="rowsUp"    class="button button-single" title="Show fewer rows (roomy)">Rows +</button>
-  <span id="rowsPct" class="readout">100%</span>
-</div>
-
-<!-- Page zoom (CSS scale fallback) -->
-<div id="zoomToolbar" class="toolbar" aria-label="Page zoom controls">
-  <button id="zoomOutBtn"  class="button button-single" title="Zoom Out">−</button>
-  <button id="zoomResetBtn" class="button button-single" title="Reset (100%)">100%</button>
-  <button id="zoomInBtn"   class="button button-single" title="Zoom In">+</button>
-  <span id="zoomPct" class="readout">100%</span>
-</div>
-
       <div class="banner" style="text-align:center; margin-top: 16px; margin-bottom: 12px;">
         <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
           The Winning Edge

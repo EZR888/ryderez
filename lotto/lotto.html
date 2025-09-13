@@ -462,10 +462,11 @@ h2 { margin: 8px 0; }
     <!-- RIGHT: data -->
     <main id="dataColumn">
     
-    <!-- Combined toolbar row -->
-<div id="toolbarsRow" style="display:flex; gap:20px; align-items:center; margin:8px 0; flex-wrap:wrap;">
+<!-- Combined toolbar row -->
+<div id="toolbarsRow"
+     style="display:flex; justify-content:space-between; align-items:center; margin:8px 0;">
 
-  <!-- Rows density -->
+  <!-- Rows density (left side) -->
   <div id="densityToolbar" class="toolbar" style="margin:0;">
     <button id="rowsDown"  class="button button-single" title="Show more rows (compact)">−</button>
     <button id="rowsReset" class="button button-single" title="Reset table density">Zoom Rows 100%</button>
@@ -473,13 +474,16 @@ h2 { margin: 8px 0; }
     <span id="rowsPct" class="readout">100%</span>
   </div>
 
-  <!-- Page zoom -->
+  <!-- Page zoom (right side) -->
   <div id="zoomToolbar" class="toolbar" aria-label="Page zoom controls" style="margin:0;">
     <button id="zoomOutBtn"  class="button button-single" title="Zoom Out">−</button>
     <button id="zoomResetBtn" class="button button-single" title="Reset (100%)">Zoom Page 100%</button>
     <button id="zoomInBtn"   class="button button-single" title="Zoom In">+</button>
     <span id="zoomPct" class="readout">100%</span>
   </div>
+
+</div>
+
 
 </div>
 

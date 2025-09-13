@@ -395,22 +395,6 @@ h2 { margin: 8px 0; }
   <div class="app">
     <!-- LEFT: controls -->
     <aside id="controlColumn">
-    
-    <!-- Rows density (table compaction) -->
-<div id="densityToolbar" class="toolbar">
-  <button id="rowsDown"  class="button button-single" title="Show more rows (compact)">−</button>
-  <button id="rowsReset" class="button button-single" title="Reset table density">Zoom Rows 100%</button>
-  <button id="rowsUp"    class="button button-single" title="Show fewer rows (roomy)">+</button>
-  <span id="rowsPct" class="readout">100%</span>
-</div>
-
-<!-- Page zoom (CSS scale fallback) -->
-<div id="zoomToolbar" class="toolbar" aria-label="Page zoom controls">
-  <button id="zoomOutBtn"  class="button button-single" title="Zoom Out">−</button>
-  <button id="zoomResetBtn" class="button button-single" title="Reset (100%)">Zoom Page 100%</button>
-  <button id="zoomInBtn"   class="button button-single" title="Zoom In">+</button>
-  <span id="zoomPct" class="readout">100%</span>
-</div>
 
       <div class="banner" style="text-align:center; margin-top: 16px; margin-bottom: 12px;">
         <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
@@ -477,6 +461,28 @@ h2 { margin: 8px 0; }
 
     <!-- RIGHT: data -->
     <main id="dataColumn">
+    
+    <!-- Combined toolbar row -->
+<div id="toolbarsRow" style="display:flex; gap:20px; align-items:center; margin:8px 0; flex-wrap:wrap;">
+
+  <!-- Rows density -->
+  <div id="densityToolbar" class="toolbar" style="margin:0;">
+    <button id="rowsDown"  class="button button-single" title="Show more rows (compact)">−</button>
+    <button id="rowsReset" class="button button-single" title="Reset table density">Zoom Rows 100%</button>
+    <button id="rowsUp"    class="button button-single" title="Show fewer rows (roomy)">+</button>
+    <span id="rowsPct" class="readout">100%</span>
+  </div>
+
+  <!-- Page zoom -->
+  <div id="zoomToolbar" class="toolbar" aria-label="Page zoom controls" style="margin:0;">
+    <button id="zoomOutBtn"  class="button button-single" title="Zoom Out">−</button>
+    <button id="zoomResetBtn" class="button button-single" title="Reset (100%)">Zoom Page 100%</button>
+    <button id="zoomInBtn"   class="button button-single" title="Zoom In">+</button>
+    <span id="zoomPct" class="readout">100%</span>
+  </div>
+
+</div>
+
       <div id="hitsTableSection" style="display: none;">
         <h2 style="text-align:center;">Hits Table (Last 25 Drawings)</h2>
         <div id="latestDrawingComment" style="margin-bottom: 10px; font-weight: bold;"></div>

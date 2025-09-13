@@ -3149,7 +3149,7 @@ window.addEventListener('load', function() {
 
 (function(){
   // 0.60 = 60% row height (denser, more rows); 1.40 = 140% (looser)
-  const MIN = 0.30, MAX = 1.40, STEP = 0.05;
+  const MIN = 0.30, MAX = 1.40, STEP = 0.02;
 
   let scale = parseFloat(localStorage.getItem('tweTableScale') || '1');
   scale = Math.min(MAX, Math.max(MIN, scale));

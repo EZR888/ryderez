@@ -297,11 +297,58 @@ h2 { margin: 8px 0; }
   justify-content: center; /* optional: centers the whole block */
 }
 
+/* ---- In-page zoom toolbar ---- */
+#zoomToolbar {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  z-index: 10000;
+  display: flex;
+  gap: 6px;
+  background: rgba(0,0,0,.55);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 6px;
+  backdrop-filter: blur(2px);
+}
+#zoomToolbar button {
+  margin: 0;
+  padding: 6px 10px;
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#zoomToolbar button:hover { background: #666; }
+
+/* Wrapper used only for the transform fallback */
+#zoomRoot {
+  transform-origin: top left;
+}
+
+/* Optional: nudge right data panel in when zoomed way out so it doesn't feel tight */
+.app { padding-right: 10px; }
+
 
   </style>
 </head>
 <body>
 <body>
+<div id="zoomToolbar" aria-label="Page zoom controls">
+  <button id="zoomOutBtn"  title="Zoom Out">−</button>
+  <button id="zoomResetBtn" title="Reset (100%)">100%</button>
+  <button id="zoomInBtn"   title="Zoom In">+</button>
+  <span id="zoomPct" style="color:#fff; padding:6px 6px; min-width:52px; text-align:center;">100%</span>
+</div>
+
+<!-- Wrap your app so transform fallback can scale cleanly -->
+<div id="zoomRoot">
+  <!-- move your existing content inside this wrapper:
+       (Everything from your splash and .app through the rest of the page)
+  -->
+
 
   <!-- Splash -->
   <div id="splashScreen">
@@ -599,6 +646,8 @@ h2 { margin: 8px 0; }
 
   <!-- Wheel output placeholder -->
   <div id="wheelOutput" style="display: none;"></div>
+
+</div><!-- /#zoomRoot -->
 
 </body>
 
@@ -3039,5 +3088,57 @@ window.addEventListener('load', function() {
   }, 3800);
 });
 </script>
+
+<script>
+(function(){
+  const supportsCssZoom = 'zoom' in document.body.style; // true in Chrome
+  const rootEl = document.getElementById('zoomRoot') || document.body;
+  const pctLabel = document.getElementById('zoomPct');
+  const btnIn  = document.getElementById('zoomInBtn');
+  const btnOut = document.getElementById('zoomOutBtn');
+  const btn100 = document.getElementById('zoomResetBtn');
+
+  // load saved zoom or default 100
+  let zoom = parseInt(localStorage.getItem('tweZoomPct') || '100', 10);
+  zoom = Math.min(200, Math.max(60, zoom)); // clamp 60–200%
+
+  function applyZoom() {
+    if (supportsCssZoom) {
+      // Chrome: real layout zoom (best behavior)
+      document.body.style.zoom = (zoom / 100).toString();
+    } else {
+      // Fallback: scale the wrapper
+      rootEl.style.transform = `scale(${zoom/100})`;
+      // ensure the wrapper takes full width so scrollbars behave
+      rootEl.style.width = `${100 / (zoom/100)}%`;
+    }
+    pctLabel.textContent = `${zoom}%`;
+    localStorage.setItem('tweZoomPct', String(zoom));
+  }
+
+  function zoomIn()  { zoom = Math.min(200, zoom + 10); applyZoom(); }
+  function zoomOut() { zoom = Math.max(60,  zoom - 10); applyZoom(); }
+  function zoomReset(){ zoom = 100; applyZoom(); }
+
+  btnIn.addEventListener('click', zoomIn);
+  btnOut.addEventListener('click', zoomOut);
+  btn100.addEventListener('click', zoomReset);
+
+  // Optional: hold Shift to jump by 20%
+  [btnIn, btnOut].forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (e.shiftKey) {
+        zoom += (btn === btnIn ? 20 : -20);
+        zoom = Math.min(200, Math.max(60, zoom));
+        applyZoom();
+      }
+    });
+  });
+
+  // First render
+  applyZoom();
+})();
+</script>
+
 </body>
 </html>

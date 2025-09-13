@@ -1901,11 +1901,10 @@ function saveTop18Numbers() {
   const numbers = [];
   const rows = document.querySelectorAll('#reverseHitsContainer table tr');
   rows.forEach((row, idx) => {
-    if (idx === 0) return; // skip header
-    const skipsCell = row.querySelector('td.col-skips');
-    if (!skipsCell) return;
-    // accept either orange-dot (skips) or blue-dot (when you load a Top file and mark it blue)
-    if (skipsCell.querySelector('.orange-dot, .blue-dot')) {
+    if (idx === 0) return;
+    const topCell = row.querySelector('td:nth-last-child(3)'); // 'Top' is 3rd from end
+    if (!topCell) return;
+    if (topCell.querySelector('.orange-dot, .blue-dot')) {
       const th = row.querySelector('th');
       const num = th ? parseInt(th.textContent, 10) : NaN;
       if (!isNaN(num)) numbers.push(num);
@@ -1915,7 +1914,7 @@ function saveTop18Numbers() {
   const count   = numbers.length;
   const allowed = [5, 12, 18];
   if (!allowed.includes(count)) {
-    alert(`The Hits table currently shows ${count || 'no'} numbers in the ‘Skips’ column.\nPlease make sure it’s exactly 5, 12, or 18 before saving.`);
+    alert(`The Hits table currently shows ${count || 'no'} numbers in the ‘Picks’ column.\nPlease make sure it’s exactly 5, 12, or 18 before saving.`);
     return;
   }
 
@@ -1932,7 +1931,6 @@ function saveTop18Numbers() {
   const link = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename });
   link.click();
 }
-
 
 function loadGameByCode(gameCode, afterLoad) {
   const code = String(gameCode || '').toUpperCase();
@@ -2135,26 +2133,24 @@ function loadTop18NumbersIntoTable(numbers) {
   if (!container) return;
   const table = container.querySelector('table'); if (!table) return;
 
-  // clear the Skips column dots
-  table.querySelectorAll('tr').forEach(row => {
-    const cell = row.querySelector('td.col-skips');
-    if (cell) cell.innerHTML = '';
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const topCell = row.querySelector('td:nth-last-child(3)');
+    if (topCell) topCell.innerHTML = '';
   });
 
-  // mirror into inputs
   top18 = numbers;
   const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
   top18Inputs.forEach((input, index) => { input.value = numbers[index] ?? ''; });
 
-  // mark rows in Skips column (blue-dot to differentiate loaded set)
-  table.querySelectorAll('tr').forEach(row => {
+  rows.forEach(row => {
     const num = parseInt(row.querySelector('th')?.textContent, 10);
     if (numbers.includes(num)) {
-      const cell = row.querySelector('td.col-skips');
-      if (cell) {
+      const topCell = row.querySelector('td:nth-last-child(3)');
+      if (topCell) {
         const blueDot = document.createElement('div');
         blueDot.className = 'blue-dot';
-        cell.appendChild(blueDot);
+        topCell.appendChild(blueDot);
       }
     }
   });
@@ -2162,7 +2158,6 @@ function loadTop18NumbersIntoTable(numbers) {
   reapplySkipTableHighlights();
   loadTop18FileInput.value = '';
 }
-
 
 window.addEventListener('click', (event) => { if (event.target === loadTop18Modal) loadTop18Modal.style.display = 'none'; });
 
@@ -3035,35 +3030,37 @@ function renderReverseHitsTable() {
 
   // ----- header -----
   const headerRow = document.createElement('tr');
-  headerRow.appendChild(document.createElement('th')); // left sticky number header
+  headerRow.appendChild(document.createElement('th'));
   for (let i = 25; i >= 1; i--) {
     const th = document.createElement('th');
     th.textContent = i;
     headerRow.appendChild(th);
   }
 
+  // Only show Skips/Hot when NOT in PB-only (26)
   if (totalNumbersGlobal !== 26) {
-    const thPicks = document.createElement('th'); thPicks.textContent = 'Picks'; thPicks.classList.add('col-picks');
-    const thHot   = document.createElement('th'); thHot.textContent   = 'Hot';   thHot.classList.add('col-hot');
-    const thSkips = document.createElement('th'); thSkips.textContent = 'Skips'; thSkips.classList.add('col-skips');
-    // 👉 order: Picks, Hot, Skips
-    headerRow.appendChild(thPicks);
-    headerRow.appendChild(thHot);
-    headerRow.appendChild(thSkips);
+    headerRow.appendChild(document.createElement('th')).textContent = 'Skips';
+    headerRow.appendChild(document.createElement('th')).textContent = 'Hot';
   }
+
+  // Picks already hidden in PB-only; keep as-is otherwise
+  if (totalNumbersGlobal !== 26) {
+    headerRow.appendChild(document.createElement('th')).textContent = 'Picks';
+  }
+
   table.appendChild(headerRow);
 
-  // ----- body -----
-  const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
+  // ----- rows -----
+  const draws = fullData
+    .map(row => row.slice(1).map(n => parseInt(n, 10)))
+    .slice(0, 25);
 
   for (let number = 1; number <= totalNumbersGlobal; number++) {
     const row = document.createElement('tr');
-
     const th = document.createElement('th');
     th.textContent = number;
     row.appendChild(th);
 
-    // red-dot grid
     for (let i = 24; i >= 0; i--) {
       const cell = document.createElement('td');
       if (draws[i] && draws[i].includes(number)) {
@@ -3075,43 +3072,45 @@ function renderReverseHitsTable() {
     }
 
     if (totalNumbersGlobal !== 26) {
-      // Picks (green) — FIRST
-      const picksCell = document.createElement('td');
-      picksCell.classList.add('pick-cell', 'col-picks');
-      picksCell.dataset.n = String(number);
-      picksCell.tabIndex = 0;
-      picksCell.setAttribute('role', 'button');
-      picksCell.setAttribute('aria-pressed', systemPicksSet.has(number) ? 'true' : 'false');
-      picksCell.setAttribute('aria-label', `Toggle pick ${number}`);
-      if (systemPicksSet && systemPicksSet.has(number)) {
+      // Skips (orange)
+      const topCell = document.createElement('td');
+      if (top18.includes(number)) {
         const dot = document.createElement('div');
-        dot.className = 'green-dot';
-        picksCell.appendChild(dot);
+        dot.className = 'orange-dot';
+        topCell.appendChild(dot);
       }
+      row.appendChild(topCell);
 
-      // Hot (blue) — SECOND
+      // Hot (blue)
       const hotCell = document.createElement('td');
-      hotCell.classList.add('col-hot');
       if (hotSet && hotSet.has(number)) {
         const d = document.createElement('div');
         d.className = 'hot-dot';
         hotCell.appendChild(d);
       }
-
-      // Skips (orange) — LAST
-      const skipsCell = document.createElement('td');
-      skipsCell.classList.add('col-skips');
-      if (top18.includes(number)) {
-        const dot = document.createElement('div');
-        dot.className = 'orange-dot';
-        skipsCell.appendChild(dot);
-      }
-
-      // append in new order
-      row.appendChild(picksCell);
       row.appendChild(hotCell);
-      row.appendChild(skipsCell);
     }
+
+// Picks (green) — only in 39/69 modes
+if (totalNumbersGlobal !== 26) {
+  const picksCell = document.createElement('td');
+
+  // ✅ make it identifiable + accessible
+  picksCell.classList.add('pick-cell');       // <— needed for click/keydown delegation
+  picksCell.dataset.n = String(number);       // <— needed to know which number to toggle
+  picksCell.tabIndex = 0;                     // allow keyboard focus
+  picksCell.setAttribute('role', 'button');   // announce as a button
+  picksCell.setAttribute('aria-pressed', systemPicksSet.has(number) ? 'true' : 'false');
+  picksCell.setAttribute('aria-label', `Toggle pick ${number}`);
+
+  if (systemPicksSet && systemPicksSet.has(number)) {
+    const dot = document.createElement('div');
+    dot.className = 'green-dot';
+    picksCell.appendChild(dot);
+  }
+  row.appendChild(picksCell);
+}
+
 
     table.appendChild(row);
   }

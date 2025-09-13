@@ -3130,13 +3130,15 @@ function updateReverseHitsTop18() {
   renderReverseHitsTable();
   reapplySkipTableHighlights();
 
-  // NEW: if these came from the user, call them manual
   setPicksMeta({
     method: 'manual',
     weeks: (window.lastPicksMeta?.weeks ?? null),
     hotCoverage: (window.lastPicksMeta?.hotCoverage ?? null)
   });
+
+  showToast('Picks column updated from inputs.');
 }
+
 });
 
 /* Additional check flow (CSV-style) */

@@ -2362,6 +2362,23 @@ document.getElementById("checkNumbersButton").onclick = function () {
     if (!match) { alert("Filename does not match expected pattern."); return; }
 
 	const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+	// after: const game = match[2].toUpperCase();
+const isPWB = (game === "PWB");
+const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+
+fetch(lottoFile + "?t=" + Date.now())
+  .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
+  .then(text => {
+    // ...
+    if (isPWB) {
+      fetch("lotto_1.txt?t=" + Date.now())
+        .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
+        // ...
+    } else {
+      checkAgainstSets(lines, nums, null, game, drawNumber);
+    }
+  })
+
 	const drawNumber = match[3];
     const reader = new FileReader();
 
@@ -2457,7 +2474,7 @@ function checkAgainstSets(lines, nums, pb, game, drawNumber) {
     if (!numbers || numbers.length < 5) continue;
 
     const picks = numbers.slice(0, 5);
-    const bonus = (mode === "pwb" && numbers.length >= 6) ? numbers[5] : null;
+    const bonus = (isPWB && numbers.length >= 6) ? numbers[5] : null;
 
     const matchCount = picks.filter(n => nums.includes(n)).length;
 	const pbMatch = (isPWB && pb !== null && bonus === pb);

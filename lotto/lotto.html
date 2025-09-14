@@ -732,31 +732,29 @@ h2 { margin: 8px 0; }
 
   // First-ever visit: let it play; remember after it finishes loading once.
   if (!localStorage.getItem(SEEN_KEY)) {
-    window.addEventListener('load', () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch {} }, { once: true });
+    window.addEventListener(
+      'load',
+      () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {} },
+      { once: true }
+    );
     return;
   }
 
   // Returning users: one click anywhere skips instantly.
-  const skip = () => {
+  function skip() {
     const img = document.getElementById('splashImage');
     if (img) {
-      img.src = '';       // stop decoding/animating
-      img.remove();       // drop from DOM
+      img.src = '';   // stop decoding/animating immediately
+      img.remove();   // drop from DOM
     }
-    splash.remove();      // remove overlay so the page can render immediately
-  };
+    splash.remove();  // remove overlay so the page renders immediately
+  }
 
   // Do NOT preventDefault—let the underlying click still fire.
   document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
-})();
-
-
-  // Capture so we run before anything else, but DO NOT preventDefault —
-  // we want the underlying button click to still happen.
-  document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
 
   // (optional) allow Esc to skip too
-  document.addEventListener('keydown', function esc(e){
+  document.addEventListener('keydown', function esc(e) {
     if (e.key === 'Escape') {
       skip();
       document.removeEventListener('keydown', esc, true);

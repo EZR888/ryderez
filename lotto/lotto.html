@@ -2361,7 +2361,8 @@ document.getElementById("checkNumbersButton").onclick = function () {
     const match = filename.match(/(All|Best)_(F5|PWB).*?_(\d+)\.txt$/i);
     if (!match) { alert("Filename does not match expected pattern."); return; }
 
-    const [, , mode, drawNumber] = match;
+	const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+	const drawNumber = match[3];
     const reader = new FileReader();
 
     reader.onload = function (e) {
@@ -2371,7 +2372,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
       const drawLabel = document.getElementById("drawNumberLabel");
       if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
 
-      const lottoFile = (mode === "pwb") ? "lotto_69.txt" : "lotto_39.txt";
+      const lottoFile = (mode === "PWB") ? "lotto_69.txt" : "lotto_39.txt";
       fetch(lottoFile + "?t=" + Date.now())
         .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
         .then(text => {
@@ -2382,7 +2383,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
           const nums = parts.slice(1, 6);
           let pb = null;
 
-          if (mode === "pwb") {
+          if (mode === "PWB") {
             fetch("lotto_1.txt?t=" + Date.now())
               .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
               .then(pbText => {
@@ -2390,11 +2391,11 @@ document.getElementById("checkNumbersButton").onclick = function () {
                 if (!pbLine) throw new Error("Matching Powerball not found for draw #" + drawNumber);
                 const pbParts = pbLine.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
                 pb = pbParts[1];
-                checkAgainstSets(lines, nums, pb, mode, drawNumber);
+                checkAgainstSets(lines, nums, pb, game, drawNumber);
               })
               .catch(err => { alert(err); console.error("⚠️ Powerball fetch error:", err); });
           } else {
-            checkAgainstSets(lines, nums, null, mode, drawNumber);
+            checkAgainstSets(lines, nums, null, game, drawNumber);
           }
         })
         .catch(err => { alert(err); console.error("⚠️ Lotto file fetch error:", err); });
@@ -2430,13 +2431,14 @@ function wireHotDialogMetaSync(){
 }
 
 
-function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
+function checkAgainstSets(lines, nums, pb, game, drawNumber) {
+  const isPWB = (String(game).toUpperCase() === 'PWB');
   const winDisplay = document.getElementById("winningNumbersDisplay");
   if (winDisplay) winDisplay.textContent = nums.join(", ");
 
   const pbDisplay = document.getElementById("winningPBDisplay");
   if (pbDisplay) {
-    if (mode === "pwb" && pb !== null) {
+    if (isPWB && pb !== null) {
       pbDisplay.textContent = `+ PB: ${pb}`;
       pbDisplay.style.display = "inline";
     } else {
@@ -2458,8 +2460,8 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     const bonus = (mode === "pwb" && numbers.length >= 6) ? numbers[5] : null;
 
     const matchCount = picks.filter(n => nums.includes(n)).length;
-    const pbMatch = (mode === "pwb" && pb !== null && bonus === pb);
-
+	const pbMatch = (isPWB && pb !== null && bonus === pb);
+	
     let tier = "", color = "";
     if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
     else if (matchCount === 5)            { tier = "5";       color = "red"; }
@@ -2470,7 +2472,7 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
     else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
     else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
-    else if (mode === "f5" && matchCount === 2) { tier = "2"; color = "lightblue";}
+    else if (!isPWB && matchCount === 2) { tier = "2"; color = "lightblue"; }
 
     if (tier) {
       foundMatch = true;
@@ -2488,7 +2490,7 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     matchDiv.appendChild(div);
   }
 
-  const prizeFile = `${mode}_${drawNumber}.txt`;
+  const prizeFile = `${isPWB ? 'pwb' : 'f5'}_${drawNumber}.txt`;
   fetch(prizeFile + "?t=" + Date.now())
     .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
     .then(text => renderPrizeTable(text))

@@ -2361,27 +2361,11 @@ document.getElementById("checkNumbersButton").onclick = function () {
     const match = filename.match(/(All|Best)_(F5|PWB).*?_(\d+)\.txt$/i);
     if (!match) { alert("Filename does not match expected pattern."); return; }
 
-	const game = match[2].toUpperCase();   // 'PWB' or 'F5'
-	// after: const game = match[2].toUpperCase();
-const isPWB = (game === "PWB");
-const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+    const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+    const isPWB = (game === "PWB");
+    const drawNumber = match[3];
 
-fetch(lottoFile + "?t=" + Date.now())
-  .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
-  .then(text => {
-    // ...
-    if (isPWB) {
-      fetch("lotto_1.txt?t=" + Date.now())
-        .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
-        // ...
-    } else {
-      checkAgainstSets(lines, nums, null, game, drawNumber);
-    }
-  })
-
-	const drawNumber = match[3];
     const reader = new FileReader();
-
     reader.onload = function (e) {
       const lines = e.target.result.trim().split("\n").filter(Boolean);
       if (!lines.length) { alert("File appears to be empty."); return; }
@@ -2389,33 +2373,33 @@ fetch(lottoFile + "?t=" + Date.now())
       const drawLabel = document.getElementById("drawNumberLabel");
       if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
 
-      const lottoFile = (mode === "PWB") ? "lotto_69.txt" : "lotto_39.txt";
+      const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+
       fetch(lottoFile + "?t=" + Date.now())
         .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
         .then(text => {
           const line = text.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
           if (!line) throw new Error("Drawing number not found in lotto file");
 
-          const parts = line.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+          const parts = line.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
           const nums = parts.slice(1, 6);
           let pb = null;
 
-          if (mode === "PWB") {
-            fetch("lotto_1.txt?t=" + Date.now())
+          if (isPWB) {
+            return fetch("lotto_1.txt?t=" + Date.now())
               .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
               .then(pbText => {
                 const pbLine = pbText.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
                 if (!pbLine) throw new Error("Matching Powerball not found for draw #" + drawNumber);
-                const pbParts = pbLine.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                const pbParts = pbLine.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
                 pb = pbParts[1];
                 checkAgainstSets(lines, nums, pb, game, drawNumber);
-              })
-              .catch(err => { alert(err); console.error("⚠️ Powerball fetch error:", err); });
+              });
           } else {
             checkAgainstSets(lines, nums, null, game, drawNumber);
           }
         })
-        .catch(err => { alert(err); console.error("⚠️ Lotto file fetch error:", err); });
+        .catch(err => { alert(err); console.error("⚠️ Lotto/Powerball fetch error:", err); });
     };
 
     reader.readAsText(file);
@@ -2423,6 +2407,7 @@ fetch(lottoFile + "?t=" + Date.now())
 
   fileInput.click();
 };
+
 
 function wireHotDialogMetaSync(){
   const weeksEl = document.getElementById('weeksInput');

@@ -722,33 +722,34 @@ h2 { margin: 8px 0; }
 
 <script>
 
-// Return visits: click-through skip that also kills the GIF immediately.
+// Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
+// First visit: we let the GIF play; onload marks the visit as "seen".
 (function () {
   const splash = document.getElementById('splashScreen');
   if (!splash) return;
 
   const SEEN_KEY = 'tweSeenSplash';
 
-  // First-ever visit: let it play once, then remember.
+  // First-ever visit: let it play; remember after it finishes loading once.
   if (!localStorage.getItem(SEEN_KEY)) {
     window.addEventListener('load', () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch {} }, { once: true });
     return;
   }
 
-  // Returning users: let clicks pass through the overlay to underlying buttons.
-  splash.style.pointerEvents = 'none';
-
-  // On first click anywhere, kill the gif and hide the splash.
+  // Returning users: one click anywhere skips instantly.
   const skip = () => {
     const img = document.getElementById('splashImage');
     if (img) {
-      // stop decoding/animating and free it
-      img.src = '';
-      img.remove();
+      img.src = '';       // stop decoding/animating
+      img.remove();       // drop from DOM
     }
-    // remove the overlay
-    splash.remove();
+    splash.remove();      // remove overlay so the page can render immediately
   };
+
+  // Do NOT preventDefault—let the underlying click still fire.
+  document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
+})();
+
 
   // Capture so we run before anything else, but DO NOT preventDefault —
   // we want the underlying button click to still happen.
@@ -1025,15 +1026,16 @@ window.addEventListener('click', (event) => {
 });
 
 /* Export Auto Top (hidden button) */
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', function () {
   const exportBtn = document.getElementById('exportAutoTopBtn');
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-      const weeks = document.getElementById('weeksInput').value || '00';
+      const weeks = document.getElementById('weeksInput')?.value || '00';
       const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
       const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
-      const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB' :
-                     (totalNumbersGlobal === 39) ? 'auto_topF5' : 'auto_topX';
+      const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB'
+                   : (totalNumbersGlobal === 39) ? 'auto_topF5'
+                   : 'auto_topX';
 
       const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
       const numbers = inputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
@@ -1050,7 +1052,8 @@ window.onload = function () {
       setTimeout(() => { URL.revokeObjectURL(url); link.remove(); document.getElementById('autoPickModal').style.display = 'none'; }, 100);
     });
   }
-};
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');

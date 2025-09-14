@@ -67,24 +67,22 @@ table tr:hover{background:#444}
 #newDrawingInputs{margin-left:12px}
 
 /* ==========  Modal  ========== */
+/* Make modals sit above sticky table headers & everything else on the page */
 .modal{
-    display:none;position:fixed;z-index:1;left:0;top:0;width:100%;height:100%;
-    overflow:auto;background:rgba(0,0,0,.4);
+  display:none;
+  position:fixed;
+  left:0; top:0; width:100%; height:100%;
+  overflow:auto;
+  background:rgba(0,0,0,.4);
+  z-index:20000;              /* was 1 */
 }
-.modal-content {
-    background: black;
-    color: lightgreen;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 70%;
-    max-width: 480px;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+
+/* Keep the sheet above its overlay just in case */
+.modal .modal-content{
+  position: relative;
+  z-index:20001;
 }
+
 
 .close-button {
   position: absolute;

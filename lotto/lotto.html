@@ -382,6 +382,9 @@ h2 { margin: 8px 0; }
 .pick-cell { cursor: pointer; }
 .pick-cell:hover { outline: 1px dashed #6f6; outline-offset: -3px; }
 
+/* ensure the splash can catch clicks */
+#splashScreen { pointer-events: auto; }
+
 
   </style>
 </head>
@@ -718,6 +721,46 @@ h2 { margin: 8px 0; }
 </body>
 
 <script>
+
+// First visit: no skipping.
+// Return visits: click anywhere to instantly dismiss the splash.
+(function () {
+  const splash = document.getElementById('splashScreen');
+  if (!splash) return;
+
+  const SEEN_KEY = 'tweSeenSplash';
+
+  // If they've never been here before, mark as seen AFTER the page loads once.
+  if (!localStorage.getItem(SEEN_KEY)) {
+    window.addEventListener('load', () => {
+      try { localStorage.setItem(SEEN_KEY, '1'); } catch {}
+    }, { once: true });
+    return; // no skip on first visit
+  }
+
+  // They’ve been here before: clicking anywhere dismisses the splash.
+  const skip = (e) => {
+    // prevent the click from also activating whatever is underneath
+    e.preventDefault();
+    e.stopPropagation();
+    document.removeEventListener('click', skip, true);
+    splash.remove();
+  };
+
+  // capture phase so we handle the click before anything else
+  document.addEventListener('click', skip, { capture: true, once: true });
+
+  // (optional nicety) allow Escape key to skip too
+  document.addEventListener('keydown', function esc(e){
+    if (e.key === 'Escape') {
+      splash.remove();
+      document.removeEventListener('keydown', esc, true);
+      document.removeEventListener('click', skip, true);
+    }
+  }, { capture: true });
+})();
+
+
 
 // 🧠 Last-picks metadata (used when saving)
 window.lastPicksMeta = {

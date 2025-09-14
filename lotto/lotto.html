@@ -2358,7 +2358,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
     if (!file) return;
 
     const filename = file.name;
-    const match = filename.match(/(all|best)_sets_(f5|pwb).*?_(\d+)\.txt$/i);
+    const match = filename.match(/(All|Best)_(F5|PWB).*?_(\d+)\.txt$/i);
     if (!match) { alert("Filename does not match expected pattern."); return; }
 
     const [, , mode, drawNumber] = match;

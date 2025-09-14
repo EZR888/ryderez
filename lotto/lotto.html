@@ -722,44 +722,46 @@ h2 { margin: 8px 0; }
 
 <script>
 
-// First visit: no skipping.
-// Return visits: click anywhere to instantly dismiss the splash.
+// Return visits: click-through skip that also kills the GIF immediately.
 (function () {
   const splash = document.getElementById('splashScreen');
   if (!splash) return;
 
   const SEEN_KEY = 'tweSeenSplash';
 
-  // If they've never been here before, mark as seen AFTER the page loads once.
+  // First-ever visit: let it play once, then remember.
   if (!localStorage.getItem(SEEN_KEY)) {
-    window.addEventListener('load', () => {
-      try { localStorage.setItem(SEEN_KEY, '1'); } catch {}
-    }, { once: true });
-    return; // no skip on first visit
+    window.addEventListener('load', () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch {} }, { once: true });
+    return;
   }
 
-  // They’ve been here before: clicking anywhere dismisses the splash.
-  const skip = (e) => {
-    // prevent the click from also activating whatever is underneath
-    e.preventDefault();
-    e.stopPropagation();
-    document.removeEventListener('click', skip, true);
+  // Returning users: let clicks pass through the overlay to underlying buttons.
+  splash.style.pointerEvents = 'none';
+
+  // On first click anywhere, kill the gif and hide the splash.
+  const skip = () => {
+    const img = document.getElementById('splashImage');
+    if (img) {
+      // stop decoding/animating and free it
+      img.src = '';
+      img.remove();
+    }
+    // remove the overlay
     splash.remove();
   };
 
-  // capture phase so we handle the click before anything else
-  document.addEventListener('click', skip, { capture: true, once: true });
+  // Capture so we run before anything else, but DO NOT preventDefault —
+  // we want the underlying button click to still happen.
+  document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
 
-  // (optional nicety) allow Escape key to skip too
+  // (optional) allow Esc to skip too
   document.addEventListener('keydown', function esc(e){
     if (e.key === 'Escape') {
-      splash.remove();
+      skip();
       document.removeEventListener('keydown', esc, true);
-      document.removeEventListener('click', skip, true);
     }
   }, { capture: true });
 })();
-
 
 
 // 🧠 Last-picks metadata (used when saving)

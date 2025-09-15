@@ -382,6 +382,9 @@ h2 { margin: 8px 0; }
 .pick-cell { cursor: pointer; }
 .pick-cell:hover { outline: 1px dashed #6f6; outline-offset: -3px; }
 
+/* ensure the splash can catch clicks */
+#splashScreen { pointer-events: auto; }
+
 
   </style>
 </head>
@@ -430,10 +433,6 @@ h2 { margin: 8px 0; }
         <img src="powerball.png" alt="Load 69-number game">
       </button>
 
-      <button id="load1Button" class="gameBtn">
-        <img src="power.png" alt="Load PB-only game">
-      </button>
-
       <button id="load39Button" class="gameBtn">
         <img src="Fantasy5.png" alt="Load 39-number game">
       </button>
@@ -454,6 +453,7 @@ h2 { margin: 8px 0; }
 
       <!-- ==== Button order per your spec ==== -->
       <button id="methodologyBtn" class="button button-single">📘 Methodology</button>
+      <button id="load1Button" class="button button-single">🔴 Pick Powerball</button>
       <button id="showHistogramBtn" class="button button-single" style="display:none;">📊 Show Points Histogram</button>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="checkNumbersButton" class="button button-single">✅ Check Sets</button>
@@ -722,6 +722,47 @@ h2 { margin: 8px 0; }
 
 <script>
 
+// Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
+// First visit: we let the GIF play; onload marks the visit as "seen".
+(function () {
+  const splash = document.getElementById('splashScreen');
+  if (!splash) return;
+
+  const SEEN_KEY = 'tweSeenSplash';
+
+  // First-ever visit: let it play; remember after it finishes loading once.
+  if (!localStorage.getItem(SEEN_KEY)) {
+    window.addEventListener(
+      'load',
+      () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {} },
+      { once: true }
+    );
+    return;
+  }
+
+  // Returning users: one click anywhere skips instantly.
+  function skip() {
+    const img = document.getElementById('splashImage');
+    if (img) {
+      img.src = '';   // stop decoding/animating immediately
+      img.remove();   // drop from DOM
+    }
+    splash.remove();  // remove overlay so the page renders immediately
+  }
+
+  // Do NOT preventDefault—let the underlying click still fire.
+  document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
+
+  // (optional) allow Esc to skip too
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') {
+      skip();
+      document.removeEventListener('keydown', esc, true);
+    }
+  }, { capture: true });
+})();
+
+
 // 🧠 Last-picks metadata (used when saving)
 window.lastPicksMeta = {
   method: 'manual',          // 'system' | 'quick12' | 'manual'
@@ -983,15 +1024,16 @@ window.addEventListener('click', (event) => {
 });
 
 /* Export Auto Top (hidden button) */
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', function () {
   const exportBtn = document.getElementById('exportAutoTopBtn');
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-      const weeks = document.getElementById('weeksInput').value || '00';
+      const weeks = document.getElementById('weeksInput')?.value || '00';
       const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
       const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
-      const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB' :
-                     (totalNumbersGlobal === 39) ? 'auto_topF5' : 'auto_topX';
+      const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB'
+                   : (totalNumbersGlobal === 39) ? 'auto_topF5'
+                   : 'auto_topX';
 
       const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
       const numbers = inputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
@@ -1008,7 +1050,8 @@ window.onload = function () {
       setTimeout(() => { URL.revokeObjectURL(url); link.remove(); document.getElementById('autoPickModal').style.display = 'none'; }, 100);
     });
   }
-};
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const closeAutoBtn = document.getElementById('closeAutoPickModal');
@@ -2315,12 +2358,14 @@ document.getElementById("checkNumbersButton").onclick = function () {
     if (!file) return;
 
     const filename = file.name;
-    const match = filename.match(/(all|best)_sets_(f5|pwb).*?_(\d+)\.txt$/i);
+    const match = filename.match(/(All|Best)_(F5|PWB).*?_(\d+)\.txt$/i);
     if (!match) { alert("Filename does not match expected pattern."); return; }
 
-    const [, , mode, drawNumber] = match;
-    const reader = new FileReader();
+    const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+    const isPWB = (game === "PWB");
+    const drawNumber = match[3];
 
+    const reader = new FileReader();
     reader.onload = function (e) {
       const lines = e.target.result.trim().split("\n").filter(Boolean);
       if (!lines.length) { alert("File appears to be empty."); return; }
@@ -2328,33 +2373,33 @@ document.getElementById("checkNumbersButton").onclick = function () {
       const drawLabel = document.getElementById("drawNumberLabel");
       if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
 
-      const lottoFile = (mode === "pwb") ? "lotto_69.txt" : "lotto_39.txt";
+      const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+
       fetch(lottoFile + "?t=" + Date.now())
         .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
         .then(text => {
           const line = text.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
           if (!line) throw new Error("Drawing number not found in lotto file");
 
-          const parts = line.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+          const parts = line.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
           const nums = parts.slice(1, 6);
           let pb = null;
 
-          if (mode === "pwb") {
-            fetch("lotto_1.txt?t=" + Date.now())
+          if (isPWB) {
+            return fetch("lotto_1.txt?t=" + Date.now())
               .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
               .then(pbText => {
                 const pbLine = pbText.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
                 if (!pbLine) throw new Error("Matching Powerball not found for draw #" + drawNumber);
-                const pbParts = pbLine.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                const pbParts = pbLine.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
                 pb = pbParts[1];
-                checkAgainstSets(lines, nums, pb, mode, drawNumber);
-              })
-              .catch(err => { alert(err); console.error("⚠️ Powerball fetch error:", err); });
+                checkAgainstSets(lines, nums, pb, game, drawNumber);
+              });
           } else {
-            checkAgainstSets(lines, nums, null, mode, drawNumber);
+            checkAgainstSets(lines, nums, null, game, drawNumber);
           }
         })
-        .catch(err => { alert(err); console.error("⚠️ Lotto file fetch error:", err); });
+        .catch(err => { alert(err); console.error("⚠️ Lotto/Powerball fetch error:", err); });
     };
 
     reader.readAsText(file);
@@ -2362,6 +2407,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
   fileInput.click();
 };
+
 
 function wireHotDialogMetaSync(){
   const weeksEl = document.getElementById('weeksInput');
@@ -2387,13 +2433,14 @@ function wireHotDialogMetaSync(){
 }
 
 
-function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
+function checkAgainstSets(lines, nums, pb, game, drawNumber) {
+  const isPWB = (String(game).toUpperCase() === 'PWB');
   const winDisplay = document.getElementById("winningNumbersDisplay");
   if (winDisplay) winDisplay.textContent = nums.join(", ");
 
   const pbDisplay = document.getElementById("winningPBDisplay");
   if (pbDisplay) {
-    if (mode === "pwb" && pb !== null) {
+    if (isPWB && pb !== null) {
       pbDisplay.textContent = `+ PB: ${pb}`;
       pbDisplay.style.display = "inline";
     } else {
@@ -2412,11 +2459,11 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     if (!numbers || numbers.length < 5) continue;
 
     const picks = numbers.slice(0, 5);
-    const bonus = (mode === "pwb" && numbers.length >= 6) ? numbers[5] : null;
+    const bonus = (isPWB && numbers.length >= 6) ? numbers[5] : null;
 
     const matchCount = picks.filter(n => nums.includes(n)).length;
-    const pbMatch = (mode === "pwb" && pb !== null && bonus === pb);
-
+	const pbMatch = (isPWB && pb !== null && bonus === pb);
+	
     let tier = "", color = "";
     if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
     else if (matchCount === 5)            { tier = "5";       color = "red"; }
@@ -2427,7 +2474,7 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
     else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
     else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
-    else if (mode === "f5" && matchCount === 2) { tier = "2"; color = "lightblue";}
+    else if (!isPWB && matchCount === 2) { tier = "2"; color = "lightblue"; }
 
     if (tier) {
       foundMatch = true;
@@ -2445,7 +2492,7 @@ function checkAgainstSets(lines, nums, pb, mode, drawNumber) {
     matchDiv.appendChild(div);
   }
 
-  const prizeFile = `${mode}_${drawNumber}.txt`;
+  const prizeFile = `${isPWB ? 'pwb' : 'f5'}_${drawNumber}.txt`;
   fetch(prizeFile + "?t=" + Date.now())
     .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
     .then(text => renderPrizeTable(text))

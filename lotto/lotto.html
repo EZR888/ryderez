@@ -1688,6 +1688,10 @@ function computeSystemPicks(
   const H = uniq(hotList);
   const T = uniq(topList);
 
+  // 🔒 1) MANDATORY = Hot ∩ Skips (Top). These must always be green.
+  const mandatory = H.filter(n => T.includes(n));
+  const mandatorySet = new Set(mandatory);
+
   const chosen = new Set();
   const push = n => { if (!chosen.has(n)) chosen.add(n); };
 
@@ -1701,41 +1705,54 @@ function computeSystemPicks(
     return p;
   }
   function preScore(n) {
-    const due = (sinceMapObj[n] || 0);
+    const due   = (sinceMapObj[n] || 0);
     const inTop = T.includes(n) ? 1 : 0;
     const inHot = H.includes(n) ? 1 : 0;
     return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
   }
 
-  // 1) consensus first
-  H.filter(n => T.includes(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
+  // 2) Seed with ALL mandatory (sorted by strength). If > count, cap to best `count`.
+  const mandatorySorted = mandatory.slice().sort((a,b) => preScore(b) - preScore(a));
+  mandatorySorted.forEach(n => { if (chosen.size < count) push(n); });
+  if (mandatorySorted.length >= count) {
+    return Array.from(chosen).sort((a,b)=>a-b); // already filled entirely by consensus
+  }
 
-  // 2) ensure at least half from Top
+  // 3) Ensure at least half from Top (Skips), excluding those already chosen
   const wantTopMin = Math.max(Math.floor(count/2), 4);
-  T.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < wantTopMin) push(n); });
+  T.filter(n => !chosen.has(n))
+   .sort((a,b)=>preScore(b)-preScore(a))
+   .forEach(n => { if (chosen.size < wantTopMin) push(n); });
 
-  // 3) fill from Hot
-  H.filter(n => !chosen.has(n)).sort((a,b)=>preScore(b)-preScore(a)).forEach(n => { if (chosen.size < count) push(n); });
+  // 4) Fill from Hot
+  H.filter(n => !chosen.has(n))
+   .sort((a,b)=>preScore(b)-preScore(a))
+   .forEach(n => { if (chosen.size < count) push(n); });
 
-  // 4) backfill by raw frequency if still short
+  // 5) Backfill by recent frequency + due if still short
   if (chosen.size < count) {
-    getTopNumbersByFrequency(weeks, totalNumbersGlobal)
+    getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))
       .filter(n => !chosen.has(n))
       .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
       .forEach(n => { if (chosen.size < count) push(n); });
   }
+
+  // 6) Final fallback (shouldn’t be needed)
   for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
 
-  // 5) points-aware refinement (deterministic with rng)
+  // 7) Points-aware refinement — 🔒 do NOT replace mandatory numbers
   let pool = Array.from(chosen).sort((a,b)=>a-b);
+  let currentScore = evaluatePoolPoints(pool, rng);
   const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
 
-  let currentScore = evaluatePoolPoints(pool, rng);
   let improved = true;
   let tries = 0;
   while (improved && tries < 40) {
     improved = false; tries++;
     for (let i = 0; i < pool.length; i++) {
+      const victim = pool[i];
+      if (mandatorySet.has(victim)) continue; // 🔒 keep consensus numbers pinned
+
       const base = pool.filter((_, idx) => idx !== i);
 
       const candidates = candidateUniverse
@@ -1746,9 +1763,11 @@ function computeSystemPicks(
       let bestLocal = currentScore;
       let bestChoice = null;
       for (const cand of candidates) {
+        // (light anti-clump — optional skip)
         const adjBad = base.some(x => Math.abs(x - cand) <= 1);
         if (adjBad && rng() < 0.4) continue;
 
+        // never eject a mandatory (already ensured by skipping victim above)
         const trial = [...base, cand].sort((a,b)=>a-b);
         const trialScore = evaluatePoolPoints(trial, rng);
         if (trialScore < bestLocal) {
@@ -1763,8 +1782,14 @@ function computeSystemPicks(
       }
     }
   }
-  return pool.slice(0, count).sort((a,b)=>a-b);
+
+  // Safety: make sure all mandatory are present (they should be)
+  mandatory.forEach(n => { if (!pool.includes(n)) pool.push(n); });
+  pool = pool.slice(0, count).sort((a,b)=>a-b);
+
+  return pool;
 }
+
 
 // 🔁 REPLACE/ADD this function
 function populateAllThreeOnLoad() {

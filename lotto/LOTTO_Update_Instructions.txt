@@ -1,0 +1,258 @@
+30 19 * * * /usr/bin/python3 /Volumes/2TBExt/Documents/GitHub/ryderez/lotto/fetch_prizes.py
+
+launchctl unload ~/Library/LaunchAgents/com.ezr.watchdraws.plist 2>/dev/null || true
+launchctl load  ~/Library/LaunchAgents/com.ezr.watchdraws.plist
+launchctl start com.ezr.watchdraws   # optional: kick off now for a test
+
+tail -f /tmp/watch_draws.out.log /tmp/watch_draws.err.log
+
+launchctl stop  com.ezr.watchdraws
+launchctl unload ~/Library/LaunchAgents/com.ezr.watchdraws.plist
+
+If the Mac reboots at 7:10 PM → the agent loads at login (RunAtLoad), the script starts immediately and is already inside the Fantasy 5 window, so it polls and updates.
+
+If the Mac reboots at 9:00 PM → same idea, it starts and proceeds into the Powerball window.
+
+On normal days, StartCalendarInterval at 19:00 ensures it begins even if you were logged in well before.
+
+The script exits after both games are published, so the agent stays idle until the next day.
+
+The lock file prevents overlap if you also run it manually.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.ezr.watchdraws</string>
+
+    <!-- Run at login/reboot -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Also schedule daily start at 19:00 PT -->
+    <key>StartCalendarInterval</key>
+    <dict>
+      <key>Hour</key><integer>19</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/bin/python3</string>
+      <string>/Volumes/2TBExt/Documents/GitHub/ryderez/lotto/watch_draws.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Volumes/2TBExt/Documents/GitHub/ryderez/lotto</string>
+
+    <!-- Helpful logs -->
+    <key>StandardOutPath</key>
+    <string>/tmp/watch_draws.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/watch_draws.err.log</string>
+
+    <!-- KeepAlive only if it crashes; do NOT relaunch after clean exit -->
+    <key>KeepAlive</key>
+    <dict>
+      <key>SuccessfulExit</key>
+      <false/>
+    </dict>
+
+    <!-- Make sure typical PATH is available if your fetch uses tools -->
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+  </dict>
+</plist>
+
+#!/usr/bin/env python3
+"""
+watch_draws.py
+Polls for Fantasy 5 (39) and Powerball (69) results in the evening, pushing updates ASAP.
+
+- 7:00–8:30 PM PT: poll once per minute until lotto_39.txt updates (new top draw), then stop F5 polling.
+- Then poll Powerball from 8:30–10:30 PM PT until lotto_69.txt updates.
+- Exit after both are detected (or windows end).
+
+Safe to start any time; it idles until the next window. Includes a lock so only one instance runs.
+"""
+
+import os
+import re
+import sys
+import time
+import atexit
+import signal
+import fcntl
+import subprocess
+from datetime import datetime, timedelta
+
+try:
+    from zoneinfo import ZoneInfo  # Python 3.9+
+except Exception:
+    ZoneInfo = None
+
+# ── PATHS ────────────────────────────────────────────────────────────────────
+REPO_DIR = "/Volumes/2TBExt/Documents/GitHub/ryderez/lotto"
+FETCH_SCRIPT = os.path.join(REPO_DIR, "fetch_prizes.py")
+LOTTO_39 = os.path.join(REPO_DIR, "lotto_39.txt")  # Fantasy 5 (39-game)
+LOTTO_69 = os.path.join(REPO_DIR, "lotto_69.txt")  # Powerball main (69-game)
+
+# ── TIME WINDOWS (Pacific) ───────────────────────────────────────────────────
+PT = ZoneInfo("America/Los_Angeles") if ZoneInfo else None
+F5_WINDOW  = ((19, 0), (20, 30))   # 7:00–8:30 PM PT
+PWB_WINDOW = ((20, 30), (22, 30))  # 8:30–10:30 PM PT
+POLL_INTERVAL_SEC = 60
+
+# ── SINGLE-INSTANCE LOCK ─────────────────────────────────────────────────────
+LOCK_PATH = "/tmp/lotto_watch.lock"
+_lock_fp = None
+
+def acquire_lock():
+    global _lock_fp
+    _lock_fp = open(LOCK_PATH, "w")
+    try:
+        fcntl.flock(_lock_fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        _lock_fp.write(str(os.getpid()))
+        _lock_fp.flush()
+    except BlockingIOError:
+        print("🧷 Another watch_draws.py instance is already running. Exiting.")
+        sys.exit(0)
+
+def release_lock():
+    try:
+        if _lock_fp:
+            fcntl.flock(_lock_fp, fcntl.LOCK_UN)
+            _lock_fp.close()
+        if os.path.exists(LOCK_PATH):
+            os.remove(LOCK_PATH)
+    except Exception:
+        pass
+
+def handle_signal(sig, frame):
+    print(f"\n🛑 Received signal {sig}. Exiting.")
+    sys.exit(0)
+
+atexit.register(release_lock)
+signal.signal(signal.SIGINT, handle_signal)
+signal.signal(signal.SIGTERM, handle_signal)
+
+# ── TIME HELPERS ─────────────────────────────────────────────────────────────
+def now_pt():
+    if PT:
+        return datetime.now(PT)
+    return datetime.now()
+
+def in_window(now_dt, window):
+    (sh, sm), (eh, em) = window
+    start = now_dt.replace(hour=sh, minute=sm, second=0, microsecond=0)
+    end   = now_dt.replace(hour=eh, minute=em, second=59, microsecond=999999)
+    return start <= now_dt <= end
+
+def next_window_start(now_dt, window):
+    (sh, sm), _ = window
+    start_today = now_dt.replace(hour=sh, minute=sm, second=0, microsecond=0)
+    return start_today if now_dt <= start_today else (start_today + timedelta(days=1))
+
+def sleep_until(ts):
+    while True:
+        delta = (ts - now_pt()).total_seconds()
+        if delta <= 0:
+            return
+        time.sleep(min(delta, 60))
+
+def sleep_interval_aligned(interval=POLL_INTERVAL_SEC):
+    now = time.time()
+    rem = interval - (now % interval)
+    time.sleep(rem if 0 < rem < interval else interval)
+
+# ── FILE/PROC HELPERS ────────────────────────────────────────────────────────
+def read_top_draw(filepath):
+    """
+    Parse first line '<drawnum>,n1,n2,n3,n4,n5' → return int drawnum or None.
+    """
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            first = f.readline().strip()
+        m = re.match(r"^(\d+),", first)
+        return int(m.group(1)) if m else None
+    except Exception:
+        return None
+
+def run_fetch_once():
+    py = sys.executable or "/usr/bin/python3"
+    try:
+        proc = subprocess.run([py, FETCH_SCRIPT], cwd=REPO_DIR)
+        return proc.returncode
+    except Exception as e:
+        print(f"⚠️  Failed to run fetch_prizes.py: {e}")
+        return 1
+
+# ── CORE POLLING ─────────────────────────────────────────────────────────────
+def poll_window_for_change(label, target_file, window):
+    """
+    Poll once per minute within 'window' until the top draw number changes.
+    Returns True if a change detected; False if window ends first.
+    """
+    print(f"⏱️  {label}: window {window[0][0]:02d}:{window[0][1]:02d}–{window[1][0]:02d}:{window[1][1]:02d} PT")
+    while True:
+        now = now_pt()
+
+        # If we're before today's window start, wait; if after, bail.
+        if not in_window(now, window):
+            start_at = next_window_start(now, window)
+            if start_at.date() != now.date():
+                print(f"⏭️  {label}: today's window has passed; not polling.")
+                return False
+            # If we’re still earlier today, wait for the start
+            if now < start_at:
+                sleep_until(start_at)
+                continue
+
+        # Baseline
+        before = read_top_draw(target_file)
+
+        # Run fetch once (does both games; that’s fine)
+        rc = run_fetch_once()
+        if rc != 0:
+            print(f"⚠️  {label}: fetch returned {rc}; will retry.")
+
+        # Check again
+        after = read_top_draw(target_file)
+        if before is None and after is not None:
+            print(f"✅ {label}: file appeared with draw #{after}.")
+            return True
+        if before is not None and after is not None and after != before:
+            print(f"✅ {label}: detected new draw #{after} (was #{before}).")
+            return True
+
+        # Keep polling within the window
+        if in_window(now_pt(), window):
+            sleep_interval_aligned()
+        else:
+            print(f"⌛ {label}: window ended without update.")
+            return False
+
+def main():
+    acquire_lock()
+    print("▶️  Evening watcher started.")
+    print(f"📁 Repo: {REPO_DIR}")
+    print(f"🕒 Now:  {now_pt().strftime('%Y-%m-%d %H:%M:%S %Z')}")
+
+    # Fantasy 5 block
+    f5_done = poll_window_for_change("Fantasy 5 (39)", LOTTO_39, F5_WINDOW)
+
+    # Powerball block — start immediately if inside window; else it will wait until it opens today
+    pb_done = poll_window_for_change("Powerball (69)", LOTTO_69, PWB_WINDOW)
+
+    print(f"🏁 Finished. Fantasy5 updated: {bool(f5_done)} | Powerball updated: {bool(pb_done)}")
+    # Normal exit; atexit will release the lock.
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n🛑 Stopped by user.")

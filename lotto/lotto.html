@@ -386,6 +386,81 @@ h2 { margin: 8px 0; }
 #splashScreen { pointer-events: auto; }
 
 
+/* Container: single column, two rows: toggle then panel */
+#backtestControls {
+  display: grid;
+  grid-template-areas:
+    "toggle"
+    "panel";
+  grid-auto-rows: auto;
+  gap: 8px 12px;
+  margin-left: 12px;
+  align-items: start; /* avoid vertical wiggle */
+}
+
+#backtestToggle {
+  grid-area: toggle;
+  justify-self: start;
+}
+
+/* Panel: two rows — inputs on row 1, buttons on row 2 */
+#backtestPanel {
+  grid-area: panel;
+  display: none; /* toggle to grid when open */
+  grid-template-areas:
+    "label input draws"
+    "buttons buttons buttons";
+  grid-template-columns: auto 60px 1fr;   /* label | number | 'draws' (flexible) */
+  gap: 8px;
+  align-items: center;
+}
+
+#backtestPanel label   { grid-area: label; }
+#backtestPanel input   { grid-area: input; width: 60px; }
+#backtestPanel span    { grid-area: draws; }
+#backtestPanel .btnrow { grid-area: buttons; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* default hidden */
+#backtestPanel { display: none; }
+
+/* visible when open */
+#backtestPanel.open {
+  display: grid;                    /* your two-row grid */
+  grid-template-areas:
+    "label input draws"
+    "buttons buttons buttons";
+  grid-template-columns: auto 60px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+#backtestPanel label   { grid-area: label; }
+#backtestPanel input   { grid-area: input; width: 60px; }
+#backtestPanel span    { grid-area: draws; }
+#backtestPanel .btnrow { grid-area: buttons; display:flex; gap:8px; flex-wrap:wrap; }
+
+/* responsive tweak (optional) */
+@media (max-width: 1100px) {
+  #backtestPanel.open {
+    grid-template-areas:
+      "label input input"
+      "draws draws draws"
+      "buttons buttons buttons";
+    grid-template-columns: auto 60px 1fr;
+  }
+}
+
+
+/* Narrow panes: stack inputs more aggressively, buttons still on their own line */
+@media (max-width: 1100px) {
+  #backtestPanel {
+    grid-template-areas:
+      "label input input"
+      "draws draws draws"
+      "buttons buttons buttons";
+    grid-template-columns: auto 60px 1fr;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -419,10 +494,11 @@ h2 { margin: 8px 0; }
     <aside id="controlColumn">
 
       <div class="banner" style="text-align:center; margin-top: 16px; margin-bottom: 12px;">
-        <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
-          The Winning Edge
-        </h1>
-        <div style="font-size: 24px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
+        <div style="font-size: 42px; font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
+        The Winning Edge
+        </div>
+
+        <div style="font-size: 18px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
           Statistically Optimized Lotto Picks
         </div>
       </div>
@@ -448,6 +524,7 @@ h2 { margin: 8px 0; }
         <h3 style="margin:0 6px 0 0;">Pick Powerball Number</h3>
         <input><input><input><input><input>
       </div>
+
 
       <div id="pbNote" style="display:none; margin: 6px 0 10px 6px; max-width: 420px; font-size: 16px; line-height:1.5; color: lightyellow;"></div>
 
@@ -476,6 +553,26 @@ h2 { margin: 8px 0; }
       <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button><br>
       <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Wheel Picks</button>
       <button id="quick12Button" class="button button-single" style="display:none">⚡ 6 Ticket Set</button><br>
+
+      
+      <!-- Back Test controls -->
+<div id="backtestControls">
+  <button id="backtestToggle" class="button button-single">🧪 Back Test</button>
+
+  <div id="backtestPanel">
+    <label for="trimInput" style="color:lightyellow;">Trim last</label>
+    <input id="trimInput" type="number" min="0" value="0">
+    <span style="color:lightyellow;">draws</span>
+
+    <div class="btnrow">
+      <button id="applyTrim" class="button">Apply</button>
+      <button id="stepBack" class="button">◀︎ Step</button>
+      <button id="stepForward" class="button">Step ▶︎</button>
+      <button id="resetTrim" class="button">Reset</button>
+    </div>
+  </div>
+</div>
+
 
     </aside>
 
@@ -722,6 +819,23 @@ h2 { margin: 8px 0; }
 
 <script>
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('backtestToggle');
+  const panel  = document.getElementById('backtestPanel');
+  if (!toggle || !panel) {
+    console.warn('Back Test controls not found in DOM.');
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    // optional a11y state:
+    const expanded = panel.classList.contains('open');
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+});
+
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
 // First visit: we let the GIF play; onload marks the visit as "seen".
 (function () {
@@ -811,7 +925,18 @@ let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDra
 let activeGameMode = null;
 let __pbInputsWired = false;
 
+// Backtesting
+let backtestTrim = 0;                     // how many most-recent draws to chop off
+const originalFullDataByGame = {};        // { 39: [...], 69: [...], 26: [...] }
 
+// support `?trim=NN` or `#trim=NN`
+function initBacktestTrimFromURL() {
+  const p = new URLSearchParams(location.search);
+  const hashP = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const v = p.get('trim') ?? hashP.get('trim');
+  backtestTrim = Math.max(0, parseInt(v, 10) || 0);
+}
+initBacktestTrimFromURL();
 
 const qs  = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
@@ -1050,6 +1175,55 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => { URL.revokeObjectURL(url); link.remove(); document.getElementById('autoPickModal').style.display = 'none'; }, 100);
     });
   }
+});
+
+// Back Test UI wiring
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle   = document.getElementById('backtestToggle');
+  const panel    = document.getElementById('backtestPanel');
+  const trimEl   = document.getElementById('trimInput');
+  const applyBtn = document.getElementById('applyTrim');
+  const stepB    = document.getElementById('stepBack');
+  const stepF    = document.getElementById('stepForward');
+  const resetBtn = document.getElementById('resetTrim');
+
+  if (!toggle || !panel) return;
+
+  // open/close panel
+  toggle.addEventListener('click', () => {
+    panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'inline-flex' : 'none';
+  });
+
+  // seed from URL (?trim=NN)
+  trimEl.value = String(backtestTrim);
+
+  // apply arbitrary trim
+  applyBtn.addEventListener('click', () => {
+    backtestTrim = Math.max(0, parseInt(trimEl.value, 10) || 0);
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
+
+  // step = add one more trimmed (go further back in time)
+  stepB.addEventListener('click', () => {
+    backtestTrim = backtestTrim + 1;
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
+
+  // step forward = reduce trim by 1 (walk toward present)
+  stepF.addEventListener('click', () => {
+    backtestTrim = Math.max(0, backtestTrim - 1);
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
+
+  // reset
+  resetBtn.addEventListener('click', () => {
+    backtestTrim = 0;
+    rebuildFromOriginalTrim();
+    showToast('Trim reset (using full dataset).');
+  });
 });
 
 
@@ -1386,36 +1560,42 @@ function setDeterministicSeed(tag = 'systemPicks') {
 
 
 function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
-    fetch(filename + '?t=' + Date.now())
-        .then(response => response.text())
-        .then(text => {
-            fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
-            const drawingNumbers = fullData.map(row => parseInt(row[0]));
-            latestDrawingNumber = drawingNumbers[0];
-            
-            updatePicksMetaDisplay(null);
+  fetch(filename + '?t=' + Date.now())
+    .then(response => response.text())
+    .then(text => {
+      // parse the raw file
+      const parsed = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
 
-            const lastDrawElem = document.getElementById('lastDrawingNumber');
-            if (lastDrawElem) {
-                lastDrawElem.textContent = latestDrawingNumber || '–';
-            } else {
-                console.warn("⚠️ Element with ID 'lastDrawingNumber' not found.");
-            }
+      // stash original (untrimmed) for this game
+      originalFullDataByGame[totalNumbers] = parsed;
 
-            const data = fullData.map(row => row.slice(1).map(n => parseInt(n)))
-                .filter(row => row.every(n => !isNaN(n)));
+      // apply current trim (drop most recent 'backtestTrim' rows)
+      const effective = parsed.slice(backtestTrim);
 
-            totalNumbersGlobal = totalNumbers;
-            hotSet.clear();  // ✅ reset Hot when switching datasets
+      // from here on, behave exactly like before, but use 'effective'
+      fullData = effective;
 
-            skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+      const drawingNumbers = fullData.map(row => parseInt(row[0], 10));
+      latestDrawingNumber = drawingNumbers[0];
 
-            pastDrawings = fullData.filter(row => row.length >= 6)
-                .map(row => row.slice(1, 6).map(n => parseInt(n)).sort((a, b) => a - b).join(','));
+      updatePicksMetaDisplay(null);
 
-            renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
-            // ⬇️ draw Skip Frequency table now that skipDataGlobal/sinceMap are ready
-renderSkipFrequency();
+      const lastDrawElem = document.getElementById('lastDrawingNumber');
+      if (lastDrawElem) lastDrawElem.textContent = latestDrawingNumber || '–';
+
+      const data = fullData.map(row => row.slice(1).map(n => parseInt(n, 10)))
+                           .filter(row => row.every(n => !isNaN(n)));
+
+      totalNumbersGlobal = totalNumbers;
+      hotSet.clear();
+
+      skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+
+      pastDrawings = fullData.filter(row => row.length >= 6)
+        .map(row => row.slice(1, 6).map(n => parseInt(n, 10)).sort((a, b) => a - b).join(','));
+
+      renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+      renderSkipFrequency();
 
 
             const quick12Btn = document.getElementById('quick12Button');
@@ -1451,6 +1631,52 @@ if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex'
 
 // expose it globally so any handler can call it
 window.loadCSVFile = loadCSVFile;
+
+function rebuildFromOriginalTrim() {
+  const raw = originalFullDataByGame[totalNumbersGlobal];
+  if (!raw) return;                         // not loaded yet
+  const effective = raw.slice(backtestTrim);
+  fullData = effective;
+
+  const drawingNumbers = fullData.map(row => parseInt(row[0], 10));
+  latestDrawingNumber = drawingNumbers[0];
+
+  const data = fullData.map(row => row.slice(1).map(n => parseInt(n, 10)))
+                       .filter(row => row.every(n => !isNaN(n)));
+
+  skipDataGlobal = buildSkipTable(data, totalNumbersGlobal, drawingNumbers);
+
+  pastDrawings = fullData.filter(row => row.length >= 6)
+    .map(row => row.slice(1, 6).map(n => parseInt(n, 10)).sort((a, b) => a - b).join(','));
+
+  renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
+  renderSkipFrequency();
+
+  // Recompute Hot/Top/Picks deterministically for the trimmed window
+  if (totalNumbersGlobal !== 26) {
+    // Skips-based top
+    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
+
+    // Hot over the (trimmed) last up to 25 draws
+    const weeks = Math.min(25, fullData.length);
+    const hot12 = computeTrendingHotNumbers(weeks, 12);
+    hotSet = new Set(hot12);
+
+    // System Picks
+    setDeterministicSeed('systemPicks');
+    const picks12 = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
+    systemPicksSet = new Set(picks12);
+
+    ensureTwelveInputs();
+    setInputsFromList(picks12, 12);
+    setPicksMeta({ method: 'system', weeks, hotCoverage: 12 });
+  }
+
+  // reflect current trim in the UI
+  const t = document.getElementById('trimInput');
+  if (t) t.value = String(backtestTrim);
+}
+
 
 // Pick the `count` numbers whose current "since" length has the strongest historical frequency.
 // Score = how often this number historically had the current since-length.

@@ -420,6 +420,36 @@ h2 { margin: 8px 0; }
 #backtestPanel span    { grid-area: draws; }
 #backtestPanel .btnrow { grid-area: buttons; display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* default hidden */
+#backtestPanel { display: none; }
+
+/* visible when open */
+#backtestPanel.open {
+  display: grid;                    /* your two-row grid */
+  grid-template-areas:
+    "label input draws"
+    "buttons buttons buttons";
+  grid-template-columns: auto 60px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+#backtestPanel label   { grid-area: label; }
+#backtestPanel input   { grid-area: input; width: 60px; }
+#backtestPanel span    { grid-area: draws; }
+#backtestPanel .btnrow { grid-area: buttons; display:flex; gap:8px; flex-wrap:wrap; }
+
+/* responsive tweak (optional) */
+@media (max-width: 1100px) {
+  #backtestPanel.open {
+    grid-template-areas:
+      "label input input"
+      "draws draws draws"
+      "buttons buttons buttons";
+    grid-template-columns: auto 60px 1fr;
+  }
+}
+
+
 /* Narrow panes: stack inputs more aggressively, buttons still on their own line */
 @media (max-width: 1100px) {
   #backtestPanel {
@@ -542,7 +572,6 @@ h2 { margin: 8px 0; }
     </div>
   </div>
 </div>
-
 
 
     </aside>
@@ -790,11 +819,22 @@ h2 { margin: 8px 0; }
 
 <script>
 
-const panel = document.getElementById('backtestPanel');
-document.getElementById('backtestToggle').onclick = () => {
-  panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
-};
 
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('backtestToggle');
+  const panel  = document.getElementById('backtestPanel');
+  if (!toggle || !panel) {
+    console.warn('Back Test controls not found in DOM.');
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    // optional a11y state:
+    const expanded = panel.classList.contains('open');
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  });
+});
 
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
 // First visit: we let the GIF play; onload marks the visit as "seen".

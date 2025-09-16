@@ -1,0 +1,3484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Winning Edge</title>
+  <style>
+ /* ==========  Global layout / colours  ========== */
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    padding:10px;
+    background: #086d22;
+    color:lightgreen;
+}
+.container{display:flex;height:100vh}
+
+/* ---------- buttons ---------- */
+button{
+    margin:12px;
+    padding:9px 9px;
+    background: salmon;
+    color:#fff;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    border-radius:4px;
+}
+button:hover{background:slategray}
+
+/* ---------- inputs ---------- */
+input[type="number"],
+input[type="text"]{
+    width:40px;
+    text-align:center;
+    font-size:16px;
+    margin:2px;
+    background:#fffbcc;
+}
+
+
+/* ---------- table styling ---------- */
+table{
+    border-collapse:collapse;
+    margin-top:10px;
+    width:100%;
+    background:#000;
+}
+th,td{
+    border:1px solid #666;
+    width:30px;height:30px;
+    text-align:center;
+    color:lightgray;
+}
+th{background:#333;color:#fff}
+
+.selected-top-skip{background:#ff0!important;color:#000;font-weight:bold}
+.top18-selected   {background:orange!important;color:#000;font-weight:bold}
+.missed-over-25   {background:red!important;color:#fff;font-weight:bold}
+.red-dot,.orange-dot{
+    width:14px;height:14px;border-radius:50%;margin:auto
+}
+.red-dot   {background:red}
+.orange-dot{background:orange}
+table tr:hover{background:#444}
+
+#skipFrequencyContainer td{font-size:17px}
+#newDrawingInputs{margin-left:12px}
+
+/* ==========  Modal  ========== */
+/* Make modals sit above sticky table headers & everything else on the page */
+.modal{
+  display:none;
+  position:fixed;
+  left:0; top:0; width:100%; height:100%;
+  overflow:auto;
+  background:rgba(0,0,0,.4);
+  z-index:20000;              /* was 1 */
+}
+
+/* Keep the sheet above its overlay just in case */
+.modal .modal-content{
+  position: relative;
+  z-index:20001;
+}
+
+.modal-content {
+    background: black;
+    color: lightgreen;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 28px;
+  font-weight: bold;
+  color: lightgray;
+  cursor: pointer;
+}
+.close-button:hover { color: white; }
+
+/* ---------- modal footer ---------- */
+.modal-footer{
+    margin:18px 0 8px;display:flex;gap:16px;justify-content:center
+}
+
+/* ==========  Powerball picker block  ========== */
+#load1Button{display:none}
+
+#pbBlock{
+    display:none;
+    gap:6px;margin:12px 0 8px 12px;
+    align-items:center
+}
+#pbBlock input{ width:36px;background:#fffbcc }
+
+/* ==========  Items hidden until data have loaded  ========== */
+#newDrawingInputs,
+#top18Inputs,
+button[onclick="exportGeneratedSets()"],
+button[onclick="exportBestSets()"],
+button[onclick="updateReverseHitsTop18()"] {
+  display: none;
+}
+#newDrawingInputs > button { display: none; }
+
+button img{
+    width:150px;height:auto;display:block;pointer-events:none;
+}
+button:hover img{ filter:brightness(1.15); }
+button.active{
+    outline:3px solid gold;
+    outline-offset:2px;
+    filter:brightness(1.25);
+}
+
+/* ---------- image buttons ---------- */
+.gameBtn{
+    background:#000;
+    padding:10px;
+    border:none;
+    cursor:pointer;
+    border-radius:6px;
+    margin:12px;
+}
+.gameBtn:hover img{filter:brightness(1.2);}
+.gameBtn.active{
+    outline:3px solid gold;
+    outline-offset:2px;
+    filter:brightness(1.25);
+}
+
+/* keep the old style for any other text buttons */
+button:not(.gameBtn){ background:#064d06; }
+
+input.dimmed { opacity: 0.4; pointer-events: none; }
+
+#matchResults div { margin: 4px 0; font-weight: bold; }
+
+/* Remove spinner arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number]{ -moz-appearance: textfield; }
+
+/* 🎯 Scoped Button Styles */
+.button { font-size:100%; padding:6px 12px; margin:5px; border:none; border-radius:5px; cursor:pointer; transition:all .2s ease; background:#444; color:#fff!important; }
+.button:hover { opacity:.8; }
+.button-single { background: salmon; color:black; }
+.button-purple { background: purple; color:#fff; }
+
+h1 {
+  font-family: 'Comic Sans MS', cursive;
+  font-style: italic;
+  font-size: 54px;
+  text-align: center;
+  position: relative;
+  margin: auto;
+  width: auto;
+  color: gold;
+}
+
+/* ---------- headings ---------- */
+h2{margin:0 0 8px;color: lightgreen}
+h3{margin:0 0 15px;color: gold}
+
+.bar-entry { display:flex; align-items:center; margin:4px 0; font-family:monospace; font-size:14px; }
+.bar-label { width:80px; color:gold; text-align:right; padding-right:6px; }
+.bar { height:14px; background:lightgreen; margin-left:4px; }
+
+#splashScreen {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: green; z-index: 9999; display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#splashImage { max-width: 90%; max-height: 80vh; }
+#splashText { margin-top: 20px; color: gold; font-size: 32px; font-weight: bold; font-family: 'Comic Sans MS', cursive; }
+
+.green-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#32cd32; }
+.hot-dot{ width:14px;height:14px;border-radius:50%;margin:auto;background:#FFFF00; }
+
+/* Toast */
+#tweToast {
+  position: fixed;
+  left: 50%;
+  top: 50%;                      /* move from bottom to middle */
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.85);
+  color: #fff;
+  padding: 18px 26px;            /* more padding */
+  border-radius: 8px;
+  font-size: 22px;               /* larger font */
+  font-weight: bold;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+#tweToast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05); /* subtle "pop" */
+}
+
+#hitsSubtitle{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+}
+#picksMetaDisplay{
+  font-weight:bold;
+  color: lightyellow;
+  font-size: 16px;
+}
+
+/* ===== Desktop two-column layout ===== */
+@media (min-width: 1100px) {
+  .app {
+    display: grid;
+    grid-template-columns: 420px 1fr; /* left controls / right data */
+    gap: 16px;
+    align-items: start;
+  }
+  #controlColumn {
+    position: sticky;
+    top: 8px;
+    max-height: calc(100vh - 16px);
+    overflow: auto;
+    padding-right: 4px;
+  }
+  /* tighten banner spacing on desktop */
+  .banner { margin: 10px 0 8px; }
+  .banner h1 {
+    font-size: clamp(40px, 3.6vw, 64px);
+    margin-bottom: 6px;
+  }
+}
+
+/* ===== Data panel scroll area ===== */
+#reverseHitsContainer,
+#skipFrequencyContainer {
+  /* allow the right side to show more table without page scroll */
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  border: 1px solid #333;
+}
+
+/* ===== Sticky header row & sticky first column in Hits table ===== */
+#reverseHitsContainer table thead th,
+#reverseHitsContainer table tr:first-child th {
+  position: sticky;
+  top: 0;
+  background: #222;
+  z-index: 3;
+}
+
+/* Make the left “number” header sticky */
+#reverseHitsContainer table th:first-child,
+#skipFrequencyContainer table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: #222;
+}
+
+/* Keep header cells readable over the dark bg */
+#reverseHitsContainer table th,
+#skipFrequencyContainer table th {
+  box-shadow: inset 0 -1px 0 #555;
+}
+
+/* Compact general spacing a bit without shrinking text */
+button { margin: 8px; }
+h2 { margin: 8px 0; }
+
+#top18Inputs {
+  display: grid;
+  grid-template-columns: repeat(6, 50px); /* each ~50px wide */
+  gap: 8px;
+  justify-content: center; /* optional: centers the whole block */
+}
+
+
+/* Optional: nudge right data panel in when zoomed way out so it doesn't feel tight */
+.app { padding-right: 10px; }
+
+/* ===== Table density (affects only the data tables) ===== */
+:root { --table-scale: 1; }  /* 1 = 100% density (default) */
+
+#reverseHitsContainer table,
+#skipFrequencyContainer table {
+  font-size: calc(14px * var(--table-scale));
+}
+
+#reverseHitsContainer table th,
+#reverseHitsContainer table td,
+#skipFrequencyContainer table th,
+#skipFrequencyContainer table td {
+  height: calc(30px * var(--table-scale));
+  padding: 0; /* tighter by default; height controls the row size */
+}
+
+/* if you want header a tad bigger than body rows: */
+#reverseHitsContainer table thead th,
+#skipFrequencyContainer table thead th {
+  height: calc(32px * var(--table-scale));
+  font-weight: bold;
+}
+
+/* dots scale too */
+.red-dot, .orange-dot, .green-dot, .hot-dot, .blue-dot {
+  width: calc(14px * var(--table-scale));
+  height: calc(14px * var(--table-scale));
+}
+
+/* your special larger font in skip freq table also scales */
+#skipFrequencyContainer td {
+  font-size: calc(17px * var(--table-scale));
+}
+
+/* keep sticky headers looking right */
+#reverseHitsContainer table thead th,
+#reverseHitsContainer table tr:first-child th {
+  line-height: calc(30px * var(--table-scale));
+}
+
+/* Make the Picks column cells look interactive */
+.pick-cell { cursor: pointer; }
+.pick-cell:hover { outline: 1px dashed #4caf50; outline-offset: -3px; }
+
+/* Inline toolbars that match your button styles */
+.toolbar{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;       /* wraps nicely if the column is narrow */
+  margin: 8px 0;
+}
+.toolbar .readout{
+  color: #fff;
+  min-width: 52px;
+  text-align: center;
+  padding: 4px 6px;
+  font-weight: bold;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 6px;
+}
+.toolbar button.button{  /* reuse your existing .button look, but tighter spacing */
+  margin: 0;
+  padding: 6px 10px;
+}
+
+.pick-cell { cursor: pointer; }
+.pick-cell:hover { outline: 1px dashed #6f6; outline-offset: -3px; }
+
+/* ensure the splash can catch clicks */
+#splashScreen { pointer-events: auto; }
+
+
+  </style>
+</head>
+<body>
+
+<!-- Wrap your app so transform fallback can scale cleanly -->
+<div id="zoomRoot">
+  <!-- move your existing content inside this wrapper:
+       (Everything from your splash and .app through the rest of the page)
+  -->
+
+
+  <!-- Splash -->
+  <div id="splashScreen">
+    <div style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+      <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; font-size: 64px; color: gold; margin-bottom: 12px; text-shadow: 2px 2px 4px black;">
+        The Winning Edge
+      </h1>
+      <div style="font-size: 24px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
+        Statistically Optimized Lotto Picks
+        <br><br>
+      </div>
+    </div>
+
+    <div id="splashText">Loading your luck...</div><br><br>
+    <img src="potogold.gif" alt="Loading your luck..." id="splashImage">
+  </div>
+
+  <!-- Two-column app -->
+  <div class="app">
+    <!-- LEFT: controls -->
+    <aside id="controlColumn">
+
+      <div class="banner" style="text-align:center; margin-top: 16px; margin-bottom: 12px;">
+        <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
+          The Winning Edge
+        </h1>
+        <div style="font-size: 24px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
+          Statistically Optimized Lotto Picks
+        </div>
+      </div>
+<br>
+      <h2>Load a Lotto Dataset</h2>
+
+      <button id="powerball" class="gameBtn">
+        <img src="powerball.png" alt="Load 69-number game">
+      </button>
+
+      <button id="load39Button" class="gameBtn">
+        <img src="Fantasy5.png" alt="Load 39-number game">
+      </button>
+
+      <span id="lastDrawingDisplay" style="font-weight: bold; margin-left: 6px; font-size: 20px; display:block;">
+        <span style="color: gold;">Last Drawing #:</span>
+        <span id="lastDrawingNumber" style="color: lightyellow;">–</span>
+      </span>
+      <br>
+
+      <!-- PB inputs (shown/hidden by JS) -->
+      <div id="pbBlock" style="display:none; margin-top:8px;">
+        <h3 style="margin:0 6px 0 0;">Pick Powerball Number</h3>
+        <input><input><input><input><input>
+      </div>
+
+      <div id="pbNote" style="display:none; margin: 6px 0 10px 6px; max-width: 420px; font-size: 16px; line-height:1.5; color: lightyellow;"></div>
+
+      <!-- ==== Button order per your spec ==== -->
+      <button id="methodologyBtn" class="button button-single">📘 Methodology</button>
+      <button id="load1Button" class="button button-single">🔴 Pick Powerball</button>
+      <button id="showHistogramBtn" class="button button-single" style="display:none;">📊 Show Points Histogram</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="checkNumbersButton" class="button button-single">✅ Check Sets</button>
+        <button id="loadTop18Button" class="button button-single">📂 Load Picks</button>
+      </div>
+      <br>
+
+      <h2 id="top18Label" style="margin-top: 14px;">Your Picks (Editable)</h2>
+
+      <!-- 2 x 6 grid for inputs (JS still targets #top18Inputs input) -->
+      <div id="top18Inputs"
+     style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; max-width:360px;">
+        <!-- JS will populate 12 <input> here -->
+      </div>
+
+      <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button>
+
+      <button id="systemPicksButton" class="button button-single" style="display:none">🤖 Restore Sys Picks</button>
+            <button id="savePicksBtn" class="button button-single">💾 Save Picks</button><br>
+      <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button><br>
+      <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Wheel Picks</button>
+      <button id="quick12Button" class="button button-single" style="display:none">⚡ 6 Ticket Set</button><br>
+
+    </aside>
+
+    <!-- RIGHT: data -->
+    <main id="dataColumn">
+    
+<!-- Combined toolbar row -->
+<div id="toolbarsRow"
+     style="display:flex; justify-content:space-between; align-items:center; margin:8px 0;">
+
+  <!-- Rows density (left side) -->
+  <div id="densityToolbar" class="toolbar" style="margin:0;">
+    <button id="rowsDown"  class="button button-single" title="Show more rows (compact)">−</button>
+    <button id="rowsReset" class="button button-single" title="Reset table density">Zoom Rows 100%</button>
+    <button id="rowsUp"    class="button button-single" title="Show fewer rows (roomy)">+</button>
+    <span id="rowsPct" class="readout">100%</span>
+  </div>
+
+  <!-- Page zoom (right side) -->
+  <div id="zoomToolbar" class="toolbar" aria-label="Page zoom controls" style="margin:0;">
+    <button id="zoomOutBtn"  class="button button-single" title="Zoom Out">−</button>
+    <button id="zoomResetBtn" class="button button-single" title="Reset (100%)">Zoom Page 100%</button>
+    <button id="zoomInBtn"   class="button button-single" title="Zoom In">+</button>
+    <span id="zoomPct" class="readout">100%</span>
+  </div>
+
+</div>
+
+      <div id="hitsTableSection" style="display: none;">
+        <h2 style="text-align:center;">Hits Table (Last 25 Drawings)</h2>
+        <div id="latestDrawingComment" style="margin-bottom: 10px; font-weight: bold;"></div>
+        <div id="recentDrawsContainer"></div>
+      </div>
+
+      <h2 style="text-align:center;">Hits Table</h2>
+      <h3 id="hitsSubtitle" style="text-align:center;">Last 25 Drawings <span id="picksMetaDisplay"></span></h3>
+      <div id="reverseHitsContainer"></div>
+
+      <br>
+      <h2 style="text-align:center;">Skip Frequency Table</h2>
+      <h3 style="text-align:center;">Number of Drawings Between Hits</h3>
+      <div id="skipFrequencyContainer"></div>
+    </main>
+  </div><!-- /.app -->
+
+  <!-- Modals (unchanged) -->
+
+  <!-- Load Prior Picks -->
+  <div id="loadTop18Modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeLoadModal">&times;</span>
+      <h2>Load Prior Picks</h2>
+      <input type="file" id="loadTop18FileInput">
+    </div>
+  </div>
+
+  <!-- Wheel -->
+  <div id="wheelModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button close-wheel">&times;</span>
+      <h2>Generated Wheel Sets</h2>
+
+      <div id="progressInfo" style="margin-top:6px;font-size:14px;"></div>
+      <div id="modalWheelOutput" style="white-space:pre-wrap"></div>
+
+      <div style="margin-top:10px">
+        <label style="color:lightgreen">How many sets to generate? </label>
+        <input type="number" id="modalSetCountChoice" value="220" min="1" max="100" style="width:50px;font-size:16px;background:#333;color:#fff"><br>
+        <label style="color:lightgreen">Show Best Sets: </label>
+        <input type="number" id="modalBestSetCount" value="5" min="1" style="width:50px;font-size:16px;background:#333;color:#fff">
+      </div>
+
+      <div class="modal-footer">
+        <button id="generateSetsModalButton">🎯 Generate Sets</button>
+        <button id="pickBestSetsModal">✨ Pick Best</button>
+        <button id="exportAllBtn">⬇️ Export All</button>
+        <button id="exportBestBtn">⬇️ Export Best</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div id="methodologyModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeMethodology">&times;</span>
+      <h2>How This Works</h2>
+<h3 style="margin-top:16px;">Skips (orange dots)</h3>
+<p style="line-height:1.6;">
+  <b>Skips</b> are based on each number’s “time since last hit” and the
+  <i>historical frequency</i> of that exact skip length. Numbers whose current skip length
+  lines up with a historically common skip for that number are considered stronger (more “due”).
+</p>
+
+<h3 style="margin-top:16px;">Hot (blue dots)</h3>
+<p style="line-height:1.6;">
+  <b>Hot</b> scores the <b>last 1–25 drawings</b> (25 by default), with <b>more weight on newer hits</b>,
+  a small bonus if hits are <b>accelerating</b>, and a minimum level of recent presence. A number must be
+  <b>very recent</b> <i>or</i> show <b>≥2 recent hits</b> to qualify. This favors numbers trending now, not just historically.
+</p>
+
+<h3 style="margin-top:16px;">Picks (green dots)</h3>
+<p style="line-height:1.6;">
+  <b>Picks</b> blend <b>Skips + Hot + Due</b> (time since hit), then refine the pool to reduce clumping
+  and lower average <b>Points</b> (see below). We start with the <b>overlap</b> (<i>Hot ∩ Skips</i>),
+  ensure <b>at least half</b> of the 12 come from <b>Skips</b>, add the rest from <b>Hot</b>, and
+  backfill from <b>recent frequency</b> if needed. A light <b>anti-clump</b> nudge discourages numbers
+  adjacent to ones already chosen. Finally, we run a quick <b>points-aware swap search</b> to improve spacing and shape.
+</p>
+
+<ul style="line-height:1.6; margin-left:18px;">
+  <li><b>Spacing:</b> small penalty if a candidate sits right next to something already picked.</li>
+  <li><b>Due-ness:</b> longer “since last hit” helps a candidate.</li>
+  <li><b>Deterministic:</b> System Picks use a stable seed tied to the current dataset and latest draw —
+      same data in ⇒ same picks out.</li>
+  <li><b>Manual edits:</b> typing in the 12 inputs flips the method to <b>Manual</b> so exports are labeled correctly.</li>
+</ul>
+
+<h3 style="margin-top:16px;">Wheel Generation</h3>
+<p style="line-height:1.6;">
+  <b>Generate Wheel</b> builds 5-number sets from <i>your 12 inputs</i> (not the Skips/Hot columns).
+  Each set must pass these filters:
+</p>
+
+<ul style="line-height:1.6; margin-left:18px;">
+  <li><b>Adaptive sum window:</b> reject sets whose sum is too low/high vs what’s typical for your 12-number pool.</li>
+  <li><b>No recent full draw:</b> reject sets that exactly match any recent 5-number draw.</li>
+  <li><b>Points cap (~1200):</b> reject sets whose <b>Points</b> score is above the threshold (we want stronger shapes).</li>
+  <li><b>Coverage:</b> track covered <b>3-number combinations</b>; more sets ⇒ more 3-combo coverage.</li>
+</ul>
+
+<h3 style="margin-top:16px;">Powerball (optional)</h3>
+<p style="line-height:1.6;">
+  Enter up to <b>5</b> Powerball numbers; exports <b>cycle round-robin</b> through them on each line.
+  Leave them blank to use a <b>fresh random PB (1–26)</b> for every set.
+</p>
+
+<h3 style="margin-top:16px;">Quick 12 (optional)</h3>
+<p style="line-height:1.6;">
+  <b>Quick 12</b> builds six sets from a fixed pattern using your 12 numbers and
+  optimizes their ordering by the <b>Points</b> score.
+</p>
+
+<h3 style="margin-top:16px;">Points (shape/quality score)</h3>
+<p style="line-height:1.6;">
+  <b>Points</b> evaluate a 5-number set’s “shape.” Lower is better. We reference empirical tables to
+  penalize unusual or historically weak patterns. Features include:
+</p>
+
+<ul style="line-height:1.6; margin-left:18px;">
+  <li><b>Sum</b> &amp; <b>Spread</b></li>
+  <li><b>Odd–Even</b> balance &amp; <b>Low–High</b> balance</li>
+  <li><b>Consecutive pairs</b> and gaps between positions (1–2, 2–3, 3–4, 4–5)</li>
+  <li><b>Min/Max</b> and <b>center value</b></li>
+</ul>
+
+<p style="line-height:1.6;">
+  Picks try to minimize <b>average Points</b> across many sampled combinations from the pool, which tends to
+  avoid awkward clumps, skewed parity, and odd spreads.
+</p>
+
+<p style="line-height:1.6; color:#ddd;">
+  It’s not magic—just disciplined filtering, scoring, and coverage.
+</p>
+
+</div> </div>
+
+      <!-- ... -->
+    </div>
+  </div>
+
+  <!-- Check Numbers -->
+  <div id="checkNumbersModal" class="modal">
+    <div class="modal-content" style="width: 60%; max-width: none;">
+      <span class="close-button close-check">&times;</span>
+      <h2>Check Your Numbers</h2>
+      <br>
+      <div style="display: flex; gap: 40px;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <label style="font-size: 20px; font-weight: bold; color: orange;">Prize Table</label>
+            <div id="drawNumberLabel" style="color: lightyellow; font-size: 18px;"></div>
+          </div>
+          <table id="prizeTable" style="width: 100%; border-collapse: collapse; color: lightgreen;">
+            <thead><tr><th>Match Tier</th><th>Winners</th><th>Prize</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <br><br>
+        </div>
+        <div style="flex: 1;">
+          <div id="checkInputFields">
+            <label style="font-size: 20px; font-weight: bold; color: orange;">Winning Numbers:</label><br>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+              <div id="winningNumbersDisplay" style="display: flex; gap: 10px; font-size: 20px; color: gold;"></div>
+              <div id="winningPBDisplay" style="font-size: 20px; color: gold;"></div>
+            </div>
+          </div>
+          <br>
+          <div id="matchResults" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrolling Histogram -->
+  <div id="histogramModal" class="modal">
+    <div class="modal-content" style="max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+      <span id="closeHistogramModal" class="close-button" style="top: 10px; right: 14px;">&times;</span>
+      <h2 style="margin-top: 0; color: lightgreen;">Points Per Drawing (Latest on Top)</h2>
+      <div id="histogramContent"></div>
+    </div>
+  </div>
+
+<!-- Auto Pick -->
+<div id="autoPickModal" class="modal">
+  <div class="modal-content" style="width: 400px; max-width: 90%;">
+    <span class="close-button" id="closeAutoPickModal">&times;</span>
+    <h2>Find Hot Numbers</h2>
+    
+    <label for="weeksInput">Number of Drawings (max 25):</label>
+    <input type="number" id="weeksInput" min="1" max="25" value="25" style="width:60px"><br><br>
+
+    <label>Select Coverage:</label><br>
+    <input type="radio" name="coverage" value="5" id="coverage5">
+    <label for="coverage5">Top 5</label><br>
+    <input type="radio" name="coverage" value="12" id="coverage12">
+    <label for="coverage12">Top 12</label><br>
+    <input type="radio" name="coverage" value="18" id="coverage18" checked>
+    <label for="coverage18">Top 18</label><br><br>
+
+    <button id="runAutoPick" class="button button-purple">🎯 Generate</button>
+    <!-- ✅ Keep these hidden but present -->
+    <button id="saveTop18Button" class="button button-single" style="display:none;">💾 Save Top #'s</button>
+    <button id="exportAutoTopBtn" class="button button-single" style="display:none;">⬇️ Export Auto Top</button>
+  </div>
+</div>
+
+    <!-- Back Test UI Elements -->
+    <div>
+        <label for="drawsBackInput">Number of Drawings to Back Test:</label>
+        <input type="number" id="drawsBackInput" min="1" max="20" value="5">
+        <button id="backTestButton">Run Back Test</button>
+    </div>   
+        
+    <div id="resultsContainer"></div> <!-- Container to display results -->
+
+  <!-- Wheel output placeholder -->
+  <div id="wheelOutput" style="display: none;"></div>
+
+</div><!-- /#zoomRoot -->
+
+</body>
+
+<script>
+
+   // Initialize variables
+        let latestDrawingNumber = null; // To be set when loading data
+        let fullData = [];
+        let hotSet = new Set();
+        let systemPicksSet = new Set();
+        let totalNumbersGlobal = 39; // Example default, adjust as needed
+
+        // Function to clear localStorage
+        function clearLocalStorage() {
+            localStorage.clear();
+        }
+
+        // Function to load historical drawing data from localStorage
+        function loadHistoricalData(drawsBack) {
+            const historicalData = [];
+            for (let i = 0; i < drawsBack; i++) {
+                const drawData = localStorage.getItem(`drawing_${latestDrawingNumber - i}`);
+                if (drawData) {
+                    historicalData.push(JSON.parse(drawData));
+                }
+            }
+            return historicalData;
+        }
+
+        // Function to apply the picking scenario to each drawing
+        function applyScenario(draw) {
+            const pickedNumbers = []; // Example picking logic
+            if (draw && draw.numbers) {
+                pickedNumbers.push(...draw.numbers.slice(0, 5)); // Adjust as per your picking logic
+            }
+            return pickedNumbers; // Return the result of the picking scenario
+        }
+
+        // Function to run the back test
+        function runBackTest(drawsBack) {
+            const historicalData = loadHistoricalData(drawsBack);
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = ''; // Clear previous results
+
+            historicalData.forEach((draw, index) => {
+                const results = applyScenario(draw);
+                const resultText = `Results for Drawing ${latestDrawingNumber - index}: ${results.join(', ')}`;
+                const resultDiv = document.createElement('div');
+                resultDiv.textContent = resultText;
+                resultsContainer.appendChild(resultDiv);
+            });
+        }
+
+        // Event listener for the Back Test button
+        document.getElementById('backTestButton').addEventListener('click', () => {
+            const drawsBack = parseInt(document.getElementById('drawsBackInput').value);
+            clearLocalStorage(); // Clear localStorage before loading new data
+            runBackTest(drawsBack);
+        });
+
+        // Function to load CSV file (Your existing function)
+        function loadCSVFile(filename, totalNumbers, callback) {
+            clearLocalStorage(); // Clear localStorage to avoid conflicts
+            fetch(filename + '?t=' + Date.now())
+                .then(response => response.text())
+                .then(text => {
+                    fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
+                    const drawingNumbers = fullData.map(row => parseInt(row[0]));
+                    latestDrawingNumber = drawingNumbers[0];
+
+                    // Store the current drawing data for back testing
+                    storeDrawingData(latestDrawingNumber, { numbers: fullData[0].slice(1).map(Number) });
+
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to load file:', error);
+                    alert('Error loading the file.');
+                });
+        }
+
+        // Example of storing drawing data
+        function storeDrawingData(drawingNumber, data) {
+            localStorage.setItem(`drawing_${drawingNumber}`, JSON.stringify(data));
+        }
+
+
+// Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
+// First visit: we let the GIF play; onload marks the visit as "seen".
+(function () {
+  const splash = document.getElementById('splashScreen');
+  if (!splash) return;
+
+  const SEEN_KEY = 'tweSeenSplash';
+
+  // First-ever visit: let it play; remember after it finishes loading once.
+  if (!localStorage.getItem(SEEN_KEY)) {
+    window.addEventListener(
+      'load',
+      () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {} },
+      { once: true }
+    );
+    return;
+  }
+
+  // Returning users: one click anywhere skips instantly.
+  function skip() {
+    const img = document.getElementById('splashImage');
+    if (img) {
+      img.src = '';   // stop decoding/animating immediately
+      img.remove();   // drop from DOM
+    }
+    splash.remove();  // remove overlay so the page renders immediately
+  }
+
+  // Do NOT preventDefault—let the underlying click still fire.
+  document.addEventListener('click', () => { skip(); }, { capture: true, once: true });
+
+  // (optional) allow Esc to skip too
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') {
+      skip();
+      document.removeEventListener('keydown', esc, true);
+    }
+  }, { capture: true });
+})();
+
+
+// 🧠 Last-picks metadata (used when saving)
+window.lastPicksMeta = {
+  method: 'manual',          // 'system' | 'quick12' | 'manual'
+  weeks: null,               // lookback drawings (e.g., 25)
+  hotCoverage: null,         // 5 | 12 | 18 (Top N)
+  timestamp: null            // ISO string
+};
+
+function setPicksMeta({ method, weeks=null, hotCoverage=null }) {
+  window.lastPicksMeta = {
+    method,
+    weeks,
+    hotCoverage,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// 🛡️ Put this once, right after setPicksMeta()
+window.__suppressManualFlag = false;
+function withSuppressedManual(fn){
+  const prev = window.__suppressManualFlag;
+  window.__suppressManualFlag = true;
+  try { fn(); } finally { window.__suppressManualFlag = prev; }
+}
+
+
+function getGameCode() {
+  return (totalNumbersGlobal === 69) ? 'PB'
+       : (totalNumbersGlobal === 39) ? 'F5'
+       : 'X';
+}
+
+function methodCode(m) {  // for filename
+  return (m === 'manual') ? 'MAN' : 'SYS';
+}
+
+let systemPicks = new Set();
+let latestDrawingNumber = null;
+let fullData = [];
+let top18 = [];
+let pastDrawings = [];
+let totalNumbersGlobal = 39, generatedSets=[];
+let skipDataGlobal={}, sinceMap={}, referenceData={};
+let top18From69 = [];
+let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
+let activeGameMode = null;
+let __pbInputsWired = false;
+
+
+
+const qs  = sel => document.querySelector(sel);
+const qsa = sel => Array.from(document.querySelectorAll(sel));
+
+/* ── BUTTON VISIBILITY / ELEMENTS ── */
+const btn39 = qs('#load39Button'),
+      btn69 = qs('#powerball'),
+      btn1  = qs('#load1Button'),
+      pbBlk = qs('#pbBlock');
+
+const wheelModal = document.getElementById('wheelModal');
+let skipDataFrom69 = {};
+
+/* ── Button handlers for loading datasets ── */
+btn69.onclick = () => {
+  loadCSVFile('lotto_69.txt', 69, () => {
+    activeGameMode = 69;
+
+    // Keep inputs manual and exactly 12 (placeholders)
+    ensureTwelveInputs();
+
+    // Auto-fill Top (orange), Hot (blue), Picks (green) — all 12 — deterministically
+    populateAllThreeOnLoad();
+
+    // ---- existing UI/show logic (unchanged) ----
+    // Save supporting data for restoring later
+    pastDrawingsFrom69 = [...pastDrawings];
+    skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
+    sinceMapFrom69     = { ...sinceMap };
+    fullDataFrom69     = [...fullData];
+
+    if (btn1) btn1.style.display = 'inline-block';
+
+    hidePBblock();
+    qs('#generateWheelButton').style.display = 'inline-block';
+    qs('#quick12Button').style.display       = 'inline-block';
+    qs('#systemPicksButton').style.display   = 'inline-block';
+    qs('#checkNumbersButton').style.display  = 'inline-block';
+    document.getElementById('showHistogramBtn').style.display = 'inline-block';
+    setupHistogramListener();
+    highlight(btn69);
+
+    // Show Top inputs/controls (inputs remain for your manual edits)
+    document.getElementById('top18Inputs').style.display = 'grid';
+    const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+    });
+
+    const pbSpan = document.getElementById('checkPBSpan');
+    if (pbSpan) pbSpan.style.display = 'inline';
+  });
+};
+
+
+btn1.onclick = () => {
+  highlight(btn1);
+  totalNumbersGlobal = 26;
+  activeGameMode = 26;
+
+  showPBblock();
+  qs('#generateWheelButton').style.display = 'none';
+  qs('#checkNumbersButton').style.display  = 'none';
+  document.getElementById('showHistogramBtn').style.display = 'none';
+  qs('#quick12Button').style.display       = 'none';
+  qs('#systemPicksButton').style.display   = 'none';
+
+  // Hide Top inputs & related controls in PB-only mode (including Save Picks)
+  ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+
+  // Load PB-only data (1..26) and compute Skips/Hot for visual consistency
+  loadCSVFile('lotto_1.txt', 26, () => {
+    // ✅ SKIPS (orange): take top 12 by current skip-profile
+    if (typeof recomputeTopFromSkips === 'function') {
+      top18 = recomputeTopFromSkips(12); // sets top18 and refreshes highlights internally
+    } else {
+      top18 = [];
+    }
+
+    // ✅ HOT (blue): trending in last up to 25 PB draws
+    const weeks = Math.min(25, fullData.length);
+    hotSet = new Set(computeTrendingHotNumbers(weeks, 12));
+
+    // No Picks column in PB mode
+    systemPicksSet = new Set();
+
+    // Draw/refresh the two tables
+    renderReverseHitsTable();
+    reapplySkipTableHighlights();
+  });
+};
+
+btn39.onclick = () => {
+  loadCSVFile('lotto_39.txt', 39, () => {
+    activeGameMode = 39;
+
+    // Keep inputs manual and exactly 12 (placeholders)
+    ensureTwelveInputs();
+
+    // Auto-fill Top (orange), Hot (blue), Picks (green) — all 12 — deterministically
+    populateAllThreeOnLoad();
+
+    // ---- existing UI/show logic (unchanged) ----
+    if (btn1) btn1.style.display = 'none';
+    hidePBblock();
+    highlight(btn39);
+    qs('#generateWheelButton').style.display = 'inline-block';
+    qs('#quick12Button').style.display       = 'inline-block';
+    qs('#systemPicksButton').style.display   = 'inline-block';
+    qs('#checkNumbersButton').style.display  = 'inline-block';
+    document.getElementById('showHistogramBtn').style.display = 'inline-block';
+    setupHistogramListener();
+
+    document.getElementById('top18Inputs').style.display = 'grid';
+    const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+    ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+    });
+
+    const checkPBSpan = document.getElementById('checkPBSpan');
+    if (checkPBSpan) checkPBSpan.style.display = 'none';
+  });
+};
+
+/* Save/Load Top18 */
+const saveTop18Button = document.getElementById('saveTop18Button');
+const loadTop18Button = document.getElementById('loadTop18Button');
+const loadTop18Modal = document.getElementById('loadTop18Modal');
+const loadTop18FileInput = document.getElementById('loadTop18FileInput');
+const closeLoadModal = document.getElementById('closeLoadModal');
+const savePicksBtn = document.getElementById('savePicksBtn');
+if (savePicksBtn) savePicksBtn.addEventListener('click', savePicksFromInputs);
+
+// Save the 12 inputs (low→high) to a file
+function savePicksFromInputs() {
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n));
+
+  if (nums.length !== 12) {
+    alert('Please enter 12 valid numbers in the input boxes before saving.');
+    return;
+  }
+
+  const sorted = nums.sort((a,b)=>a-b);
+
+  // Next draw only
+  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+    ? String(latestDrawingNumber + 1)
+    : '00000';
+
+  const game = getGameCode();              // 'PB' | 'F5' | 'X'
+  const meta = window.lastPicksMeta || {};
+  const method = meta.method || 'manual';
+  const weeks = (typeof meta.weeks === 'number') ? meta.weeks : null;
+  const hotN  = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null;
+
+  // 🏷️ Compact, informative filename:
+  // examples:
+  //   picksF5_11631_w25_h12_SYS.txt
+  //   picksPB_1470_Q12.txt
+  //   picksF5_11631_MAN.txt
+  const parts = [`Picks_${game}`, nextDraw];
+  if (method === 'system') {
+    if (hotN)  parts.push(`h${hotN}`);
+    if (weeks) parts.push(`d${weeks}`);
+  }
+  parts.push(methodCode(method));
+  const filename = parts.join('_') + '.txt';
+
+  // 🧾 Human-friendly header inside the file
+  const header = [
+    '# The Winning Edge - Picks',
+    `# Game: ${game}`,
+    `# Next Draw: ${nextDraw}`,
+    `# Method: ${method.toUpperCase()}`,
+    (weeks ? `# Lookback: ${weeks} drawings` : null),
+    (hotN  ? `# Hot Coverage: Top ${hotN}` : null),
+    (meta.timestamp ? `# Generated: ${meta.timestamp}` : `# Generated: ${new Date().toISOString()}`),
+    '---'
+  ].filter(Boolean).join('\n');
+
+  const body = sorted.join(', ');
+  const blob = new Blob([header + '\n' + body + '\n'], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 100);
+}
+
+saveTop18Button.addEventListener('click', saveTop18Numbers);
+loadTop18Button.addEventListener('click', () => { loadTop18Modal.style.display = 'block'; });
+closeLoadModal.addEventListener('click', () => { loadTop18Modal.style.display = 'none'; });
+loadTop18FileInput.addEventListener('change', handleTop18FileSelect);
+
+/* Methodology modal */
+document.getElementById('methodologyBtn').addEventListener('click', () => {
+  document.getElementById('methodologyModal').style.display = 'block';
+});
+document.getElementById('closeMethodology').addEventListener('click', () => {
+  document.getElementById('methodologyModal').style.display = 'none';
+});
+window.addEventListener('click', (event) => {
+  if (event.target.id === 'methodologyModal') {
+    document.getElementById('methodologyModal').style.display = 'none';
+  }
+});
+
+/* Export Auto Top (hidden button) */
+document.addEventListener('DOMContentLoaded', function () {
+  const exportBtn = document.getElementById('exportAutoTopBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const weeks = document.getElementById('weeksInput')?.value || '00';
+      const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
+      const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
+      const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB'
+                   : (totalNumbersGlobal === 39) ? 'auto_topF5'
+                   : 'auto_topX';
+
+      const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+      const numbers = inputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
+      const sorted = numbers.sort((a, b) => a - b);
+      const content = sorted.join(', ');
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${prefix}_${weeks}_${coverage}_${nextDraw}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => { URL.revokeObjectURL(url); link.remove(); document.getElementById('autoPickModal').style.display = 'none'; }, 100);
+    });
+  }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const closeAutoBtn = document.getElementById('closeAutoPickModal');
+  if (closeAutoBtn) {
+    closeAutoBtn.addEventListener('click', () => {
+      document.getElementById('autoPickModal').style.display = 'none';
+    });
+  }
+
+  loadPBFromStorage();   // if the PB block is hidden, values still populate the inputs
+  wirePBInputsOnce();
+
+  // ✍️ NEW: flip to MANUAL when a human edits any of the 12 inputs
+  const topBox = document.getElementById('top18Inputs');
+  if (topBox) {
+    const onManualEdit = (e) => {
+      // Only care about the 12 pick inputs
+      if (!(e.target && e.target.matches('#top18Inputs input'))) return;
+      // Ignore programmatic writes protected by withSuppressedManual
+      if (window.__suppressManualFlag) return;
+
+      const meta = window.lastPicksMeta || {};
+      setPicksMeta({
+        method: 'manual',
+        weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+        hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+      });
+    };
+
+    topBox.addEventListener('input', onManualEdit);
+    topBox.addEventListener('change', onManualEdit); // also catch blur/enter edits
+  }
+
+  // ✍️ END NEW
+
+  const runAutoBtn = document.getElementById('runAutoPick');
+  if (runAutoBtn) {
+    runAutoBtn.addEventListener('click', () => {
+      const weeks = Math.min(25, Math.max(1, parseInt(document.getElementById('weeksInput').value, 10) || 25));
+      const count = parseInt(document.querySelector('input[name="coverage"]:checked').value, 10);
+
+      // Recalculate Hot (blue dots)
+      const beforeHot = new Set(hotSet);
+      const hotNums = computeTrendingHotNumbers(weeks, count);
+      hotSet = new Set(hotNums);
+
+      // 👉 Also recompute Picks (green dots)
+      const beforePicks = new Set(systemPicksSet);
+      setDeterministicSeed('systemPicks');
+      const picks = computeSystemPicks(12, weeks, hotNums, top18, sinceMap);
+      systemPicksSet = new Set(picks);
+
+      // Mirror into inputs (programmatic; won’t flip to MANUAL)
+      setInputsFromList(picks, 12);
+
+      // Redraw
+      renderReverseHitsTable();
+      reapplySkipTableHighlights();
+
+      // Record as SYSTEM (since this was automated)
+      setPicksMeta({
+        method: 'system',
+        weeks,
+        hotCoverage: count
+      });
+
+      // Feedback
+      const hotChanged   = !setsEqual(beforeHot, hotSet);
+      const picksChanged = !setsEqual(beforePicks, systemPicksSet);
+      if (hotChanged || picksChanged) {
+        showToast('Hot + Picks updated.');
+      } else {
+        showToast('Recalculated (no change).');
+      }
+
+      // If you added this helper, safe to keep:
+      wireHotDialogMetaSync?.();
+    });
+  }
+
+  // Open Auto-pick modal
+  const showAutoBtn = document.getElementById('autoPickTopBtn');
+  if (showAutoBtn) {
+    showAutoBtn.addEventListener('click', () => {
+      document.getElementById('saveTop18Button').style.display = 'none';
+      document.getElementById('autoPickModal').style.display = 'block';
+    });
+  }
+
+  // ✅ Attach System Picks button once
+  const sysBtn = document.getElementById('systemPicksButton');
+  if (sysBtn) sysBtn.addEventListener('click', runSystemPicks);
+  
+  // Toggle picks by clicking the Picks column cells
+(function wirePickCellClickOnce(){
+  const container = document.getElementById('reverseHitsContainer');
+  if (!container || container.__pickClickWired) return;
+  container.__pickClickWired = true;
+
+  // CLICK to toggle
+  container.addEventListener('click', (e) => {
+    const cell = e.target.closest('.pick-cell');
+    if (!cell || !container.contains(cell)) return;
+
+    // Not available in PB-only mode
+    if (totalNumbersGlobal === 26) {
+      showToast('Picks are disabled in Powerball-only mode.');
+      return;
+    }
+
+    const n = parseInt(cell.dataset.n, 10);
+    if (!Number.isInteger(n)) return;
+
+    const wasSelected = systemPicksSet.has(n);
+
+    // Enforce a 12-cap (optional). Remove this block if you want unlimited.
+    if (!wasSelected && systemPicksSet.size >= 12) {
+      showToast('You already have 12 picks. Deselect one to add another.');
+      return;
+    }
+
+    // Flip membership
+    if (wasSelected) systemPicksSet.delete(n);
+    else systemPicksSet.add(n);
+
+    // Re-render and re-highlight
+    renderReverseHitsTable();
+    reapplySkipTableHighlights?.();
+
+    // Mirror to the 12 inputs (sorted)
+    const arr = Array.from(systemPicksSet).sort((a,b)=>a-b);
+    ensureTwelveInputs();
+    setInputsFromList(arr.slice(0,12), 12);
+
+    // Mark this as a manual change so exports label correctly
+    setPicksMeta({
+      method: 'manual',
+      weeks: (window.lastPicksMeta?.weeks ?? null),
+      hotCoverage: (window.lastPicksMeta?.hotCoverage ?? null)
+    });
+  });
+
+  // KEYBOARD: Enter/Space to toggle
+  container.addEventListener('keydown', (e) => {
+    const cell = e.target.closest('.pick-cell');
+    if (!cell) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();     // prevent page scroll on Space
+      cell.click();           // reuse the click handler logic
+    }
+  });
+})();
+
+});
+
+
+// Holds current System Picks result
+let systemPicksSet = new Set();
+let hotSet = new Set();
+
+function syncPicksToHot() {
+  systemPicksSet = new Set(hotSet);
+  renderReverseHitsTable();
+}
+
+function getTopSkipsFromInputs(limit = 12) {
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => !isNaN(n));
+  return nums.slice(0, limit).sort((a,b)=>a-b);
+}
+
+function computeTopHitsFromRecent(weeks = 25, count = 12) {
+  if (!fullData || !fullData.length) return [];
+  const recentDraws = fullData.slice(0, Math.min(weeks, fullData.length))
+    .map(row => row.slice(1).map(Number));
+
+  const freq = {};
+  recentDraws.forEach(draw => draw.forEach(n => { if (!isNaN(n)) freq[n] = (freq[n] || 0) + 1; }));
+
+  return Object.entries(freq)
+    .sort((a,b)=> b[1]-a[1])
+    .slice(0, count)
+    .map(([n]) => parseInt(n,10))
+    .sort((a,b)=>a-b);
+}
+
+// --- 1) If generateTopNumbersAndRender is missing, provide a simple version
+if (typeof generateTopNumbersAndRender !== "function") {
+  window.generateTopNumbersAndRender = function () {
+    // no-op: manual 12 inputs only now
+  };
+}
+
+
+// --- 2) Alias the missing name to your existing highlighter
+if (typeof rehighlightSkipTableFromTop18 !== "function") {
+  window.rehighlightSkipTableFromTop18 = function() {
+    if (typeof reapplySkipTableHighlights === "function") {
+      reapplySkipTableHighlights();
+    }
+  };
+}
+
+// --- 3) Minimal Pick Best implementation used by the modal button
+if (typeof pickBestSets !== "function") {
+  window.pickBestSets = function(openModal = true) {
+    if (!generatedSets || !generatedSets.length) {
+      alert('Generate sets first.');
+      return;
+    }
+    const bestCountInput = document.getElementById('modalBestSetCount');
+    const bestCount = parseInt(bestCountInput?.value, 10) || 5;
+
+    const best = [...generatedSets].sort((a,b) => a.points - b.points).slice(0, bestCount);
+
+    const out = document.getElementById('modalWheelOutput');
+    let html = '<ol>';
+    best.forEach(({ combo, points }) => {
+      html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+    });
+    html += '</ol>';
+    out.innerHTML = html;
+
+    if (openModal) document.getElementById('wheelModal').style.display = 'block';
+  };
+}
+
+function hidePBblock(){
+  pbBlk.style.display = 'none';
+  const note = document.getElementById('pbNote');
+  if (note) note.style.display = 'none';
+}
+
+function showPBblock() {
+  pbBlk.style.display = 'flex';
+
+  // 🔔 Note under the inputs
+  const note = document.getElementById('pbNote');
+  if (note) {
+    note.innerHTML = 'Enter <b>up to 5</b> Powerball numbers above. ' +
+      'When you export sets, we’ll <b>round-robin</b> through them on each line. ' +
+      'Leave them blank to use a fresh random PB (1–26) for every set. ' +
+      '<i>Your entries are saved in your browser.</i>';
+    note.style.display = 'block';
+  }
+
+  wirePBInputsOnce();
+
+  const inputs = qsa('#pbBlock input');
+  const existing = inputs
+    .map(inp => parseInt(inp.value, 10))
+    .filter(n => n >= 1 && n <= 26);
+
+  if (existing.length) return;
+  if (loadPBFromStorage()) return;
+
+  const pool  = Array.from({ length: 26 }, (_, i) => i + 1);
+  const picks = [];
+  while (picks.length < 5) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picks.push(pool.splice(idx, 1)[0]);
+  }
+  inputs.forEach((inp, i) => (inp.value = picks[i] ?? ''));
+  savePBToStorage();
+  __pbCycleIndex = 0;
+}
+
+function updatePicksMetaDisplay(meta){
+  const span = document.getElementById('picksMetaDisplay');
+  if (!span) return;
+
+  // Clear when no meta (e.g., on dataset load)
+  if (!meta) { span.textContent = ''; return; }
+
+  const game = meta.game || getGameCode();
+  const nextDraw = meta.nextDraw || (typeof latestDrawingNumber === 'number' ? String(latestDrawingNumber + 1) : '');
+  const methodRaw = (meta.method || '').toUpperCase();
+  const methodCodeShort = methodRaw.startsWith('SYS') ? 'SYS' : 'MAN';
+
+  const hotToken  = meta.hotCoverage ? `h${meta.hotCoverage}` : null;
+  const lookToken = meta.lookback   ? `d${meta.lookback}`   : null;
+
+  const left = ['Picks', game, nextDraw, hotToken, lookToken, methodCodeShort]
+    .filter(Boolean).join('_');
+
+  const niceMethod = (methodCodeShort === 'SYS') ? 'System Picks' : 'Manual Picks';
+  const niceBits = [niceMethod];
+  if (meta.hotCoverage) niceBits.push(`Top ${meta.hotCoverage} hot numbers`);
+  if (meta.lookback)   niceBits.push(`looking back ${meta.lookback} drawings`);
+
+  const right = `(${niceBits.join(', ')})`;
+  span.textContent = `${left}, ${right}`;
+}
+
+
+// --- Seeded RNG utilities (deterministic randomness) ---
+function makeRNG(seed) {
+  let s = (seed >>> 0) || 1;
+  return function rng() {
+    s ^= s << 13; s ^= s >>> 17; s ^= s << 5;
+    return ((s >>> 0) / 4294967296);
+  };
+}
+function stableSeed(...things) {
+  const str = JSON.stringify(things);
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+const asSorted = arr => [...arr].sort((a,b)=>a-b);
+
+// --- Deterministic RNG glue ---
+let __rng = Math.random;              // default: normal randomness
+function rand() { return __rng(); }   // use this everywhere instead of Math.random
+
+function setDeterministicSeed(tag = 'systemPicks') {
+  // Build a stable seed from the dataset + tag so same data → same picks.
+  const seed = stableSeed(
+    tag,
+    totalNumbersGlobal,
+    latestDrawingNumber || 0,
+    // include latest row content to “lock” to the dataset snapshot
+    (fullData && fullData[0]) ? fullData[0].join(',') : ''
+  );
+  __rng = makeRNG(seed);
+}
+
+
+function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
+    fetch(filename + '?t=' + Date.now())
+        .then(response => response.text())
+        .then(text => {
+            fullData = text.trim().split('\n').map(line => line.split(',').map(n => n.trim()));
+            const drawingNumbers = fullData.map(row => parseInt(row[0]));
+            latestDrawingNumber = drawingNumbers[0];
+            
+            updatePicksMetaDisplay(null);
+
+            const lastDrawElem = document.getElementById('lastDrawingNumber');
+            if (lastDrawElem) {
+                lastDrawElem.textContent = latestDrawingNumber || '–';
+            } else {
+                console.warn("⚠️ Element with ID 'lastDrawingNumber' not found.");
+            }
+
+            const data = fullData.map(row => row.slice(1).map(n => parseInt(n)))
+                .filter(row => row.every(n => !isNaN(n)));
+
+            totalNumbersGlobal = totalNumbers;
+            hotSet.clear();  // ✅ reset Hot when switching datasets
+
+            skipDataGlobal = buildSkipTable(data, totalNumbers, drawingNumbers);
+
+            pastDrawings = fullData.filter(row => row.length >= 6)
+                .map(row => row.slice(1, 6).map(n => parseInt(n)).sort((a, b) => a - b).join(','));
+
+            renderRecentDraws(data, totalNumbers, drawingNumbers[0]);
+            // ⬇️ draw Skip Frequency table now that skipDataGlobal/sinceMap are ready
+renderSkipFrequency();
+
+
+            const quick12Btn = document.getElementById('quick12Button');
+            if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
+
+const genBtn = document.getElementById('generateWheelButton');
+if (genBtn) {
+  genBtn.style.display = (totalNumbers === 69 || totalNumbers === 39) ? 'inline-block' : 'none';
+}
+
+
+            const topInputs = document.getElementById('top18Inputs');
+if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
+
+            const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
+            if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
+
+            const reverseHits = document.getElementById('reverseHitsContainer');
+            if (reverseHits) reverseHits.style.display = 'block';
+
+            const skipFreq = document.getElementById('skipFrequencyContainer');
+            if (skipFreq) skipFreq.style.display = 'block';
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load file:', error);
+            alert('Error loading the file.');
+        });
+}
+
+// expose it globally so any handler can call it
+window.loadCSVFile = loadCSVFile;
+
+// Pick the `count` numbers whose current "since" length has the strongest historical frequency.
+// Score = how often this number historically had the current since-length.
+// Tie-breakers: larger current since (more due), then smaller number.
+// Pick by how much a number "likes" its CURRENT skip length (bin), with smoothing + due nudge.
+function recomputeTopFromSkips(count = 12) {
+  if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
+
+  const picks = [];
+  for (let n = 1; n <= totalNumbersGlobal; n++) {
+    const row = skipDataGlobal.skipTable[n] || [];
+    const curSkip = sinceMap[n] || 26;            // 1..25; 26+ = "over 25"
+    const capped = Math.min(curSkip, 25);         // we only have bins 1..25
+
+    // Row total for smoothing / context
+    const rowTotal = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0);
+
+    // Frequency of THIS number hitting after THIS exact skip length historically
+    const freqAtCur = (capped >= 1 && capped <= 25) ? (row[capped] || 0) : 0;
+
+    // Laplace smoothing (prevents zeroes from dominating)
+    const p = (freqAtCur + 1) / (rowTotal + 25);  // “probability” this number likes this bin
+
+    // Gentle due bonus so longer-current-skips aren’t ignored when p is similar
+    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);  // tweak 0.10–0.25 to taste
+
+    const score = p * dueBonus;
+
+    picks.push({
+      n,
+      score,
+      curSkip,
+      freqAtCur,
+      rowTotal
+    });
+  }
+
+  // Rank by the “likes current bin” score; then favor longer current skips; then smaller number
+  picks.sort((a, b) =>
+    (b.score - a.score) ||
+    (b.curSkip - a.curSkip) ||
+     (a.n - b.n)
+  );
+
+  const top = picks.slice(0, count).map(x => x.n).sort((a,b)=>a-b);
+  top18 = top;
+
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+  return top;
+}
+
+let __pbCycleIndex = 0;
+
+function getPBPool() {
+  // Read whatever is in the 5 boxes, ignore blanks/out-of-range
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  return vals;
+}
+
+function wirePBInputsOnce() {
+  if (__pbInputsWired) return;
+  __pbInputsWired = true;
+
+  qsa('#pbBlock input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      __pbCycleIndex = 0;   // reset round-robin on any edit
+      savePBToStorage();    // 🧠 persist on every edit
+    });
+  });
+}
+
+function getNextPB(){
+  const pool = getPBPool();
+
+  // ✅ If user provided 1+ values, round-robin through them
+  if (pool.length > 0) {
+    const v = pool[ __pbCycleIndex % pool.length ];
+    __pbCycleIndex++;
+    return v;
+  }
+
+  // ✅ If inputs are blank, return a fresh random 1–26 for EACH set
+  return Math.floor(Math.random() * 26) + 1;
+}
+
+function computeTrendingHotNumbers(weeks = 25, count = 12) {
+  const N = Math.min(weeks, fullData.length);
+  if (!N) return [];
+
+  // Parse the last N draws (0 = most recent)
+  const windowDraws = fullData.slice(0, N)
+    .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
+
+  const stats = Array.from({ length: totalNumbersGlobal + 1 }, () => ({
+    hits: 0,
+    lastAges: [],  // draw indices (0 recent) where number hit
+    recencyScore: 0
+  }));
+
+  // Exponential decay for recency (tau controls decay; smaller = more recent emphasis)
+  const tau = Math.max(4, Math.round(N / 3));
+
+  windowDraws.forEach((nums, age) => {
+    const w = Math.exp(-age / tau);
+    nums.forEach(n => {
+      if (n >= 1 && n <= totalNumbersGlobal) {
+        stats[n].hits += 1;
+        stats[n].recencyScore += w;
+        stats[n].lastAges.push(age);
+      }
+    });
+  });
+
+  // Build scored entries with acceleration bonus
+  const R = Math.max(1, Math.ceil(N / 3)); // "recent" slice for plain recent-count
+  const entries = [];
+  for (let n = 1; n <= totalNumbersGlobal; n++) {
+    const s = stats[n];
+    if (s.hits === 0) continue;
+
+    // Recent-count in last R draws
+    const recentCount = s.lastAges.filter(a => a < R).length;
+
+    // Acceleration: compare last two inter-hit gaps (smaller gap = speeding up)
+    // ages: e.g., [0, 4, 11] -> gaps [4-0, 11-4] = [4,7] (but ages grow going older)
+    const ages = s.lastAges.slice().sort((a, b) => a - b); // youngest->oldest
+    let accelBonus = 0;
+    if (ages.length >= 3) {
+      const lastGap = ages[1] - ages[0];      // most recent gap
+      const prevGap = ages[2] - ages[1];      // prior gap
+      const accel = Math.max(0, prevGap - lastGap); // positive = accelerating
+      // Normalize a bit so it’s a small nudge, not the whole story:
+      accelBonus = accel / Math.max(2, Math.min(12, R));
+    }
+
+    const veryRecent = ages.length && ages[0] <= 3; // hit within 3 draws
+    const eligibility = (recentCount >= 2) || veryRecent;
+
+    // Composite score: mostly recency + a touch of raw hits + acceleration nudge
+    const score = (0.65 * s.recencyScore) + (0.25 * recentCount) + (0.10 * accelBonus);
+
+    entries.push({ n, recentCount, veryRecent, score, hits: s.hits });
+  }
+
+  // Strict filter first: require eligibility
+  let ranked = entries
+    .filter(e => e.veryRecent || e.recentCount >= 2)
+    .sort((a, b) => (b.score - a.score) || (a.n - b.n))
+    .slice(0, count);
+
+  // If we’re still short, allow 1-hit numbers but only if that 1 hit was ≤R and not clearly decelerating
+  if (ranked.length < count) {
+    const picked = new Set(ranked.map(e => e.n));
+    const fillers = entries
+      .filter(e => !picked.has(e.n) && e.recentCount >= 1 && e.veryRecent)
+      .sort((a, b) => (b.score - a.score) || (a.n - b.n))
+      .slice(0, count - ranked.length);
+    ranked = ranked.concat(fillers);
+  }
+
+  return ranked.map(e => e.n).sort((a, b) => a - b);
+}
+
+function getTopNumbersByFrequency(weeks, count){
+  const w = Math.min(weeks, fullData.length);
+  const recentDraws = fullData.slice(0, w)
+    .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
+
+  const freq = {};
+  recentDraws.forEach(draw => draw.forEach(n => { freq[n] = (freq[n] || 0) + 1; }));
+
+  return Object.entries(freq)
+    .sort((a,b) => (b[1]-a[1]) || (parseInt(a[0]) - parseInt(b[0])))
+    .slice(0, count)
+    .map(([n]) => parseInt(n, 10))
+    .sort((a,b) => a - b);
+}
+
+// ✅ Replace your existing setInputsFromList with this guarded version
+function setInputsFromList(list, limit = 12) {
+  const box = document.getElementById('top18Inputs');
+  if (!box) return;
+  withSuppressedManual(() => {
+    const inputs = box.querySelectorAll('input');
+    for (let i = 0; i < limit; i++) {
+      if (i < inputs.length) inputs[i].value = list[i] ?? '';
+    }
+    for (let i = limit; i < inputs.length; i++) inputs[i].value = '';
+  });
+}
+
+
+// Toast helper
+function showToast(msg, ms=1600){
+  let el = document.getElementById('tweToast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'tweToast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(showToast.__t);
+  showToast.__t = setTimeout(()=> el.classList.remove('show'), ms);
+}
+
+// Set compare
+function setsEqual(a, b){
+  if(a.size !== b.size) return false;
+  for (const v of a) if (!b.has(v)) return false;
+  return true;
+}
+
+function readTopSkips12(){
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const first12 = inputs.slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => !isNaN(n));
+  return Array.from(new Set(first12)).sort((a,b) => a - b);
+}
+
+function computeSystemPicks(
+  count,
+  weeks,
+  hotList = [],
+  topList = [],
+  sinceMapObj = {},
+  rng = rand
+) {
+  const uniq = arr => Array.from(new Set(arr)).filter(Number.isInteger);
+
+  const H = uniq(hotList);
+  const T = uniq(topList);
+
+  // 🔒 1) MANDATORY = Hot ∩ Skips (Top). These must always be green.
+  const mandatory = H.filter(n => T.includes(n));
+  const mandatorySet = new Set(mandatory);
+
+  const chosen = new Set();
+  const push = n => { if (!chosen.has(n)) chosen.add(n); };
+
+  function clumpPenalty(n) {
+    let p = 0;
+    chosen.forEach(c => {
+      const d = Math.abs(c - n);
+      if (d === 1) p += 2;
+      else if (d === 2) p += 1;
+    });
+    return p;
+  }
+  function preScore(n) {
+    const due   = (sinceMapObj[n] || 0);
+    const inTop = T.includes(n) ? 1 : 0;
+    const inHot = H.includes(n) ? 1 : 0;
+    return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
+  }
+
+  // 2) Seed with ALL mandatory (sorted by strength). If > count, cap to best `count`.
+  const mandatorySorted = mandatory.slice().sort((a,b) => preScore(b) - preScore(a));
+  mandatorySorted.forEach(n => { if (chosen.size < count) push(n); });
+  if (mandatorySorted.length >= count) {
+    return Array.from(chosen).sort((a,b)=>a-b); // already filled entirely by consensus
+  }
+
+  // 3) Ensure at least half from Top (Skips), excluding those already chosen
+  const wantTopMin = Math.max(Math.floor(count/2), 4);
+  T.filter(n => !chosen.has(n))
+   .sort((a,b)=>preScore(b)-preScore(a))
+   .forEach(n => { if (chosen.size < wantTopMin) push(n); });
+
+  // 4) Fill from Hot
+  H.filter(n => !chosen.has(n))
+   .sort((a,b)=>preScore(b)-preScore(a))
+   .forEach(n => { if (chosen.size < count) push(n); });
+
+  // 5) Backfill by recent frequency + due if still short
+  if (chosen.size < count) {
+    getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))
+      .filter(n => !chosen.has(n))
+      .sort((a,b)=>(sinceMapObj[b]||0)-(sinceMapObj[a]||0))
+      .forEach(n => { if (chosen.size < count) push(n); });
+  }
+
+  // 6) Final fallback (shouldn’t be needed)
+  for (let n=1; chosen.size < count && n<=totalNumbersGlobal; n++) push(n);
+
+  // 7) Points-aware refinement — 🔒 do NOT replace mandatory numbers
+  let pool = Array.from(chosen).sort((a,b)=>a-b);
+  let currentScore = evaluatePoolPoints(pool, rng);
+  const candidateUniverse = uniq([...T, ...H, ...getTopNumbersByFrequency(weeks, Math.min(totalNumbersGlobal, 40))]);
+
+  let improved = true;
+  let tries = 0;
+  while (improved && tries < 40) {
+    improved = false; tries++;
+    for (let i = 0; i < pool.length; i++) {
+      const victim = pool[i];
+      if (mandatorySet.has(victim)) continue; // 🔒 keep consensus numbers pinned
+
+      const base = pool.filter((_, idx) => idx !== i);
+
+      const candidates = candidateUniverse
+        .filter(n => !base.includes(n))
+        .sort((a,b)=>preScore(b)-preScore(a))
+        .slice(0, 20);
+
+      let bestLocal = currentScore;
+      let bestChoice = null;
+      for (const cand of candidates) {
+        // (light anti-clump — optional skip)
+        const adjBad = base.some(x => Math.abs(x - cand) <= 1);
+        if (adjBad && rng() < 0.4) continue;
+
+        // never eject a mandatory (already ensured by skipping victim above)
+        const trial = [...base, cand].sort((a,b)=>a-b);
+        const trialScore = evaluatePoolPoints(trial, rng);
+        if (trialScore < bestLocal) {
+          bestLocal = trialScore;
+          bestChoice = cand;
+        }
+      }
+      if (bestChoice !== null) {
+        pool = [...base, bestChoice].sort((a,b)=>a-b);
+        currentScore = bestLocal;
+        improved = true;
+      }
+    }
+  }
+
+  // Safety: make sure all mandatory are present (they should be)
+  mandatory.forEach(n => { if (!pool.includes(n)) pool.push(n); });
+  pool = pool.slice(0, count).sort((a,b)=>a-b);
+
+  return pool;
+}
+
+
+// 🔁 REPLACE/ADD this function
+function populateAllThreeOnLoad() {
+  // 1) Top (orange): from current-since skip profile
+  if (typeof recomputeTopFromSkips === 'function') {
+    recomputeTopFromSkips(12);
+  }
+
+  // 2) Hot (blue): trending last 25
+  const weeks = Math.min(25, fullData.length);
+  const hot12 = computeTrendingHotNumbers(weeks, 12);
+  hotSet = new Set(hot12);
+
+  // 3) Picks (green): deterministic blend of Top+Hot+Due + points
+  setDeterministicSeed('systemPicks');                 // ← important: same seed as button
+  const picks12 = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
+  systemPicksSet = new Set(picks12);
+
+  // Draw Hits table now that Top/Hot/Picks are ready
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+
+  // 👉 Mirror Picks into the 12 manual input boxes on load
+  ensureTwelveInputs();
+  setInputsFromList(picks12, 12);
+  setPicksMeta({
+  method: 'system',
+  weeks,
+  hotCoverage: 12
+});
+
+} 
+
+// ✅ Keep your existing runSystemPicks, but add the marked lines:
+function runSystemPicks(){
+  if (totalNumbersGlobal === 26){
+    alert('System Picks are not available in Powerball-only mode.');
+    return;
+  }
+
+  const weeks = Math.min(25, fullData.length);
+  const count = 12;
+
+  // Ensure Hot exists
+  if (!hotSet || hotSet.size === 0){
+    const hotNums = computeTrendingHotNumbers(weeks, count);
+    hotSet = new Set(hotNums);
+  }
+  // Ensure Top exists
+  if (!top18 || top18.length === 0) {
+    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
+  }
+
+  // Keep a copy for change detection
+  const before = new Set(systemPicksSet);
+
+  // Deterministic seed so button matches page-load result
+  setDeterministicSeed('systemPicks');
+
+  // Compute Picks
+  const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
+
+  // Save to Picks column
+  systemPicksSet = new Set(picks);
+
+  // Mirror Picks into the 12 inputs (sorted)
+  ensureTwelveInputs();
+  setInputsFromList(picks.slice().sort((a,b)=>a-b), 12);
+
+  // Redraw
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+  
+  // inside runSystemPicks(), after you compute `picks` successfully:
+setPicksMeta({
+  method: 'system',
+  weeks: Math.min(25, fullData.length),
+  hotCoverage: (hotSet ? hotSet.size : null) // usually 12
+});
+
+
+  // ✅ Feedback toast
+  const changed = !setsEqual(before, systemPicksSet);
+  showToast(changed ? 'System Picks updated.' : 'System Picks recalculated (no change).');
+}
+
+function ensureTwelveInputs() {
+  const div = document.getElementById('top18Inputs');
+  if (!div) return;
+  div.innerHTML = '';
+  for (let i = 0; i < 12; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = String(i + 1);
+    div.appendChild(inp);
+  }
+}
+
+function randomSampleCombos(pool, k, samples, rng = rand) {
+  const out = [];
+  const n = pool.length;
+  if (n < k) return out;
+
+  for (let s = 0; s < samples; s++) {
+    const idxs = new Set();
+    while (idxs.size < k) idxs.add(Math.floor(rng() * n));
+    const combo = Array.from(idxs).map(i => pool[i]).sort((a,b)=>a-b);
+
+    const adj = combo.filter((x,i)=> i>0 && combo[i]-combo[i-1]===1).length;
+    if (adj > 2 && rng() < 0.6) { s--; continue; } // same logic, seeded
+
+    out.push(combo);
+  }
+  return out;
+}
+
+function evaluatePoolPoints(pool, rng = rand) {
+  const combos = randomSampleCombos(pool, 5, 80, rng);
+  if (combos.length === 0) return 1e9;
+  let sum = 0;
+  for (const c of combos) sum += calculateRawPointsForSet(c);
+  return sum / combos.length;
+}
+
+
+function drawHistogram(points) {
+  const maxToShow = 500;
+  const recentPoints = points.slice(-maxToShow).reverse();
+  const canvasWidth = 800;
+  const barHeight = 18;
+  const spacing = 4;
+  const canvasHeight = (barHeight + spacing) * recentPoints.length;
+  
+  document.getElementById('histogramModal').style.display = 'block';
+
+  const oldCanvas = document.getElementById('pointsCanvas');
+  if (oldCanvas) oldCanvas.remove();
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'pointsCanvas';
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  canvas.style.display = 'block';
+  canvas.style.margin = '20px auto';
+  canvas.style.border = '2px solid gray';
+  canvas.style.background = '#111';
+
+  document.getElementById('histogramContent').appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const sorted = [...recentPoints].sort((a, b) => a - b);
+  const cutoffIndex = (totalNumbersGlobal === 39) ? (sorted.length - 1) : Math.floor(sorted.length * 0.95);
+  const maxPoints = sorted[cutoffIndex];
+
+  ctx.font = '14px Arial';
+  ctx.textBaseline = 'middle';
+
+  recentPoints.forEach((pts, i) => {
+    const y = i * (barHeight + spacing);
+    const logPts = Math.log10(pts + 1);
+    const logMax = Math.log10(maxPoints + 1);
+    const barWidth = (logPts / logMax) * (canvasWidth - 150);
+
+    ctx.fillStyle = pts > 1200 ? 'red' : pts > 800 ? 'orange' : pts > 400 ? 'yellow' : 'lightgreen';
+    ctx.fillRect(140, y, barWidth, barHeight);
+    const offset = (totalNumbersGlobal === 39) ? 70 : (totalNumbersGlobal === 69) ? 260 : 0;
+    ctx.fillStyle = 'white';
+    ctx.fillText(`Draw ${points.length - i + offset}:`, 10, y + barHeight / 2);
+    ctx.fillText(`${pts.toFixed(1)} pts`, 150 + barWidth, y + barHeight / 2);
+  });
+}
+
+function setupHistogramListener() {
+  const histoBtn = document.getElementById('showHistogramBtn');
+  if (!histoBtn) return;
+
+  histoBtn.onclick = () => {
+    if (!fullData || !fullData.length) { alert("Load drawing data first."); return; }
+
+    const drawingSets = fullData.map(row =>
+      row.slice(1).map(n => parseInt(n)).filter(n => !isNaN(n))
+    );
+    const points = drawingSets.map(set => calculateRawPointsForSet(set));
+    drawHistogram(points);
+  };
+}
+
+function saveTop18Numbers() {
+  const numbers = [];
+  const rows = document.querySelectorAll('#reverseHitsContainer table tr');
+  rows.forEach((row, idx) => {
+    if (idx === 0) return; // skip header
+    const skipsCell = row.querySelector('td.col-skips');
+    if (!skipsCell) return;
+    // accept either orange-dot (skips) or blue-dot (when you load a Top file and mark it blue)
+    if (skipsCell.querySelector('.orange-dot, .blue-dot')) {
+      const th = row.querySelector('th');
+      const num = th ? parseInt(th.textContent, 10) : NaN;
+      if (!isNaN(num)) numbers.push(num);
+    }
+  });
+
+  const count   = numbers.length;
+  const allowed = [5, 12, 18];
+  if (!allowed.includes(count)) {
+    alert(`The Hits table currently shows ${count || 'no'} numbers in the ‘Skips’ column.\nPlease make sure it’s exactly 5, 12, or 18 before saving.`);
+    return;
+  }
+
+  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber)) ? latestDrawingNumber + 1 : '00000';
+  const weeksField = document.getElementById('weeksInput');
+  const weeksVal = weeksField ? (String(weeksField.value || '').padStart(2,'0') || '00') : '00';
+
+  let filename;
+  if (totalNumbersGlobal === 69) filename = `topPB_${count}_${weeksVal}_${nextDraw}.txt`;
+  else if (totalNumbersGlobal === 39) filename = `topF5_${count}_${weeksVal}_${nextDraw}.txt`;
+  else filename = `top_${count}_${weeksVal}_${nextDraw}.txt`;
+
+  const blob = new Blob([numbers.join(',')], { type: 'text/plain' });
+  const link = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename });
+  link.click();
+}
+
+
+function loadGameByCode(gameCode, afterLoad) {
+  const code = String(gameCode || '').toUpperCase();
+
+  if (code === 'PB') {
+    // Mirror btn69.onclick but with a callback we control
+    loadCSVFile('lotto_69.txt', 69, () => {
+      activeGameMode = 69;
+      ensureTwelveInputs();
+      populateAllThreeOnLoad();
+
+      // ---- same UI bits as the Powerball button ----
+      pastDrawingsFrom69 = [...pastDrawings];
+      skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
+      sinceMapFrom69     = { ...sinceMap };
+      fullDataFrom69     = [...fullData];
+
+      if (btn1) btn1.style.display = 'inline-block';
+      hidePBblock();
+      qs('#generateWheelButton').style.display = 'inline-block';
+      qs('#quick12Button').style.display       = 'inline-block';
+      qs('#systemPicksButton').style.display   = 'inline-block';
+      qs('#checkNumbersButton').style.display  = 'inline-block';
+      const sh = document.getElementById('showHistogramBtn');
+      if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+      highlight(btn69);
+
+      document.getElementById('top18Inputs').style.display = 'grid';
+      const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+      ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+      });
+
+      const pbSpan = document.getElementById('checkPBSpan');
+      if (pbSpan) pbSpan.style.display = 'inline';
+
+      if (typeof afterLoad === 'function') afterLoad();
+    });
+
+  } else if (code === 'F5') {
+    // Mirror btn39.onclick but with a callback we control
+    loadCSVFile('lotto_39.txt', 39, () => {
+      activeGameMode = 39;
+      ensureTwelveInputs();
+      populateAllThreeOnLoad();
+
+      if (btn1) btn1.style.display = 'none';
+      hidePBblock();
+      highlight(btn39);
+      qs('#generateWheelButton').style.display = 'inline-block';
+      qs('#quick12Button').style.display       = 'inline-block';
+      qs('#systemPicksButton').style.display   = 'inline-block';
+      qs('#checkNumbersButton').style.display  = 'inline-block';
+      const sh = document.getElementById('showHistogramBtn');
+      if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+
+      document.getElementById('top18Inputs').style.display = 'flex';
+      const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
+      ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
+      });
+
+      const checkPBSpan = document.getElementById('checkPBSpan');
+      if (checkPBSpan) checkPBSpan.style.display = 'none';
+
+      if (typeof afterLoad === 'function') afterLoad();
+    });
+
+  } else {
+    // Unknown code → don’t switch; just proceed
+    if (typeof afterLoad === 'function') afterLoad();
+  }
+}
+
+
+function handleTop18FileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+reader.onload = function(e) {
+  // Full file text (trim BOM + whitespace)
+  const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
+
+  // 🔎 Try to read "# Game: XXX" before we use it anywhere
+  const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
+  const fileGameCode = gameMatch ? gameMatch[1].toUpperCase() : null; // e.g., 'PB' or 'F5'
+
+  // --- parse header comments (if present) ---
+  const nextDrawMatch = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
+  const methodMatch   = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
+  const lookbackMatch = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
+  const hotMatch      = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
+
+  const picksHeaderMeta = {
+    game: fileGameCode || null,
+    nextDraw: nextDrawMatch ? nextDrawMatch[1] : null,
+    method: methodMatch ? methodMatch[1] : null,                // e.g., SYSTEM / MANUAL
+    lookback: lookbackMatch ? parseInt(lookbackMatch[1],10) : null,
+    hotCoverage: hotMatch ? parseInt(hotMatch[1],10) : null
+  };
+
+  // Keep only non-empty, non-comment lines (ignore # / ---)
+  const lines = raw
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(l => l && !/^\s*(#|---)/.test(l));
+
+    if (!lines.length) {
+      alert('No data lines found. Make sure the file contains a row of 12 numbers after the header.');
+      return;
+    }
+
+    // First remaining line = picks row
+    const dataLine = lines[0];
+
+    // Accept comma or space separated numbers (or mixed)
+    const nums = dataLine
+      .split(/[,\s]+/)
+      .map(s => parseInt(s, 10))
+      .filter(Number.isInteger);
+
+    if (nums.length < 12) {
+      alert(`Found only ${nums.length} numbers on the data line. Need 12.`);
+      return;
+    }
+
+    // First 12 unique numbers (sorted)
+    const picks12 = Array.from(new Set(nums)).slice(0, 12).sort((a, b) => a - b);
+    if (picks12.length !== 12) {
+      alert(`Need 12 unique numbers, but got ${picks12.length}.`);
+      return;
+    }
+
+    // 👉 After the right dataset is loaded, apply the numbers + mark manual
+    const applyPicks = () => {
+      loadPicksIntoColumnAndInputs(picks12);
+      setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+     // 🆕 show parsed header summary next to "Last 25 Drawings"
+  updatePicksMetaDisplay(picksHeaderMeta);
+      showToast(`Loaded ${fileGameCode || getGameCode()} picks.`);
+      // Close modal + reset input
+      loadTop18Modal.style.display = 'none';
+      loadTop18FileInput.value = '';
+    };
+
+    // If the file specifies a game and it's different, switch first; else just apply
+    if (fileGameCode === 'PB' && totalNumbersGlobal !== 69) {
+      loadGameByCode('PB', applyPicks);
+    } else if (fileGameCode === 'F5' && totalNumbersGlobal !== 39) {
+      loadGameByCode('F5', applyPicks);
+    } else {
+      applyPicks();
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+
+function loadPicksIntoColumnAndInputs(numbers) {
+  // Mirror into the 12 inputs
+  ensureTwelveInputs();
+  setInputsFromList(numbers, 12);
+
+  // Update the green Picks column
+  systemPicksSet = new Set(numbers);
+
+  // Re-draw tables/highlights
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+}
+
+function savePBToStorage() {
+  const vals = qsa('#pbBlock input')
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => Number.isInteger(n) && n >= 1 && n <= 26);
+  localStorage.setItem('twePBPool', JSON.stringify(vals));
+}
+
+function loadPBFromStorage() {
+  try {
+    const raw = localStorage.getItem('twePBPool');
+    const vals = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(vals) && vals.length) {
+      const inputs = qsa('#pbBlock input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].value = vals[i] ?? '';
+      }
+      __pbCycleIndex = 0;     // safe to reset after loading a saved pool
+      wirePBInputsOnce();     // ensure listeners exist
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+function loadTop18NumbersIntoTable(numbers) {
+  const container = document.getElementById('reverseHitsContainer');
+  if (!container) return;
+  const table = container.querySelector('table'); if (!table) return;
+
+  // clear the Skips column dots
+  table.querySelectorAll('tr').forEach(row => {
+    const cell = row.querySelector('td.col-skips');
+    if (cell) cell.innerHTML = '';
+  });
+
+  // mirror into inputs
+  top18 = numbers;
+  const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  top18Inputs.forEach((input, index) => { input.value = numbers[index] ?? ''; });
+
+  // mark rows in Skips column (blue-dot to differentiate loaded set)
+  table.querySelectorAll('tr').forEach(row => {
+    const num = parseInt(row.querySelector('th')?.textContent, 10);
+    if (numbers.includes(num)) {
+      const cell = row.querySelector('td.col-skips');
+      if (cell) {
+        const blueDot = document.createElement('div');
+        blueDot.className = 'blue-dot';
+        cell.appendChild(blueDot);
+      }
+    }
+  });
+
+  reapplySkipTableHighlights();
+  loadTop18FileInput.value = '';
+}
+
+
+window.addEventListener('click', (event) => { if (event.target === loadTop18Modal) loadTop18Modal.style.display = 'none'; });
+
+// Add CSS for the blue dot
+const style = document.createElement('style');
+style.textContent = `.blue-dot { width: 14px; height: 14px; border-radius: 50%; margin: auto; background: lightgreen; }`;
+document.head.appendChild(style);
+
+function highlight(btn){ [btn39, btn69, btn1].forEach(b => b.classList.toggle('active', b === btn)); }
+
+function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
+window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });
+
+qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
+
+document.getElementById('generateSetsModalButton').onclick = generateWheelSets;
+document.getElementById('pickBestSetsModal').onclick = ()=> pickBestSets(true);
+document.getElementById('exportAllBtn').onclick = ()=> doExport('all');
+document.getElementById('exportBestBtn').onclick = ()=> doExport('best');
+
+
+// Force any legacy calls to use the new exporter & new filenames
+window.exportGeneratedSets = function () { doExport('all'); };
+window.exportBestSets      = function () { doExport('best'); };
+
+
+function doExport(mode) {
+  if (!generatedSets.length) { 
+    alert('Generate sets first!'); 
+    return; 
+  }
+
+  const allCount  = parseInt(qs('#modalSetCountChoice')?.value, 10) || 1;
+  const bestCount = parseInt(qs('#modalBestSetCount')?.value, 10) || 1;
+
+  let list = [...generatedSets];
+  if (mode === 'best') {
+    list.sort((a, b) => a.points - b.points);
+    list = list.slice(0, bestCount);
+  } else {
+    list = list.slice(0, allCount);
+  }
+
+  const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
+
+  // reset round-robin PB index each export
+  __pbCycleIndex = 0;
+
+  const lines = list.map(({ combo }, idx) => {
+    let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
+    if (needPB) out += '  ' + getNextPB();
+    return out;
+  }).join('\n');
+
+  const blob = new Blob([lines], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+
+  // ---------- filename bits ----------
+  const gameCode = (totalNumbersGlobal === 39) ? 'F5'
+                   : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'PWB' : 'X');
+
+  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+                   ? (latestDrawingNumber + 1)
+                   : '00000';
+
+  const meta = (window.lastPicksMeta || {});
+
+  // Read the 12 input boxes right now
+  const inputsNow = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .slice(0, 12)
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(Number.isInteger);
+
+  // Compare to the current systemPicksSet (order-agnostic)
+  const inputsSet = new Set(inputsNow);
+  const systemSet = (typeof systemPicksSet !== 'undefined' && systemPicksSet instanceof Set)
+    ? systemPicksSet
+    : new Set();
+
+  const sameAsSystem =
+    inputsSet.size === systemSet.size &&
+    [...inputsSet].every(n => systemSet.has(n));
+
+  // PATCH: Decide tag straight from the diff (only call it manual when all 12 are filled)
+  const methodTag = (!sameAsSystem && inputsNow.length === 12) ? 'M' : 'S';
+
+  // Keep metadata in sync when it's manual
+  if (methodTag === 'M') {
+    setPicksMeta({
+      method: 'manual',
+      weeks: (typeof meta.weeks === 'number') ? meta.weeks : null,
+      hotCoverage: (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null
+    });
+  }
+
+  // ---- Read current dialog state as fallback for h/d values ----
+  function readHotDialog() {
+    const weeksEl = document.getElementById('weeksInput');
+    const covEl   = document.querySelector('input[name="coverage"]:checked');
+    const d = weeksEl ? parseInt(weeksEl.value, 10) : NaN;
+    const h = covEl   ? parseInt(covEl.value, 10)   : NaN;
+    return {
+      weeks: (Number.isInteger(d) && d >= 1 && d <= 25) ? d : null,
+      hotCoverage: (h === 5 || h === 12 || h === 18) ? h : null
+    };
+  }
+  const dlg = readHotDialog();
+
+  // Prefer what's visible in the Find Hot Numbers dialog RIGHT NOW.
+  const dVal = (dlg.weeks !== null && dlg.weeks !== undefined) ? dlg.weeks
+              : (typeof meta.weeks === 'number' ? meta.weeks : 0);
+
+  const hVal = (dlg.hotCoverage !== null && dlg.hotCoverage !== undefined) ? dlg.hotCoverage
+              : (typeof meta.hotCoverage === 'number' ? meta.hotCoverage : 0);
+
+  // All|Best prefix (capitalized)
+  const modeTag = (mode === 'best') ? 'Best' : 'All';
+
+  // Final filename
+  a.download = `${modeTag}_${gameCode}_${methodTag}_h${hVal}_d${dVal}_${nextDraw}.txt`;
+
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 100);
+
+  // (Optional) quick sanity log:
+  // console.log('[export]', { sameAsSystem, methodTag, inputsNow, system: [...systemSet] });
+}
+
+/* Check Numbers (file flow) */
+document.getElementById("checkNumbersButton").onclick = function () {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".txt";
+
+  fileInput.onchange = function (evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+
+    const filename = file.name;
+    const match = filename.match(/(All|Best)_(F5|PWB).*?_(\d+)\.txt$/i);
+    if (!match) { alert("Filename does not match expected pattern."); return; }
+
+    const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+    const isPWB = (game === "PWB");
+    const drawNumber = match[3];
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const lines = e.target.result.trim().split("\n").filter(Boolean);
+      if (!lines.length) { alert("File appears to be empty."); return; }
+
+      const drawLabel = document.getElementById("drawNumberLabel");
+      if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
+
+      const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+
+      fetch(lottoFile + "?t=" + Date.now())
+        .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))
+        .then(text => {
+          const line = text.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
+          if (!line) throw new Error("Drawing number not found in lotto file");
+
+          const parts = line.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+          const nums = parts.slice(1, 6);
+          let pb = null;
+
+          if (isPWB) {
+            return fetch("lotto_1.txt?t=" + Date.now())
+              .then(res => res.ok ? res.text() : Promise.reject("Failed to load Powerball file"))
+              .then(pbText => {
+                const pbLine = pbText.trim().split("\n").find(line => line.startsWith(drawNumber + ","));
+                if (!pbLine) throw new Error("Matching Powerball not found for draw #" + drawNumber);
+                const pbParts = pbLine.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+                pb = pbParts[1];
+                checkAgainstSets(lines, nums, pb, game, drawNumber);
+              });
+          } else {
+            checkAgainstSets(lines, nums, null, game, drawNumber);
+          }
+        })
+        .catch(err => { alert(err); console.error("⚠️ Lotto/Powerball fetch error:", err); });
+    };
+
+    reader.readAsText(file);
+  };
+
+  fileInput.click();
+};
+
+
+function wireHotDialogMetaSync(){
+  const weeksEl = document.getElementById('weeksInput');
+  const covEls  = document.querySelectorAll('input[name="coverage"]');
+  if (!weeksEl || !covEls.length) return;
+
+  const sync = () => {
+    const weeks = parseInt(weeksEl.value, 10);
+    const cov   = document.querySelector('input[name="coverage"]:checked');
+    const hotN  = cov ? parseInt(cov.value, 10) : null;
+
+    setPicksMeta({
+      // keep whatever method you last used (system / quick12 / manual)
+      method: (window.lastPicksMeta?.method) || 'system',
+      weeks: (Number.isInteger(weeks) && weeks >= 1 && weeks <= 25) ? weeks : null,
+      hotCoverage: (hotN === 5 || hotN === 12 || hotN === 18) ? hotN : null
+    });
+  };
+
+  weeksEl.addEventListener('input',  sync);
+  covEls.forEach(r => r.addEventListener('change', sync));
+  sync(); // seed once with current UI
+}
+
+
+function checkAgainstSets(lines, nums, pb, game, drawNumber) {
+  const isPWB = (String(game).toUpperCase() === 'PWB');
+  const winDisplay = document.getElementById("winningNumbersDisplay");
+  if (winDisplay) winDisplay.textContent = nums.join(", ");
+
+  const pbDisplay = document.getElementById("winningPBDisplay");
+  if (pbDisplay) {
+    if (isPWB && pb !== null) {
+      pbDisplay.textContent = `+ PB: ${pb}`;
+      pbDisplay.style.display = "inline";
+    } else {
+      pbDisplay.textContent = "";
+      pbDisplay.style.display = "none";
+    }
+  }
+
+  const matchDiv = document.getElementById("matchResults");
+  matchDiv.innerHTML = "";
+  let foundMatch = false;
+
+  for (const line of lines) {
+    const cleanLine = line.replace(/^\d+\.\s*/, '');
+    const numbers = cleanLine.match(/\d+/g)?.map(Number).filter(n => !isNaN(n));
+    if (!numbers || numbers.length < 5) continue;
+
+    const picks = numbers.slice(0, 5);
+    const bonus = (isPWB && numbers.length >= 6) ? numbers[5] : null;
+
+    const matchCount = picks.filter(n => nums.includes(n)).length;
+	const pbMatch = (isPWB && pb !== null && bonus === pb);
+	
+    let tier = "", color = "";
+    if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
+    else if (matchCount === 5)            { tier = "5";       color = "red"; }
+    else if (matchCount === 4 && pbMatch) { tier = "4 + PB";  color = "orange"; }
+    else if (matchCount === 4)            { tier = "4";       color = "orange"; }
+    else if (matchCount === 3 && pbMatch) { tier = "3 + PB";  color = "yellow"; }
+    else if (matchCount === 3)            { tier = "3";       color = "yellow"; }
+    else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
+    else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
+    else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
+    else if (!isPWB && matchCount === 2) { tier = "2"; color = "lightblue"; }
+
+    if (tier) {
+      foundMatch = true;
+      const div = document.createElement("div");
+      div.textContent = `${picks.join(', ')} ➔ Matched ${tier}`;
+      div.style.color = color;
+      matchDiv.appendChild(div);
+    }
+  }
+
+  if (!foundMatch) {
+    const div = document.createElement("div");
+    div.textContent = "No matches were found.";
+    div.style.color = "yellow";
+    matchDiv.appendChild(div);
+  }
+
+  const prizeFile = `${isPWB ? 'pwb' : 'f5'}_${drawNumber}.txt`;
+  fetch(prizeFile + "?t=" + Date.now())
+    .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
+    .then(text => renderPrizeTable(text))
+    .catch(err => {
+      console.warn("⚠️ Prize file error:", err);
+      const table = document.getElementById("prizeTable");
+      const tbody = table.querySelector("tbody");
+      tbody.innerHTML = "";
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 3;
+      td.style.color = "orange";
+      td.textContent = String(err);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    });
+
+  const modal = document.getElementById("checkNumbersModal");
+  if (modal) modal.style.display = "block";
+}
+
+/* FIXED: render prize table into the existing table structure */
+function renderPrizeTable(tsvText) {
+  const lines = tsvText.trim().split("\n");
+  const table = document.getElementById("prizeTable");
+  const thead = table.querySelector("thead");
+  const tbody = table.querySelector("tbody");
+  // reset thead/tbody
+  thead.innerHTML = "";
+  tbody.innerHTML = "";
+
+  lines.forEach((line, idx) => {
+    const tr = document.createElement("tr");
+    const cells = line.split("\t");
+
+    let rowColor = "lightgreen";
+    if (idx !== 0) {
+      const tier = cells[0].toLowerCase();
+      if (tier.includes("5 of 5") || tier.includes("5 + powerball")) rowColor = "red";
+      else if (tier.includes("4 of 5") || tier.startsWith("4 +")) rowColor = "orange";
+      else if (tier.includes("3 of 5") || tier.startsWith("3 +")) rowColor = "yellow";
+      else if (tier.includes("2 of 5") || tier.includes("powerball")) rowColor = "lightblue";
+      else if (tier.includes("total winning")) rowColor = "gold";
+    }
+
+    cells.forEach((cellText) => {
+      const cell = document.createElement(idx === 0 ? "th" : "td");
+      cell.textContent = cellText;
+      cell.style.border = "1px solid gray";
+      cell.style.padding = "6px";
+      cell.style.textAlign = "left";
+      cell.style.color = rowColor;
+      tr.appendChild(cell);
+    });
+
+    if (idx === 0) {
+      thead.appendChild(tr);
+    } else {
+      tbody.appendChild(tr);
+    }
+  });
+}
+
+document.getElementById('updateHitsBtn').addEventListener('click', updateReverseHitsTop18);
+
+/* Generate Wheel modal open */
+const showModalButton = document.getElementById('generateWheelButton');
+if (showModalButton) showModalButton.addEventListener('click', function() { document.getElementById('wheelModal').style.display = "block"; });
+
+const generateSetsButtonModal = document.getElementById('generateSetsModalButton');
+if (generateSetsButtonModal) generateSetsButtonModal.addEventListener('click', generateWheelSets);
+
+/* Unified close handlers for all .close-button */
+document.querySelectorAll('.close-button').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const modal = this.closest('.modal');
+    if (modal) {
+      modal.style.display = 'none';
+      if (modal.id === 'wheelModal') resetModalControls();
+      if (modal.id === 'checkNumbersModal') reapplySkipTableHighlights();
+    }
+  });
+});
+
+/* Click outside modals */
+window.addEventListener('click', function(event) {
+  if (event.target == wheelModal) {
+    resetModalControls();
+    wheelModal.style.display = "none";
+    if (totalNumbersGlobal === 26) reapply69State();
+  }
+});
+
+/* Reference data */
+function loadReferenceData() {
+  const refFile = (totalNumbersGlobal === 39) ? 'f5_refSet.csv' : (totalNumbersGlobal === 69) ? 'pwb_refSet.csv' : null;
+  if (!refFile) { console.warn('⚠️ Unsupported totalNumbersGlobal:', totalNumbersGlobal); return; }
+
+  fetch(refFile + '?t=' + Date.now())
+    .then(response => response.text())
+    .then(csv => {
+      const lines = csv.trim().split('\n');
+      referenceData = {};
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        const category = row[0].trim();
+        const diff = parseInt(row[1]);
+        const cumP = parseFloat(row[3]);
+        if (!referenceData[category]) referenceData[category] = {};
+        referenceData[category][diff] = cumP;
+      }
+    })
+    .catch(error => { console.error(`❌ Failed to load ${refFile}:`, error); });
+}
+window.addEventListener('DOMContentLoaded', function() { loadReferenceData(); resetModalControls(); });
+
+document.getElementById('quick12Button').addEventListener('click', function () {
+  top18From69 = Array.from(document.querySelectorAll('#top18Inputs input'))
+      .map(inp => parseInt(inp.value.trim(), 10))
+      .filter(n => !isNaN(n) && n >= 1)
+      .sort((a, b) => a - b);
+  const allInputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const topInputs = allInputs.map(inp => parseInt(inp.value.trim(), 10)).filter(n => !isNaN(n));
+  if (topInputs.length < 12) { alert('Need at least 12 valid numbers in the Your Picks inputs.'); return; }
+
+  const fixedPattern = [
+      [0, 1, 2, 3, 4], [0, 1, 5, 6, 7], [0, 2, 5, 8, 9],
+      [0, 3, 6, 8, 10], [1, 2, 6, 9, 10], [1, 3, 5, 9, 11]
+  ];
+
+  let bestOrder = null;
+  let bestScore = Infinity;
+
+  const tryCount = 10000;
+  for (let i = 0; i < tryCount; i++) {
+    const shuffled = topInputs.slice(0, 12).sort(() => 0.5 - Math.random());
+    let totalScore = 0;
+    for (const indexes of fixedPattern) {
+      const combo = indexes.map(i => shuffled[i]);
+      totalScore += calculateRawPointsForSet(combo);
+    }
+    if (totalScore < bestScore) { bestScore = totalScore; bestOrder = shuffled.slice(0, 12); }
+  }
+
+// NEW: write inputs low→high for easy ticket entry
+const sortedForInputs = asSorted(bestOrder);
+setInputsFromList(sortedForInputs, 12);       // uses the suppressor internally
+document.querySelectorAll('#top18Inputs input').forEach((inp, idx) => {
+  if (idx < 12) inp.classList.remove('dimmed'); else inp.classList.add('dimmed');
+});
+
+
+  // at the end of quick12Button handler (once bestOrder is chosen / inputs filled):
+setPicksMeta({
+  method: 'system',
+  weeks: Math.min(25, fullData.length),
+  hotCoverage: 12
+});
+
+  document.getElementById('generateSetsModalButton').style.display = 'none';
+  document.getElementById('pickBestSetsModal').style.display = 'none';
+  document.getElementById('modalSetCountChoice').style.display = 'none';
+  document.getElementById('modalBestSetCount').style.display = 'none';
+  document.getElementById('exportBestBtn').style.display = 'none';
+  document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
+
+const fixedSets = fixedPattern.map(indexes =>
+  asSorted(indexes.map(i => bestOrder[i]))
+);  
+generatedSets = fixedSets.map(combo => ({ combo, points: calculateRawPointsForSet(combo) }));
+
+  const modal = document.getElementById('wheelModal');
+  const output = document.getElementById('modalWheelOutput');
+
+  let html = '<ol>';
+  generatedSets.forEach(({ combo, points }) => {
+    html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+  });
+  html += `</ol><p style="color:orange; font-weight:bold;">  Total Score: ${bestScore.toFixed(1)} pts</p>`;
+
+  output.innerHTML = html;
+  modal.style.display = 'block';
+});
+
+function renderFixedSetsToModal() {
+  const modal = document.getElementById('wheelModal');
+  const output = document.getElementById('modalWheelOutput');
+  const progress = document.getElementById('progressInfo');
+
+  document.getElementById('generateSetsModalButton').style.display = 'none';
+  document.getElementById('pickBestSetsModal').style.display = 'none';
+  document.getElementById('modalSetCountChoice').style.display = 'none';
+  document.getElementById('modalBestSetCount').style.display = 'none';
+
+  let html = '<ol>';
+  generatedSets.forEach(({ combo, points }) => {
+html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+  });
+  html += '</ol>';
+  output.innerHTML = html;
+
+  if (progress) progress.innerHTML = '';
+  modal.style.display = 'block';
+}
+
+function resetModalControls() {
+  document.getElementById('generateSetsModalButton').style.display = 'inline-block';
+  document.getElementById('pickBestSetsModal').style.display = 'inline-block';
+  document.getElementById('modalSetCountChoice').style.display = 'inline-block';
+  document.getElementById('modalBestSetCount').style.display = 'inline-block';
+  document.getElementById('exportBestBtn').style.display = 'inline-block';
+
+  const labels = document.querySelectorAll('#wheelModal label');
+  labels.forEach(label => label.style.display = 'inline-block');
+
+  document.querySelectorAll('#top18Inputs input.dimmed').forEach(inp => inp.classList.remove('dimmed'));
+
+  const output = document.getElementById('modalWheelOutput');
+  const progress = document.getElementById('progressInfo');
+  if (output) output.innerHTML = '';
+  if (progress) progress.innerHTML = '';
+}
+
+function reapplySkipTableHighlights() {
+  const table = document.querySelector('#skipFrequencyContainer table');
+  if (!table) return;
+
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const num = parseInt(row.querySelector('th')?.textContent, 10);
+    row.querySelectorAll('td').forEach((cell, i) => {
+      const val = parseInt(cell.textContent.trim());
+      cell.classList.remove('selected-top-skip', 'top18-selected', 'hit');
+      if (val > 0) cell.classList.add('hit');
+      if (sinceMap[num] === i + 1) cell.classList.add('selected-top-skip');
+    });
+
+    if (top18.includes(num)) {
+      row.querySelectorAll('td').forEach(cell => {
+        if (cell.classList.contains('selected-top-skip')) {
+          cell.classList.remove('selected-top-skip');
+          cell.classList.add('top18-selected');
+        }
+      });
+    }
+  });
+
+}
+
+function reapply69State() {
+  highlight(btn69);
+  totalNumbersGlobal = 69;
+  hidePBblock();
+
+  fullData = [...fullDataFrom69];
+  skipDataGlobal = JSON.parse(JSON.stringify(skipDataGlobalFrom69));
+  sinceMap = { ...sinceMapFrom69 };
+  pastDrawings = [...pastDrawingsFrom69];
+  top18 = [...top18From69];
+
+  const top18InputsDiv = document.getElementById('top18Inputs');
+  top18InputsDiv.innerHTML = '';
+  for (let i = 0; i < top18.length; i++) {
+    if (i === 12) {
+      const divider = document.createElement('div');
+      divider.style.borderLeft = '3px solid red';
+      divider.style.margin = '0 6px';
+      divider.style.height = '34px';
+      divider.style.alignSelf = 'center';
+      top18InputsDiv.appendChild(divider);
+    }
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = top18[i];
+    top18InputsDiv.appendChild(inp);
+  }
+
+  updateReverseHitsTop18();
+  renderSkipFrequency();
+}
+
+function generateWheelSets() {
+const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+const numbersToUse = top18Inputs
+  .map(input => parseInt(input.value.trim(), 10))
+  .filter(x => Number.isInteger(x) && x >= 1);
+
+if (numbersToUse.length < 12) {
+  alert('Please enter 12 valid numbers in the input boxes.');
+  return;
+}
+
+// ✅ Use a local source for wheel generation; do NOT change Top
+const wheelSource = numbersToUse.sort((a, b) => a - b);
+
+
+  const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
+  progressDiv.innerHTML = '';
+
+  const setsToGenerateInput = document.getElementById('modalSetCountChoice');
+  const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
+
+  const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
+  generatedSets = wheelSets.map(({ combo }) => ({ combo, points: calculateRawPointsForSet(combo) }));
+
+  const modalWheelOutput = document.getElementById('modalWheelOutput');
+  const wheelModal = document.getElementById('wheelModal');
+
+  if (generatedSets.length === 0) {
+      modalWheelOutput.innerHTML = '<p>No valid sets generated. Try different numbers or sets.</p>';
+      wheelModal.style.display = "block";
+      return;
+  }
+
+  let outputHtml = '<ol>';
+  generatedSets.forEach(({ combo, points }) => {
+      const color = getColorForPoints(points);
+      outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
+  });
+  outputHtml += '</ol>';
+  modalWheelOutput.innerHTML = outputHtml;
+  wheelModal.style.display = "block";
+}
+
+function createProgressInfoDiv() {
+  const div = document.createElement('div');
+  div.id = 'progressInfo';
+  div.style.marginTop = '15px';
+  div.style.fontSize = '16px';
+  const modalContent = document.querySelector('#wheelModal .modal-content');
+  if (modalContent) modalContent.insertBefore(div, document.getElementById('modalWheelOutput'));
+  return div;
+}
+
+function getColorForPoints(points) {
+  if (points < 400) return 'lightgreen';
+  if (points < 800) return 'yellow';
+  if (points < 1200) return 'orange';
+  return 'red';
+}
+
+function calculateRawPointsForSet(numbers) {
+  let totalPoints = 0;
+  const sorted = [...numbers].sort((a, b) => a - b);
+
+  const sum = sorted.reduce((a, b) => a + b, 0);
+  const spread = sorted[4] - sorted[0];
+  const lowHigh = sorted[0] - sorted[4];
+  const consecutivePairs = sorted.filter((n, i) => i < 4 && sorted[i + 1] - n === 1).length;
+  const oddEven = sorted.filter(n => n % 2 === 1).length - sorted.filter(n => n % 2 === 0).length;
+  const midpoint = totalNumbersGlobal / 2;
+  const lowHighBalance = sorted.filter(n => n <= midpoint).length - sorted.filter(n => n > midpoint).length;
+
+  const positionDiffs = {
+      "1 - 2": sorted[0] - sorted[1],
+      "2 - 3": sorted[1] - sorted[2],
+      "3 - 4": sorted[2] - sorted[3],
+      "4 - 5": sorted[3] - sorted[4]
+  };
+
+  const lookup = [
+      { category: "Sum", value: sum },
+      { category: "Spread", value: spread },
+      { category: "Low - High", value: lowHigh },
+      { category: "Odd - Even", value: oddEven },
+      { category: "LowHigh Balance", value: lowHighBalance },
+      { category: "Consecutive Pairs", value: consecutivePairs },
+      { category: "1 - 2", value: positionDiffs["1 - 2"] },
+      { category: "2 - 3", value: positionDiffs["2 - 3"] },
+      { category: "3 - 4", value: positionDiffs["3 - 4"] },
+      { category: "4 - 5", value: positionDiffs["4 - 5"] },
+      { category: "Min", value: sorted[0] },
+      { category: "Max", value: sorted[4] },
+      { category: "Center (3rd)", value: sorted[2] }
+  ];
+
+  lookup.forEach(({ category, value }) => {
+      const p = referenceData[category]?.[value];
+      if (p && p > 0) totalPoints += 1 / Math.max(p, 1e-4);
+  });
+
+  return totalPoints;
+}
+
+function processLoadedData() {
+  const drawingNumbers = fullData.map(row => parseInt(row[0]));
+  const data = fullData.map(row => row.slice(1).map(Number)).filter(row => row.every(n => !isNaN(n)));
+
+  skipDataGlobal = buildSkipTable(data, totalNumbersGlobal, drawingNumbers);
+
+  pastDrawings = fullData.filter(row => row.length >= 6)
+                         .map(row => row.slice(1, 6).sort((a, b) => a - b).join(','));
+
+  renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
+  renderSkipFrequency();
+}
+
+/* Skip table builders/renders */
+function buildSkipTable(data, totalNumbers, drawingNumbers) {
+  const skipTable = Array.from({ length: totalNumbers + 1 }, () => Array(26).fill(0));
+  const lastSeen = Array(totalNumbers + 1).fill(null);
+
+  for (let drawIndex = 0; drawIndex < data.length; drawIndex++) {
+      const currentDraw = new Set(data[drawIndex]);
+      for (let num = 1; num <= totalNumbers; num++) {
+          if (currentDraw.has(num)) {
+              if (lastSeen[num] !== null) {
+                  const skip = drawIndex - lastSeen[num] - 1;
+                  if (skip >= 1 && skip <= 25) skipTable[num][skip]++;
+              }
+              lastSeen[num] = drawIndex;
+          }
+      }
+  }
+  return { skipTable };
+}
+
+function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
+  const container = document.getElementById('recentDrawsContainer');
+  const comment = document.getElementById('latestDrawingComment');
+  comment.textContent = `The latest drawing on file is drawing # ${latestDrawingNumber}, shown in column 1.`;
+
+  const draws = data.slice(0, 25);
+  while (draws.length < 25) draws.push([]);
+
+  sinceMap = {};
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+      const th = document.createElement('th');
+      th.textContent = i;
+      headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbers; number++) {
+      const row = document.createElement('tr');
+      const th = document.createElement('th');
+      th.textContent = number;
+      row.appendChild(th);
+
+      let found = false;
+      for (let col = 0; col < 25; col++) {
+          const cell = document.createElement('td');
+          if (draws[col] && draws[col].includes(number)) {
+              const dot = document.createElement('div');
+              dot.className = 'red-dot';
+              cell.appendChild(dot);
+              if (!found) { sinceMap[number] = col + 1; found = true; }
+          }
+          row.appendChild(cell);
+      }
+      if (!found) { sinceMap[number] = draws.length + 1; }
+      table.appendChild(row);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+function renderSkipFrequency() {
+  const container = document.getElementById('skipFrequencyContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th'));
+  for (let i = 1; i <= 25; i++) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    for (let i = 1; i <= 25; i++) {
+      const cell = document.createElement('td');
+      const val = skipDataGlobal.skipTable[number]?.[i] || 0;
+      cell.textContent = val > 0 ? val : '';
+      row.appendChild(cell);
+    }
+    table.appendChild(row);
+  }
+  container.appendChild(table);
+}
+
+/* Wheel generation / coverage */
+function generateWheel(sourceNumbers, pastDrawings, setSize, numSets) {
+  const wheel = [];
+  const used = new Set();
+  const seenCombos = new Set();
+  let skippedDueToPastDrawings5 = 0;
+  let skippedDueToBadSum = 0;
+  let skippedDueToHighPoints = 0;
+  let attempts = 0;
+
+  const totalCombosNeeded = combination(sourceNumbers.length, 3);
+
+  const minPossibleSum = sourceNumbers.slice(0, 5).reduce((a, b) => a + b, 0);
+  const maxPossibleSum = sourceNumbers.slice(-5).reduce((a, b) => a + b, 0);
+  const span = maxPossibleSum - minPossibleSum;
+  const minSumAllowed = minPossibleSum + span * 0.15;
+  const maxSumAllowed = minPossibleSum + span * 0.85;
+
+  const maxPointsAllowed = 1200;
+
+  const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
+  progressDiv.innerHTML = '';
+
+  while (wheel.length < numSets && attempts < 50000) {
+    const combo = [...sourceNumbers].sort(() => 0.5 - Math.random()).slice(0, setSize).sort((a, b) => a - b);
+    const comboKey = combo.join(',');
+
+    if (used.has(comboKey)) { attempts++; continue; }
+
+    const sum = combo.reduce((a, b) => a + b, 0);
+    if (sum < minSumAllowed || sum > maxSumAllowed) { skippedDueToBadSum++; attempts++; continue; }
+
+    let conflict = false;
+    for (let i = 0; i < pastDrawings.length; i++) {
+      const past = pastDrawings[i].split(',').map(Number);
+      const overlap = combo.filter(n => past.includes(n));
+      if (overlap.length === 5) { skippedDueToPastDrawings5++; conflict = true; break; }
+    }
+    if (conflict) { attempts++; continue; }
+
+    const score = calculateRawPointsForSet(combo);
+    if (score > maxPointsAllowed) { skippedDueToHighPoints++; attempts++; continue; }
+
+    used.add(comboKey);
+    const threeCombos = getAllCombinations(combo, 3);
+    for (const c of threeCombos) seenCombos.add(c.join(','));
+
+    wheel.push({ combo, points: score });
+
+    progressDiv.innerHTML = `
+      <div style="color: red;">🔥 Skipped ${skippedDueToPastDrawings5} sets (5/5 match)</div>
+      <div style="color: orange;">🚫 Skipped ${skippedDueToBadSum} sets (bad sum)</div>
+      <div style="color: violet;">⛔ Skipped ${skippedDueToHighPoints} sets (score > ${maxPointsAllowed})</div>
+      <div style="color: lightgreen;">✅ 3-number combos covered: ${seenCombos.size} / ${totalCombosNeeded}</div>
+    `;
+
+    if (seenCombos.size >= totalCombosNeeded * 0.95) {
+      const doneMessage = document.createElement('div');
+      doneMessage.innerHTML = '🎯 95% of 3-combos covered!';
+      doneMessage.style.color = 'lime';
+      progressDiv.appendChild(doneMessage);
+    }
+
+    attempts++;
+  }
+
+  return wheel;
+}
+
+function estimateCoverage(numSets, totalNumbers) {
+  const combosPerSet = combination(5, 3);
+  const totalCombos = combination(totalNumbers, 3);
+  const coverage = (numSets * combosPerSet) / totalCombos * 100;
+  return coverage.toFixed(1);
+}
+
+function getAllCombinations(array, size) {
+  const results = [];
+  function helper(start, combo) {
+    if (combo.length === size) { results.push(combo); return; }
+    for (let i = start; i < array.length; i++) helper(i + 1, combo.concat(array[i]));
+  }
+  helper(0, []);
+  return results;
+}
+
+function combination(n, k) {
+  if (k > n) return 0;
+  let result = 1;
+  for (let i = 0; i < k; i++) result *= (n - i) / (i + 1);
+  return Math.round(result);
+}
+
+function calculateCoveragePercent(numNumbers, setsGenerated) {
+  const totalCombos = combination(numNumbers, 3);
+  const combosCovered = setsGenerated * combination(5, 3);
+  let percent = Math.min(100, (combosCovered / totalCombos) * 100);
+  return percent.toFixed(1);
+}
+
+/* Reverse hits table (Skips / Hot / Picks) */
+function renderReverseHitsTable() {
+  const container = document.getElementById('reverseHitsContainer');
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+
+  // ----- header -----
+  const headerRow = document.createElement('tr');
+  headerRow.appendChild(document.createElement('th')); // left sticky number header
+  for (let i = 25; i >= 1; i--) {
+    const th = document.createElement('th');
+    th.textContent = i;
+    headerRow.appendChild(th);
+  }
+
+  if (totalNumbersGlobal !== 26) {
+    const thPicks = document.createElement('th'); thPicks.textContent = 'Picks'; thPicks.classList.add('col-picks');
+    const thHot   = document.createElement('th'); thHot.textContent   = 'Hot';   thHot.classList.add('col-hot');
+    const thSkips = document.createElement('th'); thSkips.textContent = 'Skips'; thSkips.classList.add('col-skips');
+    // 👉 order: Picks, Hot, Skips
+    headerRow.appendChild(thPicks);
+    headerRow.appendChild(thHot);
+    headerRow.appendChild(thSkips);
+  }
+  table.appendChild(headerRow);
+
+  // ----- body -----
+  const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
+
+  for (let number = 1; number <= totalNumbersGlobal; number++) {
+    const row = document.createElement('tr');
+
+    const th = document.createElement('th');
+    th.textContent = number;
+    row.appendChild(th);
+
+    // red-dot grid
+    for (let i = 24; i >= 0; i--) {
+      const cell = document.createElement('td');
+      if (draws[i] && draws[i].includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'red-dot';
+        cell.appendChild(dot);
+      }
+      row.appendChild(cell);
+    }
+
+    if (totalNumbersGlobal !== 26) {
+      // Picks (green) — FIRST
+      const picksCell = document.createElement('td');
+      picksCell.classList.add('pick-cell', 'col-picks');
+      picksCell.dataset.n = String(number);
+      picksCell.tabIndex = 0;
+      picksCell.setAttribute('role', 'button');
+      picksCell.setAttribute('aria-pressed', systemPicksSet.has(number) ? 'true' : 'false');
+      picksCell.setAttribute('aria-label', `Toggle pick ${number}`);
+      if (systemPicksSet && systemPicksSet.has(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'green-dot';
+        picksCell.appendChild(dot);
+      }
+
+      // Hot (blue) — SECOND
+      const hotCell = document.createElement('td');
+      hotCell.classList.add('col-hot');
+      if (hotSet && hotSet.has(number)) {
+        const d = document.createElement('div');
+        d.className = 'hot-dot';
+        hotCell.appendChild(d);
+      }
+
+      // Skips (orange) — LAST
+      const skipsCell = document.createElement('td');
+      skipsCell.classList.add('col-skips');
+      if (top18.includes(number)) {
+        const dot = document.createElement('div');
+        dot.className = 'orange-dot';
+        skipsCell.appendChild(dot);
+      }
+
+      // append in new order
+      row.appendChild(picksCell);
+      row.appendChild(hotCell);
+      row.appendChild(skipsCell);
+    }
+
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+}
+
+
+function updateReverseHitsTop18() {
+  const picks = Array.from(document.querySelectorAll('#top18Inputs input'))
+    .map(inp => parseInt(inp.value.trim(), 10))
+    .filter(n => !isNaN(n))
+    .slice(0, 12)
+    .sort((a,b)=>a-b);
+
+  systemPicksSet = new Set(picks);
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
+
+  setPicksMeta({
+    method: 'manual',
+    weeks: (window.lastPicksMeta?.weeks ?? null),
+    hotCoverage: (window.lastPicksMeta?.hotCoverage ?? null)
+  });
+
+  showToast('Picks column updated from inputs.');
+}
+
+/* Additional check flow (CSV-style) */
+document.addEventListener("DOMContentLoaded", function() {
+  const fileInput = document.getElementById("checkFileInput");
+  if (!fileInput) return;
+  fileInput.addEventListener("change", function(evt) {
+    const file = evt.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const content = e.target.result;
+      const lines = content.trim().split("\n");
+      const nums = Array.from(document.querySelectorAll(".check-num")).map(n => parseInt(n.value)).filter(n => !isNaN(n));
+      const pb = parseInt(document.getElementById("checkPB").value);
+      const hasPB = !isNaN(pb) && totalNumbersGlobal === 69;
+      const resultsDiv = document.getElementById("matchResults");
+      resultsDiv.innerHTML = "";
+      let matchFound = false;
+
+      lines.forEach(line => {
+        const match = line.trim().match(/^\d+\.\s*(.+?)\s{2,}(\d+)$/);
+        if (!match) return;
+        const numberPart = match[1].replace(/\s/g, '');
+        const powerball = parseInt(match[2]);
+        const picks = numberPart.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+        if (picks.length !== 5) return;
+
+        const matchCount = picks.filter(n => nums.includes(n)).length;
+        const pbMatch = hasPB && powerball === pb;
+
+        let tier = "", color = "";
+        if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red";    }
+        else if (matchCount === 5)            { tier = "5";       color = "red";    }
+        else if (matchCount === 4 && pbMatch) { tier = "4 + PB";  color = "orange"; }
+        else if (matchCount === 4)            { tier = "4";       color = "orange"; }
+        else if (matchCount === 3 && pbMatch) { tier = "3 + PB";  color = "yellow"; }
+        else if (matchCount === 3)            { tier = "3";       color = "yellow"; }
+        else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green";  }
+        else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green";  }
+        else if (pbMatch)                     { tier = "PB Only"; color = "green";  }
+
+        if (tier) {
+          matchFound = true;
+          const div = document.createElement("div");
+          div.style.color = color;
+          div.textContent = line.trim() + " ➔ " + tier;
+          resultsDiv.appendChild(div);
+        }
+      });
+
+      if (!matchFound) {
+        const div = document.createElement("div");
+        div.style.color = "yellow";
+        div.textContent = "No matches found in any tier.";
+        resultsDiv.appendChild(div);
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+/* Histogram modal close */
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('closeHistogramModal');
+  if (closeBtn) closeBtn.addEventListener('click', () => { document.getElementById('histogramModal').style.display = 'none'; });
+});
+window.addEventListener('click', event => {
+  if (event.target === document.getElementById('histogramModal')) document.getElementById('histogramModal').style.display = 'none';
+});
+
+/* On first load, we let the splash auto-click load 69 below */
+window.addEventListener('load', function() {
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+      splash.style.opacity = 0;
+      splash.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => splash.remove(), 500);
+    }
+    const btn69 = document.getElementById('powerball');
+    if (btn69) btn69.click();
+  }, 3800);
+});
+
+(function(){
+  // 0.60 = 60% row height (denser, more rows); 1.40 = 140% (looser)
+  const MIN = 0.30, MAX = 1.40, STEP = 0.02;
+
+  let scale = parseFloat(localStorage.getItem('tweTableScale') || '1');
+  scale = Math.min(MAX, Math.max(MIN, scale));
+
+  const rowsPct = document.getElementById('rowsPct');
+  const root = document.documentElement;
+
+  function applyScale(){
+    root.style.setProperty('--table-scale', String(scale));
+    if (rowsPct) rowsPct.textContent = `${Math.round(scale*100)}%`;
+    localStorage.setItem('tweTableScale', String(scale));
+  }
+
+  function up(){   scale = Math.min(MAX, +(scale + STEP).toFixed(2)); applyScale(); }
+  function down(){ scale = Math.max(MIN, +(scale - STEP).toFixed(2)); applyScale(); }
+  function reset(){ scale = 1; applyScale(); }
+
+  const btnUp   = document.getElementById('rowsUp');
+  const btnDown = document.getElementById('rowsDown');
+  const btnReset= document.getElementById('rowsReset');
+
+  if (btnUp)   btnUp.addEventListener('click', up);
+  if (btnDown) btnDown.addEventListener('click', down);
+  if (btnReset)btnReset.addEventListener('click', reset);
+
+  applyScale();
+})();
+
+
+(function(){
+  const supportsCssZoom = 'zoom' in document.body.style; // true in Chrome
+  const rootEl = document.getElementById('zoomRoot') || document.body;
+  const pctLabel = document.getElementById('zoomPct');
+  const btnIn  = document.getElementById('zoomInBtn');
+  const btnOut = document.getElementById('zoomOutBtn');
+  const btn100 = document.getElementById('zoomResetBtn');
+
+  // load saved zoom or default 100
+  let zoom = parseInt(localStorage.getItem('tweZoomPct') || '100', 10);
+  zoom = Math.min(200, Math.max(60, zoom)); // clamp 60–200%
+
+  function applyZoom() {
+    if (supportsCssZoom) {
+      // Chrome: real layout zoom (best behavior)
+      document.body.style.zoom = (zoom / 100).toString();
+    } else {
+      // Fallback: scale the wrapper
+      rootEl.style.transform = `scale(${zoom/100})`;
+      // ensure the wrapper takes full width so scrollbars behave
+      rootEl.style.width = `${100 / (zoom/100)}%`;
+    }
+    pctLabel.textContent = `${zoom}%`;
+    localStorage.setItem('tweZoomPct', String(zoom));
+  }
+
+  function zoomIn()  { zoom = Math.min(200, zoom + 10); applyZoom(); }
+  function zoomOut() { zoom = Math.max(60,  zoom - 10); applyZoom(); }
+  function zoomReset(){ zoom = 100; applyZoom(); }
+
+  btnIn.addEventListener('click', zoomIn);
+  btnOut.addEventListener('click', zoomOut);
+  btn100.addEventListener('click', zoomReset);
+
+  // Optional: hold Shift to jump by 20%
+  [btnIn, btnOut].forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (e.shiftKey) {
+        zoom += (btn === btnIn ? 20 : -20);
+        zoom = Math.min(200, Math.max(60, zoom));
+        applyZoom();
+      }
+    });
+  });
+
+  // First render
+  applyZoom();
+})();
+</script>
+
+</body>
+</html>

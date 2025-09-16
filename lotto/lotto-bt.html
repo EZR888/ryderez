@@ -386,31 +386,50 @@ h2 { margin: 8px 0; }
 #splashScreen { pointer-events: auto; }
 
 
-  #backtestControls {
-    display: grid;
-    grid-template-columns: auto 1fr;  /* toggle on the left, panel fills next column */
-    gap: 8px 12px;
-    margin-left: 12px;
-    align-items: center;
-  }
+/* Container: single column, two rows: toggle then panel */
+#backtestControls {
+  display: grid;
+  grid-template-areas:
+    "toggle"
+    "panel";
+  grid-auto-rows: auto;
+  gap: 8px 12px;
+  margin-left: 12px;
+  align-items: start; /* avoid vertical wiggle */
+}
+
+#backtestToggle {
+  grid-area: toggle;
+  justify-self: start;
+}
+
+/* Panel: two rows — inputs on row 1, buttons on row 2 */
 #backtestPanel {
+  grid-area: panel;
   display: none; /* toggle to grid when open */
   grid-template-areas:
     "label input draws"
     "buttons buttons buttons";
-  grid-template-columns: auto 60px auto;
+  grid-template-columns: auto 60px 1fr;   /* label | number | 'draws' (flexible) */
   gap: 8px;
   align-items: center;
 }
 
 #backtestPanel label   { grid-area: label; }
-#backtestPanel input   { grid-area: input; }
+#backtestPanel input   { grid-area: input; width: 60px; }
 #backtestPanel span    { grid-area: draws; }
-#backtestPanel .btnrow { grid-area: buttons; display:flex; gap:8px; flex-wrap:wrap; }
-  @media (max-width: 1100px) {
-    #backtestPanel { grid-template-columns: repeat(3, auto); } /* stack on narrow panes */
-  }
+#backtestPanel .btnrow { grid-area: buttons; display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* Narrow panes: stack inputs more aggressively, buttons still on their own line */
+@media (max-width: 1100px) {
+  #backtestPanel {
+    grid-template-areas:
+      "label input input"
+      "draws draws draws"
+      "buttons buttons buttons";
+    grid-template-columns: auto 60px 1fr;
+  }
+}
 
   </style>
 </head>
@@ -512,7 +531,7 @@ h2 { margin: 8px 0; }
 
   <div id="backtestPanel">
     <label for="trimInput" style="color:lightyellow;">Trim last</label>
-    <input id="trimInput" type="number" min="0" value="0" style="width:50px">
+    <input id="trimInput" type="number" min="0" value="0">
     <span style="color:lightyellow;">draws</span>
 
     <div class="btnrow">
@@ -771,8 +790,10 @@ h2 { margin: 8px 0; }
 
 <script>
 
-
-backtestPanel.style.display = backtestPanel.style.display === 'grid' ? 'none' : 'grid';
+const panel = document.getElementById('backtestPanel');
+document.getElementById('backtestToggle').onclick = () => {
+  panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
+};
 
 
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.

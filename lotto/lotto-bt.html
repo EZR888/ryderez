@@ -181,7 +181,7 @@ input[type=number]{ -moz-appearance: textfield; }
 h1 {
   font-family: 'Comic Sans MS', cursive;
   font-style: italic;
-  font-size: 36px;
+  font-size: 54px;
   text-align: center;
   position: relative;
   margin: auto;
@@ -393,12 +393,20 @@ h2 { margin: 8px 0; }
     margin-left: 12px;
     align-items: center;
   }
-  #backtestPanel {
-    display: none; /* toggle to grid when open */
-    grid-template-columns: auto 60px auto auto auto auto; /* label, input, draws, Apply, ◀, ▶, Reset */
-    gap: 8px;
-    align-items: center;
-  }
+#backtestPanel {
+  display: none; /* toggle to grid when open */
+  grid-template-areas:
+    "label input draws"
+    "buttons buttons buttons";
+  grid-template-columns: auto 60px auto;
+  gap: 8px;
+  align-items: center;
+}
+
+#backtestPanel label   { grid-area: label; }
+#backtestPanel input   { grid-area: input; }
+#backtestPanel span    { grid-area: draws; }
+#backtestPanel .btnrow { grid-area: buttons; display:flex; gap:8px; flex-wrap:wrap; }
   @media (max-width: 1100px) {
     #backtestPanel { grid-template-columns: repeat(3, auto); } /* stack on narrow panes */
   }
@@ -437,10 +445,11 @@ h2 { margin: 8px 0; }
     <aside id="controlColumn">
 
       <div class="banner" style="text-align:center; margin-top: 16px; margin-bottom: 12px;">
-        <h1 style="font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
-          The Winning Edge
-        </h1>
-        <div style="font-size: 24px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
+        <div style="font-size: 42px; font-family: 'Comic Sans MS', cursive; font-style: italic; color: gold; text-shadow: 2px 2px 4px black;">
+        The Winning Edge
+        </div>
+
+        <div style="font-size: 18px; color: lime; font-family: 'Arial', sans-serif; font-weight: 300; text-shadow: 1px 1px 2px #000;">
           Statistically Optimized Lotto Picks
         </div>
       </div>
@@ -503,14 +512,18 @@ h2 { margin: 8px 0; }
 
   <div id="backtestPanel">
     <label for="trimInput" style="color:lightyellow;">Trim last</label>
-    <input id="trimInput" type="number" min="0" value="0" style="width:60px">
+    <input id="trimInput" type="number" min="0" value="0" style="width:50px">
     <span style="color:lightyellow;">draws</span>
-    <button id="applyTrim" class="button">Apply</button>
-    <button id="stepBack" class="button">◀︎ Step</button>
-    <button id="stepForward" class="button">Step ▶︎</button>
-    <button id="resetTrim" class="button">Reset</button>
+
+    <div class="btnrow">
+      <button id="applyTrim" class="button">Apply</button>
+      <button id="stepBack" class="button">◀︎ Step</button>
+      <button id="stepForward" class="button">Step ▶︎</button>
+      <button id="resetTrim" class="button">Reset</button>
+    </div>
   </div>
 </div>
+
 
 
     </aside>

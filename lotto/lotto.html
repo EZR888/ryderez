@@ -305,6 +305,7 @@ h2 { margin: 8px 0; }
 #top18Inputs {
   display: grid;
   grid-template-columns: repeat(6, 50px); /* each ~50px wide */
+  margin-left: 30px;
   gap: 8px;
   justify-content: center; /* optional: centers the whole block */
 }
@@ -410,6 +411,7 @@ h2 { margin: 8px 0; }
     "label input draws"
     "buttons buttons buttons";
   grid-template-columns: auto 60px 1fr;   /* label | number | 'draws' (flexible) */
+  margin-left: 30px;
   gap: 8px;
   align-items: center;
 }
@@ -545,8 +547,7 @@ h2 { margin: 8px 0; }
         <!-- JS will populate 12 <input> here -->
       </div>
 
-      <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button>
-
+      <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button><br><br>
       <button id="systemPicksButton" class="button button-single" style="display:none">🤖 Restore Sys Picks</button>
             <button id="savePicksBtn" class="button button-single">💾 Save Picks</button><br>
       <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button><br>
@@ -1415,26 +1416,38 @@ if (typeof rehighlightSkipTableFromTop18 !== "function") {
 
 // --- 3) Minimal Pick Best implementation used by the modal button
 if (typeof pickBestSets !== "function") {
-  window.pickBestSets = function(openModal = true) {
-    if (!generatedSets || !generatedSets.length) {
-      alert('Generate sets first.');
-      return;
-    }
-    const bestCountInput = document.getElementById('modalBestSetCount');
-    const bestCount = parseInt(bestCountInput?.value, 10) || 5;
+// Replace your current pickBestSets with this version
+window.pickBestSets = function (openModal = true) {
+  if (!generatedSets || !generatedSets.length) {
+    alert('Generate sets first.');
+    return;
+  }
 
-    const best = [...generatedSets].sort((a,b) => a.points - b.points).slice(0, bestCount);
+  const bestCountInput = document.getElementById('modalBestSetCount');
+  const bestCount = parseInt(bestCountInput?.value, 10) || 6;
 
-    const out = document.getElementById('modalWheelOutput');
-    let html = '<ol>';
-    best.forEach(({ combo, points }) => {
-      html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
-    });
-    html += '</ol>';
-    out.innerHTML = html;
+  // Sort by score (asc) and take the best N — these are the SAME object refs as in generatedSets
+  const best = [...generatedSets].sort((a, b) => a.points - b.points).slice(0, bestCount);
 
-    if (openModal) document.getElementById('wheelModal').style.display = 'block';
-  };
+  // Reassign PBs specifically for the best list
+  const needPB = (totalNumbersGlobal === 69);
+  if (needPB) {
+    __pbCycleIndex = 0;               // start round-robin from the beginning
+    best.forEach(item => { item.pb = getNextPB(); }); // overwrite PB on these items
+  }
+
+  // Render
+  const out = document.getElementById('modalWheelOutput');
+  let html = '<ol>';
+  best.forEach(({ combo, points, pb }) => {
+    const pbPart = (needPB && pb != null) ? `  + PB: <b>${pb}</b>` : '';
+    html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+  });
+  html += '</ol>';
+  out.innerHTML = html;
+
+  if (openModal) document.getElementById('wheelModal').style.display = 'block';
+};
 }
 
 function hidePBblock(){
@@ -2497,14 +2510,11 @@ function doExport(mode) {
 
   const needPB = (totalNumbersGlobal === 69 || totalNumbersGlobal === 26);
 
-  // reset round-robin PB index each export
-  __pbCycleIndex = 0;
-
-  const lines = list.map(({ combo }, idx) => {
-    let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
-    if (needPB) out += '  ' + getNextPB();
-    return out;
-  }).join('\n');
+const lines = list.map(({ combo, pb }, idx) => {
+  let out = `${idx + 1}.  ${asSorted(combo).join(', ')}`;
+  if (totalNumbersGlobal === 69) out += '  ' + (pb != null ? pb : getNextPB());
+  return out;
+}).join('\n');
 
   const blob = new Blob([lines], { type: 'text/plain' });
   const a = document.createElement('a');
@@ -2896,16 +2906,25 @@ setPicksMeta({
 const fixedSets = fixedPattern.map(indexes =>
   asSorted(indexes.map(i => bestOrder[i]))
 );  
-generatedSets = fixedSets.map(combo => ({ combo, points: calculateRawPointsForSet(combo) }));
+// before creating generatedSets, decide if PB is needed and reset round-robin
+const needPB = (totalNumbersGlobal === 69);
+if (needPB) __pbCycleIndex = 0;
+
+generatedSets = fixedSets.map(combo => ({
+  combo,
+  points: calculateRawPointsForSet(combo),
+  pb: needPB ? getNextPB() : null
+}));
 
   const modal = document.getElementById('wheelModal');
   const output = document.getElementById('modalWheelOutput');
 
   let html = '<ol>';
-  generatedSets.forEach(({ combo, points }) => {
-    html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
-  });
-  html += `</ol><p style="color:orange; font-weight:bold;">  Total Score: ${bestScore.toFixed(1)} pts</p>`;
+generatedSets.forEach(({ combo, points, pb }) => {
+  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+  html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+});
+
 
   output.innerHTML = html;
   modal.style.display = 'block';
@@ -2921,11 +2940,12 @@ function renderFixedSetsToModal() {
   document.getElementById('modalSetCountChoice').style.display = 'none';
   document.getElementById('modalBestSetCount').style.display = 'none';
 
-  let html = '<ol>';
-  generatedSets.forEach(({ combo, points }) => {
-html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
-  });
-  html += '</ol>';
+let html = '<ol>';
+generatedSets.forEach(({ combo, points, pb }) => {
+  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+  html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+});
+html += '</ol>';
   output.innerHTML = html;
 
   if (progress) progress.innerHTML = '';
@@ -3030,7 +3050,14 @@ const wheelSource = numbersToUse.sort((a, b) => a - b);
   const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
 
   const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
-  generatedSets = wheelSets.map(({ combo }) => ({ combo, points: calculateRawPointsForSet(combo) }));
+const needPB = (totalNumbersGlobal === 69);
+if (needPB) __pbCycleIndex = 0;
+
+generatedSets = wheelSets.map(({ combo }) => ({
+  combo,
+  points: calculateRawPointsForSet(combo),
+  pb: needPB ? getNextPB() : null
+}));
 
   const modalWheelOutput = document.getElementById('modalWheelOutput');
   const wheelModal = document.getElementById('wheelModal');
@@ -3042,13 +3069,13 @@ const wheelSource = numbersToUse.sort((a, b) => a - b);
   }
 
   let outputHtml = '<ol>';
-  generatedSets.forEach(({ combo, points }) => {
-      const color = getColorForPoints(points);
-      outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b></li>`;
-  });
-  outputHtml += '</ol>';
-  modalWheelOutput.innerHTML = outputHtml;
-  wheelModal.style.display = "block";
+generatedSets.forEach(({ combo, points, pb }) => {
+  const color = getColorForPoints(points);
+  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+  outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+});
+outputHtml += '</ol>';
+modalWheelOutput.innerHTML = outputHtml;
 }
 
 function createProgressInfoDiv() {

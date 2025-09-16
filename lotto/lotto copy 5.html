@@ -2839,30 +2839,17 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   });
 
   // ---------- helpers ----------
-  const header0 = (lines[0] || "").toLowerCase();
-  const isFantasy5 = header0.includes("matching numbers") && header0.includes("prize");
-
-  // normalize labels coming from both TSV and tierCounts
   const normalizeLabel = (raw) => {
     if (!raw) return "";
-    let s = String(raw).trim().replace(/:$/, "");
-    // F5 TSV form: "Matched 3 of 5 numbers" → "3 of 5"
+    let s = String(raw).trim();
+
+    // Fantasy 5: "Matched 3 of 5 numbers" -> "3 of 5"
     const m = s.match(/Matched\s+(\d)\s+of\s+5/i);
     if (m) return `${m[1]} of 5`;
 
-    // If the tierCounts key is just a digit ("2","3","4","5"), treat as Fantasy 5
-    if (/^[2345]$/.test(s)) return `${s} of 5`;
-
-    // Tidy + unify capitalization
     s = s.replace(/\s+/g, " ").trim();
     s = s.replace(/PowerBall/i, "Powerball");
     return s;
-  };
-
-  const prettyTier = (raw) => {
-    // What we actually show in the “Tier” column
-    const n = normalizeLabel(raw);
-    return n; // already “3 of 5”, “4 of 5”, “Powerball Only”, etc.
   };
 
   const parseAmount = (s) => {
@@ -2873,50 +2860,58 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
     return num ? parseFloat(num) : 0;
   };
 
-  // Build normalized "label → amount" map from TSV rows
+  const header = (lines[0] || "").toLowerCase();
+  const isFantasy5 = header.includes("matching numbers") && header.includes("prize");
+
+  // Build normalized "label -> amount" map from TSV rows
   const labelToAmount = {};
   for (let i = 1; i < lines.length; i++) {
     const parts = lines[i].split("\t");
     if (parts.length < 1) continue;
 
+    // Skip the total row
     const raw0 = (parts[0] || "").trim();
-    if (/^total\b/i.test(raw0)) continue; // skip summary row
+    if (/^total\b/i.test(raw0)) continue;
 
-    const key = normalizeLabel(raw0);
+    const label = normalizeLabel(raw0);
     const amount = parseAmount(parts[2] || "");
-    if (key) labelToAmount[key] = amount;
+    if (label) labelToAmount[label] = amount;
   }
 
   // --- compute totals using provided tierCounts ---
   let totalWinnings = 0;
   const breakdown = [];
   Object.entries(tierCounts).forEach(([label, count]) => {
+    // normalize incoming label to match our map keys
     const key = normalizeLabel(label);
     const amt = labelToAmount[key] || 0;
     const subtotal = count * amt;
     totalWinnings += subtotal;
-    breakdown.push({ display: prettyTier(label), count, amt, subtotal });
+    breakdown.push({ label, count, amt, subtotal });
   });
 
   // --- render totals area right under the prize table ---
-  // Clear previous
+
+  // Remove any previous totals blocks/tables
   document.querySelectorAll('#prizeTotals, #prizeTotalsTable').forEach(el => el.remove());
 
   const money = (v) =>
     Number(v).toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
+  // Outer box
   const totalsBox = document.createElement("div");
   totalsBox.id = "prizeTotals";
   totalsBox.style.marginTop = "12px";
   totalsBox.style.padding = "8px 0";
-  totalsBox.style.marginTop = "20px";  // gives about one blank line of space
 
+  // Header ("Total Winnings") — gold to match totals in the main table
   const totalHeader = document.createElement("div");
-  totalHeader.textContent = `Winnings Table`;
+  totalHeader.textContent = `Total Winnings: ${money(totalWinnings)}`;
   totalHeader.style.fontWeight = "bold";
-  totalHeader.style.color = "orange"; // match main table's totals color
+  totalHeader.style.color = "gold";
   totalsBox.appendChild(totalHeader);
 
+  // Breakdown table
   const tbl = document.createElement("table");
   tbl.id = "prizeTotalsTable";
   tbl.style.marginTop = "8px";
@@ -2934,6 +2929,7 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
     tr.appendChild(td);
   };
 
+  // Head
   const thead2 = document.createElement("thead");
   const hr = document.createElement("tr");
   addCell(hr, "th", "Tier", { textAlign: "left" });
@@ -2943,32 +2939,37 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   thead2.appendChild(hr);
   tbl.appendChild(thead2);
 
+  // Body
   const tbody2 = document.createElement("tbody");
   breakdown
     .slice()
     .sort((a, b) => b.subtotal - a.subtotal)
-    .forEach(({ display, count, amt, subtotal }) => {
+    .forEach(({ label, count, amt, subtotal }) => {
       const tr = document.createElement("tr");
 
-      // color to match the prize table scheme
+      // match the prize table color scheme
       let rowColor = "lightgreen";
-      const t = String(display).toLowerCase();
+      const t = String(label).toLowerCase();
       if (t.includes("5 of 5") || t.includes("5 + powerball")) rowColor = "red";
       else if (t.includes("4 of 5") || t.startsWith("4 +"))     rowColor = "orange";
       else if (t.includes("3 of 5") || t.startsWith("3 +"))     rowColor = "yellow";
       else if (t.includes("2 of 5") || t.includes("powerball")) rowColor = "lightblue";
 
-      addCell(tr, "td", display, { textAlign: "left", color: rowColor });
+      // strip any stray trailing colon in labels
+      const cleanLabel = String(label).replace(/:$/, "");
+
+      addCell(tr, "td", cleanLabel, { textAlign: "left", color: rowColor });
       addCell(tr, "td", String(count), { color: rowColor });
       addCell(tr, "td", money(amt), { color: rowColor });
       addCell(tr, "td", money(subtotal), { color: rowColor });
       tbody2.appendChild(tr);
     });
 
+  // Footer (TOTAL)
   const tfoot2 = document.createElement("tfoot");
   const fr = document.createElement("tr");
-  addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "normal", color: "gold" });
-  addCell(fr, "td", String(breakdown.reduce((s, b) => s + b.count, 0)), { fontWeight: "normal", color: "gold" });
+  addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "bold", color: "gold" });
+  addCell(fr, "td", String(breakdown.reduce((s, b) => s + b.count, 0)), { fontWeight: "bold", color: "gold" });
   addCell(fr, "td", "—", { color: "gold" });
   addCell(fr, "td", money(totalWinnings), { fontWeight: "bold", color: "gold" });
   tfoot2.appendChild(fr);
@@ -2977,7 +2978,7 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   tbl.appendChild(tfoot2);
   totalsBox.appendChild(tbl);
 
-  // Insert directly under the main prize table (inside the modal)
+  // Insert directly under the main prize table
   const prizeTableEl = document.getElementById("prizeTable");
   if (prizeTableEl && prizeTableEl.parentElement) {
     prizeTableEl.insertAdjacentElement("afterend", totalsBox);

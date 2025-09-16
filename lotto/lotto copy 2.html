@@ -2697,37 +2697,6 @@ function checkAgainstSets(lines, nums, pb, game, drawNumber) {
   matchDiv.innerHTML = "";
   let foundMatch = false;
 
-  // NEW: tally per-tier for $ calc
-  const tierCounts = {};          // { "4 of 5 + Powerball": 3, "3 of 5": 2, ... }
-  const bump = k => (tierCounts[k] = (tierCounts[k] || 0) + 1);
-
-  // helper maps our simple labels to the TSV tier text
-// helper maps our simple labels to the TSV tier text (MATCH prize file)
-function tierLabelForPrizeTable(game, matchCount, pbMatch) {
-  const isPWB = (String(game).toUpperCase() === 'PWB');
-
-  if (isPWB) {
-    if (matchCount === 5 && pbMatch) return "5 + Powerball";
-    if (matchCount === 5)            return "5";
-    if (matchCount === 4 && pbMatch) return "4 + Powerball";
-    if (matchCount === 4)            return "4";
-    if (matchCount === 3 && pbMatch) return "3 + Powerball";
-    if (matchCount === 3)            return "3";
-    if (matchCount === 2 && pbMatch) return "2 + Powerball";
-    if (matchCount === 1 && pbMatch) return "1 + Powerball";
-    if (pbMatch)                     return "Powerball";
-    return "";
-  } else {
-    // Fantasy 5 rows look like: "5", "4", "3", "2"
-    if (matchCount === 5) return "5";
-    if (matchCount === 4) return "4";
-    if (matchCount === 3) return "3";
-    if (matchCount === 2) return "2";
-    return "";
-  }
-}
-
-
   for (const line of lines) {
     const cleanLine = line.replace(/^\d+\.\s*/, '');
     const numbers = cleanLine.match(/\d+/g)?.map(Number).filter(n => !isNaN(n));
@@ -2737,8 +2706,8 @@ function tierLabelForPrizeTable(game, matchCount, pbMatch) {
     const bonus = (isPWB && numbers.length >= 6) ? numbers[5] : null;
 
     const matchCount = picks.filter(n => nums.includes(n)).length;
-    const pbMatch = (isPWB && pb !== null && bonus === pb);
-
+	const pbMatch = (isPWB && pb !== null && bonus === pb);
+	
     let tier = "", color = "";
     if (matchCount === 5 && pbMatch)      { tier = "5 + PB";  color = "red"; }
     else if (matchCount === 5)            { tier = "5";       color = "red"; }
@@ -2749,15 +2718,10 @@ function tierLabelForPrizeTable(game, matchCount, pbMatch) {
     else if (matchCount === 2 && pbMatch) { tier = "2 + PB";  color = "green"; }
     else if (matchCount === 1 && pbMatch) { tier = "1 + PB";  color = "green"; }
     else if (pbMatch)                     { tier = "PB Only"; color = "green"; }
-    else if (!isPWB && matchCount === 2)  { tier = "2";       color = "lightblue"; }
+    else if (!isPWB && matchCount === 2) { tier = "2"; color = "lightblue"; }
 
     if (tier) {
       foundMatch = true;
-
-      // tally for money calc
-      const label = tierLabelForPrizeTable(game, matchCount, pbMatch);
-      if (label) bump(label);
-
       const div = document.createElement("div");
       div.textContent = `${picks.join(', ')} ➔ Matched ${tier}`;
       div.style.color = color;
@@ -2772,11 +2736,10 @@ function tierLabelForPrizeTable(game, matchCount, pbMatch) {
     matchDiv.appendChild(div);
   }
 
-
   const prizeFile = `${isPWB ? 'pwb' : 'f5'}_${drawNumber}.txt`;
   fetch(prizeFile + "?t=" + Date.now())
     .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
-    .then(text => renderPrizeTable(text, tierCounts))   // ← pass the counts
+    .then(text => renderPrizeTable(text))
     .catch(err => {
       console.warn("⚠️ Prize file error:", err);
       const table = document.getElementById("prizeTable");
@@ -2789,61 +2752,34 @@ function tierLabelForPrizeTable(game, matchCount, pbMatch) {
       td.textContent = String(err);
       tr.appendChild(td);
       tbody.appendChild(tr);
-      // also clear totals if present
-      const totals = document.getElementById("prizeTotals");
-      if (totals) totals.innerHTML = "";
     });
 
   const modal = document.getElementById("checkNumbersModal");
   if (modal) modal.style.display = "block";
 }
 
-/* render prize table + compute totals (robust labels + visible placement) */
-/* render prize table + compute totals (robust parsing) */
-function renderPrizeTable(tsvText, tierCounts = {}) {
+/* FIXED: render prize table into the existing table structure */
+function renderPrizeTable(tsvText) {
   const lines = tsvText.trim().split("\n");
   const table = document.getElementById("prizeTable");
   const thead = table.querySelector("thead");
   const tbody = table.querySelector("tbody");
+  // reset thead/tbody
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
-  // Helper: normalize labels so we can match reliably
-const norm = (s) =>
-  String(s || "")
-    .toLowerCase()
-    .replace(/power\s*ball/g, "powerball") // "Power Ball" -> "powerball"
-    .replace(/\bof\s*5\b/g, "")            // drop "of 5"
-    .replace(/\s*\+\s*/g, " + ")           // unify plus spacing
-    .replace(/\s+/g, " ")
-    .trim();
-
-
-  // Helper: parse currency/number
-  const parseAmount = (s) => {
-    if (!s) return 0;
-    // grab last numeric-looking token from the string
-    const m = String(s).match(/(\$?\s*[\d,]+(?:\.\d{1,2})?)\s*$/);
-    if (!m) return 0;
-    const numeric = m[1].replace(/[^0-9.]/g, "");
-    return numeric ? parseFloat(numeric) : 0;
-  };
-
-  // --- draw table with a tolerant splitter ---
   lines.forEach((line, idx) => {
     const tr = document.createElement("tr");
-
-    // split on tabs if present; otherwise split on 2+ spaces
-    const cells = line.includes("\t") ? line.split("\t") : line.split(/\s{2,}/);
+    const cells = line.split("\t");
 
     let rowColor = "lightgreen";
     if (idx !== 0) {
-      const tierTxt = (cells[0] || "").toLowerCase();
-      if (tierTxt.includes("5 of 5") || tierTxt.includes("5 + powerball")) rowColor = "red";
-      else if (tierTxt.includes("4 of 5") || tierTxt.startsWith("4 +"))    rowColor = "orange";
-      else if (tierTxt.includes("3 of 5") || tierTxt.startsWith("3 +"))    rowColor = "yellow";
-      else if (tierTxt.includes("2 of 5") || tierTxt.includes("powerball"))rowColor = "lightblue";
-      else if (tierTxt.includes("total"))                                  rowColor = "gold";
+      const tier = cells[0].toLowerCase();
+      if (tier.includes("5 of 5") || tier.includes("5 + powerball")) rowColor = "red";
+      else if (tier.includes("4 of 5") || tier.startsWith("4 +")) rowColor = "orange";
+      else if (tier.includes("3 of 5") || tier.startsWith("3 +")) rowColor = "yellow";
+      else if (tier.includes("2 of 5") || tier.includes("powerball")) rowColor = "lightblue";
+      else if (tier.includes("total winning")) rowColor = "gold";
     }
 
     cells.forEach((cellText) => {
@@ -2856,159 +2792,12 @@ const norm = (s) =>
       tr.appendChild(cell);
     });
 
-    (idx === 0 ? thead : tbody).appendChild(tr);
+    if (idx === 0) {
+      thead.appendChild(tr);
+    } else {
+      tbody.appendChild(tr);
+    }
   });
-
-  // --- build label -> amount map (skip totals rows), using last column for amount ---
-  const labelToAmount = {};
-  for (let i = 1; i < lines.length; i++) {
-    const raw = lines[i];
-    const cells = raw.includes("\t") ? raw.split("\t") : raw.split(/\s{2,}/);
-    if (!cells.length) continue;
-
-    const label = (cells[0] || "").trim();
-    if (/^total\b/i.test(label)) continue; // ignore "Total..." summary rows
-
-    const lastCol = cells[cells.length - 1];      // amount is in the last column
-    labelToAmount[norm(label)] = parseAmount(lastCol);
-  }
-
-  // --- total it up ---
-  let totalWinnings = 0;
-  const breakdown = [];
-
-  Object.entries(tierCounts).forEach(([rawLabel, count]) => {
-    const key = norm(rawLabel);
-    const amt = labelToAmount[key] || 0;
-    const subtotal = count * amt;
-    totalWinnings += subtotal;
-    breakdown.push({ label: rawLabel, count, amt, subtotal });
-  });
-
-  // Place totals right after the table
-// --- render totals + breakdown table ---
-let totals = document.getElementById("prizeTotals");
-if (!totals) {
-  totals = document.createElement("div");
-  totals.id = "prizeTotals";
-  totals.style.marginTop = "10px";
-  totals.style.padding = "8px 0";
-  const modal = document.getElementById("checkNumbersModal") || document.body;
-  modal.appendChild(totals);
-}
-
-// --- render totals + breakdown table *under the prize table in the modal* ---
-const money = v => v.toLocaleString(undefined, {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0
-});
-
-// helper: insert node after a reference node
-function insertAfter(newNode, referenceNode) {
-  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
-
-// create or reuse the totals wrapper
-totals = document.getElementById("prizeTotals");
-if (!totals) {
-  totals = document.createElement("div");
-  totals.id = "prizeTotals";
-  totals.style.marginTop = "10px";
-  totals.style.padding = "8px 0";
-}
-
-// always position it right after the prize table in the modal
-const modal = document.getElementById("checkNumbersModal") || document.body;
-const prizeTableEl = document.getElementById("prizeTable");
-if (prizeTableEl && prizeTableEl.parentNode) {
-  // if it already exists elsewhere, move it
-  if (totals.parentNode !== prizeTableEl.parentNode) totals.remove();
-  insertAfter(totals, prizeTableEl);
-} else {
-  // fallback (shouldn’t happen)
-  modal.appendChild(totals);
-}
-
-// 1) Big total line
-// 1) Big total line styled like the prize table's "Total Winning" row
-totals.innerHTML =
-  `<br><div style="font-weight:bold; color:orange;">
-     Winnings Table
-   </div>`;
-
-// 2) Breakdown table (Tier, Qty, Prize, Total)
-(function renderBreakdownTable() {
-  let tbl = document.getElementById("prizeTotalsTable");
-  if (tbl) tbl.remove();
-
-  tbl = document.createElement("table");
-  tbl.id = "prizeTotalsTable";
-  tbl.style.marginTop = "8px";
-  tbl.style.borderCollapse = "collapse";
-  tbl.style.minWidth = "420px";
-
-  const addCell = (tr, tag, text, style = {}) => {
-    const td = document.createElement(tag);
-    td.textContent = text;
-    td.style.border = "1px solid gray";
-    td.style.padding = "6px 10px";
-    td.style.textAlign = (tag === "th" ? "left" : "right");
-    Object.assign(td.style, style);
-    tr.appendChild(td);
-  };
-
-  // header
-  const thead = document.createElement("thead");
-  const hr = document.createElement("tr");
-  addCell(hr, "th", "Tier", { textAlign: "left" });
-  addCell(hr, "th", "Qty");
-  addCell(hr, "th", "Prize");
-  addCell(hr, "th", "Total");
-  thead.appendChild(hr);
-  tbl.appendChild(thead);
-
-  // body with same rowColor rules as prize table
-  const tbody = document.createElement("tbody");
-  breakdown
-    .slice()
-    .sort((a, b) => b.subtotal - a.subtotal)
-    .forEach(({ label, count, amt, subtotal }) => {
-      const r = document.createElement("tr");
-
-      // same color logic
-      let rowColor = "lightgreen";
-      const tier = label.toLowerCase();
-      if (tier.includes("5 of 5") || tier.includes("5 + powerball")) rowColor = "red";
-      else if (tier.includes("4 of 5") || tier.startsWith("4 +"))    rowColor = "orange";
-      else if (tier.includes("3 of 5") || tier.startsWith("3 +"))    rowColor = "yellow";
-      else if (tier.includes("2 of 5") || tier.includes("powerball"))rowColor = "lightblue";
-
-      const cleanLabel = String(label).replace(/:$/, "");
-      addCell(r, "td", cleanLabel, { textAlign: "left", color: rowColor });
-      addCell(r, "td", String(count), { color: rowColor });
-      addCell(r, "td", money(amt), { color: rowColor });
-      addCell(r, "td", money(subtotal), { color: rowColor });
-      tbody.appendChild(r);
-    });
-
-  // footer total row in gold
-  const tfoot = document.createElement("tfoot");
-  const fr = document.createElement("tr");
-  addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "bold", color: "gold" });
-  addCell(fr, "td", String(breakdown.reduce((s, b) => s + b.count, 0)), { fontWeight: "bold", color: "gold" });
-  addCell(fr, "td", "—", { color: "gold" });
-  addCell(fr, "td", money(totalWinnings), { fontWeight: "bold", color: "gold" });
-  tfoot.appendChild(fr);
-
-  tbl.appendChild(tbody);
-  tbl.appendChild(tfoot);
-
-  totals.appendChild(tbl);
-})();
-
-  // (optional) debug:
-  console.log('[labelToAmount]', labelToAmount);
 }
 
 document.getElementById('updateHitsBtn').addEventListener('click', updateReverseHitsTop18);

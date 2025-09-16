@@ -2897,48 +2897,19 @@ if (!totals) {
   modal.appendChild(totals);
 }
 
-// --- render totals + breakdown table *under the prize table in the modal* ---
 const money = v => v.toLocaleString(undefined, {
   style: 'currency',
   currency: 'USD',
   maximumFractionDigits: 0
 });
 
-// helper: insert node after a reference node
-function insertAfter(newNode, referenceNode) {
-  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
-
-// create or reuse the totals wrapper
-totals = document.getElementById("prizeTotals");
-if (!totals) {
-  totals = document.createElement("div");
-  totals.id = "prizeTotals";
-  totals.style.marginTop = "10px";
-  totals.style.padding = "8px 0";
-}
-
-// always position it right after the prize table in the modal
-const modal = document.getElementById("checkNumbersModal") || document.body;
-const prizeTableEl = document.getElementById("prizeTable");
-if (prizeTableEl && prizeTableEl.parentNode) {
-  // if it already exists elsewhere, move it
-  if (totals.parentNode !== prizeTableEl.parentNode) totals.remove();
-  insertAfter(totals, prizeTableEl);
-} else {
-  // fallback (shouldn’t happen)
-  modal.appendChild(totals);
-}
-
 // 1) Big total line
-// 1) Big total line styled like the prize table's "Total Winning" row
 totals.innerHTML =
-  `<br><div style="font-weight:bold; color:orange;">
-     Winnings Table
-   </div>`;
+  `<div style="color:lightgreen;font-weight:bold;">Total Winnings: ${money(totalWinnings)}</div>`;
 
 // 2) Breakdown table (Tier, Qty, Prize, Total)
 (function renderBreakdownTable() {
+  // remove old table if present
   let tbl = document.getElementById("prizeTotalsTable");
   if (tbl) tbl.remove();
 
@@ -2968,44 +2939,38 @@ totals.innerHTML =
   thead.appendChild(hr);
   tbl.appendChild(thead);
 
-  // body with same rowColor rules as prize table
+  // body (sorted by largest subtotal first)
   const tbody = document.createElement("tbody");
   breakdown
     .slice()
     .sort((a, b) => b.subtotal - a.subtotal)
     .forEach(({ label, count, amt, subtotal }) => {
       const r = document.createElement("tr");
-
-      // same color logic
-      let rowColor = "lightgreen";
-      const tier = label.toLowerCase();
-      if (tier.includes("5 of 5") || tier.includes("5 + powerball")) rowColor = "red";
-      else if (tier.includes("4 of 5") || tier.startsWith("4 +"))    rowColor = "orange";
-      else if (tier.includes("3 of 5") || tier.startsWith("3 +"))    rowColor = "yellow";
-      else if (tier.includes("2 of 5") || tier.includes("powerball"))rowColor = "lightblue";
-
+      // strip any stray colon just in case (display only)
       const cleanLabel = String(label).replace(/:$/, "");
-      addCell(r, "td", cleanLabel, { textAlign: "left", color: rowColor });
-      addCell(r, "td", String(count), { color: rowColor });
-      addCell(r, "td", money(amt), { color: rowColor });
-      addCell(r, "td", money(subtotal), { color: rowColor });
+      addCell(r, "td", cleanLabel, { textAlign: "left" });
+      addCell(r, "td", String(count));
+      addCell(r, "td", money(amt));
+      addCell(r, "td", money(subtotal));
       tbody.appendChild(r);
     });
 
-  // footer total row in gold
+  // footer total row
   const tfoot = document.createElement("tfoot");
   const fr = document.createElement("tr");
-  addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "bold", color: "gold" });
-  addCell(fr, "td", String(breakdown.reduce((s, b) => s + b.count, 0)), { fontWeight: "bold", color: "gold" });
-  addCell(fr, "td", "—", { color: "gold" });
-  addCell(fr, "td", money(totalWinnings), { fontWeight: "bold", color: "gold" });
+  addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "bold" });
+  addCell(fr, "td", String(breakdown.reduce((s, b) => s + b.count, 0)), { fontWeight: "bold" });
+  addCell(fr, "td", "—");
+  addCell(fr, "td", money(totalWinnings), { fontWeight: "bold" });
   tfoot.appendChild(fr);
 
   tbl.appendChild(tbody);
   tbl.appendChild(tfoot);
 
+  // insert right after the big total line
   totals.appendChild(tbl);
 })();
+
 
   // (optional) debug:
   console.log('[labelToAmount]', labelToAmount);

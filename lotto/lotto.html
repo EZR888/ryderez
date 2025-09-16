@@ -2925,6 +2925,7 @@ generatedSets.forEach(({ combo, points, pb }) => {
   html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
 });
 
+html += `</ol><p style="color:orange; font-weight:bold;">  Total Score: ${bestScore.toFixed(1)} pts</p>`;
 
   output.innerHTML = html;
   modal.style.display = 'block';

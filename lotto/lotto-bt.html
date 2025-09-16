@@ -386,6 +386,24 @@ h2 { margin: 8px 0; }
 #splashScreen { pointer-events: auto; }
 
 
+  #backtestControls {
+    display: grid;
+    grid-template-columns: auto 1fr;  /* toggle on the left, panel fills next column */
+    gap: 8px 12px;
+    margin-left: 12px;
+    align-items: center;
+  }
+  #backtestPanel {
+    display: none; /* toggle to grid when open */
+    grid-template-columns: auto 60px auto auto auto auto; /* label, input, draws, Apply, ◀, ▶, Reset */
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 1100px) {
+    #backtestPanel { grid-template-columns: repeat(3, auto); } /* stack on narrow panes */
+  }
+
+
   </style>
 </head>
 <body>
@@ -480,19 +498,20 @@ h2 { margin: 8px 0; }
 
       
       <!-- Back Test controls -->
-<div id="backtestControls" style="display:inline-flex; gap:10px; align-items:center; margin-left:12px;">
+<div id="backtestControls">
   <button id="backtestToggle" class="button button-single">🧪 Back Test</button>
-  <div id="backtestPanel" style="display:none; align-items:center; gap:8px;"><br>
+
+  <div id="backtestPanel">
     <label for="trimInput" style="color:lightyellow;">Trim last</label>
     <input id="trimInput" type="number" min="0" value="0" style="width:60px">
     <span style="color:lightyellow;">draws</span>
-    <br><br>
     <button id="applyTrim" class="button">Apply</button>
     <button id="stepBack" class="button">◀︎ Step</button>
     <button id="stepForward" class="button">Step ▶︎</button>
     <button id="resetTrim" class="button">Reset</button>
   </div>
 </div>
+
 
     </aside>
 
@@ -739,6 +758,8 @@ h2 { margin: 8px 0; }
 
 <script>
 
+
+backtestPanel.style.display = backtestPanel.style.display === 'grid' ? 'none' : 'grid';
 
 
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.

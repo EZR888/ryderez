@@ -908,9 +908,6 @@ let top18From69 = [];
 let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDrawingsFrom69 = [];
 let activeGameMode = null;
 let __pbInputsWired = false;
-let freezeArmed = false;     // show previous context for exactly one step
-let frozenOnce  = null;      // { hot:Set, top:Array, picks:Set, fromDraw:number }
-
 
 // Backtesting
 let backtestTrim = 0;                     // how many most-recent draws to chop off
@@ -999,7 +996,7 @@ btn1.onclick = () => {
   loadCSVFile('lotto_1.txt', 26, () => {
     // ✅ SKIPS (orange): take top 12 by current skip-profile
     if (typeof recomputeTopFromSkips === 'function') {
-top18 = recomputeTopFromSkips(12, { render:false });
+      top18 = recomputeTopFromSkips(12); // sets top18 and refreshes highlights internally
     } else {
       top18 = [];
     }
@@ -1185,30 +1182,25 @@ document.addEventListener('DOMContentLoaded', () => {
   trimEl.value = String(backtestTrim);
 
   // apply arbitrary trim
- applyBtn.addEventListener('click', () => {
-  backtestTrim = Math.max(0, parseInt(trimEl.value, 10) || 0);
-  armFreezeOnce();                     // ← add this
-  rebuildFromOriginalTrim({ afterStep: true });  // ← pass the option
-  showToast(`Trimmed last ${backtestTrim} draw(s).`);
-});
-
+  applyBtn.addEventListener('click', () => {
+    backtestTrim = Math.max(0, parseInt(trimEl.value, 10) || 0);
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
 
   // step = add one more trimmed (go further back in time)
-stepB.addEventListener('click', () => {
-  backtestTrim = backtestTrim + 1;
-  armFreezeOnce();                     // ← add this
-  rebuildFromOriginalTrim({ afterStep: true });
-  showToast(`Trimmed last ${backtestTrim} draw(s).`);
-});
+  stepB.addEventListener('click', () => {
+    backtestTrim = backtestTrim + 1;
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
 
   // step forward = reduce trim by 1 (walk toward present)
-stepF.addEventListener('click', () => {
-  backtestTrim = Math.max(0, backtestTrim - 1);
-  armFreezeOnce();                     // ← add this
-  rebuildFromOriginalTrim({ afterStep: true });
-  showToast(`Trimmed last ${backtestTrim} draw(s).`);
-});
-
+  stepF.addEventListener('click', () => {
+    backtestTrim = Math.max(0, backtestTrim - 1);
+    rebuildFromOriginalTrim();
+    showToast(`Trimmed last ${backtestTrim} draw(s).`);
+  });
 
   // reset
   resetBtn.addEventListener('click', () => {
@@ -1372,64 +1364,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 });
-
-function armFreezeOnce(){
-  if (freezeArmed) return;
-  frozenOnce = {
-    hot:   new Set(hotSet),
-    top:   top18.slice(),
-    picks: new Set(systemPicksSet),
-    fromDraw: latestDrawingNumber
-  };
-  freezeArmed = true;
-}
-
-
-// ✅ Attach System Picks button once
-const sysBtn = document.getElementById('systemPicksButton');
-if (sysBtn) sysBtn.addEventListener('click', runSystemPicks);
-
-/* === Restore Sys Picks (recalculate Skips/Hot/Picks for THIS draw) === */
-function restoreSystemContext() {
-  // Clear the one-step freeze
-  freezeArmed = false;
-  frozenOnce  = null;
-
-  if (totalNumbersGlobal === 26) return;
-
-  // Recompute Skips (Top), Hot, and Picks for the *current* back-test window
-  if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
-
-  const weeks = Math.min(25, fullData.length);
-  const hot12 = computeTrendingHotNumbers(weeks, 12);
-  hotSet = new Set(hot12);
-
-  setDeterministicSeed('systemPicks');
-  const picks = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
-  systemPicksSet = new Set(picks);
-
-  ensureTwelveInputs();
-  setInputsFromList(picks.slice().sort((a,b)=>a-b), 12);
-
-  renderReverseHitsTable();
-  reapplySkipTableHighlights();
-
-  setPicksMeta({ method: 'system', weeks, hotCoverage: 12 });
-  showToast('Restored System Picks/Hot/Skips for this draw.');
-}
-
-// 🔗 Wire the existing "Restore Sys Picks" button (by id or label text)
-(function wireRestoreSysPicksOnce(){
-  const btn =
-    document.getElementById('restoreSysPicksBtn') ||
-    document.getElementById('restoreSysPicksButton') ||
-    Array.from(document.querySelectorAll('button'))
-      .find(b => /restore\s*sys\s*picks/i.test(b.textContent || ''));
-  if (btn && !btn.__wiredRestore) {
-    btn.__wiredRestore = true;
-    btn.addEventListener('click', restoreSystemContext);
-  }
-})();
 
 
 // Holds current System Picks result
@@ -1694,9 +1628,9 @@ if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex'
 // expose it globally so any handler can call it
 window.loadCSVFile = loadCSVFile;
 
-function rebuildFromOriginalTrim(opts = {}) {
+function rebuildFromOriginalTrim() {
   const raw = originalFullDataByGame[totalNumbersGlobal];
-  if (!raw) return;
+  if (!raw) return;                         // not loaded yet
   const effective = raw.slice(backtestTrim);
   fullData = effective;
 
@@ -1714,37 +1648,29 @@ function rebuildFromOriginalTrim(opts = {}) {
   renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
   renderSkipFrequency();
 
-  // Recompute Hot/Top/Picks (normal live state) if not PB-only
+  // Recompute Hot/Top/Picks deterministically for the trimmed window
   if (totalNumbersGlobal !== 26) {
-if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12, { render:false });
+    // Skips-based top
+    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
+
+    // Hot over the (trimmed) last up to 25 draws
     const weeks = Math.min(25, fullData.length);
     const hot12 = computeTrendingHotNumbers(weeks, 12);
     hotSet = new Set(hot12);
+
+    // System Picks
     setDeterministicSeed('systemPicks');
     const picks12 = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
     systemPicksSet = new Set(picks12);
+
     ensureTwelveInputs();
     setInputsFromList(picks12, 12);
     setPicksMeta({ method: 'system', weeks, hotCoverage: 12 });
   }
 
-  // 👇 If this call was triggered by a Back Test step AND a freeze was armed,
-  // draw Hot/Skips/Picks from the snapshot for this one render.
-  if (opts.afterStep && freezeArmed && frozenOnce) {
-    renderReverseHitsTable({
-      hotOverride: frozenOnce.hot,
-      topOverride: frozenOnce.top,
-      picksOverride: frozenOnce.picks,
-      badgeText: `Frozen Hot/Skips/Picks from draw #${frozenOnce.fromDraw}`
-    });
-    reapplySkipTableHighlights(frozenOnce.top);
-    // auto-disarm so the NEXT step will re-arm a fresh snapshot
-    freezeArmed = false;
-  } else {
-    // normal render
-    renderReverseHitsTable();
-    reapplySkipTableHighlights();
-  }
+  // reflect current trim in the UI
+  const t = document.getElementById('trimInput');
+  if (t) t.value = String(backtestTrim);
 }
 
 
@@ -1752,37 +1678,52 @@ if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12, { ren
 // Score = how often this number historically had the current since-length.
 // Tie-breakers: larger current since (more due), then smaller number.
 // Pick by how much a number "likes" its CURRENT skip length (bin), with smoothing + due nudge.
-function recomputeTopFromSkips(count = 12, options = { render: false }) {
+function recomputeTopFromSkips(count = 12) {
   if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
 
   const picks = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
     const row = skipDataGlobal.skipTable[n] || [];
-    const curSkip = sinceMap[n] || 26;
-    const capped = Math.min(curSkip, 25);
+    const curSkip = sinceMap[n] || 26;            // 1..25; 26+ = "over 25"
+    const capped = Math.min(curSkip, 25);         // we only have bins 1..25
 
+    // Row total for smoothing / context
     const rowTotal = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0);
+
+    // Frequency of THIS number hitting after THIS exact skip length historically
     const freqAtCur = (capped >= 1 && capped <= 25) ? (row[capped] || 0) : 0;
 
-    const p = (freqAtCur + 1) / (rowTotal + 25);
-    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);
+    // Laplace smoothing (prevents zeroes from dominating)
+    const p = (freqAtCur + 1) / (rowTotal + 25);  // “probability” this number likes this bin
+
+    // Gentle due bonus so longer-current-skips aren’t ignored when p is similar
+    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);  // tweak 0.10–0.25 to taste
+
     const score = p * dueBonus;
 
-    picks.push({ n, score, curSkip });
+    picks.push({
+      n,
+      score,
+      curSkip,
+      freqAtCur,
+      rowTotal
+    });
   }
 
-  picks.sort((a, b) => (b.score - a.score) || (b.curSkip - a.curSkip) || (a.n - b.n));
-  const top = picks.slice(0, count).map(x => x.n).sort((a,b)=>a-b);
+  // Rank by the “likes current bin” score; then favor longer current skips; then smaller number
+  picks.sort((a, b) =>
+    (b.score - a.score) ||
+    (b.curSkip - a.curSkip) ||
+     (a.n - b.n)
+  );
 
+  const top = picks.slice(0, count).map(x => x.n).sort((a,b)=>a-b);
   top18 = top;
 
-  if (options.render) {
-    renderReverseHitsTable();
-    reapplySkipTableHighlights();
-  }
+  renderReverseHitsTable();
+  reapplySkipTableHighlights();
   return top;
 }
-
 
 let __pbCycleIndex = 0;
 
@@ -2076,7 +2017,7 @@ function computeSystemPicks(
 function populateAllThreeOnLoad() {
   // 1) Top (orange): from current-since skip profile
   if (typeof recomputeTopFromSkips === 'function') {
-recomputeTopFromSkips(12, { render:false });
+    recomputeTopFromSkips(12);
   }
 
   // 2) Hot (blue): trending last 25
@@ -2121,7 +2062,7 @@ function runSystemPicks(){
   }
   // Ensure Top exists
   if (!top18 || top18.length === 0) {
-if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12, { render:false });
+    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
   }
 
   // Keep a copy for change detection
@@ -3218,11 +3159,9 @@ function resetModalControls() {
   if (progress) progress.innerHTML = '';
 }
 
-function reapplySkipTableHighlights(topOverride) {
+function reapplySkipTableHighlights() {
   const table = document.querySelector('#skipFrequencyContainer table');
   if (!table) return;
-
-  const TOP = Array.isArray(topOverride) && topOverride.length ? topOverride : top18;
 
   const rows = table.querySelectorAll('tr');
   rows.forEach(row => {
@@ -3234,7 +3173,7 @@ function reapplySkipTableHighlights(topOverride) {
       if (sinceMap[num] === i + 1) cell.classList.add('selected-top-skip');
     });
 
-    if (TOP.includes(num)) {
+    if (top18.includes(num)) {
       row.querySelectorAll('td').forEach(cell => {
         if (cell.classList.contains('selected-top-skip')) {
           cell.classList.remove('selected-top-skip');
@@ -3243,8 +3182,8 @@ function reapplySkipTableHighlights(topOverride) {
       });
     }
   });
-}
 
+}
 
 function reapply69State() {
   highlight(btn69);
@@ -3279,78 +3218,54 @@ function reapply69State() {
 }
 
 function generateWheelSets() {
-  // 1) Read 12+ numbers from the inputs
-  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-  const numbersToUse = inputs
-    .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(n => Number.isInteger(n) && n >= 1);
+const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+const numbersToUse = top18Inputs
+  .map(input => parseInt(input.value.trim(), 10))
+  .filter(x => Number.isInteger(x) && x >= 1);
 
-  if (numbersToUse.length < 12) {
-    alert('Please enter 12 valid numbers in the input boxes.');
-    return;
-  }
+if (numbersToUse.length < 12) {
+  alert('Please enter 12 valid numbers in the input boxes.');
+  return;
+}
 
-  // Local, sorted copy (does not mutate any "Top" state)
-  const wheelSource = [...numbersToUse].sort((a, b) => a - b);
+// ✅ Use a local source for wheel generation; do NOT change Top
+const wheelSource = numbersToUse.sort((a, b) => a - b);
 
-  // 2) UI hooks
+
   const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
   progressDiv.innerHTML = '';
 
   const setsToGenerateInput = document.getElementById('modalSetCountChoice');
-  const setsToGenerate = Math.max(1, parseInt(setsToGenerateInput?.value, 10) || 6);
+  const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
+
+  const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
+const needPB = (totalNumbersGlobal === 69);
+if (needPB) __pbCycleIndex = 0;
+
+generatedSets = wheelSets.map(({ combo }) => ({
+  combo,
+  points: calculateRawPointsForSet(combo),
+  pb: needPB ? getNextPB() : null
+}));
 
   const modalWheelOutput = document.getElementById('modalWheelOutput');
   const wheelModal = document.getElementById('wheelModal');
 
-  // 3) Disable modal controls during generation to avoid clicks piling up
-  const toDisable = [
-    document.getElementById('generateSetsModalButton'),
-    document.getElementById('pickBestSetsModal'),
-    document.getElementById('exportAllBtn'),
-    document.getElementById('exportBestBtn'),
-    setsToGenerateInput
-  ].filter(Boolean);
-  toDisable.forEach(b => b.disabled = true);
-
-  try {
-    // 4) Generate sets (generateWheel itself is now throttled for progress updates)
-    const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
-
-    // 5) PB handling and scoring
-    const needPB = (totalNumbersGlobal === 69);
-    if (needPB) __pbCycleIndex = 0;
-
-    generatedSets = wheelSets.map(({ combo }) => ({
-      combo,
-      points: calculateRawPointsForSet(combo),
-      pb: needPB ? getNextPB() : null
-    }));
-
-    // 6) Render once
-    if (!generatedSets.length) {
+  if (generatedSets.length === 0) {
       modalWheelOutput.innerHTML = '<p>No valid sets generated. Try different numbers or sets.</p>';
-      wheelModal.style.display = 'block';
+      wheelModal.style.display = "block";
       return;
-    }
-
-    // Build the list with one string write (cheap)
-    let html = '<ol>';
-    for (const { combo, points, pb } of generatedSets) {
-      const color = getColorForPoints(points);
-      const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
-      html += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
-    }
-    html += '</ol>';
-
-    modalWheelOutput.innerHTML = html;
-    wheelModal.style.display = 'block';
-  } finally {
-    // 7) Re-enable controls even if something throws
-    toDisable.forEach(b => b.disabled = false);
   }
-}
 
+  let outputHtml = '<ol>';
+generatedSets.forEach(({ combo, points, pb }) => {
+  const color = getColorForPoints(points);
+  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+  outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+});
+outputHtml += '</ol>';
+modalWheelOutput.innerHTML = outputHtml;
+}
 
 function createProgressInfoDiv() {
   const div = document.createElement('div');
@@ -3490,8 +3405,6 @@ function renderRecentDraws(data, totalNumbers, latestDrawingNumber) {
 }
 
 function renderSkipFrequency() {
-  console.log('[renderSkipFrequency] skipTable ready?', !!skipDataGlobal?.skipTable);
-
   const container = document.getElementById('skipFrequencyContainer');
   container.innerHTML = '';
 
@@ -3623,31 +3536,16 @@ function calculateCoveragePercent(numNumbers, setsGenerated) {
 }
 
 /* Reverse hits table (Skips / Hot / Picks) */
-function renderReverseHitsTable(overrides = {}) {
-  console.log('[renderReverseHitsTable] fullData len:', fullData?.length, 'totalNumbersGlobal:', totalNumbersGlobal);
-  // pick which sets to draw: live (default) or frozen (override)
-  const HOT   = overrides.hotOverride   || hotSet;
-  const PICKS = overrides.picksOverride || systemPicksSet;
-  const TOP   = overrides.topOverride   || top18;
-
+function renderReverseHitsTable() {
   const container = document.getElementById('reverseHitsContainer');
   container.innerHTML = '';
 
-  // (OPTIONAL) show a small badge when frozen columns are displayed
-  if (overrides.badgeText) {
-    const badge = document.createElement('div');
-    badge.textContent = overrides.badgeText;
-    badge.style.color = 'orange';
-    badge.style.margin = '4px 0 6px';
-    badge.style.fontWeight = 'bold';
-    container.appendChild(badge);
-  }
-
   const table = document.createElement('table');
+
   // ----- header -----
   const headerRow = document.createElement('tr');
-  headerRow.appendChild(document.createElement('th'));
-  for (let i = 25; i >= 1; i++) {
+  headerRow.appendChild(document.createElement('th')); // left sticky number header
+  for (let i = 25; i >= 1; i--) {
     const th = document.createElement('th');
     th.textContent = i;
     headerRow.appendChild(th);
@@ -3657,12 +3555,14 @@ function renderReverseHitsTable(overrides = {}) {
     const thPicks = document.createElement('th'); thPicks.textContent = 'Picks'; thPicks.classList.add('col-picks');
     const thHot   = document.createElement('th'); thHot.textContent   = 'Hot';   thHot.classList.add('col-hot');
     const thSkips = document.createElement('th'); thSkips.textContent = 'Skips'; thSkips.classList.add('col-skips');
+    // 👉 order: Picks, Hot, Skips
     headerRow.appendChild(thPicks);
     headerRow.appendChild(thHot);
     headerRow.appendChild(thSkips);
   }
   table.appendChild(headerRow);
 
+  // ----- body -----
   const draws = fullData.map(row => row.slice(1).map(n => parseInt(n, 10))).slice(0, 25);
 
   for (let number = 1; number <= totalNumbersGlobal; number++) {
@@ -3684,35 +3584,39 @@ function renderReverseHitsTable(overrides = {}) {
     }
 
     if (totalNumbersGlobal !== 26) {
+      // Picks (green) — FIRST
       const picksCell = document.createElement('td');
       picksCell.classList.add('pick-cell', 'col-picks');
       picksCell.dataset.n = String(number);
       picksCell.tabIndex = 0;
       picksCell.setAttribute('role', 'button');
-      picksCell.setAttribute('aria-pressed', PICKS.has(number) ? 'true' : 'false');
+      picksCell.setAttribute('aria-pressed', systemPicksSet.has(number) ? 'true' : 'false');
       picksCell.setAttribute('aria-label', `Toggle pick ${number}`);
-      if (PICKS.has(number)) {
+      if (systemPicksSet && systemPicksSet.has(number)) {
         const dot = document.createElement('div');
         dot.className = 'green-dot';
         picksCell.appendChild(dot);
       }
 
+      // Hot (blue) — SECOND
       const hotCell = document.createElement('td');
       hotCell.classList.add('col-hot');
-      if (HOT && HOT.has(number)) {
+      if (hotSet && hotSet.has(number)) {
         const d = document.createElement('div');
         d.className = 'hot-dot';
         hotCell.appendChild(d);
       }
 
+      // Skips (orange) — LAST
       const skipsCell = document.createElement('td');
       skipsCell.classList.add('col-skips');
-      if (TOP.includes(number)) {
+      if (top18.includes(number)) {
         const dot = document.createElement('div');
         dot.className = 'orange-dot';
         skipsCell.appendChild(dot);
       }
 
+      // append in new order
       row.appendChild(picksCell);
       row.appendChild(hotCell);
       row.appendChild(skipsCell);

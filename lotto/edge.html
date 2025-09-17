@@ -1701,45 +1701,56 @@ window.loadCSVFile = loadCSVFile;
 
 function rebuildFromOriginalTrim() {
   const raw = originalFullDataByGame[totalNumbersGlobal];
-  if (!raw) return;                         // not loaded yet
+  if (!raw) return;
+
+  // 1) Apply the trim to the dataset
   const effective = raw.slice(backtestTrim);
   fullData = effective;
 
+  // 2) Rebuild base structures from the trimmed data
   const drawingNumbers = fullData.map(row => parseInt(row[0], 10));
-  latestDrawingNumber = drawingNumbers[0];
+  latestDrawingNumber  = drawingNumbers[0];
 
   const data = fullData.map(row => row.slice(1).map(n => parseInt(n, 10)))
                        .filter(row => row.every(n => !isNaN(n)));
 
   skipDataGlobal = buildSkipTable(data, totalNumbersGlobal, drawingNumbers);
 
-  pastDrawings = fullData.filter(row => row.length >= 6)
+  pastDrawings = fullData
+    .filter(row => row.length >= 6)
     .map(row => row.slice(1, 6).map(n => parseInt(n, 10)).sort((a, b) => a - b).join(','));
 
+  // 3) Recompute the 25-draw grid + skip-frequency from the trimmed set
   renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
   renderSkipFrequency();
 
-  // Recompute Hot/Top/Picks deterministically for the trimmed window
-  if (totalNumbersGlobal !== 26) {
-    // Skips-based top
-    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
-
-    // Hot over the (trimmed) last up to 25 draws
-    const weeks = Math.min(25, fullData.length);
-    const hot12 = computeTrendingHotNumbers(weeks, 12);
-    hotSet = new Set(hot12);
-
-    // System Picks
-    setDeterministicSeed('systemPicks');
-    const picks12 = computeSystemPicks(12, weeks, hot12, top18, sinceMap);
-    systemPicksSet = new Set(picks12);
-
-    ensureTwelveInputs();
-    setInputsFromList(picks12, 12);
-    setPicksMeta({ method: 'system', weeks, hotCoverage: 12 });
+  // 4) Recalculate SKIPS (Top) and HOT for this trimmed window
+  //    Note: recomputeTopFromSkips() currently renders once — that’s fine;
+  //    we will do a *final* render at the end after we also set Picks.
+  if (typeof recomputeTopFromSkips === 'function') {
+    recomputeTopFromSkips(12);            // sets global `top18`
   }
 
-  // reflect current trim in the UI
+  const weeks = Math.min(25, fullData.length);
+  const hot12 = computeTrendingHotNumbers(weeks, 12);
+  hotSet = new Set(hot12);
+
+  // 5) P I C K S  =  D E F A U L T S  (per your spec for Back Test)
+  //    This mirrors a “Defaults” button tap: load hardwired 12 into inputs + Picks column.
+  if (totalNumbersGlobal !== 26) {
+    // for PB/F5, fill the 12-pick inputs and green column from hardwired defaults
+    applyHardwiredPicksForCurrentGame();     // calls loadPicksIntoColumnAndInputs(...) internally
+    // `applyHardwiredPicksForCurrentGame` already sets method:'manual'. Keep meta tidy:
+    setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+  } else {
+    // PB-only mode (no Picks column). Still OK to refresh table below.
+  }
+
+  // 6) FINAL authoritative render so Picks/Hot/Skips are in-sync for this trim
+  renderReverseHitsTable();
+  reapplySkipTableHighlights?.();
+
+  // 7) Reflect the trim value in the UI control
   const t = document.getElementById('trimInput');
   if (t) t.value = String(backtestTrim);
 }
@@ -3896,25 +3907,67 @@ function __setPBRedPool(vals) {
   if (typeof savePBToStorage === 'function') savePBToStorage();
 }
 
+/* Complete the helper (in case it was partial) */
 function applyHardwiredPicksForCurrentGame() {
-  // White balls / Fantasy 5 inputs (12)
-  if (typeof loadPicksIntoColumnAndInputs !== 'function') return;
-
-  if (typeof totalNumbersGlobal === 'number' && totalNumbersGlobal === 69) {
-    loadPicksIntoColumnAndInputs(HARDCODE_DEFAULTS.PB_WHITES);
-    // PB red balls (hidden UI still feeds exporter)
-    __setPBRedPool(HARDCODE_DEFAULTS.PB_REDS);
-  } else if (typeof totalNumbersGlobal === 'number' && totalNumbersGlobal === 39) {
-    loadPicksIntoColumnAndInputs(HARDCODE_DEFAULTS.F5);
+  let picks12 = [];
+  if (totalNumbersGlobal === 69) {
+    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.PB_WHITES) ? HARDCODE_DEFAULTS.PB_WHITES.slice() : [];
+  } else if (totalNumbersGlobal === 39) {
+    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.F5) ? HARDCODE_DEFAULTS.F5.slice() : [];
+  } else {
+    // PB-only (26): no 12-input column; just return after red-ball reset
+    return;
   }
 
-  // Mark as MANUAL so your filenames/labels read correctly
-  if (typeof setPicksMeta === 'function') {
+  if (picks12.length === 12) {
+    loadPicksIntoColumnAndInputs(picks12);   // mirrors into inputs + green column + redraws
     setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+    showToast('Defaults applied for this game.');
+  } else {
+    console.warn('Defaults not found for current game.');
   }
-  if (typeof renderReverseHitsTable === 'function') renderReverseHitsTable();
-  if (typeof reapplySkipTableHighlights === 'function') reapplySkipTableHighlights();
 }
+
+/* Add a "Defaults" button to the right of Update Picks Column */
+document.addEventListener('DOMContentLoaded', () => {
+  const updateBtn = document.getElementById('updateHitsBtn');
+  if (!updateBtn) return;
+
+  const defaultsBtn = document.createElement('button');
+  defaultsBtn.id = 'defaultsBtn';
+  defaultsBtn.textContent = 'Defaults';
+
+  // Try to match the look of the Update button
+  if (updateBtn.className) defaultsBtn.className = updateBtn.className;
+  defaultsBtn.style.marginLeft = '8px';
+
+  // Place it immediately to the right
+  updateBtn.insertAdjacentElement('afterend', defaultsBtn);
+
+  // Click handler: reset whites (per game) + PB reds
+  defaultsBtn.addEventListener('click', () => {
+    try {
+      // Always reset the PB red-ball inputs
+      if (window.HARDCODE_DEFAULTS && Array.isArray(HARDCODE_DEFAULTS.PB_REDS)) {
+        __setPBRedPool(HARDCODE_DEFAULTS.PB_REDS.slice());
+      }
+
+      // Reset the 12 inputs to the current game's defaults (if applicable)
+      if (totalNumbersGlobal === 69 || totalNumbersGlobal === 39) {
+        applyHardwiredPicksForCurrentGame();
+      } else {
+        showToast('Powerball-only mode: red balls reset.');
+      }
+
+      // Refresh highlights just to be tidy
+      renderReverseHitsTable();
+      reapplySkipTableHighlights?.();
+    } catch (e) {
+      console.error('Defaults error:', e);
+      showToast('Could not apply defaults.');
+    }
+  });
+});
 
 // --- Override page-load auto-population to prefer your hardwired sets ---
 (function overridePopulateAllThreeOnLoad(){

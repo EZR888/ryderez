@@ -823,47 +823,6 @@ h2 { margin: 8px 0; }
 // Global: are we currently in Quick-12 (6 ticket) mode?
 window.__isQuickSix = false;
 
-function parseNumberList(str){
-  return Array.from(new Set(
-    String(str || '').split(/[,\s]+/).map(s => parseInt(s,10)).filter(Number.isInteger)
-  )).sort((a,b)=>a-b);
-}
-
-function readSection(raw, name){
-  // captures lines after [NAME] until next [ or EOF
-  const re = new RegExp(`\\[${name}\\]\\s*\\n([\\s\\S]*?)(?:\\n\\s*\\[[^\\]]+\\]|$)`, 'i');
-  const m = raw.match(re);
-  return m ? parseNumberList(m[1]) : [];
-}
-
-function applyThreeColumns({ picks, hot, skips }, headerMeta){
-  // Switch to MANUAL labeling when loading from a file
-  setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
-
-  // Apply Skips (orange)
-  if (Array.isArray(skips) && skips.length){
-    window.top18 = skips.slice(0); // store
-  }
-
-  // Apply Hot (blue)
-  if (Array.isArray(hot) && hot.length){
-    window.hotSet = new Set(hot);
-  }
-
-  // Apply Picks (green + inputs)
-  if (Array.isArray(picks) && picks.length >= 12){
-    const p12 = picks.slice(0,12).sort((a,b)=>a-b);
-    loadPicksIntoColumnAndInputs(p12);
-  }
-
-  // Redraw
-  renderReverseHitsTable();
-  reapplySkipTableHighlights?.();
-
-  // Optional summary text near “Last 25 Drawings”
-  updatePicksMetaDisplay?.(headerMeta);
-}
-
 
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
 // First visit: we let the GIF play; onload marks the visit as "seen".
@@ -1101,89 +1060,63 @@ const savePicksBtn = document.getElementById('savePicksBtn');
 if (savePicksBtn) savePicksBtn.addEventListener('click', savePicksFromInputs);
 
 // Save the 12 inputs (low→high) to a file
-// Save the 12 inputs (Picks) + current Hot + Skips into one snapshot file
-// Save the 12 inputs (Picks) + current Hot + Skips into one snapshot file
 function savePicksFromInputs() {
-  // Read the 12 input boxes
-  const picks = Array.from(document.querySelectorAll('#top18Inputs input'))
+  const nums = Array.from(document.querySelectorAll('#top18Inputs input'))
     .slice(0, 12)
     .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(Number.isInteger);
+    .filter(n => Number.isInteger(n));
 
-  if (picks.length !== 12) {
+  if (nums.length !== 12) {
     alert('Please enter 12 valid numbers in the input boxes before saving.');
     return;
   }
 
-  const picks12 = [...new Set(picks)].slice(0, 12).sort((a,b)=>a-b);
-  if (picks12.length !== 12) {
-    alert('Need 12 unique numbers in the inputs.');
-    return;
-  }
+  const sorted = nums.sort((a,b)=>a-b);
 
-  // ✅ Use the live variables, not window.*
-  const hotArr   = Array.from(hotSet || []).filter(Number.isInteger).sort((a,b)=>a-b);
-  const skipsArr = Array.isArray(top18)
-    ? [...new Set(top18)].filter(Number.isInteger).sort((a,b)=>a-b)
-    : [];
-
-  // Header metadata
+  // Next draw only
   const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
     ? String(latestDrawingNumber + 1)
     : '00000';
 
-  const game  = getGameCode(); // 'PB' | 'F5' | 'X'
-  const meta  = window.lastPicksMeta || {};
-  const method = (meta.method || 'manual').toLowerCase(); // 'system' | 'quick12' | 'manual'
-  const weeks  = (typeof meta.weeks === 'number') ? meta.weeks : null;
-  // If dialog/meta didn't set one, derive from what we're actually saving
-  const hotN   = (typeof meta.hotCoverage === 'number' && meta.hotCoverage > 0)
-    ? meta.hotCoverage
-    : (hotArr.length ? hotArr.length : null);
+  const game = getGameCode();              // 'PB' | 'F5' | 'X'
+  const meta = window.lastPicksMeta || {};
+  const method = meta.method || 'manual';
+  const weeks = (typeof meta.weeks === 'number') ? meta.weeks : null;
+  const hotN  = (typeof meta.hotCoverage === 'number') ? meta.hotCoverage : null;
 
-  // Filename remains compatible with your existing pattern
+  // 🏷️ Compact, informative filename:
+  // examples:
+  //   picksF5_11631_w25_h12_SYS.txt
+  //   picksPB_1470_Q12.txt
+  //   picksF5_11631_MAN.txt
   const parts = [`Picks_${game}`, nextDraw];
   if (method === 'system') {
     if (hotN)  parts.push(`h${hotN}`);
     if (weeks) parts.push(`d${weeks}`);
   }
-  parts.push(methodCode(method)); // 'MAN' or 'SYS'
+  parts.push(methodCode(method));
   const filename = parts.join('_') + '.txt';
 
-  // Header
+  // 🧾 Human-friendly header inside the file
   const header = [
-    '# The Winning Edge - Picks Snapshot',
+    '# The Winning Edge - Picks',
     `# Game: ${game}`,
     `# Next Draw: ${nextDraw}`,
     `# Method: ${method.toUpperCase()}`,
     (weeks ? `# Lookback: ${weeks} drawings` : null),
     (hotN  ? `# Hot Coverage: Top ${hotN}` : null),
-    `# Generated: ${new Date().toISOString()}`,
+    (meta.timestamp ? `# Generated: ${meta.timestamp}` : `# Generated: ${new Date().toISOString()}`),
     '---'
   ].filter(Boolean).join('\n');
 
-  // Body sections
-  const sections = [
-    '[PICKS]',
-    picks12.join(', '),
-    '',
-    '[HOT]',
-    hotArr.join(', '),
-    '',
-    '[SKIPS]',
-    skipsArr.join(', '),
-    ''
-  ].join('\n');
-
-  // Save
-  const blob = new Blob([header + '\n' + sections], { type: 'text/plain' });
+  const body = sorted.join(', ');
+  const blob = new Blob([header + '\n' + body + '\n'], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 100);
 }
-
 
 saveTop18Button.addEventListener('click', saveTop18Numbers);
 loadTop18Button.addEventListener('click', () => { loadTop18Modal.style.display = 'block'; });
@@ -2386,67 +2319,85 @@ function handleTop18FileSelect(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
+reader.onload = function(e) {
+  // Full file text (trim BOM + whitespace)
+  const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
 
-    // Header metadata (works for old and new)
-    const gameMatch   = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
-    const nextMatch   = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
-    const methodMatch = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
-    const lookMatch   = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
-    const hotMeta     = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
+  // 🔎 Try to read "# Game: XXX" before we use it anywhere
+  const gameMatch = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
+  const fileGameCode = gameMatch ? gameMatch[1].toUpperCase() : null; // e.g., 'PB' or 'F5'
 
-    const headerMeta = {
-      game: gameMatch ? gameMatch[1].toUpperCase() : null,
-      nextDraw: nextMatch ? nextMatch[1] : null,
-      method: methodMatch ? methodMatch[1] : null,
-      lookback: lookMatch ? parseInt(lookMatch[1],10) : null,
-      hotCoverage: hotMeta ? parseInt(hotMeta[1],10) : null
-    };
+  // --- parse header comments (if present) ---
+  const nextDrawMatch = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
+  const methodMatch   = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
+  const lookbackMatch = raw.match(/^\s*#\s*Lookback:\s*(\d+)/mi);
+  const hotMatch      = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
 
-    // NEW snapshot sections (if present)
-    const picksSec = readSection(raw, 'PICKS');
-    const hotSec   = readSection(raw, 'HOT');
-    const skipsSec = readSection(raw, 'SKIPS');
+  const picksHeaderMeta = {
+    game: fileGameCode || null,
+    nextDraw: nextDrawMatch ? nextDrawMatch[1] : null,
+    method: methodMatch ? methodMatch[1] : null,                // e.g., SYSTEM / MANUAL
+    lookback: lookbackMatch ? parseInt(lookbackMatch[1],10) : null,
+    hotCoverage: hotMatch ? parseInt(hotMatch[1],10) : null
+  };
 
-    // Legacy fallback: first non-comment line = 12 picks
-    let legacyPicks = [];
-    if (!picksSec.length && !hotSec.length && !skipsSec.length) {
-      const line = raw
-        .split(/\r?\n/).map(s => s.trim())
-        .filter(s => s && !/^\s*(#|---)/.test(s))[0];
-      if (!line) { alert('No data lines found.'); return; }
-      legacyPicks = parseNumberList(line);
-      if (legacyPicks.length < 12) { alert(`Found only ${legacyPicks.length} numbers. Need 12.`); return; }
+  // Keep only non-empty, non-comment lines (ignore # / ---)
+  const lines = raw
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(l => l && !/^\s*(#|---)/.test(l));
+
+    if (!lines.length) {
+      alert('No data lines found. Make sure the file contains a row of 12 numbers after the header.');
+      return;
     }
 
-    // Ensure the right dataset is loaded first (PB vs F5), then apply
-    const wantGame = headerMeta.game || getGameCode();
-    const afterLoad = () => {
-      applyThreeColumns(
-        {
-          picks: picksSec.length ? picksSec : legacyPicks.slice(0,12),
-          hot:   hotSec,
-          skips: skipsSec
-        },
-        headerMeta
-      );
-      showToast(`Loaded ${headerMeta.game || getGameCode()} snapshot.`);
+    // First remaining line = picks row
+    const dataLine = lines[0];
+
+    // Accept comma or space separated numbers (or mixed)
+    const nums = dataLine
+      .split(/[,\s]+/)
+      .map(s => parseInt(s, 10))
+      .filter(Number.isInteger);
+
+    if (nums.length < 12) {
+      alert(`Found only ${nums.length} numbers on the data line. Need 12.`);
+      return;
+    }
+
+    // First 12 unique numbers (sorted)
+    const picks12 = Array.from(new Set(nums)).slice(0, 12).sort((a, b) => a - b);
+    if (picks12.length !== 12) {
+      alert(`Need 12 unique numbers, but got ${picks12.length}.`);
+      return;
+    }
+
+    // 👉 After the right dataset is loaded, apply the numbers + mark manual
+    const applyPicks = () => {
+      loadPicksIntoColumnAndInputs(picks12);
+      setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+     // 🆕 show parsed header summary next to "Last 25 Drawings"
+  updatePicksMetaDisplay(picksHeaderMeta);
+      showToast(`Loaded ${fileGameCode || getGameCode()} picks.`);
+      // Close modal + reset input
       loadTop18Modal.style.display = 'none';
       loadTop18FileInput.value = '';
     };
 
-    if (wantGame === 'PB' && totalNumbersGlobal !== 69) {
-      loadGameByCode('PB', afterLoad);
-    } else if (wantGame === 'F5' && totalNumbersGlobal !== 39) {
-      loadGameByCode('F5', afterLoad);
+    // If the file specifies a game and it's different, switch first; else just apply
+    if (fileGameCode === 'PB' && totalNumbersGlobal !== 69) {
+      loadGameByCode('PB', applyPicks);
+    } else if (fileGameCode === 'F5' && totalNumbersGlobal !== 39) {
+      loadGameByCode('F5', applyPicks);
     } else {
-      afterLoad();
+      applyPicks();
     }
   };
 
   reader.readAsText(file);
 }
+
 
 function loadPicksIntoColumnAndInputs(numbers) {
   // Mirror into the 12 inputs

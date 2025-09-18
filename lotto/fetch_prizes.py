@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import subprocess
 from datetime import datetime
 import warnings
@@ -21,7 +22,8 @@ LOTTO_39 = os.path.join(OUTPUT_DIR, "lotto_39.txt")  # Fantasy 5
 
 GAME_CONFIG = {
     "powerball": {
-        "url": "https://www.calottery.com/en/draw-games/powerball#section-content-2-3",
+        # Use base page (anchor not sent to server anyway)
+        "url": "https://www.calottery.com/en/draw-games/powerball",
         "prefix": "pwb_",
         "main_range": (1, 69),
         "bonus_range": (1, 26),
@@ -47,6 +49,13 @@ UA = (
 )
 
 # ===================== Small file helpers =====================
+
+def prize_out_path(game_key: str, draw_number: str) -> str:
+    pref = GAME_CONFIG[game_key]["prefix"]
+    return os.path.join(OUTPUT_DIR, f"{pref}{draw_number}.txt")
+
+def pending_flag_path(game_key: str, draw_number: str) -> str:
+    return prize_out_path(game_key, draw_number) + ".pending"
 
 def ensure_dir(path):
     os.makedirs(path, exist_ok=True)
@@ -92,13 +101,18 @@ def first_line_startswith_draw(filepath: str, draw_number: str) -> bool:
 # ===================== Network & parsing helpers =====================
 
 def fetch_page(url: str) -> str:
+    """Fetch with a timestamp param to bust CDN caches when payouts just posted."""
+    ts = int(time.time())
+    sep = "&" if "?" in url else "?"
+    busted = f"{url}{sep}_={ts}"
     resp = requests.get(
-        url,
+        busted,
         headers={
             "User-Agent": UA,
             "Accept-Language": "en-US,en;q=0.9",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Cache-Control": "no-cache",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
         },
         timeout=(12, 25),
     )
@@ -220,22 +234,98 @@ def save_prize_table_txt(rows, out_path):
             f.write("\t".join(row) + "\n")
 
 def extract_prize_rows(soup: BeautifulSoup):
-    table = soup.find("table", class_="table-last-draw")
-    if not table:
-        return []
-    rows = []
-    thead = table.find("thead")
-    if thead:
-        headers = [th.get_text(strip=True) for th in thead.find_all("th")]
-        if headers:
-            rows.append(headers)
-    tbody = table.find("tbody")
-    if tbody:
-        for tr in tbody.find_all("tr"):
-            cells = [td.get_text(strip=True) for td in tr.find_all("td")]
-            if cells:
-                rows.append(cells)
-    return rows
+    """
+    Return the first table on the page that *looks like* the prize table.
+    Prefer .table-last-draw, but fall back to any table that matches.
+    """
+    tables = []
+    first = soup.find("table", class_="table-last-draw")
+    if first:
+        tables.append(first)
+    tables.extend([t for t in soup.find_all("table") if t is not first])
+
+    for table in tables:
+        rows = []
+        thead = table.find("thead")
+        if thead:
+            headers = [th.get_text(strip=True) for th in thead.find_all("th")]
+            if headers:
+                rows.append(headers)
+        tbody = table.find("tbody")
+        if tbody:
+            for tr in tbody.find_all("tr"):
+                cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+                if cells:
+                    rows.append(cells)
+        # Keep the first table that passes our heuristic
+        if looks_like_prize_table(rows):
+            return rows
+
+    return []
+
+def looks_like_prize_table(rows) -> bool:
+    """
+    True only for real draw prize tables (with winners + dollar/payout column).
+    Rejects static 'Odds' tables.
+    """
+    if not rows or len(rows) < 2:
+        return False
+
+    header = [h.strip().lower() for h in rows[0]]
+    body   = rows[1:]
+
+    has_winners = any(re.search(r"winner|winning tickets?|tickets?", h) for h in header)
+    has_prize_col = any(re.search(r"prize|payout|amount|cash", h) for h in header)
+    has_odds = any("odd" in h for h in header)
+
+    # Extra hint from body: money amounts or "Free Play"
+    body_has_money = any(
+        any("$" in c or re.search(r"\d[\d,]*\.\d{2}", c) or "free" in c.lower() for c in row)
+        for row in body
+    )
+
+    return (has_winners and (has_prize_col or body_has_money)) and not has_odds
+
+def process_prize_table(game_key: str, draw_number: str, soup: BeautifulSoup) -> bool:
+    """
+    Try to extract + save the prize table for this draw.
+    If already saved, return True.
+    If not ready, create a .pending flag and return False.
+    """
+    out = prize_out_path(game_key, draw_number)
+    flag = pending_flag_path(game_key, draw_number)
+
+    # 0) Already have a prize file? trust it and clear pending
+    if os.path.exists(out) and os.path.getsize(out) > 20:
+        if os.path.exists(flag):
+            try:
+                os.remove(flag)
+            except Exception:
+                pass
+        print(f"✅ {game_key.title()} prize table already present: {out}")
+        return True
+
+    # 1) Try to find and save a fresh prize table
+    rows = extract_prize_rows(soup)
+    if looks_like_prize_table(rows):
+        save_prize_table_txt(rows, out)
+        if os.path.exists(flag):
+            try:
+                os.remove(flag)
+            except Exception:
+                pass
+        print(f"✅ Saved {game_key.title()} prize table to {out}")
+        return True
+
+    # 2) Not ready yet → mark pending
+    ensure_dir(OUTPUT_DIR)
+    try:
+        with open(flag, "w", encoding="utf-8") as f:
+            f.write(datetime.now().isoformat())
+    except Exception:
+        pass
+    print(f"⏳ {game_key.title()} prize amounts not posted yet for draw #{draw_number}. Will retry later.")
+    return False
 
 # ===================== Core =====================
 
@@ -291,7 +381,7 @@ def handle_numbers_write(game_key, draw_number, winning_numbers):
 def fetch_lotto_data(game_key):
     cfg   = GAME_CONFIG[game_key]
     url   = cfg["url"]
-    pref  = cfg["prefix"]
+    pref  = cfg["prefix"]  # (kept for clarity/logging, even if unused here)
 
     # 1) Fetch page (with simple one-retry)
     try:
@@ -327,16 +417,14 @@ def fetch_lotto_data(game_key):
     # 4) Write lotto_*.txts with guards
     wrote = handle_numbers_write(game_key, draw_number, numbers)
 
-    # 5) Prize table
-    if wrote:
-        rows = extract_prize_rows(soup)
-        if not rows:
-            print(f"❌ Could not find prize table rows for {game_key}")
-            return
-        out = os.path.join(OUTPUT_DIR, f"{pref}{draw_number}.txt")
-        save_prize_table_txt(rows, out)
-        tag = " (derived draw #)" if derived else ""
-        print(f"✅ Saved {game_key.title()} prize table to {out}{tag}")
+    # 5) Prize table — always attempt; handles .pending when not ready
+    try:
+        ok = process_prize_table(game_key, draw_number, soup)
+        if not ok:
+            # prizes not posted yet; .pending flag was written inside
+            pass
+    except Exception as e:
+        print(f"⚠️ Error while processing prize table: {e}")
 
 def git_upload():
     try:
@@ -360,4 +448,3 @@ if __name__ == "__main__":
     for game in GAME_CONFIG:
         fetch_lotto_data(game)
     git_upload()
-

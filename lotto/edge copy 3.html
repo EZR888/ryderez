@@ -933,7 +933,7 @@ function withSuppressedManual(fn){
 
 
 function getGameCode() {
-  return (totalNumbersGlobal === 69) ? 'PWB'
+  return (totalNumbersGlobal === 69) ? 'PB'
        : (totalNumbersGlobal === 39) ? 'F5'
        : 'X';
 }
@@ -1142,13 +1142,13 @@ function savePicksFromInputs() {
     : (hotArr.length ? hotArr.length : null);
 
   // Filename remains compatible with your existing pattern
-// NEW: Game first; Picks; method (M/S); optional h/d; draw at end
-const methodTag = (method === 'manual') ? 'M' : 'S';
-const filename =
-  `${game}_Picks_${methodTag}` +
-  `${hotN ? `_h${hotN}` : ''}` +
-  `${weeks ? `_d${weeks}` : ''}` +
-  `_${nextDraw}.txt`;
+  const parts = [`Picks_${game}`, nextDraw];
+  if (method === 'system') {
+    if (hotN)  parts.push(`h${hotN}`);
+    if (weeks) parts.push(`d${weeks}`);
+  }
+  parts.push(methodCode(method)); // 'MAN' or 'SYS'
+  const filename = parts.join('_') + '.txt';
 
   // Header
   const header = [
@@ -2649,7 +2649,7 @@ const modeTag = (window.__isQuickSix === true) ? 'Quick'
                : 'All';
 
   // Final filename
-  a.download = `${gameCode}_${modeTag}_${methodTag}_h${hVal}_d${dVal}_${nextDraw}.txt`;
+  a.download = `${modeTag}_${gameCode}_${methodTag}_h${hVal}_d${dVal}_${nextDraw}.txt`;
 
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 100);
@@ -2669,23 +2669,12 @@ document.getElementById("checkNumbersButton").onclick = function () {
     if (!file) return;
 
     const filename = file.name;
-// New format: PWB|F5 first, then mode, then method, optional h/d, then draw
-let game, drawNumber;
-let m = filename.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(S|M)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+const match = filename.match(/(All|Best|Quick)_(F5|PWB).*?_(\d+)\.txt$/i);
+    if (!match) { alert("Filename does not match expected pattern."); return; }
 
-if (m) {
-  game = m[1].toUpperCase();
-  drawNumber = m[6];
-} else {
-  // Legacy fallback: Mode first, then game, draw at end
-  m = filename.match(/(All|Best|Quick)_(F5|PWB).*?_(\d+)\.txt$/i);
-  if (!m) { alert("Filename does not match expected pattern."); return; }
-  game = m[2].toUpperCase();
-  drawNumber = m[3];
-}
-
-const isPWB = (game === "PWB");
-
+    const game = match[2].toUpperCase();   // 'PWB' or 'F5'
+    const isPWB = (game === "PWB");
+    const drawNumber = match[3];
 
     const reader = new FileReader();
     reader.onload = function (e) {

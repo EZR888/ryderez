@@ -1675,7 +1675,7 @@ if (genBtn) {
 
 
             const topInputs = document.getElementById('top18Inputs');
-if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'flex';
+if (topInputs) topInputs.style.display = (totalNumbers === 26) ? 'none' : 'grid';
 
             const updateHitsButton = document.querySelector('button[onclick="updateReverseHitsTop18()"]');
             if (updateHitsButton) updateHitsButton.style.display = 'inline-block';
@@ -2373,7 +2373,7 @@ function loadGameByCode(gameCode, afterLoad) {
       const sh = document.getElementById('showHistogramBtn');
       if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
 
-      document.getElementById('top18Inputs').style.display = 'flex';
+      document.getElementById('top18Inputs').style.display = 'grid';
       const label = document.getElementById('top18Label'); if (label) label.style.display = 'block';
       ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn'].forEach(id => {
         const el = document.getElementById(id); if (el) el.style.display = 'inline-block';
@@ -3126,6 +3126,31 @@ window.addEventListener('click', function(event) {
     if (totalNumbersGlobal === 26) reapply69State();
   }
 });
+
+/* Find Hot Numbers (autoPickModal): close on outside click + Esc */
+document.addEventListener('DOMContentLoaded', () => {
+  const autoPickModal = document.getElementById('autoPickModal');
+  if (!autoPickModal) return;
+
+  // Click on the dark overlay closes the modal
+  window.addEventListener('click', (e) => {
+    if (e.target === autoPickModal) {
+      autoPickModal.style.display = 'none';
+      const saveBtn = document.getElementById('saveTop18Button');
+      if (saveBtn) saveBtn.style.display = 'inline-block';
+    }
+  });
+
+  // Esc closes the modal (optional, matches other panels you’ve got)
+  document.addEventListener('keydown', function onEsc(e) {
+    if (e.key === 'Escape' && autoPickModal.style.display === 'block') {
+      autoPickModal.style.display = 'none';
+      const saveBtn = document.getElementById('saveTop18Button');
+      if (saveBtn) saveBtn.style.display = 'inline-block';
+    }
+  });
+});
+
 
 /* Reference data */
 function loadReferenceData() {

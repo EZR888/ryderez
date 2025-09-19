@@ -2668,23 +2668,55 @@ document.getElementById("checkNumbersButton").onclick = function () {
     const file = evt.target.files[0];
     if (!file) return;
 
-    const filename = file.name;
-// New format: PWB|F5 first, then mode, then method, optional h/d, then draw
-let game, drawNumber;
-let m = filename.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(S|M)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+    // Normalize name: allow " (1)" etc before .txt
+    const rawName = file.name;
+    const name = rawName.replace(/\s+\(\d+\)(?=\.txt$)/i, '');
 
-if (m) {
-  game = m[1].toUpperCase();
-  drawNumber = m[6];
-} else {
-  // Legacy fallback: Mode first, then game, draw at end
-  m = filename.match(/(All|Best|Quick)_(F5|PWB).*?_(\d+)\.txt$/i);
-  if (!m) { alert("Filename does not match expected pattern."); return; }
-  game = m[2].toUpperCase();
-  drawNumber = m[3];
-}
+    // Parse filename (new + legacy + very old)
+    let game = null;       // 'PWB' or 'F5'
+    let drawNumber = null;
 
-const isPWB = (game === "PWB");
+    // 1) New convention: GAME first, short method tag S/M
+    let m = name.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(S|M)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+    if (m) {
+      game = m[1].toUpperCase();
+      drawNumber = m[6];
+    }
+
+    // 2) New convention: GAME first, long method tag SYS/MAN
+    if (!m) {
+      m = name.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(SYS|MAN)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+      if (m) {
+        game = m[1].toUpperCase();
+        drawNumber = m[6];
+      }
+    }
+
+    // 3) Legacy: Mode first, then GAME, draw at end
+    if (!m) {
+      m = name.match(/^(All|Best|Quick)_(F5|PWB).*?_(\d+)\.txt$/i);
+      if (m) {
+        game = m[2].toUpperCase();
+        drawNumber = m[3];
+      }
+    }
+
+    // 4) Very old Picks: Picks_GAME_draw[_MAN|_SYS].txt (accept PB too)
+    if (!m) {
+      m = name.match(/^Picks_(PB|PWB|F5)_(\d+)(?:_(?:MAN|SYS))?\.txt$/i);
+      if (m) {
+        const g = m[1].toUpperCase();
+        game = (g === 'PB') ? 'PWB' : g;
+        drawNumber = m[2];
+      }
+    }
+
+    if (!game || !drawNumber) {
+      alert("Filename does not match expected pattern.");
+      return;
+    }
+
+    const isPWB = (game === "PWB");
 
     const reader = new FileReader();
     reader.onload = function (e) {

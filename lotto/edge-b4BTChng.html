@@ -956,10 +956,6 @@ let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDra
 let activeGameMode = null;
 let __pbInputsWired = false;
 
-// Are we in Back Test mode (pre-draw lens)?
-window.__backtestMode = false;
-
-
 // Backtesting
 let backtestTrim = 0;                     // how many most-recent draws to chop off
 const originalFullDataByGame = {};        // { 39: [...], 69: [...], 26: [...] }
@@ -1296,34 +1292,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!toggle || !panel) return;
 
   // open/close panel
-// open/close panel + enter/exit Back Test mode
-toggle.addEventListener('click', () => {
-  const isOpening = (panel.style.display === 'none' || !panel.style.display);
-  panel.style.display = isOpening ? 'inline-flex' : 'none';
-
-  // Flip mode
-  window.__backtestMode = isOpening;
-
-  if (isOpening) {
-    // 👉 ENTER Back Test: recompute Hot/Skips as-of BEFORE the target draw
-    rebuildFromOriginalTrim();   // this will re-render with the trimmed data
-
-    // Use Defaults in Picks so you can compare Default vs System/Hot on this draw
-    if (totalNumbersGlobal !== 26) {
-      applyHardwiredPicksForCurrentGame?.();
-      setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
-    }
-
-    showToast('Back Test: pre-draw lens ON');
-  } else {
-    // 👉 EXIT Back Test: reset trim & return to normal (next-draw) mode
-    backtestTrim = 0;
-    rebuildFromOriginalTrim();   // rebuild to full dataset
-    populateAllThreeOnLoad?.();  // System Picks + Hot + Skips for live mode
-    showToast('Back Test OFF — live view restored');
-  }
-});
-
+  toggle.addEventListener('click', () => {
+    panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'inline-flex' : 'none';
+  });
 
   // seed from URL (?trim=NN)
   trimEl.value = String(backtestTrim);
@@ -1839,36 +1810,51 @@ function rebuildFromOriginalTrim() {
 // Tie-breakers: larger current since (more due), then smaller number.
 // Pick by how much a number "likes" its CURRENT skip length (bin), with smoothing + due nudge.
 function recomputeTopFromSkips(count = 12) {
-  if (!skipDataGlobal || !skipDataGlobal.skipTable) return [];
-
-  // 👇 key change: use pre-draw since-map in Back Test
-  const sinceNow = window.__backtestMode ? computeSinceMapFromLatest25(true) : sinceMap;
+  if (!skipDataGlobal || !skipDataGlobal.skipTable || !sinceMap) return [];
 
   const picks = [];
   for (let n = 1; n <= totalNumbersGlobal; n++) {
     const row = skipDataGlobal.skipTable[n] || [];
-    const curSkip = sinceNow[n] || 26;     // 1..25; 26 => over-25
-    const capped  = Math.min(curSkip, 25);
+    const curSkip = sinceMap[n] || 26;            // 1..25; 26+ = "over 25"
+    const capped = Math.min(curSkip, 25);         // we only have bins 1..25
 
+    // Row total for smoothing / context
     const rowTotal = row.slice(1, 26).reduce((a, b) => a + (b || 0), 0);
+
+    // Frequency of THIS number hitting after THIS exact skip length historically
     const freqAtCur = (capped >= 1 && capped <= 25) ? (row[capped] || 0) : 0;
 
-    const p = (freqAtCur + 1) / (rowTotal + 25); // Laplace smoothing
-    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);
+    // Laplace smoothing (prevents zeroes from dominating)
+    const p = (freqAtCur + 1) / (rowTotal + 25);  // “probability” this number likes this bin
+
+    // Gentle due bonus so longer-current-skips aren’t ignored when p is similar
+    const dueBonus = 1 + 0.15 * Math.log1p(curSkip);  // tweak 0.10–0.25 to taste
 
     const score = p * dueBonus;
-    picks.push({ n, score, curSkip });
+
+    picks.push({
+      n,
+      score,
+      curSkip,
+      freqAtCur,
+      rowTotal
+    });
   }
 
-  picks.sort((a, b) => (b.score - a.score) || (b.curSkip - a.curSkip) || (a.n - b.n));
+  // Rank by the “likes current bin” score; then favor longer current skips; then smaller number
+  picks.sort((a, b) =>
+    (b.score - a.score) ||
+    (b.curSkip - a.curSkip) ||
+     (a.n - b.n)
+  );
+
   const top = picks.slice(0, count).map(x => x.n).sort((a,b)=>a-b);
   top18 = top;
 
   renderReverseHitsTable();
-  reapplySkipTableHighlights?.();
+  reapplySkipTableHighlights();
   return top;
 }
-
 
 let __pbCycleIndex = 0;
 
@@ -1907,14 +1893,13 @@ function getNextPB(){
 }
 
 function computeTrendingHotNumbers(weeks = 25, count = 12) {
-  // 👇 During Back Test we drop the current latest row (the target draw)
-  const src = window.__backtestMode ? fullData.slice(1) : fullData;
-
-  const N = Math.min(weeks, src.length);
+  const N = Math.min(weeks, fullData.length);
   if (!N) return [];
 
-  const windowDraws = src.slice(0, N)
+  // Parse the last N draws (0 = most recent)
+  const windowDraws = fullData.slice(0, N)
     .map(row => row.slice(1).map(Number).filter(n => !isNaN(n)));
+
   const stats = Array.from({ length: totalNumbersGlobal + 1 }, () => ({
     hits: 0,
     lastAges: [],  // draw indices (0 recent) where number hit
@@ -4218,31 +4203,6 @@ if (typeof hotSet !== 'undefined') {
     // if (typeof orig === 'function') orig();
   };
 })();
-
-// Back Test state: when true, we score Hot/Skips against "pre-draw" data
-window.__backtestMode = false;
-
-// Build a since-map from the last up-to-25 draws.
-// If excludeMostRecent=true, we drop the current latest row (the target draw)
-// so results reflect the state right BEFORE that draw.
-function computeSinceMapFromLatest25(excludeMostRecent = false) {
-  const offset = excludeMostRecent ? 1 : 0;
-  const W = Math.min(25, Math.max(0, fullData.length - offset));
-  const draws = fullData.slice(offset, offset + W)
-    .map(row => row.slice(1).map(Number));
-
-  const m = {};
-  for (let n = 1; n <= totalNumbersGlobal; n++) {
-    let found = false;
-    for (let col = 0; col < W; col++) {
-      if (draws[col].includes(n)) { m[n] = col + 1; found = true; break; }
-    }
-    // 26 = "over 25" bucket; matches how your skip table bins work
-    if (!found) m[n] = 26;
-  }
-  return m;
-}
-
 </script>
 
 </body>

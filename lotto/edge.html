@@ -2652,9 +2652,9 @@ const lines = list.map(({ combo, pb }, idx) => {
   const gameCode = (totalNumbersGlobal === 39) ? 'F5'
                    : ((totalNumbersGlobal === 26 || totalNumbersGlobal === 69) ? 'PWB' : 'X');
 
-  const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
-                   ? (latestDrawingNumber + 1)
-                   : '00000';
+   const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
+    ? String(window.__backtestMode ? latestDrawingNumber : (latestDrawingNumber + 1))
+    : '00000';
 
   const meta = (window.lastPicksMeta || {});
 

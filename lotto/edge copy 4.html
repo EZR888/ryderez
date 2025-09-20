@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -551,12 +550,12 @@ h2 { margin: 8px 0; }
       <button id="updateHitsBtn" class="button button-single">🔄 Update Picks Column</button><br><br>
       <button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
             <button id="savePicksBtn" class="button button-single">💾 Save Picks</button><br>
-      <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button><br>
-      <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Wheel Picks</button><br>
-      <button id="quick12Button" class="button button-single" style="display:none">⚡ 6 Ticket Set</button>
-<button id="quick132Button" class="button button-single" style="display:none">132 Ticket Set</button>
+      <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button>
+            <button id="loadWheelTxtButton" class="button button-single">Load Wheel</button>
+	  <input id="wheelTxtFile" type="file" accept=".txt" style="display:none" />
+      <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Wheel Picks</button>
+      <button id="quick12Button" class="button button-single" style="display:none">⚡ 6 Ticket Set</button><br>
 
-      
       <!-- Back Test controls -->
 <div id="backtestControls">
   <button id="backtestToggle" class="button button-single">🧪 Back Test</button>
@@ -844,12 +843,12 @@ function applyThreeColumns({ picks, hot, skips }, headerMeta){
 
   // Apply Skips (orange)
   if (Array.isArray(skips) && skips.length){
-    window.top18 = skips.slice(0); // store
+    top18 = skips.slice(0); // ← use the real variable, not window.*
   }
 
   // Apply Hot (blue)
   if (Array.isArray(hot) && hot.length){
-    window.hotSet = new Set(hot);
+    hotSet = new Set(hot);  // ← same here
   }
 
   // Apply Picks (green + inputs)
@@ -865,6 +864,7 @@ function applyThreeColumns({ picks, hot, skips }, headerMeta){
   // Optional summary text near “Last 25 Drawings”
   updatePicksMetaDisplay?.(headerMeta);
 }
+
 
 
 // Return-visitor splash skip: click anywhere → kill GIF instantly and remove overlay.
@@ -956,6 +956,38 @@ let fullDataFrom69 = [], skipDataGlobalFrom69 = {}, sinceMapFrom69 = {}, pastDra
 let activeGameMode = null;
 let __pbInputsWired = false;
 
+// ── Lean 4-cover (index wheel) support ───────────────────────────────────────
+window.__indexWheel = null;         // { v,k,t,blocks:[ [0..11]*5 ], notes }
+window.__useIndexWheel = false;     // controlled by a checkbox in the modal
+
+async function loadLean4CoverIndex() {
+  if (window.__indexWheel) return window.__indexWheel;
+  try {
+    // Put the JSON file in your web root and keep this filename:
+    const res = await fetch('wheel_4cover_lean_12of5_v1.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+
+    // basic validation
+    if (!Array.isArray(j.blocks) || !j.blocks.every(b => Array.isArray(b) && b.length === 5)) {
+      console.warn('Invalid index wheel JSON shape.');
+      return null;
+    }
+    window.__indexWheel = j;
+    return j;
+  } catch (e) {
+    console.warn('Index wheel load failed:', e);
+    return null;
+  }
+}
+
+// Expand 0-based index blocks into concrete 5-sets from your 12 inputs
+function expandIndexWheel(picks12, blocks) {
+  const arr = picks12.slice(0, 12);
+  return blocks.map(idx5 => idx5.map(i => arr[i]).sort((a, b) => a - b));
+}
+
+
 // Backtesting
 let backtestTrim = 0;                     // how many most-recent draws to chop off
 const originalFullDataByGame = {};        // { 39: [...], 69: [...], 26: [...] }
@@ -976,9 +1008,7 @@ const qsa = sel => Array.from(document.querySelectorAll(sel));
 const btn39 = qs('#load39Button'),
       btn69 = qs('#powerball'),
       btn1  = qs('#load1Button'),
-      pbBlk = qs('#pbBlock'),
-      quick132Btn = qs('#quick132Button');  // ← add this line
-
+      pbBlk = qs('#pbBlock');
 
 const wheelModal = document.getElementById('wheelModal');
 let skipDataFrom69 = {};
@@ -1040,7 +1070,6 @@ btn1.onclick = () => {
   // Hide Top inputs & related controls in PB-only mode (including Save Picks)
   ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn']
     .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-    if (quick132Btn) quick132Btn.style.display = 'none';
 
   // Load PB-only data (1..26) and compute Skips/Hot for visual consistency
   loadCSVFile('lotto_1.txt', 26, () => {
@@ -1096,34 +1125,6 @@ btn39.onclick = () => {
   });
 };
 
-// --- 132-set wheel loader (0-based indices) ---
-let __wheel132Cache = null;
-
-async function loadWheel132Blocks() {
-  if (__wheel132Cache) return __wheel132Cache;
-
-  try {
-    // Put the JSON next to your page: /wheel_4cover_lean_12of5_v1.json
-    const res = await fetch('wheel_4cover_lean_12of5_v1.json?t=' + Date.now());
-    if (!res.ok) throw new Error('fetch failed');
-    const data = await res.json();
-    if (!data || !Array.isArray(data.blocks) || data.blocks.length !== 132) {
-      throw new Error('bad file shape');
-    }
-    __wheel132Cache = data.blocks;
-    return __wheel132Cache;
-  } catch (e) {
-    console.warn('⚠️ Could not load wheel_4cover_lean_12of5_v1.json:', e);
-
-    // Minimal fallback so the app doesn’t crash if the file isn’t present.
-    // (Tip: you can paste the full `blocks` array from the JSON here to go fully offline.)
-    alert('132-ticket template file not found. Place wheel_4cover_lean_12of5_v1.json next to your page.');
-    __wheel132Cache = [];
-    return __wheel132Cache;
-  }
-}
-
-
 /* Save/Load Top18 */
 const saveTop18Button = document.getElementById('saveTop18Button');
 const loadTop18Button = document.getElementById('loadTop18Button');
@@ -1133,9 +1134,11 @@ const closeLoadModal = document.getElementById('closeLoadModal');
 const savePicksBtn = document.getElementById('savePicksBtn');
 if (savePicksBtn) savePicksBtn.addEventListener('click', savePicksFromInputs);
 
+// Save the 12 inputs (low→high) to a file
+// Save the 12 inputs (Picks) + current Hot + Skips into one snapshot file
 // Save the 12 inputs (Picks) + current Hot + Skips into one snapshot file
 function savePicksFromInputs() {
-  // Read & validate the 12 input boxes
+  // Read the 12 input boxes
   const picks = Array.from(document.querySelectorAll('#top18Inputs input'))
     .slice(0, 12)
     .map(inp => parseInt(inp.value.trim(), 10))
@@ -1145,59 +1148,50 @@ function savePicksFromInputs() {
     alert('Please enter 12 valid numbers in the input boxes before saving.');
     return;
   }
+
   const picks12 = [...new Set(picks)].slice(0, 12).sort((a,b)=>a-b);
   if (picks12.length !== 12) {
     alert('Need 12 unique numbers in the inputs.');
     return;
   }
 
-  // Live Hot / Skips
+  // ✅ Use the live variables, not window.*
   const hotArr   = Array.from(hotSet || []).filter(Number.isInteger).sort((a,b)=>a-b);
   const skipsArr = Array.isArray(top18)
     ? [...new Set(top18)].filter(Number.isInteger).sort((a,b)=>a-b)
     : [];
 
-  // Draw / game
+  // Header metadata
   const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
     ? String(latestDrawingNumber + 1)
     : '00000';
-  const game = getGameCode(); // 'PWB' | 'F5' | 'X'
 
-  // Decide M vs S by comparing inputs to current system picks (robust to manual tweaks in inputs or Hits table)
-  const systemSet = (systemPicksSet instanceof Set) ? systemPicksSet : new Set();
-  const inputsSet = new Set(picks12);
-  const sameAsSystem = inputsSet.size === systemSet.size && [...inputsSet].every(n => systemSet.has(n));
-const methodTag = (window.lastPicksMeta?.method === 'manual') ? 'M' : 'S';
+  const game  = getGameCode(); // 'PB' | 'F5' | 'X'
+  const meta  = window.lastPicksMeta || {};
+  const method = (meta.method || 'manual').toLowerCase(); // 'system' | 'quick12' | 'manual'
+  const weeks  = (typeof meta.weeks === 'number') ? meta.weeks : null;
+  // If dialog/meta didn't set one, derive from what we're actually saving
+  const hotN   = (typeof meta.hotCoverage === 'number' && meta.hotCoverage > 0)
+    ? meta.hotCoverage
+    : (hotArr.length ? hotArr.length : null);
 
-  // Prefer visible Find Hot Numbers dialog values; fall back to meta; then to live Hot length
-  const weeksEl = document.getElementById('weeksInput');
-  const covEl   = document.querySelector('input[name="coverage"]:checked');
-  const dlgWeeks = weeksEl ? parseInt(weeksEl.value, 10) : NaN;
-  const dlgHot   = covEl   ? parseInt(covEl.value, 10)   : NaN;
+  // Filename remains compatible with your existing pattern
+// NEW: Game first; Picks; method (M/S); optional h/d; draw at end
+const methodTag = (method === 'manual') ? 'M' : 'S';
+const filename =
+  `${game}_Picks_${methodTag}` +
+  `${hotN ? `_h${hotN}` : ''}` +
+  `${weeks ? `_d${weeks}` : ''}` +
+  `_${nextDraw}.txt`;
 
-  const meta = window.lastPicksMeta || {};
-  const dVal = (Number.isInteger(dlgWeeks) && dlgWeeks >= 1 && dlgWeeks <= 25)
-                ? dlgWeeks
-                : (typeof meta.weeks === 'number' ? meta.weeks : null);
-  const hVal = ([5,12,18].includes(dlgHot))
-                ? dlgHot
-                : (typeof meta.hotCoverage === 'number' ? meta.hotCoverage : (hotArr.length || null));
-
-  // Filename: GAME_Picks_M|S[_hX][_dY]_DRAW.txt
-  const filename =
-    `${game}_Picks_${methodTag}` +
-    `${hVal ? `_h${hVal}` : ''}` +
-    `${dVal ? `_d${dVal}` : ''}` +
-    `_${nextDraw}.txt`;
-
-  // Header (keeps the richer info)
+  // Header
   const header = [
     '# The Winning Edge - Picks Snapshot',
     `# Game: ${game}`,
     `# Next Draw: ${nextDraw}`,
-    `# Method: ${methodTag === 'M' ? 'MANUAL' : 'SYSTEM'}`,
-    (dVal ? `# Lookback: ${dVal} drawings` : null),
-    (hVal ? `# Hot Coverage: Top ${hVal}`  : null),
+    `# Method: ${method.toUpperCase()}`,
+    (weeks ? `# Lookback: ${weeks} drawings` : null),
+    (hotN  ? `# Hot Coverage: Top ${hotN}` : null),
     `# Generated: ${new Date().toISOString()}`,
     '---'
   ].filter(Boolean).join('\n');
@@ -1215,20 +1209,13 @@ const methodTag = (window.lastPicksMeta?.method === 'manual') ? 'M' : 'S';
     ''
   ].join('\n');
 
-  // Persist file
+  // Save
   const blob = new Blob([header + '\n' + sections], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 100);
-
-  // Keep meta in sync for subsequent actions
-  setPicksMeta({
-    method: (methodTag === 'M' ? 'manual' : 'system'),
-    weeks: dVal ?? null,
-    hotCoverage: hVal ?? null
-  });
 }
 
 
@@ -1484,6 +1471,76 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const btn   = document.getElementById('loadWheelTxtButton');
+  const input = document.getElementById('wheelTxtFile');
+  if (!btn || !input) return;
+
+  btn.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', async (evt) => {
+    const file = evt.target.files?.[0];
+    if (!file) return;
+
+    const text  = await file.text();
+    const lines = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+
+    const sets = [];
+    for (const line of lines) {
+      // tolerate "1. 2, 3, 7, 9, 10" or "2 3 7 9 10  + PB 12"
+      const nums = (line.replace(/^\d+\.\s*/, '').match(/\d+/g) || []).map(n => parseInt(n, 10));
+      if (nums.length < 5) continue;
+
+      const picks = nums.slice(0, 5).sort((a,b)=>a-b);
+
+      // Range-guard for your games
+      if (totalNumbersGlobal === 39 && picks.some(n => n < 1 || n > 39)) continue;
+      if (totalNumbersGlobal === 69 && picks.some(n => n < 1 || n > 69)) continue;
+
+      // If the file *includes* PB as a 6th number, keep it; otherwise we’ll round-robin
+      const pb = (totalNumbersGlobal === 69 && nums.length >= 6) ? nums[5] : null;
+
+      sets.push({
+        combo: picks,
+        points: calculateRawPointsForSet(picks),
+        pb
+      });
+    }
+
+    if (!sets.length) {
+      alert('Could not find any valid 5-number lines in that file.');
+      return;
+    }
+
+    // Optional heads-up if the wheel’s 12-number universe differs from your current inputs
+    const inputs12 = readTopSkips12();
+    const wheelUniverse = Array.from(new Set(sets.flatMap(s => s.combo))).sort((a,b)=>a-b);
+    if (inputs12.length === 12) {
+      const A = new Set(inputs12), B = new Set(wheelUniverse);
+      const samePool = inputs12.length === wheelUniverse.length && inputs12.every(n => B.has(n));
+      if (!samePool) showToast('Heads-up: wheel file uses different numbers than your 12 inputs.');
+    }
+
+    // If PB needed and file didn’t include PB on each line, round-robin from your PB inputs
+    if (totalNumbersGlobal === 69) {
+      __pbCycleIndex = 0;
+      sets.forEach(s => { if (s.pb == null) s.pb = getNextPB(); });
+    }
+
+    // Plug into your existing flow
+    generatedSets = sets;
+
+    // Show in the modal (same renderer you already have)
+    const countBox = document.getElementById('modalSetCountChoice');
+    if (countBox) countBox.value = String(sets.length);
+
+    renderFixedSetsToModal(true);
+    document.getElementById('wheelModal').style.display = 'block';
+    showToast(`Loaded ${sets.length} wheel lines.`);
+  });
+});
+
+
 // Holds current System Picks result
 let systemPicksSet = new Set();
 let hotSet = new Set();
@@ -1531,6 +1588,25 @@ if (typeof rehighlightSkipTableFromTop18 !== "function") {
     }
   };
 }
+
+function renderGeneratedSetsToModal(/* keepProgress? ignored */) {
+  const modal  = document.getElementById('wheelModal');
+  const output = document.getElementById('modalWheelOutput');
+
+  let html = '<ol>';
+  generatedSets.forEach(({ combo, points, pb }) => {
+    const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+    html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+  });
+  html += '</ol>';
+
+  output.innerHTML = html;
+  // NOTE: do NOT touch #progressInfo here — we want the old coverage stats to remain
+  modal.style.display = 'block';
+}
+
+
+
 
 // --- 3) Minimal Pick Best implementation used by the modal button
 if (typeof pickBestSets !== "function") {
@@ -1712,15 +1788,13 @@ function loadCSVFile(filename, totalNumbers, callback, isPowerball69 = false) {
       renderSkipFrequency();
 
 
-            const quick12Btn = document.getElementById('quick12Button')
-            if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';;
-
+            const quick12Btn = document.getElementById('quick12Button');
+            if (quick12Btn) quick12Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
 
 const genBtn = document.getElementById('generateWheelButton');
 if (genBtn) {
   genBtn.style.display = (totalNumbers === 69 || totalNumbers === 39) ? 'inline-block' : 'none';
 }
-if (quick132Btn) quick132Btn.style.display = (totalNumbers === 26) ? 'none' : 'inline-block';
 
 
             const topInputs = document.getElementById('top18Inputs');
@@ -2449,7 +2523,7 @@ function handleTop18FileSelect(event) {
   reader.onload = function(e) {
     const raw = (e.target.result || "").replace(/^\uFEFF/, "").trim();
 
-    // Header metadata (works for old and new)
+    // ---- header meta (new format) ----
     const gameMatch   = raw.match(/^\s*#\s*Game:\s*([A-Za-z0-9_+-]+)/mi);
     const nextMatch   = raw.match(/^\s*#\s*Next Draw:\s*(\d+)/mi);
     const methodMatch = raw.match(/^\s*#\s*Method:\s*([A-Za-z]+)/mi);
@@ -2457,51 +2531,69 @@ function handleTop18FileSelect(event) {
     const hotMeta     = raw.match(/^\s*#\s*Hot Coverage:\s*Top\s*(\d+)/mi);
 
     const headerMeta = {
-      game: gameMatch ? gameMatch[1].toUpperCase() : null,
-      nextDraw: nextMatch ? nextMatch[1] : null,
-      method: methodMatch ? methodMatch[1] : null,
-      lookback: lookMatch ? parseInt(lookMatch[1],10) : null,
-      hotCoverage: hotMeta ? parseInt(hotMeta[1],10) : null
+      game:       gameMatch ? gameMatch[1].toUpperCase() : null,  // 'PWB'|'PB'|'F5'
+      nextDraw:   nextMatch ? nextMatch[1] : null,
+      method:     methodMatch ? methodMatch[1] : null,
+      lookback:   lookMatch ? parseInt(lookMatch[1],10) : null,
+      hotCoverage:hotMeta ? parseInt(hotMeta[1],10) : null
     };
 
-    // NEW snapshot sections (if present)
+    // ---- body sections (new format) ----
     const picksSec = readSection(raw, 'PICKS');
     const hotSec   = readSection(raw, 'HOT');
     const skipsSec = readSection(raw, 'SKIPS');
 
-    // Legacy fallback: first non-comment line = 12 picks
+    // ---- legacy fallback: first non-comment line = 12 picks ----
     let legacyPicks = [];
     if (!picksSec.length && !hotSec.length && !skipsSec.length) {
-      const line = raw
+      const firstLine = raw
         .split(/\r?\n/).map(s => s.trim())
         .filter(s => s && !/^\s*(#|---)/.test(s))[0];
-      if (!line) { alert('No data lines found.'); return; }
-      legacyPicks = parseNumberList(line);
+      if (!firstLine) { alert('No data lines found.'); return; }
+      legacyPicks = parseNumberList(firstLine);
       if (legacyPicks.length < 12) { alert(`Found only ${legacyPicks.length} numbers. Need 12.`); return; }
     }
 
-    // Ensure the right dataset is loaded first (PB vs F5), then apply
-    const wantGame = headerMeta.game || getGameCode();
-    const afterLoad = () => {
+    // ---- ensure correct game is loaded first ----
+    const wantGame = (headerMeta.game || getGameCode()).toUpperCase();
+    const isPBWanted = (wantGame === 'PB' || wantGame === 'PWB');
+
+    const applyNow = () => {
+      // sanitize + in-range for the active game
+      const inRange = n => Number.isInteger(n) && n >= 1 && n <= totalNumbersGlobal;
+      const clean = arr => Array.from(new Set((arr || []).filter(inRange))).sort((a,b)=>a-b);
+
+      const picks = picksSec.length ? picksSec.slice(0, 12) : legacyPicks.slice(0, 12);
+      const hot   = hotSec;
+      const skips = skipsSec;
+
+      if (!clean(picks).length) {
+        alert('No valid PICKS found in this file.');
+        return;
+      }
+
+      // Apply to UI/state (fills inputs, sets green/blue/orange dots, refreshes tables)
       applyThreeColumns(
         {
-          picks: picksSec.length ? picksSec : legacyPicks.slice(0,12),
-          hot:   hotSec,
-          skips: skipsSec
+          picks: clean(picks),
+          hot:   clean(hot),
+          skips: clean(skips)
         },
         headerMeta
       );
-      showToast(`Loaded ${headerMeta.game || getGameCode()} snapshot.`);
-      loadTop18Modal.style.display = 'none';
-      loadTop18FileInput.value = '';
+
+      // tidy the loader UI
+      try { loadTop18Modal.style.display = 'none'; } catch(_) {}
+      try { loadTop18FileInput.value = ''; } catch(_) {}
+      showToast('Snapshot loaded.');
     };
 
-    if (wantGame === 'PB' && totalNumbersGlobal !== 69) {
-      loadGameByCode('PB', afterLoad);
+    if (isPBWanted && totalNumbersGlobal !== 69) {
+      loadGameByCode('PB', applyNow);
     } else if (wantGame === 'F5' && totalNumbersGlobal !== 39) {
-      loadGameByCode('F5', afterLoad);
+      loadGameByCode('F5', applyNow);
     } else {
-      afterLoad();
+      applyNow();
     }
   };
 
@@ -2591,9 +2683,10 @@ function highlight(btn){ [btn39, btn69, btn1].forEach(b => b.classList.toggle('a
 function closeCheckModal() { const modal = document.getElementById("checkNumbersModal"); if (modal) modal.style.display = "none"; }
 window.addEventListener("click", function(event) { const modal = document.getElementById("checkNumbersModal"); if (event.target === modal) modal.style.display = "none"; });
 
-qs('#generateWheelButton').onclick= ()=> qs('#wheelModal').style.display='block';
-
-document.getElementById('generateSetsModalButton').onclick = generateWheelSets;
+qs('#generateWheelButton').onclick = () => {
+  applyWheelModalUI();                     // <- reset + mode-aware hide
+  qs('#wheelModal').style.display = 'block';
+};
 document.getElementById('pickBestSetsModal').onclick = ()=> pickBestSets(true);
 document.getElementById('exportAllBtn').onclick = ()=> doExport('all');
 document.getElementById('exportBestBtn').onclick = ()=> doExport('best');
@@ -2660,7 +2753,7 @@ const lines = list.map(({ combo, pb }, idx) => {
     [...inputsSet].every(n => systemSet.has(n));
 
   // PATCH: Decide tag straight from the diff (only call it manual when all 12 are filled)
-const methodTag = (window.lastPicksMeta?.method === 'manual') ? 'M' : 'S';
+  const methodTag = (!sameAsSystem && inputsNow.length === 12) ? 'M' : 'S';
 
   // Keep metadata in sync when it's manual
   if (methodTag === 'M') {
@@ -2832,6 +2925,29 @@ function wireHotDialogMetaSync(){
   weeksEl.addEventListener('input',  sync);
   covEls.forEach(r => r.addEventListener('change', sync));
   sync(); // seed once with current UI
+}
+
+function applyWheelModalUI() {
+  // Always start clean: show all default controls/labels
+  resetModalControls();
+
+  const isIndex = !!window.__useIndexWheel; // 4-cover mode
+  const isQuick = !!window.__isQuickSix;    // Quick-12 (6-ticket) run
+
+  // If either special mode is active, hide the count fields + their labels
+  if (isIndex || isQuick) {
+    const hide = id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+    hide('modalSetCountChoice');
+    hide('modalBestSetCount');
+    hide('pickBestSetsModal');
+    hide('exportBestBtn');
+
+    // Hide the text labels by content (works even without 'for=' attributes)
+    document.querySelectorAll('#wheelModal label').forEach(lab => {
+      const t = (lab.textContent || '').toLowerCase();
+      if (/how many sets|show best sets/.test(t)) lab.style.display = 'none';
+    });
+  }
 }
 
 
@@ -3148,10 +3264,6 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
 
 document.getElementById('updateHitsBtn').addEventListener('click', updateReverseHitsTop18);
 
-/* Generate Wheel modal open */
-const showModalButton = document.getElementById('generateWheelButton');
-if (showModalButton) showModalButton.addEventListener('click', function() { document.getElementById('wheelModal').style.display = "block"; });
-
 const generateSetsButtonModal = document.getElementById('generateSetsModalButton');
 if (generateSetsButtonModal) generateSetsButtonModal.addEventListener('click', generateWheelSets);
 
@@ -3305,112 +3417,26 @@ html += `</ol><p style="color:orange; font-weight:bold;">  Total Score: ${bestSc
   modal.style.display = 'block';
 });
 
-if (quick132Btn) quick132Btn.addEventListener('click', async function () {
-  // Read & validate the 12 picks
-  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-  const nums = inputs.map(inp => parseInt(inp.value.trim(), 10))
-                     .filter(n => Number.isInteger(n));
-  if (nums.length < 12) {
-    alert('Need at least 12 valid numbers in the Your Picks inputs.');
-    return;
-  }
-
-  // Mark as "Quick" so exports use Quick_... (reusing your existing flag)
-  window.__isQuickSix = true;
-
-  // Load the 132-set template (0-based indices into our 12 picks)
-  const blocks = await loadWheel132Blocks();
-  if (!blocks.length) return; // file missing: bail cleanly
-
-  // Try permutations of the first 12 numbers to minimize total points across all 132 blocks
-  const base12 = nums.slice(0, 12);
-  let bestOrder = base12.slice();
-  let bestScore = Infinity;
-
-  const tryCount = 4000; // 4k × 132 is plenty fast in practice; bump if you like
-  for (let i = 0; i < tryCount; i++) {
-    const shuffled = base12.slice().sort(() => 0.5 - Math.random());
-    let total = 0;
-    for (const idxs of blocks) {
-      const combo = idxs.map(j => shuffled[j]).sort((a,b)=>a-b);
-      total += calculateRawPointsForSet(combo);
-      // tiny short-circuit to keep UI snappy
-      if (total >= bestScore) break;
-    }
-    if (total < bestScore) {
-      bestScore = total;
-      bestOrder = shuffled.slice();
-    }
-  }
-
-  // Write inputs low→high for easy ticket entry (and dim beyond 12)
-  setInputsFromList([...bestOrder].sort((a,b)=>a-b), 12);
-  document.querySelectorAll('#top18Inputs input').forEach((inp, idx) => {
-    if (idx < 12) inp.classList.remove('dimmed'); else inp.classList.add('dimmed');
-  });
-
-  // Tag as SYSTEM for meta (same as your quick-12 flow)
-  setPicksMeta({
-    method: 'system',
-    weeks: Math.min(25, fullData.length),
-    hotCoverage: 12
-  });
-
-  // Build generatedSets from the 132 template (assign PB in round-robin if PWB)
-  const needPB = (totalNumbersGlobal === 69);
-  if (needPB) __pbCycleIndex = 0;
-
-  generatedSets = blocks.map(idxs => {
-    const combo = idxs.map(j => bestOrder[j]).sort((a,b)=>a-b);
-    return {
-      combo,
-      points: calculateRawPointsForSet(combo),
-      pb: needPB ? getNextPB() : null
-    };
-  });
-
-  // Render to the modal (and hide the extra controls like the 6-ticket flow)
-  document.getElementById('generateSetsModalButton').style.display = 'none';
-  document.getElementById('pickBestSetsModal').style.display = 'none';
-  document.getElementById('modalSetCountChoice').style.display = 'none';
-  document.getElementById('modalBestSetCount').style.display = 'none';
-  document.getElementById('exportBestBtn').style.display = 'none';
-  document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
-
-  const out = document.getElementById('modalWheelOutput');
-  let html = '<ol>';
-  let sum = 0;
-  generatedSets.forEach(({ combo, points, pb }) => {
-    sum += points;
-    const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
-    html += `<li style="color:${getColorForPoints(points)}">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
-  });
-  html += `</ol><p style="color:orange; font-weight:bold;">Total Score (132): ${sum.toFixed(1)} pts</p>`;
-  out.innerHTML = html;
-
-  document.getElementById('wheelModal').style.display = 'block';
-});
-
-
-function renderFixedSetsToModal() {
-  const modal = document.getElementById('wheelModal');
+function renderFixedSetsToModal(clearProgress = true) {
+  const modal  = document.getElementById('wheelModal');
   const output = document.getElementById('modalWheelOutput');
   const progress = document.getElementById('progressInfo');
 
+  // fixed flows hide controls
   document.getElementById('generateSetsModalButton').style.display = 'none';
   document.getElementById('pickBestSetsModal').style.display = 'none';
   document.getElementById('modalSetCountChoice').style.display = 'none';
   document.getElementById('modalBestSetCount').style.display = 'none';
 
-let html = '<ol>';
-generatedSets.forEach(({ combo, points, pb }) => {
-  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
-  html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
-});
-html += '</ol>';
-  output.innerHTML = html;
+  let html = '<ol>';
+  generatedSets.forEach(({ combo, points, pb }) => {
+    const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
+    html += `<li style="color:${getColorForPoints(points)}">${asSorted(combo).join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
+  });
+  html += '</ol>';
 
-  if (progress) progress.innerHTML = '';
+  output.innerHTML = html;
+  if (clearProgress && progress) progress.innerHTML = '';
   modal.style.display = 'block';
 }
 
@@ -3490,56 +3516,71 @@ function reapply69State() {
   renderSkipFrequency();
 }
 
-function generateWheelSets() {
-window.__isQuickSix = false;
-const top18Inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
-const numbersToUse = top18Inputs
-  .map(input => parseInt(input.value.trim(), 10))
-  .filter(x => Number.isInteger(x) && x >= 1);
+// ⬇️ Replace your whole function with this:
+async function generateWheelSets() {
+  window.__isQuickSix = false;
 
-if (numbersToUse.length < 12) {
-  alert('Please enter 12 valid numbers in the input boxes.');
-  return;
-}
-
-// ✅ Use a local source for wheel generation; do NOT change Top
-const wheelSource = numbersToUse.sort((a, b) => a - b);
-
+  // Use exactly the 12 numbers in the inputs (sorted & unique)
+  const picks12 = readTopSkips12();
+  if (picks12.length < 12) {
+    alert('Please enter 12 valid numbers in the input boxes.');
+    return;
+  }
 
   const progressDiv = document.getElementById('progressInfo') || createProgressInfoDiv();
   progressDiv.innerHTML = '';
 
-  const setsToGenerateInput = document.getElementById('modalSetCountChoice');
-  const setsToGenerate = parseInt(setsToGenerateInput.value, 10) || 6;
+  const needPB = (totalNumbersGlobal === 69);
+  if (needPB) __pbCycleIndex = 0;
 
-  const wheelSets = generateWheel(wheelSource, pastDrawings, 5, setsToGenerate);
-const needPB = (totalNumbersGlobal === 69);
-if (needPB) __pbCycleIndex = 0;
+  // ── Index path (Lean 4-cover), only if enabled ─────────────────────────────
+  if (window.__useIndexWheel) {
+    try {
+      // Lazy-load and cache the index JSON
+      if (!window.__indexWheel) {
+        const res = await fetch('wheel_4cover_lean_12of5_v1.json?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        window.__indexWheel = await res.json();
+      }
+      const blocks = (window.__indexWheel && Array.isArray(window.__indexWheel.blocks))
+        ? window.__indexWheel.blocks
+        : [];
 
-generatedSets = wheelSets.map(({ combo }) => ({
-  combo,
-  points: calculateRawPointsForSet(combo),
-  pb: needPB ? getNextPB() : null
-}));
+      if (!blocks.length) throw new Error('No blocks found in index file.');
 
-  const modalWheelOutput = document.getElementById('modalWheelOutput');
-  const wheelModal = document.getElementById('wheelModal');
+      // Expand 0-based indices into your 12 picks
+      const combos = blocks.map(idx5 => idx5.map(i => picks12[i]).sort((a,b)=>a-b));
 
-  if (generatedSets.length === 0) {
-      modalWheelOutput.innerHTML = '<p>No valid sets generated. Try different numbers or sets.</p>';
-      wheelModal.style.display = "block";
+      generatedSets = combos.map(combo => ({
+        combo,
+        points: calculateRawPointsForSet(combo),
+        pb: needPB ? getNextPB() : null
+      }));
+
+      renderGeneratedSetsToModal();
+      showToast(`Generated ${generatedSets.length} lines from Lean 4-Cover.`);
       return;
+    } catch (err) {
+      console.warn('Index wheel load/expand failed, using regular generator:', err);
+      showToast('Index wheel unavailable — using regular generator.');
+    }
   }
 
-  let outputHtml = '<ol>';
-generatedSets.forEach(({ combo, points, pb }) => {
-  const color = getColorForPoints(points);
-  const pbPart = (pb != null) ? `  + PB: <b>${pb}</b>` : '';
-  outputHtml += `<li style="color:${color};">${combo.join(', ')} ➔ <b>${points.toFixed(1)} pts</b>${pbPart}</li>`;
-});
-outputHtml += '</ol>';
-modalWheelOutput.innerHTML = outputHtml;
+  // ── Regular path (your existing behavior) ──────────────────────────────────
+  const setsToGenerateInput = document.getElementById('modalSetCountChoice');
+  const setsToGenerate = parseInt(setsToGenerateInput?.value, 10) || 6;
+
+  const wheelSets = generateWheel(picks12, pastDrawings, 5, setsToGenerate);
+
+  generatedSets = wheelSets.map(({ combo }) => ({
+    combo,
+    points: calculateRawPointsForSet(combo),
+    pb: needPB ? getNextPB() : null
+  }));
+
+  renderFixedSetsToModal(true);
 }
+
 
 function createProgressInfoDiv() {
   const div = document.createElement('div');
@@ -4188,7 +4229,7 @@ const hot12 = computeTrendingHotNumbers(weeks, 12);
 if (typeof hotSet !== 'undefined') {
   hotSet = new Set(hot12);
 } else {
-  window.hotSet = new Set(hot12);
+  hotSet = new Set(hot12);
 }
 
         // ⬇️ keep the Hot dialog’s metadata (weeks/coverage) in sync
@@ -4203,6 +4244,129 @@ if (typeof hotSet !== 'undefined') {
     // if (typeof orig === 'function') orig();
   };
 })();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('wheelModal');
+  const panel = modal?.querySelector('.modal-content');
+  if (!panel || panel.querySelector('#useIndexWheelToggle')) return;
+
+  const label = document.createElement('label');
+  label.style.display = 'block';
+  label.style.margin = '8px 0';
+  label.innerHTML = `
+    <input id="useIndexWheelToggle" type="checkbox" />
+    Use Lean 4-Cover (132 lines)
+  `;
+
+  // wire it
+  const box = label.querySelector('input');
+  box.addEventListener('change', async (e) => {
+    window.__useIndexWheel = e.target.checked;
+    if (e.target.checked && !window.__indexWheel) {
+      const w = await loadLean4CoverIndex();
+      if (w) showToast(`Loaded 4-cover (${w.blocks.length} lines).`);
+      else {
+        e.target.checked = false;
+        window.__useIndexWheel = false;
+        alert('Could not load 4-cover JSON file.');
+      }
+    }
+  });
+});
+
+/* 1) Init the flag once */
+window.__useIndexWheel = !!window.__useIndexWheel;
+
+/* 2) Central modal UI toggler */
+function applyIndexModeUI(isOn) {
+  const mm = document.getElementById('wheelModal');
+  if (!mm) return;
+
+  const setCount    = document.getElementById('modalSetCountChoice');
+  const bestCount   = document.getElementById('modalBestSetCount');
+  const genBtn      = document.getElementById('generateSetsModalButton');
+  const bestBtn     = document.getElementById('pickBestSetsModal');
+  const exportBest  = document.getElementById('exportBestBtn');
+
+  // Try to hide just the two labels by 'for' attribute
+  const lblSetCount  = mm.querySelector('label[for="modalSetCountChoice"]');
+  const lblBestCount = mm.querySelector('label[for="modalBestSetCount"]');
+
+  const off = (el) => { if (el) el.style.display = 'none'; };
+  const on  = (el) => { if (el) el.style.display = 'inline-block'; };
+
+  if (isOn) {
+    off(setCount); off(lblSetCount);
+    off(bestCount); off(lblBestCount);
+    off(bestBtn); off(exportBest);
+    if (genBtn) genBtn.textContent = 'Build 132 Sets';
+
+    // Remove any stray inline toggle from the modal (if it exists)
+    mm.querySelectorAll('#indexWheelInline, #indexWheelToggle').forEach(el => el.remove());
+  } else {
+    on(setCount); if (lblSetCount) lblSetCount.style.display = 'inline';
+    on(bestCount); if (lblBestCount) lblBestCount.style.display = 'inline';
+    on(bestBtn); on(exportBest);
+    if (genBtn) genBtn.textContent = 'Generate Sets';
+  }
+
+  // Fallback: if specific labels aren’t found, hide *all* labels in index mode
+  if (isOn && !lblSetCount && !lblBestCount) {
+    mm.querySelectorAll('label').forEach(l => l.style.display = 'none');
+  }
+}
+
+/* 3) Single checkbox OUTSIDE the modal */
+document.addEventListener('DOMContentLoaded', () => {
+  // Create the toggle if you haven’t placed it in HTML
+  if (!document.getElementById('indexWheelToggle')) {
+    const launcher = document.getElementById('generateWheelButton'); // your “Wheel Picks” button
+    if (launcher && launcher.parentElement) {
+      const wrapper = document.createElement('label');
+      wrapper.id = 'indexWheelLabel';
+      wrapper.style.marginLeft = '8px';
+      wrapper.innerHTML = `
+        <input type="checkbox" id="indexWheelToggle">
+        4-Hit Strategy (132)
+      `;
+      launcher.parentElement.insertBefore(wrapper, launcher.nextSibling);
+    }
+  }
+
+  const cb = document.getElementById('indexWheelToggle');
+  if (cb) {
+    cb.checked = !!window.__useIndexWheel;
+    cb.addEventListener('change', () => {
+      window.__useIndexWheel = cb.checked;
+      // If the modal is open, reflect immediately
+      applyIndexModeUI(cb.checked);
+    });
+  }
+});
+
+/* 4) Apply the UI state whenever the modal opens */
+const showModalButton = document.getElementById('generateWheelButton'); // “Wheel Picks”
+if (showModalButton) {
+  showModalButton.addEventListener('click', () => {
+    const modal = document.getElementById('wheelModal');
+    if (modal) {
+      modal.style.display = 'block';
+      applyIndexModeUI(!!window.__useIndexWheel);
+    }
+  });
+}
+
+/* 5) Keep reset in sync too */
+(function patchReset(){
+  const oldReset = window.resetModalControls;
+  window.resetModalControls = function() {
+    if (typeof oldReset === 'function') oldReset();
+    applyIndexModeUI(!!window.__useIndexWheel);
+  };
+})();
+
+
+
 </script>
 
 </body>

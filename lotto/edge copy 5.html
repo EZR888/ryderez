@@ -3177,6 +3177,13 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
 
 document.getElementById('updateHitsBtn').addEventListener('click', updateReverseHitsTop18);
 
+/* Generate Wheel modal open */
+const showModalButton = document.getElementById('generateWheelButton');
+if (showModalButton) showModalButton.addEventListener('click', function() { document.getElementById('wheelModal').style.display = "block"; });
+
+const generateSetsButtonModal = document.getElementById('generateSetsModalButton');
+if (generateSetsButtonModal) generateSetsButtonModal.addEventListener('click', generateWheelSets);
+
 /* Unified close handlers for all .close-button */
 document.querySelectorAll('.close-button').forEach(btn => {
   btn.addEventListener('click', function () {
@@ -3292,17 +3299,12 @@ setPicksMeta({
   hotCoverage: 12
 });
 
-// We already generated the 6 sets; hide the “How many sets” controls only.
-document.getElementById('generateSetsModalButton').style.display = 'none';
-document.getElementById('modalSetCountChoice').style.display = 'none';
-hideHowManySets();
-
-// Keep the “Show Best Sets” input + Export Best visible in Quick mode:
-showBestControls();
-
-// Optional: let users preview the best list in-modal
-const pickBestBtn = document.getElementById('pickBestSetsModal');
-if (pickBestBtn) pickBestBtn.style.display = 'inline-block';
+  document.getElementById('generateSetsModalButton').style.display = 'none';
+  document.getElementById('pickBestSetsModal').style.display = 'none';
+  document.getElementById('modalSetCountChoice').style.display = 'none';
+  document.getElementById('modalBestSetCount').style.display = 'none';
+  document.getElementById('exportBestBtn').style.display = 'none';
+  document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
 
 const fixedSets = fixedPattern.map(indexes =>
   asSorted(indexes.map(i => bestOrder[i]))
@@ -3396,18 +3398,13 @@ if (quick132Btn) quick132Btn.addEventListener('click', async function () {
     };
   });
 
- // 132 set wheel is already built; no need for “How many sets”
-document.getElementById('generateSetsModalButton').style.display = 'none';
-document.getElementById('modalSetCountChoice').style.display = 'none';
-hideHowManySets();
-
-// Always show “Show Best Sets” + Export Best
-showBestControls();
-
-// Optional: keep the in-modal “Show Best Sets” button visible
-const pickBestBtn = document.getElementById('pickBestSetsModal');
-if (pickBestBtn) pickBestBtn.style.display = 'inline-block';
-
+  // Render to the modal (and hide the extra controls like the 6-ticket flow)
+  document.getElementById('generateSetsModalButton').style.display = 'none';
+  document.getElementById('pickBestSetsModal').style.display = 'none';
+  document.getElementById('modalSetCountChoice').style.display = 'none';
+  document.getElementById('modalBestSetCount').style.display = 'none';
+  document.getElementById('exportBestBtn').style.display = 'none';
+  document.querySelectorAll('#wheelModal label').forEach(label => label.style.display = 'none');
 
   const out = document.getElementById('modalWheelOutput');
   let html = '<ol>';
@@ -3429,17 +3426,10 @@ function renderFixedSetsToModal() {
   const output = document.getElementById('modalWheelOutput');
   const progress = document.getElementById('progressInfo');
 
-document.getElementById('generateSetsModalButton').style.display = 'none';
-document.getElementById('modalSetCountChoice').style.display = 'none';
-hideHowManySets();
-
-// Keep Best controls visible
-showBestControls();
-
-// Let users preview best in the modal (optional)
-const pickBestBtn = document.getElementById('pickBestSetsModal');
-if (pickBestBtn) pickBestBtn.style.display = 'inline-block';
-
+  document.getElementById('generateSetsModalButton').style.display = 'none';
+  document.getElementById('pickBestSetsModal').style.display = 'none';
+  document.getElementById('modalSetCountChoice').style.display = 'none';
+  document.getElementById('modalBestSetCount').style.display = 'none';
 
 let html = '<ol>';
 generatedSets.forEach(({ combo, points, pb }) => {
@@ -4202,6 +4192,8 @@ if (!window.__backtestMode) {
     showToast('Powerball-only mode: red balls reset.');
   }
 }
+
+
       // Refresh highlights just to be tidy
       renderReverseHitsTable();
       reapplySkipTableHighlights?.();
@@ -4266,34 +4258,6 @@ function computeSinceMapFromLatest25(excludeMostRecent = false) {
     if (!found) m[n] = 26;
   }
   return m;
-}
-
-// Identify labels by text (once) so we can toggle them precisely
-document.addEventListener('DOMContentLoaded', () => {
-  const labels = Array.from(document.querySelectorAll('#wheelModal label'));
-  labels.forEach(l => {
-    const t = l.textContent.trim().toLowerCase();
-    if (t.includes('how many sets')) l.id = 'lblSetCount';
-    if (t.includes('show best sets')) l.id = 'lblBestCount';
-  });
-});
-
-/* Centralize which controls are visible in the Wheel modal */
-function setWheelModalUI({ showSetCount = true, showBest = true } = {}) {
-  const setInput   = document.getElementById('modalSetCountChoice');
-  const setLabel   = document.getElementById('lblSetCount');
-  const bestInput  = document.getElementById('modalBestSetCount');
-  const bestLabel  = document.getElementById('lblBestCount');
-
-  const genBtn     = document.getElementById('generateSetsModalButton'); // uses set count
-  const pickBest   = document.getElementById('pickBestSetsModal');
-  const exportBest = document.getElementById('exportBestBtn');
-
-  // Set-count controls
-  [setInput, setLabel, genBtn].forEach(el => { if (el) el.style.display = showSetCount ? 'inline-block' : 'none'; });
-
-  // Best controls
-  [bestInput, bestLabel, pickBest, exportBest].forEach(el => { if (el) el.style.display = showBest ? 'inline-block' : 'none'; });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -4385,30 +4349,6 @@ function computeSystemPicksV2(count = 12, trialsPerNumber = 48) {
   }
 
   return chosen.sort((a,b)=>a-b);
-}
-
-function showBestControls() {
-  const bestInput = document.getElementById('modalBestSetCount');
-  const bestBtn   = document.getElementById('exportBestBtn');
-
-  // Try to find the label via 'for', else fall back to the element before the input.
-  const bestLbl =
-    document.querySelector('#wheelModal label[for="modalBestSetCount"]') ||
-    bestInput?.previousElementSibling;
-
-  if (bestInput) bestInput.style.display = 'inline-block';
-  if (bestBtn)   bestBtn.style.display   = 'inline-block';
-  if (bestLbl)   bestLbl.style.display   = 'inline-block';
-}
-
-function hideHowManySets() {
-  const howInput = document.getElementById('modalSetCountChoice');
-  const howLbl =
-    document.querySelector('#wheelModal label[for="modalSetCountChoice"]') ||
-    howInput?.previousElementSibling;
-
-  if (howInput) howInput.style.display = 'none';
-  if (howLbl)   howLbl.style.display   = 'none';
 }
 
 

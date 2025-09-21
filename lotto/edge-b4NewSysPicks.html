@@ -173,8 +173,6 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number]{ -moz-appearance: textfield; }
 
-#system20Button { display: inline-block !important; }
-
 /* 🎯 Scoped Button Styles */
 .button { font-size:100%; padding:6px 12px; margin:5px; border:none; border-radius:5px; cursor:pointer; transition:all .2s ease; background:#444; color:#fff!important; }
 .button:hover { opacity:.8; }
@@ -465,39 +463,6 @@ h2 { margin: 8px 0; }
   }
 }
 
-/* 1) Reset native button/input quirks so the class fully controls size */
-button.button-single,
-input.button-single {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #444;
-  border: none;
-  margin: 5;
-  padding: 6;
-  font: inherit;
-  line-height: 1; /* kill tall default line-height */
-}
-
-/* 2) Give the shared class the actual sizing (applies to <a>, <button>, <input>) */
-a.button-single,
-button.button-single,
-input.button-single,
-.button-single {
-  display: inline-block;
-  box-sizing: border-box;
-  height: 36px;           /* set one canonical height */
-  line-height: 36px;      /* vertical centering for single-line labels */
-  padding: 0 12px;        /* same horizontal padding as the others */
-  border: 1px solid var(--btn-border, #555);
-  border-radius: 6px;
-  background: #064d06;
-  color: var(--btn-fg, #fff);
-  white-space: nowrap;
-  vertical-align: middle; /* keeps baseline alignment consistent */
-}
-
-
-
   </style>
 </head>
 <body>
@@ -587,11 +552,9 @@ input.button-single,
       <button id="systemPicksButton" class="button button-single" style="display:none">🤖 System Picks</button>
             <button id="savePicksBtn" class="button button-single">💾 Save Picks</button><br>
       <button id="autoPickTopBtn" class="button button-single">🧠 Find Hot Numbers</button><br>
-      <button id="generateWheelButton" class="button button-single" style="display:none">🎯 Wheel Picks</button><br>
+      <button id="generateWheelButton" class="button button-purple" style="display:none">🎯 Wheel Picks</button><br>
       <button id="quick12Button" class="button button-single" style="display:none">⚡ 6 Ticket Set</button>
-      <button id="system20Button" class="button button-single" style="display:none">20 Ticket Set</button>
-	  <button id="quick132Button" class="button button-single" style="display:none">132 Ticket Set</button>
-
+<button id="quick132Button" class="button button-single" style="display:none">132 Ticket Set</button>
 
       
       <!-- Back Test controls -->
@@ -1045,7 +1008,6 @@ btn69.onclick = () => {
     if (btn1) btn1.style.display = 'inline-block';
 
     hidePBblock();
-    qs('#system20Button').style.display = 'inline-block';
     qs('#generateWheelButton').style.display = 'inline-block';
     qs('#quick12Button').style.display       = 'inline-block';
     qs('#systemPicksButton').style.display   = 'inline-block';
@@ -1078,8 +1040,6 @@ btn1.onclick = () => {
   document.getElementById('showHistogramBtn').style.display = 'none';
   qs('#quick12Button').style.display       = 'none';
   qs('#systemPicksButton').style.display   = 'none';
-  const sys20 = qs('#system20Button');
-if (sys20) sys20.style.display = 'none';
 
   // Hide Top inputs & related controls in PB-only mode (including Save Picks)
   ['top18Inputs','updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','top18Label','savePicksBtn']
@@ -1122,7 +1082,6 @@ btn39.onclick = () => {
     if (btn1) btn1.style.display = 'none';
     hidePBblock();
     highlight(btn39);
-    qs('#system20Button').style.display = 'inline-block';
     qs('#generateWheelButton').style.display = 'inline-block';
     qs('#quick12Button').style.display       = 'inline-block';
     qs('#systemPicksButton').style.display   = 'inline-block';
@@ -2239,9 +2198,28 @@ function runSystemPicks(){
     return;
   }
 
+  const weeks = Math.min(25, fullData.length);
   const count = 12;
+
+  // Ensure Hot exists
+  if (!hotSet || hotSet.size === 0){
+    const hotNums = computeTrendingHotNumbers(weeks, count);
+    hotSet = new Set(hotNums);
+  }
+  // Ensure Top exists
+  if (!top18 || top18.length === 0) {
+    if (typeof recomputeTopFromSkips === 'function') recomputeTopFromSkips(12);
+  }
+
+  // Keep a copy for change detection
   const before = new Set(systemPicksSet);
-  const picks = computeSystemPicksV2(count);
+
+  // Deterministic seed so button matches page-load result
+  setDeterministicSeed('systemPicks');
+
+  // Compute Picks
+  const picks = computeSystemPicks(count, weeks, Array.from(hotSet), top18, sinceMap);
+
   // Save to Picks column
   systemPicksSet = new Set(picks);
 
@@ -2253,8 +2231,12 @@ function runSystemPicks(){
   renderReverseHitsTable();
   reapplySkipTableHighlights();
   
-  // No Hot/Skips inputs here — we’re shape-driven
-  setPicksMeta({ method: 'system', weeks: null, hotCoverage: null });
+  // inside runSystemPicks(), after you compute `picks` successfully:
+setPicksMeta({
+  method: 'system',
+  weeks: Math.min(25, fullData.length),
+  hotCoverage: (hotSet ? hotSet.size : null) // usually 12
+});
 
 
   // ✅ Feedback toast
@@ -2422,7 +2404,6 @@ function loadGameByCode(gameCode, afterLoad) {
       qs('#quick12Button').style.display       = 'inline-block';
       qs('#systemPicksButton').style.display   = 'inline-block';
       qs('#checkNumbersButton').style.display  = 'inline-block';
-      qs('#system20Button').style.display = 'inline-block';
       const sh = document.getElementById('showHistogramBtn');
       if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
       highlight(btn69);
@@ -2453,7 +2434,6 @@ function loadGameByCode(gameCode, afterLoad) {
       qs('#quick12Button').style.display       = 'inline-block';
       qs('#systemPicksButton').style.display   = 'inline-block';
       qs('#checkNumbersButton').style.display  = 'inline-block';
-      qs('#system20Button').style.display = 'inline-block';
       const sh = document.getElementById('showHistogramBtn');
       if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
 
@@ -2470,7 +2450,6 @@ function loadGameByCode(gameCode, afterLoad) {
     });
 
   } else {
-  qs('#system20Button').style.display = 'none';
     // Unknown code → don’t switch; just proceed
     if (typeof afterLoad === 'function') afterLoad();
   }
@@ -4263,209 +4242,6 @@ function computeSinceMapFromLatest25(excludeMostRecent = false) {
   }
   return m;
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// System Picks v2: shape-driven projection (independent of Hot/Skips)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function computeSystemPicksV2(count = 12, trialsPerNumber = 48) {
-  // Deterministic sampling
-  setDeterministicSeed('sysV2');
-
-  const N = totalNumbersGlobal;
-  if (!N || N < 5) return [];
-
-  // Build quintile bins for gentle spacing pressure
-  const bins = Array.from({ length: 5 }, () => []);
-  const binOf = (n) => Math.min(4, Math.floor((n - 1) * 5 / N));
-  for (let n = 1; n <= N; n++) bins[binOf(n)].push(n);
-
-  function sample4Companions(anchor, rng = rand) {
-    // Prefer one from each remaining bin to enforce spread; fall back to any if short
-    const myBin = binOf(anchor);
-    const pick = [];
-    const neededBins = [0,1,2,3,4].filter(b => b !== myBin);
-
-    // Shuffle bins deterministically
-    for (let i = neededBins.length - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      [neededBins[i], neededBins[j]] = [neededBins[j], neededBins[i]];
-    }
-    // Try one from each of the four bins
-    neededBins.forEach(b => {
-      const arr = bins[b];
-      if (arr.length) pick.push(arr[Math.floor(rng() * arr.length)]);
-    });
-
-    // If duplicates or anchor collision happened, fix
-    const s = new Set([anchor, ...pick]);
-    let attempts = 0;
-    while (s.size < 5 && attempts < 200) {
-      const candidate = 1 + Math.floor(rng() * N);
-      if (!s.has(candidate)) s.add(candidate);
-      attempts++;
-    }
-    const out = Array.from(s).filter(x => x !== anchor);
-    return out.slice(0, 4);
-  }
-
-  // 1) Compatibility score per number (lower = better)
-  const scores = [];
-  for (let n = 1; n <= N; n++) {
-    let acc = 0, seen = 0;
-    for (let t = 0; t < trialsPerNumber; t++) {
-      const companions = sample4Companions(n);
-      const combo = [n, ...companions].sort((a,b)=>a-b);
-      acc += calculateRawPointsForSet(combo);
-      seen++;
-    }
-    scores.push({ n, score: acc / Math.max(1, seen) });
-  }
-  // Sort by “shape compatibility”
-  scores.sort((a,b) => (a.score - b.score) || (a.n - b.n));
-
-  // 2) Greedy pick with mild spacing + bin balance
-  const chosen = [];
-  const chosenBins = [0,0,0,0,0];
-  const minGap = 2; // avoid adjacent neighbors
-  for (const entry of scores) {
-    if (chosen.length >= count) break;
-    const n = entry.n;
-    const b = binOf(n);
-    const tooClose = chosen.some(x => Math.abs(x - n) < minGap);
-    // early priority: ensure at least two numbers per bin before overfilling others
-    const mustFill = chosenBins.some(c => c < 2);
-    if (mustFill && chosenBins[b] >= 2) continue;
-    if (tooClose) continue;
-
-    chosen.push(n);
-    chosenBins[b]++;
-  }
-
-  // If short, backfill ignoring the “2 per bin” rule but keeping gap
-  if (chosen.length < count) {
-    for (const { n } of scores) {
-      if (chosen.length >= count) break;
-      if (chosen.includes(n)) continue;
-      if (chosen.some(x => Math.abs(x - n) < minGap)) continue;
-      chosen.push(n);
-    }
-  }
-
-  return chosen.sort((a,b)=>a-b);
-}
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Build 20 tickets from the 12 System Picks: greedy 3-cover + low points
-// ─────────────────────────────────────────────────────────────────────────────
-
-function build20SystemSetsFromPicks(picks12) {
-  if (!Array.isArray(picks12) || picks12.length < 12) {
-    alert('Need 12 numbers to build System 20.');
-    return [];
-  }
-
-  // Enumerate all C(12,5) combos
-  // Small helper to enumerate combinations of array indices
-  function *combIndices(n, k, start=0, prev=[]) {
-    if (prev.length === k) { yield prev; return; }
-    for (let i = start; i <= n - (k - prev.length); i++) {
-      yield* combIndices(n, k, i + 1, prev.concat(i));
-    }
-  }
-
-  const source = picks12.slice().sort((a,b)=>a-b);
-  const candidates = [];
-  for (const idxs of combIndices(source.length, 5)) {
-    const combo = idxs.map(i => source[i]);
-    const pts = calculateRawPointsForSet(combo);
-    // Precompute the 10 triples each ticket covers
-    const triples = getAllCombinations(combo, 3).map(t => t.join(','));
-    candidates.push({ combo, points: pts, triples });
-  }
-
-  // Greedy: maximize unseen triples, tie-break by lower points
-  const covered = new Set();
-  const picked = [];
-
-  // A little helper to value a candidate
-  function value(c) {
-    let newTriples = 0;
-    for (const t of c.triples) if (!covered.has(t)) newTriples++;
-    // prefer more new triples; when equal, prefer lower points
-    // return pair [primary desc, secondary asc] as a sortable key
-    return { newTriples, points: c.points };
-  }
-
-  while (picked.length < 20 && candidates.length) {
-    // Find best candidate
-    let bestIdx = -1, bestNT = -1, bestPts = Infinity;
-    for (let i = 0; i < candidates.length; i++) {
-      const c = candidates[i];
-      const { newTriples, points } = value(c);
-      if (newTriples > bestNT || (newTriples === bestNT && points < bestPts)) {
-        bestIdx = i; bestNT = newTriples; bestPts = points;
-      }
-    }
-    if (bestIdx < 0) break;
-
-    const chosen = candidates.splice(bestIdx, 1)[0];
-    picked.push(chosen);
-
-    // Mark coverage
-    chosen.triples.forEach(t => covered.add(t));
-
-    // Optional prune: drop hopeless candidates (add <4 new triples)
-    for (let i = candidates.length - 1; i >= 0; i--) {
-      let fresh = 0;
-      const tris = candidates[i].triples;
-      for (let j = 0; j < tris.length && fresh < 4; j++) {
-        if (!covered.has(tris[j])) fresh++;
-      }
-      if (fresh < 2) candidates.splice(i, 1); // be a bit aggressive
-    }
-  }
-
-  // Return in your generatedSets shape (and assign PB if needed)
-  const needPB = (totalNumbersGlobal === 69);
-  if (needPB) __pbCycleIndex = 0;
-
-  return picked.map(({ combo, points }) => ({
-    combo: combo.slice().sort((a,b)=>a-b),
-    points,
-    pb: needPB ? getNextPB() : null
-  }));
-}
-
-// Build 20 tickets from the CURRENT 12 picks and show in the Wheel modal
-window.buildSystem20Now = function () {
-  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'))
-    .slice(0, 12)
-    .map(inp => parseInt(inp.value.trim(), 10))
-    .filter(Number.isInteger);
-
-  if (inputs.length !== 12) {
-    alert('Need 12 picks in the inputs to build System 20.');
-    return;
-  }
-
-  generatedSets = build20SystemSetsFromPicks(inputs);
-
-  if (!generatedSets.length) {
-    alert('Could not build System 20.');
-    return;
-  }
-
-  // Render like your other flows
-  renderFixedSetsToModal?.();
-  showToast('System 20 ready.');
-};
-
-// (Optional) auto-wire if you add a button with id="system20Button"
-const sys20Btn = document.getElementById('system20Button');
-if (sys20Btn) sys20Btn.addEventListener('click', () => window.buildSystem20Now());
-
 
 </script>
 

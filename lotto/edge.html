@@ -1349,12 +1349,6 @@ toggle.addEventListener('click', () => {
     // 👉 ENTER Back Test: recompute Hot/Skips as-of BEFORE the target draw
     rebuildFromOriginalTrim();   // this will re-render with the trimmed data
 
-    // Use Defaults in Picks so you can compare Default vs System/Hot on this draw
-    if (totalNumbersGlobal !== 26) {
-      applyHardwiredPicksForCurrentGame?.();
-      setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
-    }
-
     showToast('Back Test: pre-draw lens ON');
   } else {
     // 👉 EXIT Back Test: reset trim & return to normal (next-draw) mode
@@ -1822,11 +1816,17 @@ function rebuildFromOriginalTrim() {
   const raw = originalFullDataByGame[totalNumbersGlobal];
   if (!raw) return;
 
-  // 1) Apply the trim to the dataset
+  // ✅ remember current Picks (from the green column), if any
+  const prevPicks =
+    (totalNumbersGlobal !== 26 && systemPicksSet && systemPicksSet.size)
+      ? Array.from(systemPicksSet)
+      : null;
+
+  // 1) Apply the trim
   const effective = raw.slice(backtestTrim);
   fullData = effective;
 
-  // 2) Rebuild base structures from the trimmed data
+  // 2) Rebuild base structures
   const drawingNumbers = fullData.map(row => parseInt(row[0], 10));
   latestDrawingNumber  = drawingNumbers[0];
 
@@ -1839,37 +1839,30 @@ function rebuildFromOriginalTrim() {
     .filter(row => row.length >= 6)
     .map(row => row.slice(1, 6).map(n => parseInt(n, 10)).sort((a, b) => a - b).join(','));
 
-  // 3) Recompute the 25-draw grid + skip-frequency from the trimmed set
+  // 3) Recompute the 25-draw grid + skip-frequency
   renderRecentDraws(data, totalNumbersGlobal, drawingNumbers[0]);
   renderSkipFrequency();
 
   // 4) Recalculate SKIPS (Top) and HOT for this trimmed window
-  //    Note: recomputeTopFromSkips() currently renders once — that’s fine;
-  //    we will do a *final* render at the end after we also set Picks.
   if (typeof recomputeTopFromSkips === 'function') {
-    recomputeTopFromSkips(12);            // sets global `top18`
+    recomputeTopFromSkips(12); // updates global top18 and renders once
   }
-
   const weeks = Math.min(25, fullData.length);
   const hot12 = computeTrendingHotNumbers(weeks, 12);
   hotSet = new Set(hot12);
 
-  // 5) P I C K S  =  D E F A U L T S  (per your spec for Back Test)
-  //    This mirrors a “Defaults” button tap: load hardwired 12 into inputs + Picks column.
-  if (totalNumbersGlobal !== 26) {
-    // for PB/F5, fill the 12-pick inputs and green column from hardwired defaults
-    applyHardwiredPicksForCurrentGame();     // calls loadPicksIntoColumnAndInputs(...) internally
-    // `applyHardwiredPicksForCurrentGame` already sets method:'manual'. Keep meta tidy:
-    setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
+  // 5) ✅ KEEP CURRENT PICKS instead of forcing defaults
+  //    Restore the previously-selected Picks (and mirror into inputs)
+  if (prevPicks && prevPicks.length) {
+    const keep = Array.from(new Set(prevPicks)).slice(0, 12).sort((a,b)=>a-b);
+    loadPicksIntoColumnAndInputs(keep); // re-renders table & highlights
   } else {
-    // PB-only mode (no Picks column). Still OK to refresh table below.
+    // nothing to keep; just render normally
+    renderReverseHitsTable();
+    reapplySkipTableHighlights?.();
   }
 
-  // 6) FINAL authoritative render so Picks/Hot/Skips are in-sync for this trim
-  renderReverseHitsTable();
-  reapplySkipTableHighlights?.();
-
-  // 7) Reflect the trim value in the UI control
+  // 6) reflect trim in the UI
   const t = document.getElementById('trimInput');
   if (t) t.value = String(backtestTrim);
 }
@@ -4191,12 +4184,15 @@ document.addEventListener('DOMContentLoaded', () => {
         __setPBRedPool(HARDCODE_DEFAULTS.PB_REDS.slice());
       }
 
-      // Reset the 12 inputs to the current game's defaults (if applicable)
-      if (totalNumbersGlobal === 69 || totalNumbersGlobal === 39) {
-        applyHardwiredPicksForCurrentGame();
-      } else {
-        showToast('Powerball-only mode: red balls reset.');
-      }
+// Only reset to defaults in LIVE mode (not during Back Test)
+if (!window.__backtestMode) {
+  if (totalNumbersGlobal === 69 || totalNumbersGlobal === 39) {
+    applyHardwiredPicksForCurrentGame();
+  } else {
+    showToast('Powerball-only mode: red balls reset.');
+  }
+}
+
 
       // Refresh highlights just to be tidy
       renderReverseHitsTable();

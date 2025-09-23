@@ -568,10 +568,11 @@ input.button-single,
       <!-- ==== Button order per your spec ==== -->
       <button id="methodologyBtn" class="button button-single">📘 Methodology</button>
       <button id="load1Button" class="button button-single">🔴 Pick Powerball</button>
-      <button id="showHistogramBtn" class="button button-single" style="display:none;">📊 Show Points Histogram</button>
+      <button id="showHistogramBtn" class="button button-single" style="display:none;">📊 Histogram</button>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="checkNumbersButton" class="button button-single">✅ Check Sets</button>
         <button id="loadTop18Button" class="button button-single">📂 Load Picks</button>
+        <button id="btnPickHitStats" class="button button-single">📈 Picks Hit History</button>
       </div>
       <br>
 
@@ -855,6 +856,25 @@ input.button-single,
 
 </div><!-- /#zoomRoot -->
 
+
+<div id="pickHitModal" class="modal">
+  <div class="modal-content" style="width: 880px; max-width: 95%;">
+    <span class="close-button" id="pickHitClose">&times;</span>
+    <h2 style="margin-top:0;">Picks Hit History</h2>
+
+    <div style="display:flex; gap:10px; align-items:center; margin:8px 0;">
+      <label>Last N draws:
+        <input id="pickHitLastN" type="number" min="1" placeholder="(all)"
+               style="width:100px; margin-left:6px; background:#333; color:#fff;">
+      </label>
+      <button id="pickHitRecompute" class="button button-single">Recompute</button>
+      <button id="pickHitExport" class="button button-single">Export ≥4 CSV</button>
+    </div>
+
+    <div id="pickHitContent" style="font-family:system-ui,Arial,sans-serif; font-size:14px;"></div>
+  </div>
+</div>
+
 </body>
 
 <script>
@@ -1041,6 +1061,10 @@ btn69.onclick = () => {
     skipDataFrom69     = JSON.parse(JSON.stringify(skipDataGlobal));
     sinceMapFrom69     = { ...sinceMap };
     fullDataFrom69     = [...fullData];
+    
+    window.fullData = fullData;
+    console.log('fullData exposed:', Array.isArray(window.fullData), window.fullData?.length);
+
 
     if (btn1) btn1.style.display = 'inline-block';
 
@@ -1105,6 +1129,10 @@ if (sys20) sys20.style.display = 'none';
     // Draw/refresh the two tables
     renderReverseHitsTable();
     reapplySkipTableHighlights();
+    
+    window.fullData = fullData;
+    console.log('fullData exposed:', Array.isArray(window.fullData), window.fullData?.length);
+
   });
 };
 
@@ -1138,6 +1166,10 @@ btn39.onclick = () => {
 
     const checkPBSpan = document.getElementById('checkPBSpan');
     if (checkPBSpan) checkPBSpan.style.display = 'none';
+    
+    window.fullData = fullData;
+    console.log('fullData exposed:', Array.isArray(window.fullData), window.fullData?.length);
+
   });
 };
 
@@ -1825,6 +1857,9 @@ function rebuildFromOriginalTrim() {
   // 1) Apply the trim
   const effective = raw.slice(backtestTrim);
   fullData = effective;
+  
+  window.fullData = fullData;
+  console.log('fullData exposed:', Array.isArray(window.fullData), window.fullData?.length);
 
   // 2) Rebuild base structures
   const drawingNumbers = fullData.map(row => parseInt(row[0], 10));
@@ -4522,8 +4557,220 @@ window.buildSystem20Now = function () {
 const sys20Btn = document.getElementById('system20Button');
 if (sys20Btn) sys20Btn.addEventListener('click', () => window.buildSystem20Now());
 
+/* ========= Picks Hit History: pulls from your page state ========= */
+
+/* Read the current 12 picks from your inputs (fallback to systemPicksSet). */
+function getCurrentPicks() {
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const vals = inputs.slice(0, 12)
+    .map(inp => parseInt((inp.value||'').trim(), 10))
+    .filter(Number.isInteger);
+  if (vals.length === 12) return Array.from(new Set(vals)).sort((a,b)=>a-b);
+
+  if (window.systemPicksSet instanceof Set && window.systemPicksSet.size) {
+    return Array.from(window.systemPicksSet).sort((a,b)=>a-b).slice(0,12);
+  }
+  return [];
+}
+
+async function waitForFullData(maxMs = 3000) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < maxMs) {
+    if (Array.isArray(window.fullData) && window.fullData.length > 0) return true;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return Array.isArray(window.fullData) && window.fullData.length > 0;
+}
+
+function parseDrawsFromFullData() {
+  const src = Array.isArray(window.fullData) ? window.fullData : [];
+  const rows = [];
+  for (const r of src) {
+    if (!r) continue;
+    const parts = Array.isArray(r) ? r : String(r).split(/[,\s]+/);
+    const nums = parts.map(x => parseInt(x, 10)).filter(n => Number.isFinite(n));
+    if (nums.length >= 6) {
+      const drawId = nums[0];
+      const five = nums.slice(1, 6).sort((a,b)=>a-b);
+      rows.push({ drawId, date: "", nums: five });
+    }
+  }
+  rows.sort((a,b) => a.drawId - b.drawId); // oldest -> newest
+  return rows;
+}
+
+function getCurrentPicks() {
+  const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));
+  const vals = inputs.slice(0, 12)
+    .map(inp => parseInt((inp.value||'').trim(), 10))
+    .filter(Number.isInteger);
+  if (vals.length === 12) return Array.from(new Set(vals)).sort((a,b)=>a-b);
+  if (window.systemPicksSet instanceof Set && window.systemPicksSet.size) {
+    return Array.from(window.systemPicksSet).sort((a,b)=>a-b).slice(0,12);
+  }
+  return [];
+}
+
+function computePickHitStats(picksArr, drawsArr, ticketsArr) {
+  const picksSet = new Set(picksArr);
+  const rows4 = [], rows5 = [], rowsGE4 = [];
+  for (const d of drawsArr) {
+    const matched = d.nums.filter(n => picksSet.has(n));
+    const k = matched.length;
+    if (k >= 4) {
+      const row = { drawId: d.drawId, date: d.date || "", k, matched, winning: d.nums, tickets: [] };
+      if (Array.isArray(ticketsArr)) {
+        ticketsArr.forEach((t, idx) => {
+          const tkMatch = d.nums.filter(n => t.includes(n));
+          if (tkMatch.length >= 4) row.tickets.push({ tIndex: idx+1, k: tkMatch.length, matched: tkMatch });
+        });
+      }
+      rowsGE4.push(row);
+      if (k === 4) rows4.push(row);
+      if (k === 5) rows5.push(row);
+    }
+  }
+  const last4k4 = rows4.slice().reverse().slice(0, 4);
+  const last5k5 = rows5.slice().reverse().slice(0, 5);
+  return { picks: picksArr, total4: rows4.length, total5: rows5.length, totalGE4: rowsGE4.length,
+           last4k4, last5k5, ge4All: rowsGE4 };
+}
+
+function renderTable(rows, caption) {
+  if (!rows.length) return `<div style="margin:6px 0 14px;"><b>${caption}:</b> none</div>`;
+
+  // Compute per-row skip based on the rows as displayed (most-recent first).
+  // skip[i] = drawId[i] - drawId[i+1]; last row has no skip.
+  const items = rows.map((r, i) => {
+    const idCurr = parseInt(r.drawId, 10);
+    const idPrev = (i < rows.length - 1) ? parseInt(rows[i + 1].drawId, 10) : NaN;
+    const skip = (Number.isFinite(idCurr) && Number.isFinite(idPrev)) ? (idCurr - idPrev) : "";
+    return { ...r, __skip: skip };
+  });
+
+  const thead = `<thead><tr>
+    <th style="text-align:left;">Draw</th>
+    <th style="text-align:left;">Skips</th>
+    <th style="text-align:left;">k</th>
+    <th style="text-align:left;">Matched</th>
+    <th style="text-align:left;">Winning 5</th>
+    <th style="text-align:left;">Tickets ≥4</th>
+  </tr></thead>`;
+
+  const tbody = items.map(r => {
+    const tcol = (r.tickets && r.tickets.length)
+      ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
+      : "";
+    return `<tr>
+      <td>${r.drawId}</td>
+      <td>${r.__skip === "" ? "" : r.__skip}</td>
+      <td>${r.k}</td>
+      <td>${r.matched.join(", ")}</td>
+      <td>${r.winning.join(", ")}</td>
+      <td>${tcol}</td>
+    </tr>`;
+  }).join("");
+
+  return `<div style="margin:6px 0 14px;">
+    <div style="font-weight:600; margin-bottom:6px;">${caption}</div>
+    <table style="width:100%; border-collapse:collapse;">
+      ${thead}
+      <tbody>${tbody}</tbody>
+    </table>
+  </div>`;
+}
+
+
+function buildPickHitHTML(stats) {
+  const { picks, total4, total5, totalGE4, last4k4, last5k5, ge4All } = stats;
+  const last10GE4 = ge4All.slice().reverse().slice(0, 10);
+  return `
+    <div style="margin-bottom:10px;">
+      <div><b>Picks (${picks.length}):</b> ${picks.join(", ")}</div>
+      <div style="margin-top:6px;">
+        <b>Totals (current filter):</b>
+        <span style="margin-left:10px;">exact 4-hits = ${total4}</span>
+        <span style="margin-left:14px;">exact 5-hits = ${total5}</span>
+        <span style="margin-left:14px;">≥4 combined = ${totalGE4}</span>
+      </div>
+    </div>
+    ${renderTable(last4k4, "Last 4 drawing numbers with <b>exactly 4</b> hits")}
+    ${renderTable(last5k5, "Last 5 drawing numbers with <b>exactly 5</b> hits")}
+    ${renderTable(last10GE4, "Most recent 10 draws with <b>≥4</b> hits")}
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const $btn = document.getElementById("btnPickHitStats");
+  const $modal = document.getElementById("pickHitModal");
+  const $close = document.getElementById("pickHitClose");
+  const $content = document.getElementById("pickHitContent");
+  const $lastN = document.getElementById("pickHitLastN");
+  const $recompute = document.getElementById("pickHitRecompute");
+  const $export = document.getElementById("pickHitExport");
+  if (!$btn || !$modal || !$close || !$content || !$recompute || !$export) return;
+
+  async function recomputeAndRender() {
+    const picks = getCurrentPicks();
+    if (!picks.length) { alert("No Picks found. Fill your 12 inputs or toggle picks."); return; }
+
+    await waitForFullData(3000);
+    const all = parseDrawsFromFullData();
+    if (!all.length) { alert("No historical draws loaded."); return; }
+
+    const N = parseInt($lastN.value, 10);
+    const draws = (Number.isFinite(N) && N > 0) ? all.slice(-N) : all;
+
+    const tickets = Array.isArray(window.__WHEEL_TICKETS__) ? window.__WHEEL_TICKETS__ : null;
+    const stats = computePickHitStats(picks, draws, tickets);
+    $content.innerHTML = buildPickHitHTML(stats);
+    $content.__stats = stats;
+  }
+
+  $btn.addEventListener("click", async () => { await recomputeAndRender(); $modal.style.display = "block"; });
+  $recompute.addEventListener("click", recomputeAndRender);
+  $export.addEventListener("click", () => {
+    const s = $content.__stats; if (!s) return;
+    const rows = [["drawId","date","k","matched","winning5","ticket_hits"]];
+    s.ge4All.forEach(r => {
+      const tcol = (r.tickets && r.tickets.length)
+        ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
+        : "";
+      rows.push([r.drawId, r.date || "", r.k, r.matched.join(" "), r.winning.join(" "), tcol]);
+    });
+    const csv = rows.map(r => r.map(x => String(x).replace(/"/g,'""'))
+                       .map(x => /[",\n]/.test(x) ? `"${x}"` : x).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8;"}));
+    a.download = "picks_ge4_history.csv"; document.body.appendChild(a); a.click();
+    URL.revokeObjectURL(a.href); a.remove();
+  });
+  $close.addEventListener("click", () => { $modal.style.display = "none"; });
+  $modal.addEventListener("click", (e) => { if (e.target === $modal) $modal.style.display = "none"; });
+});
+
+function exportGE4CSV(stats, filename="picks_ge4_history.csv") {
+  const rows = [["drawId","date","k","matched","winning5","ticket_hits"]];
+  stats.ge4All.forEach(r => {
+    const tcol = (r.tickets && r.tickets.length)
+      ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
+      : "";
+    rows.push([ r.drawId, r.date || "", r.k, r.matched.join(" "), r.winning.join(" "), tcol ]);
+  });
+  const csv = rows.map(r => r.map(x => String(x).replace(/"/g,'""'))
+                     .map(x => /[",\n]/.test(x) ? `"${x}"` : x).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(a.href);
+  a.remove();
+}
 
 </script>
+
 
 </body>
 </html>

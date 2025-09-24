@@ -4614,7 +4614,6 @@ function getCurrentPicks() {
 function computePickHitStats(picksArr, drawsArr, ticketsArr) {
   const picksSet = new Set(picksArr);
   const rows4 = [], rows5 = [], rowsGE4 = [];
-
   for (const d of drawsArr) {
     const matched = d.nums.filter(n => picksSet.has(n));
     const k = matched.length;
@@ -4631,26 +4630,17 @@ function computePickHitStats(picksArr, drawsArr, ticketsArr) {
       if (k === 5) rows5.push(row);
     }
   }
-
-  // Most-recent-first “last 4”
   const last4k4 = rows4.slice().reverse().slice(0, 4);
-  const last4k5 = rows5.slice().reverse().slice(0, 4);
-
-  return {
-    picks: picksArr,
-    total4: rows4.length,
-    total5: rows5.length,
-    totalGE4: rowsGE4.length,
-    last4k4,
-    last4k5,
-    ge4All: rowsGE4   // oldest -> newest
-  };
+  const last5k5 = rows5.slice().reverse().slice(0, 5);
+  return { picks: picksArr, total4: rows4.length, total5: rows5.length, totalGE4: rowsGE4.length,
+           last4k4, last5k5, ge4All: rowsGE4 };
 }
 
 function renderTable(rows, caption) {
   if (!rows.length) return `<div style="margin:6px 0 14px;"><b>${caption}:</b> none</div>`;
 
-  // Compute Skips based on the displayed order (assume rows are most-recent first).
+  // Compute per-row skip based on the rows as displayed (most-recent first).
+  // skip[i] = drawId[i] - drawId[i+1]; last row has no skip.
   const items = rows.map((r, i) => {
     const idCurr = parseInt(r.drawId, 10);
     const idPrev = (i < rows.length - 1) ? parseInt(rows[i + 1].drawId, 10) : NaN;
@@ -4660,11 +4650,11 @@ function renderTable(rows, caption) {
 
   const thead = `<thead><tr>
     <th style="text-align:left;">Draw</th>
-    <th style="text-align:left;">Skips</th>
-    <th style="text-align:left;">k</th>
+    <th style="text-align:left;">Drawings Since Last Hit</th>
+    <th style="text-align:left;">Number of Hits</th>
     <th style="text-align:left;">Matched</th>
     <th style="text-align:left;">Winning 5</th>
-    <th style="text-align:left;">Tickets ≥4</th>
+    <th style="text-align:left;">TBD</th>
   </tr></thead>`;
 
   const tbody = items.map(r => {
@@ -4690,72 +4680,10 @@ function renderTable(rows, caption) {
   </div>`;
 }
 
-function getCurrentDrawId() {
-  // Prefer the app’s global if present (your code sets latestDrawingNumber to the most-recent draw)
-  const ld = parseInt(window.latestDrawingNumber, 10);
-  if (Number.isFinite(ld)) return ld + 1; // "current" = next draw after the last recorded
-
-  // Fallback: read newest row from fullData (newest-first)
-  const fd = window.fullData;
-  if (Array.isArray(fd) && fd.length && Array.isArray(fd[0]) && fd[0].length > 0) {
-    const newest = parseInt(fd[0][0], 10);
-    if (Number.isFinite(newest)) return newest + 1;
-  }
-  return NaN; // no current id available
-}
-
-function renderTableScrollable(rows, caption, maxHeight = "380px") {
-  if (!rows.length) return `<div style="margin:6px 0 14px;"><b>${caption}:</b> none</div>`;
-
-  // Same skip computation, but we’ll build the table inside a scrolling container.
-  const items = rows.map((r, i) => {
-    const idCurr = parseInt(r.drawId, 10);
-    const idPrev = (i < rows.length - 1) ? parseInt(rows[i + 1].drawId, 10) : NaN;
-    const skip = (Number.isFinite(idCurr) && Number.isFinite(idPrev)) ? (idCurr - idPrev) : "";
-    return { ...r, __skip: skip };
-  });
-
-  const thead = `<thead><tr>
-    <th style="text-align:left;">Draw</th>
-    <th style="text-align:left;">Skips</th>
-    <th style="text-align:left;">k</th>
-    <th style="text-align:left;">Matched</th>
-    <th style="text-align:left;">Winning 5</th>
-    <th style="text-align:left;">Tickets ≥4</th>
-  </tr></thead>`;
-
-  const tbody = items.map(r => {
-    const tcol = (r.tickets && r.tickets.length)
-      ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
-      : "";
-    return `<tr>
-      <td>${r.drawId}</td>
-      <td>${r.__skip === "" ? "" : r.__skip}</td>
-      <td>${r.k}</td>
-      <td>${r.matched.join(", ")}</td>
-      <td>${r.winning.join(", ")}</td>
-      <td>${tcol}</td>
-    </tr>`;
-  }).join("");
-
-  return `<div style="margin:6px 0 14px;">
-    <div style="font-weight:600; margin-bottom:6px;">${caption}</div>
-    <div style="max-height:${maxHeight}; overflow-y:auto; border:1px solid #333; border-radius:8px;">
-      <table style="width:100%; border-collapse:collapse;">
-        ${thead}
-        <tbody>${tbody}</tbody>
-      </table>
-    </div>
-  </div>`;
-}
-
 
 function buildPickHitHTML(stats) {
-  const { picks, total4, total5, totalGE4, last4k4, last4k5, ge4All } = stats;
-
-  // For “All ≥4” we want most-recent first, and we’ll make it scrollable
-  const ge4RecentFirst = ge4All.slice().reverse();
-
+  const { picks, total4, total5, totalGE4, last4k4, last5k5, ge4All } = stats;
+  const last10GE4 = ge4All.slice().reverse().slice(0, 10);
   return `
     <div style="margin-bottom:10px;">
       <div><b>Picks (${picks.length}):</b> ${picks.join(", ")}</div>
@@ -4767,8 +4695,8 @@ function buildPickHitHTML(stats) {
       </div>
     </div>
     ${renderTable(last4k4, "Last 4 drawing numbers with <b>exactly 4</b> hits")}
-    ${renderTable(last4k5, "Last 4 drawing numbers with <b>exactly 5</b> hits")}
-    ${renderTableScrollable(ge4RecentFirst, "All draws with <b>&ge;4</b> hits", "420px")}
+    ${renderTable(last5k5, "Last 5 drawing numbers with <b>exactly 5</b> hits")}
+    ${renderTable(last10GE4, "Most recent 10 draws with <b>≥4</b> hits")}
   `;
 }
 

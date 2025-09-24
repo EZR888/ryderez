@@ -2463,7 +2463,9 @@ function loadGameByCode(gameCode, afterLoad) {
 
       const pbSpan = document.getElementById('checkPBSpan');
       if (pbSpan) pbSpan.style.display = 'inline';
-
+window.fullData = fullData;
+console.log('[loadGameByCode:PB] exposed fullData:', Array.isArray(window.fullData), window.fullData?.length);
+if (typeof afterLoad === 'function') afterLoad();
       if (typeof afterLoad === 'function') afterLoad();
     });
 
@@ -2493,6 +2495,9 @@ function loadGameByCode(gameCode, afterLoad) {
 
       const checkPBSpan = document.getElementById('checkPBSpan');
       if (checkPBSpan) checkPBSpan.style.display = 'none';
+window.fullData = fullData;
+console.log('[loadGameByCode:F5] exposed fullData:', Array.isArray(window.fullData), window.fullData?.length);
+if (typeof afterLoad === 'function') afterLoad();
 
       if (typeof afterLoad === 'function') afterLoad();
     });
@@ -4583,21 +4588,31 @@ async function waitForFullData(maxMs = 3000) {
 }
 
 function parseDrawsFromFullData() {
-  const src = Array.isArray(window.fullData) ? window.fullData : [];
+  // Prefer the active game’s canonical store; fall back to window.fullData.
+  const og = (window.originalFullDataByGame || {});
+  const gm = window.activeGameMode || window.totalNumbersGlobal;
+  let src = [];
+
+  if (gm === 39 && Array.isArray(og[39]) && og[39].length)      src = og[39];
+  else if (gm === 69 && Array.isArray(og[69]) && og[69].length) src = og[69];
+  else if (gm === 26 && Array.isArray(og[26]) && og[26].length) src = og[26];
+  else if (Array.isArray(window.fullData))                      src = window.fullData;
+
   const rows = [];
-  for (const r of src) {
+  for (const r of (src || [])) {
     if (!r) continue;
     const parts = Array.isArray(r) ? r : String(r).split(/[,\s]+/);
-    const nums = parts.map(x => parseInt(x, 10)).filter(n => Number.isFinite(n));
+    const nums = parts.map(x => parseInt(x, 10)).filter(Number.isFinite);
     if (nums.length >= 6) {
       const drawId = nums[0];
-      const five = nums.slice(1, 6).sort((a,b)=>a-b);
+      const five   = nums.slice(1, 6).sort((a,b)=>a-b);
       rows.push({ drawId, date: "", nums: five });
     }
   }
-  rows.sort((a,b) => a.drawId - b.drawId); // oldest -> newest
+  rows.sort((a,b) => a.drawId - b.drawId); // oldest → newest
   return rows;
 }
+
 
 function getCurrentPicks() {
   const inputs = Array.from(document.querySelectorAll('#top18Inputs input'));

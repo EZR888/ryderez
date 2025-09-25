@@ -4764,12 +4764,32 @@ function renderTableScrollable(rows, caption, maxHeight = "380px") {
   </div>`;
 }
 
-
 function buildPickHitHTML(stats) {
   const { picks, total4, total5, totalGE4, last4k4, last4k5, ge4All } = stats;
 
-  // For “All ≥4” we want most-recent first, and we’ll make it scrollable
   const ge4RecentFirst = ge4All.slice().reverse();
+
+  // Helper to compute <x> using .drawId
+  const getX = (rows, label) => {
+    if (!rows || !rows.length) {
+      console.log("getX:", label, "rows missing/empty", rows);
+      return "?";
+    }
+    const firstRow = rows[0];
+    console.log("getX:", label, "first row =", firstRow);
+    if (!firstRow || typeof firstRow.drawId === "undefined") {
+      console.log("getX:", label, "no drawId field");
+      return "?";
+    }
+    const drawNum = parseInt(firstRow.drawId, 10);
+    console.log("getX:", label, "parsed drawId =", drawNum, "latestDrawingNumber =", latestDrawingNumber);
+    if (isNaN(drawNum)) return "?";
+    return (latestDrawingNumber + 1) - drawNum;
+  };
+
+  const x4   = getX(last4k4, "last4k4");
+  const x5   = getX(last4k5, "last4k5");
+  const xGE4 = getX(ge4RecentFirst, "ge4RecentFirst");
 
   return `
     <div style="margin-bottom:10px;">
@@ -4781,11 +4801,15 @@ function buildPickHitHTML(stats) {
         <span style="margin-left:14px;">≥4 combined = ${totalGE4}</span>
       </div>
     </div>
-    ${renderTable(last4k4, "Last 4 drawing numbers with <b>exactly 4</b> hits")}
-    ${renderTable(last4k5, "Last 4 drawing numbers with <b>exactly 5</b> hits")}
-    ${renderTableScrollable(ge4RecentFirst, "All draws with <b>&ge;4</b> hits", "420px")}
+    ${renderTable(last4k4,
+      "Last drawing 4 numbers hit was <b><span style='color:gold;'>" + x4 + "</span></b> drawings ago")}
+    ${renderTable(last4k5,
+      "Last drawing 5 numbers hit was <b><span style='color:gold;'>" + x5 + "</span></b> drawings ago")}
+    ${renderTableScrollable(ge4RecentFirst,
+      "Last time a 4 or a 5 hit was <b><span style='color:gold;'>" + xGE4 + "</span></b> drawings ago", "420px")}
   `;
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const $btn = document.getElementById("btnPickHitStats");

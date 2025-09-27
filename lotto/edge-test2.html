@@ -1063,17 +1063,14 @@ btnPalm5.onclick = () => {
     ensureTwelveInputs();
     populateAllThreeOnLoad();
 
-    fullData = fullData.map(row => ({
-      drawId: parseInt(row[0], 10),
-      date: "",   // always blank now
-      nums: row.slice(1, 6).map(Number)
-    }));
+    buildDateLookup('palm5-dates.txt', () => {
 
-    window.fullData = fullData;
-    console.log("[Palm5] normalized fullData:", fullData.length);
+      console.log("[Palm5] normalized rows:", fullData.slice(0,2));
+    });
 
     hidePBblock();
-    document.getElementById('load1Button').style.display = 'none';
+    document.getElementById('load1Button').style.display = 'none';  // 🔥 force hide PB button
+
     highlight(btnPalm5);
 
     document.getElementById('top18Inputs').style.display = 'grid';
@@ -1213,10 +1210,9 @@ btn39.onclick = () => {
   });
 };
 
-let dateLookup = {};
+const dateLookup = {};
 
 function buildDateLookup(fileName, callback) {
-  dateLookup = {};   // 🔥 reset before filling
   fetch(fileName)
     .then(res => res.text())
     .then(text => {
@@ -1226,6 +1222,11 @@ function buildDateLookup(fileName, callback) {
       });
       if (callback) callback(dateLookup);
     });
+}
+
+function getDisplayLabel(game, drawId) {
+  if (dateLookup[drawId]) return dateLookup[drawId];
+  return drawId;
 }
 
 
@@ -2488,6 +2489,9 @@ function saveTop18Numbers() {
 function loadGameByCode(gameCode, afterLoad) {
   const code = String(gameCode || '').toUpperCase();
 
+  // ==============================
+  // Powerball (PB)
+  // ==============================
   if (code === 'PB') {
     loadCSVFile('lotto_69.txt', 69, () => {
       activeGameMode = 69;
@@ -2511,20 +2515,26 @@ function loadGameByCode(gameCode, afterLoad) {
       highlight(btn69);
 
       document.getElementById('top18Inputs').style.display = 'grid';
-      const label = document.getElementById('top18Label'); 
+      const label = document.getElementById('top18Label');
       if (label) label.style.display = 'block';
       ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn']
-        .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'inline-block';
+        });
 
       const pbSpan = document.getElementById('checkPBSpan');
       if (pbSpan) pbSpan.style.display = 'inline';
 
       window.fullData = fullData;
-      console.log('[loadGameByCode:PB] exposed fullData:', Array.isArray(fullData), fullData?.length);
+      console.log('[loadGameByCode:PB] exposed fullData:', Array.isArray(window.fullData), window.fullData?.length);
 
       if (typeof afterLoad === 'function') afterLoad();
     });
 
+  // ==============================
+  // Fantasy 5 (F5)
+  // ==============================
   } else if (code === 'F5') {
     loadCSVFile('lotto_39.txt', 39, () => {
       activeGameMode = 39;
@@ -2543,60 +2553,73 @@ function loadGameByCode(gameCode, afterLoad) {
       if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
 
       document.getElementById('top18Inputs').style.display = 'grid';
-      const label = document.getElementById('top18Label'); 
+      const label = document.getElementById('top18Label');
       if (label) label.style.display = 'block';
       ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn']
-        .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'inline-block';
+        });
 
       const checkPBSpan = document.getElementById('checkPBSpan');
       if (checkPBSpan) checkPBSpan.style.display = 'none';
 
-      // Normalize rows: always use drawId only
-      fullData = fullData.map(row => ({
-        drawId: parseInt(row[0], 10),
-        date: "",   // no date
-        nums: row.slice(1, 6).map(Number)
-      }));
       window.fullData = fullData;
-      console.log('[loadGameByCode:F5] exposed fullData:', fullData.length);
+      console.log('[loadGameByCode:F5] exposed fullData:', Array.isArray(window.fullData), window.fullData?.length);
 
       if (typeof afterLoad === 'function') afterLoad();
     });
 
+  // ==============================
+  // Palmetto 5 (PALM5)
+  // ==============================
   } else if (code === 'PALM5') {
     loadCSVFile('palm5.txt', 39, () => {
       activeGameMode = "Palm5";
       ensureTwelveInputs();
       populateAllThreeOnLoad();
 
-      // Normalize rows: just draw numbers
-      fullData = fullData.map(row => ({
-        drawId: parseInt(row[0], 10),
-        date: "",   // ignore date file
-        nums: row.slice(1, 6).map(Number)
-      }));
-      window.fullData = fullData;
-      console.log("[loadGameByCode:PALM5] normalized rows:", fullData.slice(0, 2));
+      // Load date lookup, then normalize fullData *inside* this callback
+      buildDateLookup('palm5-dates.txt', (map) => {
+        window.dateLookup = map;
+        console.log("[PALM5] dateLookup ready:", Object.keys(map).length);
 
-      if (typeof afterLoad === 'function') afterLoad();
+        fullData = fullData.map(row => {
+          const drawId = parseInt(row[0], 10);
+          const nums   = row.slice(1, 6).map(n => parseInt(n, 10));
+          return {
+            drawId,
+            date: map[drawId] || "",
+            nums
+          };
+        });
+        window.fullData = fullData;
+        console.log("[loadGameByCode:PALM5] normalized rows:", fullData.slice(0, 2));
 
-      hidePBblock();
-      highlight(btnPalm5);
-      qs('#generateWheelButton').style.display = 'inline-block';
-      qs('#quick12Button').style.display       = 'inline-block';
-      qs('#systemPicksButton').style.display   = 'inline-block';
-      qs('#checkNumbersButton').style.display  = 'inline-block';
-      qs('#system20Button').style.display      = 'inline-block';
-      const sh = document.getElementById('showHistogramBtn');
-      if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+        if (typeof afterLoad === 'function') afterLoad();
 
-      document.getElementById('top18Inputs').style.display = 'grid';
-      const label = document.getElementById('top18Label');
-      if (label) label.style.display = 'block';
-      ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn']
-        .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
+        // ✅ Keep UI updates here
+        hidePBblock();
+        highlight(btnPalm5);
+        qs('#generateWheelButton').style.display = 'inline-block';
+        qs('#quick12Button').style.display       = 'inline-block';
+        qs('#systemPicksButton').style.display   = 'inline-block';
+        qs('#checkNumbersButton').style.display  = 'inline-block';
+        qs('#system20Button').style.display      = 'inline-block';
+        const sh = document.getElementById('showHistogramBtn');
+        if (sh) { sh.style.display = 'inline-block'; setupHistogramListener(); }
+
+        document.getElementById('top18Inputs').style.display = 'grid';
+        const label = document.getElementById('top18Label');
+        if (label) label.style.display = 'block';
+        ['updateHitsBtn','autoPickTopBtn','saveTop18Button','loadTop18Button','savePicksBtn']
+          .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'inline-block'; });
+      });
     });
 
+  // ==============================
+  // Fallback
+  // ==============================
   } else {
     qs('#system20Button').style.display = 'none';
     if (typeof afterLoad === 'function') afterLoad();
@@ -4817,22 +4840,6 @@ function computePickHitStats(picksArr, drawsArr, ticketsArr) {
   };
 }
 
-function getDisplayLabel(row) {
-  // Palm5 rows have shape: { drawId, date, nums }
-  if (activeGameMode === "Palm5" && row && typeof row === "object") {
-    return row.date || row.drawId;   // prefer date if present
-  }
-
-  // Other games: row is usually [drawId, n1, n2, ...]
-  if (Array.isArray(row)) {
-    return row[0];
-  }
-
-  // Fallback
-  return row?.drawId ?? "?";
-}
-
-
 function renderTable(rows, caption) {
   if (!rows.length) return `<div style="margin:6px 0 14px;"><b>${caption}:</b> none</div>`;
 
@@ -4857,7 +4864,7 @@ function renderTable(rows, caption) {
       ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
       : "";
     return `<tr>
-<td>${r.drawId}</td>
+<td>${getDisplayLabel(activeGameMode, r.drawId)}</td>
       <td>${r.__skip}</td>
       <td>${r.k}</td>
       <td>${r.matched.join(", ")}</td>
@@ -4899,7 +4906,7 @@ function renderTableScrollable(rows, caption, maxHeight = "380px") {
       ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
       : "";
     return `<tr>
-<td>${r.drawId}</td>
+<td>${getDisplayLabel(activeGameMode, r.drawId)}</td>
       <td>${r.__skip}</td>
       <td>${r.k}</td>
       <td>${r.matched.join(", ")}</td>
@@ -4933,25 +4940,26 @@ function getCurrentDrawId() {
   return NaN; // no current id available
 }
 
-// ✅ Proper helper for “drawings ago”
-function getX(rows) {
-  if (!rows || !rows.length) return "?";
-  const firstRow = rows[0];
-  const drawNum = Number(firstRow.drawId);
-
-  if (!Number.isInteger(drawNum)) return "?";
-
-  if (activeGameMode === "Palm5" || activeGameMode === 39) {
-    const idx = fullData.findIndex(d => d.drawId === drawNum);
-    return (idx !== -1) ? (fullData.length - 1 - idx) : "?";
-  } else {
-    return (latestDrawingNumber + 1) - drawNum;
-  }
-}
-
 function buildPickHitHTML(stats) {
   const { picks, total4, total5, totalGE4, last4k4, last4k5, ge4All } = stats;
   const ge4RecentFirst = ge4All.slice().reverse();
+
+  // Proper helper for “drawings ago”
+  const getX = (rows) => {
+    if (!rows || !rows.length) return "?";
+    const firstRow = rows[0];
+
+    if (activeGameMode === "Palm5") {
+      const idx = fullData.findIndex(d => d.drawId === firstRow.drawId);
+      const latestIdx = fullData.findIndex(d => d.drawId === latestDrawingNumber);
+      if (idx === -1 || latestIdx === -1) return "?";
+      return latestIdx - idx;
+    } else {
+      const drawNum = parseInt(firstRow.drawId, 10);
+      if (isNaN(drawNum)) return "?";
+      return (latestDrawingNumber + 1) - drawNum;
+    }
+  };
 
   const x4   = getX(last4k4);
   const x5   = getX(last4k5);
@@ -4976,6 +4984,7 @@ function buildPickHitHTML(stats) {
   `;
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
   const $btn = document.getElementById("btnPickHitStats");
   const $modal = document.getElementById("pickHitModal");
@@ -4986,46 +4995,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const $export = document.getElementById("pickHitExport");
   if (!$btn || !$modal || !$close || !$content || !$recompute || !$export) return;
 
-async function recomputeAndRender() { const picks = getCurrentPicks(); if (!picks.length) { alert("No Picks found. Fill your 12 inputs or toggle picks."); return; } await waitForFullData(3000); const all = parseDrawsFromFullData(); if (!all.length) { alert("No historical draws loaded."); return; } const N = parseInt($lastN.value, 10); const draws = (Number.isFinite(N) && N > 0) ? all.slice(-N) : all; const tickets = Array.isArray(window.__WHEEL_TICKETS__) ? window.__WHEEL_TICKETS__ : null; // ✅ normalize rows so every entry has consistent fields 
-const normalized = draws.map(row => { if (typeof row.drawId !== "undefined") return row; 
+  async function recomputeAndRender() {
+    const picks = getCurrentPicks();
+    if (!picks.length) {
+      alert("No Picks found. Fill your 12 inputs or toggle picks.");
+      return;
+    }
 
-return { drawId: parseInt(row.drawId ?? row[0], 10), winning: row.slice(1, 6).map(Number), matched: [], k: 0, 
-date: "", }; 
-}); 
+    await waitForFullData(3000);
+    const all = parseDrawsFromFullData();
+    if (!all.length) {
+      alert("No historical draws loaded.");
+      return;
+    }
 
-const stats = computePickHitStats(picks, normalized, tickets); 
-$content.innerHTML = buildPickHitHTML(stats); 
-$content.__stats = stats;  
-}
+    const N = parseInt($lastN.value, 10);
+    const draws = (Number.isFinite(N) && N > 0) ? all.slice(-N) : all;
+
+    const tickets = Array.isArray(window.__WHEEL_TICKETS__) ? window.__WHEEL_TICKETS__ : null;
+
+    // ✅ normalize rows so every entry has consistent fields
+    const normalized = draws.map(row => {
+      if (typeof row.drawId !== "undefined") return row; // already object
+      return {
+        drawId: parseInt(row.drawId ?? row[0], 10),
+        winning: row.slice(1, 6).map(Number),
+        matched: [],
+        k: 0,
+        date: "", // placeholder
+      };
+    });
+
+    const stats = computePickHitStats(picks, normalized, tickets);
+    $content.innerHTML = buildPickHitHTML(stats);
+    $content.__stats = stats;
+  }
 
   $btn.addEventListener("click", async () => { await recomputeAndRender(); $modal.style.display = "block"; });
   $recompute.addEventListener("click", recomputeAndRender);
-
   $export.addEventListener("click", () => {
-    const s = $content.__stats; 
-    if (!s) return;
-
-    const rows = [["drawId","k","matched","winning5","ticket_hits"]];
+    const s = $content.__stats; if (!s) return;
+    const rows = [["drawId","date","k","matched","winning5","ticket_hits"]];
     s.ge4All.forEach(r => {
       const tcol = (r.tickets && r.tickets.length)
         ? r.tickets.map(t => `t#${t.tIndex}(${t.k}): ${t.matched.join(" ")}`).join(" | ")
         : "";
-      rows.push([ r.drawId, r.k, r.matched.join(" "), r.winning.join(" "), tcol ]);
+      rows.push([r.drawId, r.date || "", r.k, r.matched.join(" "), r.winning.join(" "), tcol]);
     });
-
     const csv = rows.map(r => r.map(x => String(x).replace(/"/g,'""'))
                        .map(x => /[",\n]/.test(x) ? `"${x}"` : x).join(",")).join("\n");
-
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8;"}));
     a.download = "picks_ge4_history.csv";
-    document.body.appendChild(a); 
-    a.click();
-    URL.revokeObjectURL(a.href); 
-    a.remove();
+    document.body.appendChild(a); a.click();
+    URL.revokeObjectURL(a.href); a.remove();
   });
-
-  // ✅ close the DOMContentLoaded callback properly
+  $close.addEventListener("click", () => { $modal.style.display = "none"; });
+  $modal.addEventListener("click", (e) => { if (e.target === $modal) $modal.style.display = "none"; });
 });
 
 

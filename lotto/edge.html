@@ -2901,11 +2901,11 @@ document.getElementById("checkNumbersButton").onclick = function () {
     const name = rawName.replace(/\s+\(\d+\)(?=\.txt$)/i, '');
 
     // Parse filename (new + legacy + very old)
-    let game = null;       // 'PWB' or 'F5'
+    let game = null;       // 'PWB', 'F5', or 'PALM5'
     let drawNumber = null;
 
     // 1) New convention: GAME first, short method tag S/M
-    let m = name.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(S|M)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+    let m = name.match(/^(PWB|F5|Palm5)_(All|Best|Quick|Picks)_(S|M)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
     if (m) {
       game = m[1].toUpperCase();
       drawNumber = m[6];
@@ -2913,7 +2913,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
     // 2) New convention: GAME first, long method tag SYS/MAN
     if (!m) {
-      m = name.match(/^(PWB|F5)_(All|Best|Quick|Picks)_(SYS|MAN)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
+      m = name.match(/^(PWB|F5|Palm5)_(All|Best|Quick|Picks)_(SYS|MAN)(?:_h(\d+))?(?:_d(\d+))?_(\d+)\.txt$/i);
       if (m) {
         game = m[1].toUpperCase();
         drawNumber = m[6];
@@ -2922,7 +2922,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
     // 3) Legacy: Mode first, then GAME, draw at end
     if (!m) {
-      m = name.match(/^(All|Best|Quick)_(F5|PWB).*?_(\d+)\.txt$/i);
+      m = name.match(/^(All|Best|Quick)_(F5|PWB|Palm5).*?_(\d+)\.txt$/i);
       if (m) {
         game = m[2].toUpperCase();
         drawNumber = m[3];
@@ -2931,7 +2931,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
 
     // 4) Very old Picks: Picks_GAME_draw[_MAN|_SYS].txt (accept PB too)
     if (!m) {
-      m = name.match(/^Picks_(PB|PWB|F5)_(\d+)(?:_(?:MAN|SYS))?\.txt$/i);
+      m = name.match(/^Picks_(PB|PWB|F5|Palm5)_(\d+)(?:_(?:MAN|SYS))?\.txt$/i);
       if (m) {
         const g = m[1].toUpperCase();
         game = (g === 'PB') ? 'PWB' : g;
@@ -2945,6 +2945,7 @@ document.getElementById("checkNumbersButton").onclick = function () {
     }
 
     const isPWB = (game === "PWB");
+    const isPalm5 = (game === "PALM5");
 
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -2954,7 +2955,8 @@ document.getElementById("checkNumbersButton").onclick = function () {
       const drawLabel = document.getElementById("drawNumberLabel");
       if (drawLabel) drawLabel.textContent = `Drawing #${drawNumber}`;
 
-      const lottoFile = isPWB ? "lotto_69.txt" : "lotto_39.txt";
+      // Determine correct lotto file for comparison
+      const lottoFile = isPWB ? "lotto_69.txt" : isPalm5 ? "palm5.txt" : "lotto_39.txt";
 
       fetch(lottoFile + "?t=" + Date.now())
         .then(res => res.ok ? res.text() : Promise.reject("Failed to load lotto file"))

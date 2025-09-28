@@ -4304,15 +4304,19 @@ function applyHardwiredPicksForCurrentGame() {
   let picks12 = [];
   if (totalNumbersGlobal === 69) {
     picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.PB_WHITES) ? HARDCODE_DEFAULTS.PB_WHITES.slice() : [];
+  } else if (totalNumbersGlobal === 39 && activeGameMode === "Palm5") {
+    // ✅ Palmetto 5 defaults
+    picks12 = [10, 13, 16, 23, 27, 28, 30, 31, 32, 34, 36, 38];
   } else if (totalNumbersGlobal === 39) {
+    // Fantasy 5 defaults
     picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.F5) ? HARDCODE_DEFAULTS.F5.slice() : [];
   } else {
-    // PB-only (26): no 12-input column; just return after red-ball reset
+    // PB-only mode (26): nothing to fill
     return;
   }
 
   if (picks12.length === 12) {
-    loadPicksIntoColumnAndInputs(picks12);   // mirrors into inputs + green column + redraws
+    loadPicksIntoColumnAndInputs(picks12);
     setPicksMeta({ method: 'manual', weeks: null, hotCoverage: null });
     showToast('Defaults applied for this game.');
   } else {

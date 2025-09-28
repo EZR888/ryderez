@@ -3112,42 +3112,178 @@ function tierLabelForPrizeTable(game, matchCount, pbMatch) {
   }
 
 
-  const prizeFile = `${isPWB ? 'pwb' : 'f5'}_${drawNumber}.txt`;
-  fetch(prizeFile + "?t=" + Date.now())
-    .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
-    .then(text => renderPrizeTable(text, tierCounts))   // ← pass the counts
-    .catch(err => {
-      console.warn("⚠️ Prize file error:", err);
-      const table = document.getElementById("prizeTable");
-      const tbody = table.querySelector("tbody");
-      tbody.innerHTML = "";
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 3;
-      td.style.color = "orange";
-      td.textContent = String(err);
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-      // also clear totals if present
-      const totals = document.getElementById("prizeTotals");
-      if (totals) totals.innerHTML = "";
-    });
+ // ---------- Prize table & winnings ----------
+let prizeFile;
 
+if (String(game).toUpperCase() === "PWB") {
+  prizeFile = `pwb_${drawNumber}.txt`;
+} else if (String(game).toUpperCase() === "F5") {
+  prizeFile = `f5_${drawNumber}.txt`;
+} else if (String(game).toUpperCase() === "PALM5") {
+  // Palmetto Cash 5: no external file, use static table
+  renderPrizeTable(null, tierCounts);
   const modal = document.getElementById("checkNumbersModal");
   if (modal) modal.style.display = "block";
+  return;
+} else {
+  console.warn("Unknown game type:", game);
+  return;
+}
+
+fetch(prizeFile + "?t=" + Date.now())
+  .then(r => r.ok ? r.text() : Promise.reject("Could not load prize file."))
+  .then(text => renderPrizeTable(text, tierCounts))
+  .catch(err => {
+    console.warn("⚠️ Prize file error:", err);
+    const table = document.getElementById("prizeTable");
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 3;
+    td.style.color = "orange";
+    td.textContent = String(err);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    const totals = document.getElementById("prizeTotals");
+    if (totals) totals.innerHTML = "";
+  });
+
+const modal = document.getElementById("checkNumbersModal");
+if (modal) modal.style.display = "block";
 }
 
 /* render prize table + compute totals (robust labels + visible placement) */
 /* render prize table + compute totals (works for Powerball & Fantasy 5) */
 function renderPrizeTable(tsvText, tierCounts = {}) {
-  const lines = (tsvText || "").trim().split("\n");
-
-  // --- render the main prize table ---
   const table = document.getElementById("prizeTable");
   const thead = table.querySelector("thead");
   const tbody = table.querySelector("tbody");
   thead.innerHTML = "";
   tbody.innerHTML = "";
+
+  // ---------- PALM 5 SPECIAL HANDLING ----------
+  if (activeGameMode === "Palm5" || totalNumbersGlobal === 39 && window.isPalm5Mode) {
+    // Static prizes
+    const prizeData = [
+      { tier: "5 of 5", prize: "Jackpot", color: "red" },
+      { tier: "4 of 5", prize: "$300", color: "orange" },
+      { tier: "3 of 5", prize: "$5", color: "yellow" },
+      { tier: "2 of 5", prize: "$1", color: "lightblue" },
+    ];
+
+    // Build prize table
+    const headerRow = document.createElement("tr");
+    ["Tier", "Prize"].forEach(label => {
+      const th = document.createElement("th");
+      th.textContent = label;
+      th.style.padding = "6px 10px";
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    prizeData.forEach(({ tier, prize, color }) => {
+      const tr = document.createElement("tr");
+      const td1 = document.createElement("td");
+      td1.textContent = tier;
+      td1.style.color = color;
+      td1.style.border = "1px solid gray";
+      td1.style.padding = "6px 10px";
+
+      const td2 = document.createElement("td");
+      td2.textContent = prize;
+      td2.style.color = color;
+      td2.style.border = "1px solid gray";
+      td2.style.padding = "6px 10px";
+      td2.style.textAlign = "right";
+
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tbody.appendChild(tr);
+    });
+
+    // --- Build Winnings Table (same structure as F5/PWB) ---
+    document.querySelectorAll('#prizeTotals, #prizeTotalsTable').forEach(el => el.remove());
+    const totalsBox = document.createElement("div");
+    totalsBox.id = "prizeTotals";
+    totalsBox.style.marginTop = "20px";
+    totalsBox.style.padding = "8px 0";
+
+    const totalHeader = document.createElement("div");
+    totalHeader.textContent = "Winnings Table";
+    totalHeader.style.fontWeight = "bold";
+    totalHeader.style.color = "orange";
+    totalsBox.appendChild(totalHeader);
+
+    const tbl = document.createElement("table");
+    tbl.id = "prizeTotalsTable";
+    tbl.style.marginTop = "8px";
+    tbl.style.borderCollapse = "collapse";
+    tbl.style.minWidth = "420px";
+    tbl.style.width = "fit-content";
+
+    const addCell = (tr, tag, text, style = {}) => {
+      const td = document.createElement(tag);
+      td.textContent = text;
+      td.style.border = "1px solid gray";
+      td.style.padding = "6px 10px";
+      td.style.textAlign = (tag === "th" ? "left" : "right");
+      Object.assign(td.style, style);
+      tr.appendChild(td);
+    };
+
+    const thead2 = document.createElement("thead");
+    const hr = document.createElement("tr");
+    addCell(hr, "th", "Tier", { textAlign: "left" });
+    addCell(hr, "th", "Qty");
+    addCell(hr, "th", "Prize");
+    addCell(hr, "th", "Total");
+    thead2.appendChild(hr);
+    tbl.appendChild(thead2);
+
+    const tbody2 = document.createElement("tbody");
+    const money = (v) => Number(v).toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    const getPrizeValue = (tier) => (tier === "4 of 5" ? 300 : tier === "3 of 5" ? 5 : tier === "2 of 5" ? 1 : 0);
+
+    let totalWinnings = 0;
+    prizeData.forEach(({ tier, prize, color }) => {
+      const count = tierCounts[tier] || 0;
+      const prizeVal = getPrizeValue(tier);
+      const subtotal = tier === "5 of 5" ? "Jackpot" : money(count * prizeVal);
+      if (tier !== "5 of 5") totalWinnings += count * prizeVal;
+
+      const tr = document.createElement("tr");
+      addCell(tr, "td", tier, { textAlign: "left", color });
+      addCell(tr, "td", String(count), { color });
+      addCell(tr, "td", prize, { color });
+      addCell(tr, "td", subtotal, { color });
+      tbody2.appendChild(tr);
+    });
+
+    const tfoot2 = document.createElement("tfoot");
+    const fr = document.createElement("tr");
+    addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "normal", color: "gold" });
+    addCell(fr, "td", String(Object.values(tierCounts).reduce((a, b) => a + b, 0)), { fontWeight: "normal", color: "gold" });
+    addCell(fr, "td", "—", { color: "gold" });
+    addCell(fr, "td", money(totalWinnings), { fontWeight: "bold", color: "gold" });
+    tfoot2.appendChild(fr);
+
+    tbl.appendChild(tbody2);
+    tbl.appendChild(tfoot2);
+    totalsBox.appendChild(tbl);
+
+    // Add info link
+    const infoLink = document.createElement("div");
+    infoLink.style.marginTop = "12px";
+    infoLink.innerHTML = `<a href="https://www.sceducationlottery.com/Games/PalmettoCash5" target="_blank" style="color: lightblue; text-decoration: underline;">Click here for more details on number of winners and Jackpot amount.</a>`;
+    totalsBox.appendChild(infoLink);
+
+    table.insertAdjacentElement("afterend", totalsBox);
+    return;
+  }
+
+  // ---------- DEFAULT (POWERBALL + FANTASY 5) ----------
+  const lines = (tsvText || "").trim().split("\n");
 
   lines.forEach((line, idx) => {
     const tr = document.createElement("tr");
@@ -3157,10 +3293,10 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
     if (idx !== 0) {
       const tier = (cells[0] || "").toLowerCase();
       if (tier.includes("5 of 5") || tier.includes("5 + powerball")) rowColor = "red";
-      else if (tier.includes("4 of 5") || tier.startsWith("4 +"))     rowColor = "orange";
-      else if (tier.includes("3 of 5") || tier.startsWith("3 +"))     rowColor = "yellow";
+      else if (tier.includes("4 of 5") || tier.startsWith("4 +")) rowColor = "orange";
+      else if (tier.includes("3 of 5") || tier.startsWith("3 +")) rowColor = "yellow";
       else if (tier.includes("2 of 5") || tier.includes("powerball")) rowColor = "lightblue";
-      else if (tier.includes("total winning"))                        rowColor = "gold";
+      else if (tier.includes("total winning")) rowColor = "gold";
     }
 
     cells.forEach((cellText) => {
@@ -3177,32 +3313,22 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
     else tbody.appendChild(tr);
   });
 
-  // ---------- helpers ----------
+  // The rest (Fantasy 5 / Powerball) stays identical
   const header0 = (lines[0] || "").toLowerCase();
   const isFantasy5 = header0.includes("matching numbers") && header0.includes("prize");
 
-  // normalize labels coming from both TSV and tierCounts
   const normalizeLabel = (raw) => {
     if (!raw) return "";
     let s = String(raw).trim().replace(/:$/, "");
-    // F5 TSV form: "Matched 3 of 5 numbers" → "3 of 5"
     const m = s.match(/Matched\s+(\d)\s+of\s+5/i);
     if (m) return `${m[1]} of 5`;
-
-    // If the tierCounts key is just a digit ("2","3","4","5"), treat as Fantasy 5
     if (/^[2345]$/.test(s)) return `${s} of 5`;
-
-    // Tidy + unify capitalization
     s = s.replace(/\s+/g, " ").trim();
     s = s.replace(/PowerBall/i, "Powerball");
     return s;
   };
 
-  const prettyTier = (raw) => {
-    // What we actually show in the “Tier” column
-    const n = normalizeLabel(raw);
-    return n; // already “3 of 5”, “4 of 5”, “Powerball Only”, etc.
-  };
+  const prettyTier = (raw) => normalizeLabel(raw);
 
   const parseAmount = (s) => {
     if (!s) return 0;
@@ -3217,16 +3343,13 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   for (let i = 1; i < lines.length; i++) {
     const parts = lines[i].split("\t");
     if (parts.length < 1) continue;
-
     const raw0 = (parts[0] || "").trim();
-    if (/^total\b/i.test(raw0)) continue; // skip summary row
-
+    if (/^total\b/i.test(raw0)) continue;
     const key = normalizeLabel(raw0);
     const amount = parseAmount(parts[2] || "");
     if (key) labelToAmount[key] = amount;
   }
 
-  // --- compute totals using provided tierCounts ---
   let totalWinnings = 0;
   const breakdown = [];
   Object.entries(tierCounts).forEach(([label, count]) => {
@@ -3238,22 +3361,18 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   });
 
   // --- render totals area right under the prize table ---
-  // Clear previous
   document.querySelectorAll('#prizeTotals, #prizeTotalsTable').forEach(el => el.remove());
-
-  const money = (v) =>
-    Number(v).toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  const money = (v) => Number(v).toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
   const totalsBox = document.createElement("div");
   totalsBox.id = "prizeTotals";
-  totalsBox.style.marginTop = "12px";
+  totalsBox.style.marginTop = "20px";
   totalsBox.style.padding = "8px 0";
-  totalsBox.style.marginTop = "20px";  // gives about one blank line of space
 
   const totalHeader = document.createElement("div");
-  totalHeader.textContent = `Winnings Table`;
+  totalHeader.textContent = "Winnings Table";
   totalHeader.style.fontWeight = "bold";
-  totalHeader.style.color = "orange"; // match main table's totals color
+  totalHeader.style.color = "orange";
   totalsBox.appendChild(totalHeader);
 
   const tbl = document.createElement("table");
@@ -3283,26 +3402,21 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   tbl.appendChild(thead2);
 
   const tbody2 = document.createElement("tbody");
-  breakdown
-    .slice()
-    .sort((a, b) => b.subtotal - a.subtotal)
-    .forEach(({ display, count, amt, subtotal }) => {
-      const tr = document.createElement("tr");
+  breakdown.slice().sort((a, b) => b.subtotal - a.subtotal).forEach(({ display, count, amt, subtotal }) => {
+    const tr = document.createElement("tr");
+    let rowColor = "lightgreen";
+    const t = String(display).toLowerCase();
+    if (t.includes("5 of 5") || t.includes("5 + powerball")) rowColor = "red";
+    else if (t.includes("4 of 5") || t.startsWith("4 +")) rowColor = "orange";
+    else if (t.includes("3 of 5") || t.startsWith("3 +")) rowColor = "yellow";
+    else if (t.includes("2 of 5") || t.includes("powerball")) rowColor = "lightblue";
 
-      // color to match the prize table scheme
-      let rowColor = "lightgreen";
-      const t = String(display).toLowerCase();
-      if (t.includes("5 of 5") || t.includes("5 + powerball")) rowColor = "red";
-      else if (t.includes("4 of 5") || t.startsWith("4 +"))     rowColor = "orange";
-      else if (t.includes("3 of 5") || t.startsWith("3 +"))     rowColor = "yellow";
-      else if (t.includes("2 of 5") || t.includes("powerball")) rowColor = "lightblue";
-
-      addCell(tr, "td", display, { textAlign: "left", color: rowColor });
-      addCell(tr, "td", String(count), { color: rowColor });
-      addCell(tr, "td", money(amt), { color: rowColor });
-      addCell(tr, "td", money(subtotal), { color: rowColor });
-      tbody2.appendChild(tr);
-    });
+    addCell(tr, "td", display, { textAlign: "left", color: rowColor });
+    addCell(tr, "td", String(count), { color: rowColor });
+    addCell(tr, "td", money(amt), { color: rowColor });
+    addCell(tr, "td", money(subtotal), { color: rowColor });
+    tbody2.appendChild(tr);
+  });
 
   const tfoot2 = document.createElement("tfoot");
   const fr = document.createElement("tr");
@@ -3316,7 +3430,6 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   tbl.appendChild(tfoot2);
   totalsBox.appendChild(tbl);
 
-  // Insert directly under the main prize table (inside the modal)
   const prizeTableEl = document.getElementById("prizeTable");
   if (prizeTableEl && prizeTableEl.parentElement) {
     prizeTableEl.insertAdjacentElement("afterend", totalsBox);

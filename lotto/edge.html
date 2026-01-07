@@ -2245,7 +2245,9 @@ function computeSystemPicks(
     const due   = (sinceMapObj[n] || 0);
     const inTop = T.includes(n) ? 1 : 0;
     const inHot = H.includes(n) ? 1 : 0;
-    return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
+    // New (Hot-Heavy): 
+    return (inHot * 2.0) + (inTop * 0.5) + (due * 0.2);
+    // return (due * 1.0) + (inTop * 0.6) + (inHot * 0.4) - clumpPenalty(n) * 0.5;
   }
 
   // 2) Seed with ALL mandatory (sorted by strength). If > count, cap to best `count`.

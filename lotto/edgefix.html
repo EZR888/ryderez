@@ -1437,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
       const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
       const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB'
-                     (totalNumbersGlobal === 42) ? 'auto_topPalm5'
+                   : (totalNumbersGlobal === 42) ? 'auto_topPalm5'
                    : (totalNumbersGlobal === 39) ? 'auto_topF5'
                    : 'auto_topX';
 

@@ -3164,126 +3164,55 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   thead.innerHTML = "";
   tbody.innerHTML = "";
 
-  // ---------- PALM 5 SPECIAL HANDLING ----------
-if (totalNumbersGlobal === 42 ||
-   (totalNumbersGlobal === 39 ))
-    // Static prizes
-    const prizeData = [
-      { tier: "5 of 5", prize: "Jackpot", color: "red" },
-      { tier: "4 of 5", prize: "$300", color: "orange" },
-      { tier: "3 of 5", prize: "$5", color: "yellow" },
-      { tier: "2 of 5", prize: "$1", color: "lightblue" },
-    ];
+// ---------- PALM 5 SPECIAL HANDLING ----------
+if (
+  totalNumbersGlobal === 42 ||
+  totalNumbersGlobal === 39
+) {
 
-    // Build prize table
-    const headerRow = document.createElement("tr");
-    ["Tier", "Prize"].forEach(label => {
-      const th = document.createElement("th");
-      th.textContent = label;
-      th.style.padding = "6px 10px";
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
+  // Static prizes
+  const prizeData = [
+    { tier: "5 of 5", prize: "Jackpot", color: "red" },
+    { tier: "4 of 5", prize: "$300", color: "orange" },
+    { tier: "3 of 5", prize: "$5", color: "yellow" },
+    { tier: "2 of 5", prize: "$1", color: "lightblue" },
+  ];
 
-    prizeData.forEach(({ tier, prize, color }) => {
-      const tr = document.createElement("tr");
-      const td1 = document.createElement("td");
-      td1.textContent = tier;
-      td1.style.color = color;
-      td1.style.border = "1px solid gray";
-      td1.style.padding = "6px 10px";
+  // Build prize table
+  const headerRow = document.createElement("tr");
+  ["Tier", "Prize"].forEach(label => {
+    const th = document.createElement("th");
+    th.textContent = label;
+    th.style.padding = "6px 10px";
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
 
-      const td2 = document.createElement("td");
-      td2.textContent = prize;
-      td2.style.color = color;
-      td2.style.border = "1px solid gray";
-      td2.style.padding = "6px 10px";
-      td2.style.textAlign = "right";
+  prizeData.forEach(({ tier, prize, color }) => {
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td");
+    td1.textContent = tier;
+    td1.style.color = color;
+    td1.style.border = "1px solid gray";
+    td1.style.padding = "6px 10px";
 
-      tr.appendChild(td1);
-      tr.appendChild(td2);
-      tbody.appendChild(tr);
-    });
+    const td2 = document.createElement("td");
+    td2.textContent = prize;
+    td2.style.color = color;
+    td2.style.border = "1px solid gray";
+    td2.style.padding = "6px 10px";
+    td2.style.textAlign = "right";
 
-    // --- Build Winnings Table (same structure as F5/PWB) ---
-    document.querySelectorAll('#prizeTotals, #prizeTotalsTable').forEach(el => el.remove());
-    const totalsBox = document.createElement("div");
-    totalsBox.id = "prizeTotals";
-    totalsBox.style.marginTop = "20px";
-    totalsBox.style.padding = "8px 0";
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tbody.appendChild(tr);
+  });
 
-    const totalHeader = document.createElement("div");
-    totalHeader.textContent = "Winnings Table";
-    totalHeader.style.fontWeight = "bold";
-    totalHeader.style.color = "orange";
-    totalsBox.appendChild(totalHeader);
+  // ... ALL the rest of the Palm5 code ...
 
-    const tbl = document.createElement("table");
-    tbl.id = "prizeTotalsTable";
-    tbl.style.marginTop = "8px";
-    tbl.style.borderCollapse = "collapse";
-    tbl.style.minWidth = "420px";
-    tbl.style.width = "fit-content";
-
-    const addCell = (tr, tag, text, style = {}) => {
-      const td = document.createElement(tag);
-      td.textContent = text;
-      td.style.border = "1px solid gray";
-      td.style.padding = "6px 10px";
-      td.style.textAlign = (tag === "th" ? "left" : "right");
-      Object.assign(td.style, style);
-      tr.appendChild(td);
-    };
-
-    const thead2 = document.createElement("thead");
-    const hr = document.createElement("tr");
-    addCell(hr, "th", "Tier", { textAlign: "left" });
-    addCell(hr, "th", "Qty");
-    addCell(hr, "th", "Prize");
-    addCell(hr, "th", "Total");
-    thead2.appendChild(hr);
-    tbl.appendChild(thead2);
-
-    const tbody2 = document.createElement("tbody");
-    const money = (v) => Number(v).toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-    const getPrizeValue = (tier) => (tier === "4 of 5" ? 300 : tier === "3 of 5" ? 5 : tier === "2 of 5" ? 1 : 0);
-
-    let totalWinnings = 0;
-    prizeData.forEach(({ tier, prize, color }) => {
-      const count = tierCounts[tier] || 0;
-      const prizeVal = getPrizeValue(tier);
-      const subtotal = tier === "5 of 5" ? "Jackpot" : money(count * prizeVal);
-      if (tier !== "5 of 5") totalWinnings += count * prizeVal;
-
-      const tr = document.createElement("tr");
-      addCell(tr, "td", tier, { textAlign: "left", color });
-      addCell(tr, "td", String(count), { color });
-      addCell(tr, "td", prize, { color });
-      addCell(tr, "td", subtotal, { color });
-      tbody2.appendChild(tr);
-    });
-
-    const tfoot2 = document.createElement("tfoot");
-    const fr = document.createElement("tr");
-    addCell(fr, "td", "TOTAL", { textAlign: "left", fontWeight: "normal", color: "gold" });
-    addCell(fr, "td", String(Object.values(tierCounts).reduce((a, b) => a + b, 0)), { fontWeight: "normal", color: "gold" });
-    addCell(fr, "td", "—", { color: "gold" });
-    addCell(fr, "td", money(totalWinnings), { fontWeight: "bold", color: "gold" });
-    tfoot2.appendChild(fr);
-
-    tbl.appendChild(tbody2);
-    tbl.appendChild(tfoot2);
-    totalsBox.appendChild(tbl);
-
-    // Add info link
-    const infoLink = document.createElement("div");
-    infoLink.style.marginTop = "12px";
-    infoLink.innerHTML = `<a href="https://www.sceducationlottery.com/Games/PalmettoCash5" target="_blank" style="color: lightblue; text-decoration: underline;">Click here for more details on number of winners and Jackpot amount.</a>`;
-    totalsBox.appendChild(infoLink);
-
-    table.insertAdjacentElement("afterend", totalsBox);
-    return;
-  }
+  table.insertAdjacentElement("afterend", totalsBox);
+  return;
+}
 
   // ---------- DEFAULT (POWERBALL + FANTASY 5) ----------
   const lines = (tsvText || "").trim().split("\n");

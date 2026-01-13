@@ -909,7 +909,7 @@ input.button-single,
 function getGamePrefix() {
   if (activeGameMode === 69) return "PWB";     // Powerball
   if (activeGameMode === 39) return "F5";      // Fantasy 5
-  if (activeGameMode === "Palm5") return "Palm5";
+  if (totalNumbersGlobal === 42) return "Palm5";
   return "F5"; // default fallback
 }
 
@@ -1028,7 +1028,7 @@ function withSuppressedManual(fn){
 
 function getGameCode() {
   if (totalNumbersGlobal === 69) return 'PWB';
-  if (activeGameMode === "Palm5") return 'Palm5';
+  if (totalNumbersGlobal === 42) return 'Palm5';
   if (totalNumbersGlobal === 39) return 'F5';
   return 'X';
 }
@@ -1084,8 +1084,9 @@ let skipDataFrom69 = {};
 /* ── Button handlers for loading datasets ── */
 // --- Palm 5 (clone of Fantasy 5 logic) ---
 btnPalm5.onclick = () => {
-  loadCSVFile('palm5.txt', 39, () => {
-    activeGameMode = "Palm5";
+  loadCSVFile('palm5.txt', 42, () => {
+  activeGameMode = 42;
+  totalNumbersGlobal = 42;
 
     ensureTwelveInputs();
     populateAllThreeOnLoad();
@@ -1436,6 +1437,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const coverage = document.querySelector('input[name="coverage"]:checked')?.value || '00';
       const nextDraw = (typeof latestDrawingNumber === 'number') ? latestDrawingNumber + 1 : '00000';
       const prefix = (totalNumbersGlobal === 69) ? 'auto_topPB'
+                     (totalNumbersGlobal === 42) ? 'auto_topPalm5'
                    : (totalNumbersGlobal === 39) ? 'auto_topF5'
                    : 'auto_topX';
 
@@ -2810,13 +2812,11 @@ const lines = list.map(({ combo, pb }, idx) => {
 
   // ---------- filename bits ----------
 const gameCode =
-  (totalNumbersGlobal === 69 || totalNumbersGlobal === 26)
-    ? 'PWB'
-    : (activeGameMode === "Palm5")
-      ? 'Palm5'
-      : (totalNumbersGlobal === 39)
-        ? 'F5'
-        : 'X';
+  totalNumbersGlobal === 69 ? 'PWB'
+  : totalNumbersGlobal === 42 ? 'Palm5'
+  : totalNumbersGlobal === 39 ? 'F5'
+  : 'X';
+
 
    const nextDraw = (typeof latestDrawingNumber === 'number' && !isNaN(latestDrawingNumber))
     ? String(window.__backtestMode ? latestDrawingNumber : (latestDrawingNumber + 1))
@@ -3165,7 +3165,8 @@ function renderPrizeTable(tsvText, tierCounts = {}) {
   tbody.innerHTML = "";
 
   // ---------- PALM 5 SPECIAL HANDLING ----------
-  if (activeGameMode === "Palm5" || totalNumbersGlobal === 39 && window.isPalm5Mode) {
+if (totalNumbersGlobal === 42 ||
+   (totalNumbersGlobal === 39 ))
     // Static prizes
     const prizeData = [
       { tier: "5 of 5", prize: "Jackpot", color: "red" },
@@ -4421,7 +4422,7 @@ function applyHardwiredPicksForCurrentGame() {
   let picks12 = [];
   if (totalNumbersGlobal === 69) {
     picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.PB_WHITES) ? HARDCODE_DEFAULTS.PB_WHITES.slice() : [];
-  } else if (totalNumbersGlobal === 39 && activeGameMode === "Palm5") {
+  } else if (totalNumbersGlobal === 39 && totalNumbersGlobal === 42) {
     // ✅ Palmetto 5 defaults
     picks12 = [5,6,10,13,16,18,23,27,30,32,33,37];
   } else if (totalNumbersGlobal === 39) {

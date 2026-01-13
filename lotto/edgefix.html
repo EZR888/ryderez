@@ -1033,7 +1033,7 @@ function getGameCode() {
   return 'X';
 }
 
-
+ 
 function methodCode(m) {  // for filename
   return (m === 'manual') ? 'MAN' : 'SYS';
 }
@@ -4349,14 +4349,23 @@ function __setPBRedPool(vals) {
 /* Complete the helper (in case it was partial) */
 function applyHardwiredPicksForCurrentGame() {
   let picks12 = [];
+
   if (totalNumbersGlobal === 69) {
-    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.PB_WHITES) ? HARDCODE_DEFAULTS.PB_WHITES.slice() : [];
-  } else if (totalNumbersGlobal === 39 && totalNumbersGlobal === 42) {
+    // Powerball
+    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.PB_WHITES)
+      ? HARDCODE_DEFAULTS.PB_WHITES.slice()
+      : [];
+
+  } else if (totalNumbersGlobal === 42) {
     // ✅ Palmetto 5 defaults
-    picks12 = [5,6,10,13,16,18,23,27,30,32,33,37];
+    picks12 = [5, 6, 10, 13, 16, 18, 23, 27, 30, 32, 33, 37];
+
   } else if (totalNumbersGlobal === 39) {
     // Fantasy 5 defaults
-    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.F5) ? HARDCODE_DEFAULTS.F5.slice() : [];
+    picks12 = (HARDCODE_DEFAULTS && HARDCODE_DEFAULTS.F5)
+      ? HARDCODE_DEFAULTS.F5.slice()
+      : [];
+
   } else {
     // PB-only mode (26): nothing to fill
     return;
@@ -4370,6 +4379,7 @@ function applyHardwiredPicksForCurrentGame() {
     console.warn('Defaults not found for current game.');
   }
 }
+
 
 /* Add a "Defaults" button to the right of Update Picks Column */
 document.addEventListener('DOMContentLoaded', () => {

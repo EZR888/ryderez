@@ -7,22 +7,31 @@
     <style>
         body {
             background-color: #0d1117;
-            color: #c9d1d9;
+            color: lightgreen; 
             font-family: 'Courier New', Courier, monospace;
-            line-height: 1.6;
+            line-height: 1.4;
             padding: 20px;
-            max-width: 800px;
+            max-width: 1000px;
             margin: auto;
             border: 1px solid #30363d;
         }
-        h1 { color: #58a6ff; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
-        h2 { color: #79c0ff; margin-top: 30px; }
+        /* Updated to match your Sine Wave icon */
+        h1 { color: #00aaff; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
+        h2 { color: #58a6ff; margin-top: 30px; }
+        
+        strong { color: #ffffff; } 
+
         .logic-block {
             background-color: #161b22;
-            padding: 15px;
-            border-left: 4px solid #238636;
+            padding: 10px 15px;
             margin: 10px 0;
+            background-image: linear-gradient(#238636, #238636);
+            background-size: 4px 30%; 
+            background-repeat: no-repeat;
+            background-position: left center;
+            padding-left: 20px;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -33,25 +42,33 @@
             padding: 12px;
             border: 1px solid #30363d;
         }
-        th { background-color: #161b22; color: #58a6ff; }
+        th { background-color: #161b22; color: #00aaff; }
+        
+        td:first-child { color: #ffffff; font-weight: bold; }
+
+        /* The 'Anyway' color: high-alert red turned into a dismissive 'Terminate' red */
         .anyway {
             color: #ff7b72;
             font-weight: bold;
             font-size: 1.2em;
+            text-transform: uppercase;
         }
         .footer {
             margin-top: 40px;
             font-style: italic;
-            color: #8b949e;
+            color: #ff7b72;
+            font-weight: bold;
             text-align: center;
         }
         .highlight { color: #d2a8ff; }
+        
+        li, p { margin: 5px 0; }
     </style>
 </head>
 <body>
 
     <h1>SYSTEM_PROTOCOL: INTERNAL_LINE_NOISE</h1>
-    <p><strong>Status:</strong> <span style="color: #238636;">Non-Critical Background Process</span></p>
+    <p><strong>Status:</strong> Non-Critical Background Process</p>
 
     <h2>01. BOOT-UP SEQUENCE (06:00 - 08:00)</h2>
     <div class="logic-block">
@@ -66,7 +83,7 @@
     <div class="logic-block">
         <p>1. <strong>Label:</strong> "Internal static is high right now."</p>
         <p>2. <strong>Dismiss:</strong> <span class="anyway">"Anyway..."</span></p>
-        <p>3. <strong>Task Switch:</strong> Return to code or memoir. Do <u>not</u> wait for volume to drop.</p>
+        <p>3. <strong>Task Switch:</strong> Resume focus on whatever. Do <u>not</u> wait for volume to drop.</p>
     </div>
 
     <h2>03. DATA DICTIONARY</h2>
@@ -81,25 +98,25 @@
         <tbody>
             <tr>
                 <td>Tinnitus</td>
-                <td><strong>Line Noise</strong></td>
+                <td>Line Noise</td>
                 <td>Meaningless data in circuit.</td>
             </tr>
             <tr>
                 <td>Spike</td>
-                <td><strong>High Gain</strong></td>
+                <td>High Gain</td>
                 <td>Mic sensitivity up; no threat.</td>
             </tr>
             <tr>
                 <td>Habituation</td>
-                <td><strong>Indifference</strong></td>
+                <td>Indifference</td>
                 <td>"On" or "Off" is irrelevant.</td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
-        "If you are working on it, you are prioritizing it." <br>
-        <strong>Goal: Neglect the signal into submission.</strong>
+        "IF YOU ARE WORKING ON IT, YOU ARE PRIORITIZING IT." <br>
+        <strong>GOAL: NEGLECT THE SIGNAL INTO SUBMISSION.</strong>
     </div>
 
 </body>

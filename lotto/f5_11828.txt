@@ -1,0 +1,6 @@
+Matching Numbers	Winning Tickets	Prize Amounts
+Matched 5 of 5 numbers	1	$180,558
+Matched 4 of 5 numbers	179	$376
+Matched 3 of 5 numbers	5,604	$14
+Matched 2 of 5 numbers	61,761	Free play
+Total Winning Tickets	67,545	

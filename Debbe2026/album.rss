@@ -46,12 +46,6 @@
       <media:thumbnail url="thumbs/7.jpg" />
     </item>
     <item>
-      <title>8</title>
-      <description></description>
-      <link>slides/8.jpg</link>
-      <media:thumbnail url="thumbs/8.jpg" />
-    </item>
-    <item>
       <title>9</title>
       <description></description>
       <link>slides/9.jpg</link>
@@ -194,12 +188,6 @@
       <description></description>
       <link>slides/33.jpg</link>
       <media:thumbnail url="thumbs/33.jpg" />
-    </item>
-    <item>
-      <title>ChatGPT Image Jul 19, 2026, 11_39_15 AM</title>
-      <description></description>
-      <link>slides/ChatGPT%20Image%20Jul%2019%2C%202026%2C%2011_39_15%20AM.jpg</link>
-      <media:thumbnail url="thumbs/ChatGPT%20Image%20Jul%2019%2C%202026%2C%2011_39_15%20AM.jpg" />
     </item>
   </channel>
 </rss>

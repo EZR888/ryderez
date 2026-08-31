@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Read The Escape</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f4f1ea;
+      color: #222;
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 50px 25px 80px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 5px;
+    }
+
+    .author {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 45px;
+    }
+
+    .intro {
+      font-size: 1.15rem;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .reader-box {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      margin: 25px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    .reader-box h2 {
+      margin-top: 0;
+      font-size: 1.7rem;
+    }
+
+    .button {
+      display: inline-block;
+      background: #222;
+      color: white;
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 7px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 8px 8px 8px 0;
+    }
+
+    .button:hover {
+      background: #444;
+    }
+
+    .kindle-button {
+      background: #e47911;
+    }
+
+    .kindle-button:hover {
+      background: #c96608;
+    }
+
+    .steps {
+      margin-top: 20px;
+    }
+
+    .steps li {
+      margin-bottom: 10px;
+    }
+
+    .note {
+      color: #666;
+      font-size: .95rem;
+    }
+
+    .help {
+      text-align: center;
+      margin-top: 45px;
+      color: #666;
+      font-size: .95rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .page {
+        padding: 30px 18px 60px;
+      }
+
+      .button {
+        display: block;
+        text-align: center;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <h1>The Escape</h1>
+    <div class="author">by Eric Zachary Ryder</div>
+
+    <div class="intro">
+      Want to read my memoir on your e-reader? Choose the device you have below.
+      You don't need to buy anything.
+    </div>
+
+
+    <!-- KOBO -->
+
+    <div class="reader-box">
+
+      <h2>I have a Kobo</h2>
+
+      <p>
+        This is the easiest one. If you're viewing this page on your Kobo,
+        just tap the button below.
+      </p>
+
+      <a class="button"
+         href="TheEscape.epub"
+         download>
+        Download The Escape
+      </a>
+
+      <p class="note">
+        After it downloads, the book should appear in your Kobo library.
+      </p>
+
+    </div>
+
+
+    <!-- KINDLE -->
+
+    <div class="reader-box">
+
+      <h2>I have a Kindle</h2>
+
+      <p>
+        Kindle uses Amazon's free <strong>Send to Kindle</strong> service.
+        It sounds more complicated than it is.
+      </p>
+
+      <div class="steps">
+        <ol>
+          <li>
+            First, download the book:
+            <br><br>
+
+            <a class="button"
+               href="TheEscape.epub"
+               download>
+              Download The Escape
+            </a>
+          </li>
+
+          <li>
+            Then open Amazon's Send to Kindle page:
+            <br><br>
+
+            <a class="button kindle-button"
+               href="https://www.amazon.com/sendtokindle"
+               target="_blank"
+               rel="noopener">
+              Open Send to Kindle
+            </a>
+          </li>
+
+          <li>
+            Sign in to Amazon if asked.
+          </li>
+
+          <li>
+            Select the <strong>TheEscape.epub</strong> file you just downloaded.
+          </li>
+
+          <li>
+            Amazon will send it to your Kindle.
+          </li>
+        </ol>
+      </div>
+
+      <p class="note">
+        You do not need to convert the file yourself. Amazon does that automatically.
+      </p>
+
+    </div>
+
+
+    <!-- PHONE / TABLET / COMPUTER -->
+
+    <div class="reader-box">
+
+      <h2>I don't have an e-reader</h2>
+
+      <p>
+        That's fine too. You can download the EPUB file and read it with
+        many book-reading apps on a phone, tablet, Mac, or PC.
+      </p>
+
+      <a class="button"
+         href="TheEscape.epub"
+         download>
+        Download The Escape
+      </a>
+
+    </div>
+
+
+    <div class="help">
+      If none of this makes any sense, don't worry — just ask me and I'll help you get the book onto your device.
+    </div>
+
+  </div>
+
+</body>
+</html>

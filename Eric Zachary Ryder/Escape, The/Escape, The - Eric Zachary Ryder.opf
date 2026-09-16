@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
-        <dc:identifier opf:scheme="calibre" id="calibre_id">33</dc:identifier>
-        <dc:identifier opf:scheme="uuid" id="uuid_id">8f6134a2-f09d-4d60-a028-8e4c505b1bb1</dc:identifier>
+        <dc:identifier opf:scheme="calibre" id="calibre_id">34</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">85fe6a33-cd67-4307-b44d-21d6bf158fd3</dc:identifier>
         <dc:title>The Escape</dc:title>
         <dc:creator opf:file-as="Eric Zachary Ryder" opf:role="aut">Eric Zachary Ryder</dc:creator>
         <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (7.24.0) [https://calibre-ebook.com]</dc:contributor>
         <dc:date>2026-09-16T00:00:00+00:00</dc:date>
         <dc:publisher>anonymous</dc:publisher>
         <dc:language>eng</dc:language>
-        <meta name="calibre:timestamp" content="2026-09-16T22:13:36.784909+00:00"/>
+        <meta name="calibre:timestamp" content="2026-09-16T23:18:10.840032+00:00"/>
         <meta name="calibre:title_sort" content="Escape, The"/>
     </metadata>
     <guide>

@@ -1,0 +1,11 @@
+Matching Numbers	Winning Tickets	Prize Amounts
+5 + Powerball	0	$389,000,000
+5	0	$1,428,728
+4 + Powerball	2	$15,354
+4	35	$438
+3 + Powerball	106	$150
+3	2,363	$7
+2 + Powerball	2,262	$7
+1 + Powerball	17,232	$4
+Powerball	40,518	$3
+Total Winning Tickets	62,518	
